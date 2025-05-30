@@ -1,11 +1,11 @@
-// --- DOM Elements (Profile Management) ---
-const profileNameInput = document.getElementById('profileName');
-const saveProfileBtn = document.getElementById('saveProfileBtn');
-const savedProfilesSelect = document.getElementById('savedProfiles');
-const loadProfileBtn = document.getElementById('loadProfileBtn');
-const deleteProfileBtn = document.getElementById('deleteProfileBtn');
-const profileStatusDiv = document.getElementById('profileStatus');
-const PROFILE_STORAGE_PREFIX = 'gachaCalcProfile_';
+// --- DOM Elements (Champion Management) ---
+const championNameInput = document.getElementById('championName'); // MODIFIED
+const saveChampionBtn = document.getElementById('saveChampionBtn'); // MODIFIED
+const savedChampionsSelect = document.getElementById('savedChampions'); // MODIFIED
+const loadChampionBtn = document.getElementById('loadChampionBtn'); // MODIFIED
+const deleteChampionBtn = document.getElementById('deleteChampionBtn'); // MODIFIED
+const championStatusDiv = document.getElementById('championStatus'); // MODIFIED
+const CHAMPION_STORAGE_PREFIX = 'gachaCalcChampion_'; // MODIFIED
 
 
 // --- Core Calculation Functions ---
@@ -71,7 +71,7 @@ const targetStarLevelSelect = document.getElementById('targetStarLevel');
 const calculateBtn = document.getElementById('calculateBtn');
 const calculateBtnText = calculateBtn.querySelector('.btn-text'); 
 const calculateBtnSpinner = calculateBtn.querySelector('.spinner'); 
-const toggleUnlockCostBtn = document.getElementById('toggleUnlockCostBtn'); // MODIFIED
+const toggleUnlockCostBtn = document.getElementById('toggleUnlockCostBtn'); 
 
 const advisoryBox = document.getElementById('advisoryBox');
 const advisoryMessage = document.getElementById('advisoryMessage');
@@ -132,7 +132,7 @@ const lmRateUpChanceError = document.getElementById('lmRateUpChanceError');
 const starLevelError = document.getElementById('starLevelError');
 
 // --- Game Constants and Data ---
-let isUnlockCostIncluded = false; // MODIFIED: State for the toggle button
+let isUnlockCostIncluded = false; 
 const NM_GUARANTEE_THRESHOLD = 3;
 const SHARD_REQUIREMENTS = {
     "White 1-Star": 2, "White 2-Star": 5, "White 3-Star": 10, "White 4-Star": 20, "White 5-Star": 40,
@@ -205,105 +205,110 @@ function updateChart(currentCosts, proposedCosts, labels, includeUnlock, unlockC
     });
 }
 
-function displayProfileStatus(message, isError = false) {
-    profileStatusDiv.textContent = message;
-    profileStatusDiv.className = 'status-message text-center py-1'; 
+// MODIFIED: Renamed function and updated references
+function displayChampionStatus(message, isError = false) {
+    championStatusDiv.textContent = message; // MODIFIED
+    championStatusDiv.className = 'status-message text-center py-1'; 
     if (isError) {
-        profileStatusDiv.classList.add('status-error');
+        championStatusDiv.classList.add('status-error'); // MODIFIED
     } else {
-        profileStatusDiv.classList.add('status-success');
+        championStatusDiv.classList.add('status-success'); // MODIFIED
     }
     setTimeout(() => {
-        profileStatusDiv.textContent = '';
-        profileStatusDiv.className = 'status-message h-8'; 
+        championStatusDiv.textContent = ''; // MODIFIED
+        championStatusDiv.className = 'status-message h-8'; 
     }, 3000);
 }
 
-function saveProfile() {
-    const profileName = profileNameInput.value.trim();
-    if (!profileName) {
-        displayProfileStatus("Profile name cannot be empty.", true);
+// MODIFIED: Renamed function and updated references
+function saveChampion() {
+    const championName = championNameInput.value.trim(); // MODIFIED
+    if (!championName) {
+        displayChampionStatus("Champion name cannot be empty.", true); // MODIFIED
         return;
     }
-    const profileData = {
+    const championData = { // MODIFIED
         mythicProbability: mythicProbabilityInput.value,
         mythicHardPity: mythicHardPityInput.value,
         lmRateUpChance: lmRateUpChanceInput.value,
-        includeUnlockCost: isUnlockCostIncluded, // MODIFIED: Save toggle state
+        includeUnlockCost: isUnlockCostIncluded, 
         startStarLevel: startStarLevelSelect.value,
         targetStarLevel: targetStarLevelSelect.value
     };
     try {
-        localStorage.setItem(PROFILE_STORAGE_PREFIX + profileName, JSON.stringify(profileData));
-        displayProfileStatus(`Profile "${profileName}" saved successfully!`);
-        populateSavedProfilesDropdown();
-        profileNameInput.value = ''; 
+        localStorage.setItem(CHAMPION_STORAGE_PREFIX + championName, JSON.stringify(championData)); // MODIFIED
+        displayChampionStatus(`Champion "${championName}" saved successfully!`); // MODIFIED
+        populateSavedChampionsDropdown(); // MODIFIED
+        championNameInput.value = ''; 
     } catch (e) {
-        displayProfileStatus("Error saving profile. LocalStorage might be full or disabled.", true);
+        displayChampionStatus("Error saving champion. LocalStorage might be full or disabled.", true); // MODIFIED
         console.error("Error saving to localStorage:", e);
     }
 }
 
-function loadProfile() {
-    const profileName = savedProfilesSelect.value;
-    if (!profileName) {
-        displayProfileStatus("No profile selected to load.", true);
+// MODIFIED: Renamed function and updated references
+function loadChampion() {
+    const championName = savedChampionsSelect.value; // MODIFIED
+    if (!championName) {
+        displayChampionStatus("No champion selected to load.", true); // MODIFIED
         return;
     }
     try {
-        const profileDataString = localStorage.getItem(PROFILE_STORAGE_PREFIX + profileName);
-        if (profileDataString) {
-            const profileData = JSON.parse(profileDataString);
-            mythicProbabilityInput.value = profileData.mythicProbability;
-            mythicHardPityInput.value = profileData.mythicHardPity;
-            lmRateUpChanceInput.value = profileData.lmRateUpChance;
-            isUnlockCostIncluded = profileData.includeUnlockCost; // MODIFIED: Load toggle state
-            updateToggleUnlockButtonAppearance(); // Update button based on loaded state
-            startStarLevelSelect.value = profileData.startStarLevel;
-            targetStarLevelSelect.value = profileData.targetStarLevel;
+        const championDataString = localStorage.getItem(CHAMPION_STORAGE_PREFIX + championName); // MODIFIED
+        if (championDataString) {
+            const championData = JSON.parse(championDataString); // MODIFIED
+            mythicProbabilityInput.value = championData.mythicProbability;
+            mythicHardPityInput.value = championData.mythicHardPity;
+            lmRateUpChanceInput.value = championData.lmRateUpChance;
+            isUnlockCostIncluded = championData.includeUnlockCost; 
+            updateToggleUnlockButtonAppearance(); 
+            startStarLevelSelect.value = championData.startStarLevel;
+            targetStarLevelSelect.value = championData.targetStarLevel;
             updateCalculator(); 
-            displayProfileStatus(`Profile "${profileName}" loaded.`);
+            displayChampionStatus(`Champion "${championName}" loaded.`); // MODIFIED
         } else {
-            displayProfileStatus(`Profile "${profileName}" not found.`, true);
+            displayChampionStatus(`Champion "${championName}" not found.`, true); // MODIFIED
         }
     } catch (e) {
-        displayProfileStatus("Error loading profile. Data might be corrupted.", true);
+        displayChampionStatus("Error loading champion. Data might be corrupted.", true); // MODIFIED
         console.error("Error loading from localStorage:", e);
     }
 }
 
-function deleteProfile() {
-    const profileName = savedProfilesSelect.value;
-    if (!profileName) {
-        displayProfileStatus("No profile selected to delete.", true);
+// MODIFIED: Renamed function and updated references
+function deleteChampion() {
+    const championName = savedChampionsSelect.value; // MODIFIED
+    if (!championName) {
+        displayChampionStatus("No champion selected to delete.", true); // MODIFIED
         return;
     }
     try {
-        localStorage.removeItem(PROFILE_STORAGE_PREFIX + profileName);
-        displayProfileStatus(`Profile "${profileName}" deleted.`);
-        populateSavedProfilesDropdown();
+        localStorage.removeItem(CHAMPION_STORAGE_PREFIX + championName); // MODIFIED
+        displayChampionStatus(`Champion "${championName}" deleted.`); // MODIFIED
+        populateSavedChampionsDropdown(); // MODIFIED
     } catch (e) {
-        displayProfileStatus("Error deleting profile.", true);
+        displayChampionStatus("Error deleting champion.", true); // MODIFIED
         console.error("Error deleting from localStorage:", e);
     }
 }
 
-function populateSavedProfilesDropdown() {
-    savedProfilesSelect.innerHTML = '<option value="">-- Select a Profile --</option>'; 
+// MODIFIED: Renamed function and updated references
+function populateSavedChampionsDropdown() {
+    savedChampionsSelect.innerHTML = '<option value="">-- Select a Champion --</option>'; // MODIFIED
     try {
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            if (key.startsWith(PROFILE_STORAGE_PREFIX)) {
-                const profileName = key.substring(PROFILE_STORAGE_PREFIX.length);
+            if (key.startsWith(CHAMPION_STORAGE_PREFIX)) { // MODIFIED
+                const championName = key.substring(CHAMPION_STORAGE_PREFIX.length); // MODIFIED
                 const option = document.createElement('option');
-                option.value = profileName;
-                option.textContent = profileName;
-                savedProfilesSelect.appendChild(option);
+                option.value = championName;
+                option.textContent = championName;
+                savedChampionsSelect.appendChild(option); // MODIFIED
             }
         }
     } catch (e) {
-        displayProfileStatus("Could not access localStorage to populate profiles.", true);
-        console.error("Error accessing localStorage for populating profiles:", e);
+        displayChampionStatus("Could not access localStorage to populate champions.", true); // MODIFIED
+        console.error("Error accessing localStorage for populating champions:", e);
     }
 }
 
@@ -321,7 +326,6 @@ function setButtonLoadingState(isLoading) {
     }
 }
 
-// MODIFIED: Function to update toggle button appearance
 function updateToggleUnlockButtonAppearance() {
     if (isUnlockCostIncluded) {
         toggleUnlockCostBtn.textContent = 'Include Initial Unlock: ON';
@@ -440,7 +444,6 @@ function updateCalculator() {
         let upgradeAnvilsBestProposed = calculateGachaAnvils(shardsNeededForUpgrade, bestShardsProgressionProposed, drawsPerMythicBest);
         let upgradeAnvilsWorstProposed = calculateGachaAnvils(shardsNeededForUpgrade, worstShardsProgressionProposed, drawsPerMythicWorst);
 
-        // MODIFIED: Use isUnlockCostIncluded state variable
         if (isUnlockCostIncluded) { 
             unlockCostSection.classList.remove('hidden');
             detailUnlockCostSection.classList.remove('hidden');
@@ -508,7 +511,7 @@ function updateCalculator() {
         const totalCurrentAvgDisplayed = parseFloat(anvilsCurrentSpan.textContent);
         const totalProposedAvgDisplayed = parseFloat(anvilsProposedSpan.textContent);
 
-        if (shardsNeededForUpgrade <= 0 && !isUnlockCostIncluded) { // MODIFIED: Check toggle state
+        if (shardsNeededForUpgrade <= 0 && !isUnlockCostIncluded) { 
             conclusionParagraph.textContent = "No shards needed for this upgrade range. Cost is 0."
         } else if (isFinite(totalCurrentAvgDisplayed) && isFinite(totalProposedAvgDisplayed)) {
             if (totalCurrentAvgDisplayed < totalProposedAvgDisplayed) {
@@ -532,7 +535,7 @@ function updateCalculator() {
             chartProgressionCostsCurrent.push(isFinite(currentProgCost) ? Math.round(currentProgCost) : 0);
             chartProgressionCostsProposed.push(isFinite(proposedProgCost) ? Math.round(proposedProgCost) : 0);
         });
-        updateChart(chartProgressionCostsCurrent, chartProgressionCostsProposed, allStarLevelsForChart, isUnlockCostIncluded, anvilsUnlockAvg); // MODIFIED
+        updateChart(chartProgressionCostsCurrent, chartProgressionCostsProposed, allStarLevelsForChart, isUnlockCostIncluded, anvilsUnlockAvg); 
         
         setButtonLoadingState(false); 
     }, 50); 
@@ -540,12 +543,13 @@ function updateCalculator() {
 
 document.addEventListener('DOMContentLoaded', () => {
     populateStarLevels();
-    populateSavedProfilesDropdown(); 
-    updateToggleUnlockButtonAppearance(); // Initialize toggle button appearance
+    populateSavedChampionsDropdown(); // MODIFIED
+    updateToggleUnlockButtonAppearance(); 
 
-    saveProfileBtn.addEventListener('click', saveProfile);
-    loadProfileBtn.addEventListener('click', loadProfile);
-    deleteProfileBtn.addEventListener('click', deleteProfile);
+    // MODIFIED Event Listeners for Champion Management
+    saveChampionBtn.addEventListener('click', saveChampion);
+    loadChampionBtn.addEventListener('click', loadChampion);
+    deleteChampionBtn.addEventListener('click', deleteChampion);
 
     calculateBtn.addEventListener('click', updateCalculator);
     mythicProbabilityInput.addEventListener('input', updateCalculator);
@@ -553,7 +557,6 @@ document.addEventListener('DOMContentLoaded', () => {
     lmRateUpChanceInput.addEventListener('input', updateCalculator);
     startStarLevelSelect.addEventListener('change', updateCalculator);
     targetStarLevelSelect.addEventListener('change', updateCalculator);
-    // MODIFIED: Event listener for the new toggle button
     toggleUnlockCostBtn.addEventListener('click', () => {
         isUnlockCostIncluded = !isUnlockCostIncluded;
         updateToggleUnlockButtonAppearance();
