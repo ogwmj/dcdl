@@ -149,11 +149,31 @@
 
         <div id="results" class="mt-8">
             <h2 class="text-xl font-semibold mb-4">Calculation Results</h2>
-            <div id="resultCurrent" class="result-box mb-4">
-                <p><strong>Current Bleed System:</strong> <span id="anvilsCurrent">--</span> Anvils</p>
-            </div>
-            <div id="resultProposed" class="result-box mb-4">
-                <p><strong>Proposed Bleed System:</strong> <span id="anvilsProposed">--</span> Anvils</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="col-span-1">
+                    <h3 class="font-medium text-lg mb-2 text-blue-700">Current Bleed System</h3>
+                    <div class="result-box mb-2">
+                        <p><strong>Average:</strong> <span id="anvilsCurrent">--</span> Anvils</p>
+                    </div>
+                    <div class="result-box mb-2">
+                        <p><strong>Best Case:</strong> <span id="anvilsBestCurrent">--</span> Anvils</p>
+                    </div>
+                    <div class="result-box">
+                        <p><strong>Worst Case:</strong> <span id="anvilsWorstCurrent">--</span> Anvils</p>
+                    </div>
+                </div>
+                <div class="col-span-1">
+                    <h3 class="font-medium text-lg mb-2 text-blue-700">Proposed Bleed System</h3>
+                    <div class="result-box mb-2">
+                        <p><strong>Average:</strong> <span id="anvilsProposed">--</span> Anvils</p>
+                    </div>
+                    <div class="result-box mb-2">
+                        <p><strong>Best Case:</strong> <span id="anvilsBestProposed">--</span> Anvils</p>
+                    </div>
+                    <div class="result-box">
+                        <p><strong>Worst Case:</strong> <span id="anvilsWorstProposed">--</span> Anvils</p>
+                    </div>
+                </div>
             </div>
             <p id="conclusion" class="text-center text-gray-700 font-medium mt-6"></p>
         </div>
@@ -238,7 +258,8 @@
             if (avgShardsPerMythic <= 0) {
                 return Infinity; // Cannot gain shards, so infinite anvils needed
             }
-            const expectedMythicPulls = targetShards / avgShardsPerMythic;
+            // Use Math.ceil for mythic pulls as you can't have a fraction of a pull
+            const expectedMythicPulls = Math.ceil(targetShards / avgShardsPerMythic);
             const anvilsNeeded = expectedMythicPulls * drawsPerMythic;
             return anvilsNeeded;
         }
@@ -249,8 +270,14 @@
         const lmRateUpChanceInput = document.getElementById('lmRateUpChance');
         const targetStarLevelSelect = document.getElementById('targetStarLevel');
         const calculateBtn = document.getElementById('calculateBtn');
+
+        // Result display spans
         const anvilsCurrentSpan = document.getElementById('anvilsCurrent');
         const anvilsProposedSpan = document.getElementById('anvilsProposed');
+        const anvilsBestCurrentSpan = document.getElementById('anvilsBestCurrent');
+        const anvilsWorstCurrentSpan = document.getElementById('anvilsWorstCurrent');
+        const anvilsBestProposedSpan = document.getElementById('anvilsBestProposed');
+        const anvilsWorstProposedSpan = document.getElementById('anvilsWorstProposed');
         const conclusionParagraph = document.getElementById('conclusion');
 
         // Error message elements
@@ -307,6 +334,10 @@
             lmRateUpChanceError.classList.add('hidden');
             anvilsCurrentSpan.textContent = '--';
             anvilsProposedSpan.textContent = '--';
+            anvilsBestCurrentSpan.textContent = '--';
+            anvilsWorstCurrentSpan.textContent = '--';
+            anvilsBestProposedSpan.textContent = '--';
+            anvilsWorstProposedSpan.textContent = '--';
             conclusionParagraph.textContent = '';
 
             let isValid = true;
@@ -338,8 +369,11 @@
             }
 
             // Calculate core game mechanics
-            const drawsPerMythic = calculateExpectedDrawsPerMythic(mythicProbability, mythicHardPity);
-            if (isNaN(drawsPerMythic)) {
+            const drawsPerMythicAverage = calculateExpectedDrawsPerMythic(mythicProbability, mythicHardPity);
+            const drawsPerMythicBest = 1; // Best case: Mythic on 1st pull
+            const drawsPerMythicWorst = mythicHardPity; // Worst case: Hit hard pity every time
+
+            if (isNaN(drawsPerMythicAverage)) {
                 anvilsCurrentSpan.textContent = 'Error';
                 anvilsProposedSpan.textContent = 'Error';
                 conclusionParagraph.textContent = 'Could not calculate draws per Mythic. Check inputs.';
@@ -360,6 +394,13 @@
                 LM_SHARDS_PROPOSED, NM_SHARDS_PROPOSED, lmRateUpChance, NM_GUARANTEE_THRESHOLD
             );
 
+            // Best case shards per Mythic pull (always get LM)
+            const bestShardsPerMythicCurrent = LM_SHARDS_CURRENT;
+            const bestShardsPerMythicProposed = LM_SHARDS_PROPOSED;
+
+            // Worst case shards per Mythic pull (worst LM guarantee cycle: 3 NMs + 1 LM = 4 Mythic pulls for 40 shards total)
+            const WORST_SHARDS_PER_MYTHIC_EFFECTIVE = 10; // (3*0 + 40) / 4 or (3*5 + 25) / 4
+
             if (isNaN(avgShardsPerMythicCurrent) || isNaN(avgShardsPerMythicProposed)) {
                 anvilsCurrentSpan.textContent = 'Error';
                 anvilsProposedSpan.textContent = 'Error';
@@ -370,13 +411,25 @@
             const targetStarLevel = targetStarLevelSelect.value;
             const targetShards = SHARD_REQUIREMENTS[targetStarLevel];
 
-            // Calculate Anvils for each system
-            const anvilsCurrent = calculateGachaAnvils(targetShards, avgShardsPerMythicCurrent, drawsPerMythic);
-            const anvilsProposed = calculateGachaAnvils(targetShards, avgShardsPerMythicProposed, drawsPerMythic);
+            // Calculate Anvils for each system (Average, Best, Worst)
+            const anvilsCurrent = calculateGachaAnvils(targetShards, avgShardsPerMythicCurrent, drawsPerMythicAverage);
+            const anvilsProposed = calculateGachaAnvils(targetShards, avgShardsPerMythicProposed, drawsPerMythicAverage);
+
+            const anvilsBestCurrent = calculateGachaAnvils(targetShards, bestShardsPerMythicCurrent, drawsPerMythicBest);
+            const anvilsWorstCurrent = calculateGachaAnvils(targetShards, WORST_SHARDS_PER_MYTHIC_EFFECTIVE, drawsPerMythicWorst);
+
+            const anvilsBestProposed = calculateGachaAnvils(targetShards, bestShardsPerMythicProposed, drawsPerMythicBest);
+            const anvilsWorstProposed = calculateGachaAnvils(targetShards, WORST_SHARDS_PER_MYTHIC_EFFECTIVE, drawsPerMythicWorst);
+
 
             // Display results, rounded to nearest whole number
             anvilsCurrentSpan.textContent = isFinite(anvilsCurrent) ? Math.round(anvilsCurrent).toString() : 'Infinity';
             anvilsProposedSpan.textContent = isFinite(anvilsProposed) ? Math.round(anvilsProposed).toString() : 'Infinity';
+            anvilsBestCurrentSpan.textContent = isFinite(anvilsBestCurrent) ? Math.round(anvilsBestCurrent).toString() : 'Infinity';
+            anvilsWorstCurrentSpan.textContent = isFinite(anvilsWorstCurrent) ? Math.round(anvilsWorstCurrent).toString() : 'Infinity';
+            anvilsBestProposedSpan.textContent = isFinite(anvilsBestProposed) ? Math.round(anvilsBestProposed).toString() : 'Infinity';
+            anvilsWorstProposedSpan.textContent = isFinite(anvilsWorstProposed) ? Math.round(anvilsWorstProposed).toString() : 'Infinity';
+
 
             // Provide conclusion, rounding difference UP
             if (anvilsCurrent < anvilsProposed) {
