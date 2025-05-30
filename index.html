@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DC: Dark Legion - Anvil Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font for Inter */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light gray background */
+        }
+        .container {
+            max-width: 90%; /* Fluid width for responsiveness */
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background-color: #ffffff;
+            border-radius: 1rem; /* Rounded corners */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .input-group label {
+            font-weight: 600;
+            color: #334155; /* Slate 700 */
+        }
+        .input-group input, .input-group select {
+            border: 1px solid #cbd5e1; /* Slate 300 */
+            border-radius: 0.5rem; /* Rounded corners for inputs */
+            padding: 0.6rem 0.8rem;
+            margin-top: 0.3rem;
+            width: 100%;
+            transition: border-color 0.2s;
+        }
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #3b82f6; /* Blue 500 */
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+        .btn-primary {
+            background-color: #3b82f6; /* Blue 500 */
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.75rem; /* More rounded */
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
+        }
+        .btn-primary:hover {
+            background-color: #2563eb; /* Blue 600 */
+            transform: translateY(-1px);
+        }
+        .result-box {
+            background-color: #e0f2fe; /* Light blue */
+            border-left: 4px solid #3b82f6; /* Blue 500 */
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-top: 1rem;
+        }
+        .result-box strong {
+            color: #1e40af; /* Blue 800 */
+        }
+        .error-message {
+            color: #ef4444; /* Red 500 */
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+        h1 {
+            color: #1e293b; /* Slate 800 */
+        }
+        h2 {
+            color: #334155; /* Slate 700 */
+            border-bottom: 1px solid #e2e8f0; /* Slate 200 */
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        /* Responsive adjustments */
+        @media (min-width: 640px) {
+            .container {
+                max-width: 600px; /* Max width for larger screens */
+            }
+        }
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 768px; /* Even larger for desktop */
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center mb-6">DC: Dark Legion - Anvil Calculator</h1>
+        <p class="text-center text-gray-600 mb-8">Estimate the average Anvils needed to reach a specific Star Level.</p>
+
+        <div class="mb-8 p-4 bg-blue-50 rounded-lg shadow-inner">
+            <h2 class="text-xl font-semibold mb-4">Configure Base Gacha Rates</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="input-group">
+                    <label for="mythicProbability" class="block text-sm">Mythic Base Probability (e.g., 0.0384 for 3.84%):</label>
+                    <input type="number" id="mythicProbability" value="0.0384" step="0.0001" min="0" max="1">
+                    <p id="mythicProbabilityError" class="error-message hidden"></p>
+                </div>
+                <div class="input-group">
+                    <label for="mythicHardPity" class="block text-sm">Mythic Hard Pity (e.g., 50):</label>
+                    <input type="number" id="mythicHardPity" value="50" step="1" min="1">
+                    <p id="mythicHardPityError" class="error-message hidden"></p>
+                </div>
+            </div>
+            <div class="input-group mt-4">
+                <label for="lmRateUpChance" class="block text-sm">Limited Mythic Rate-Up Chance (e.g., 0.269 for 26.9%):</label>
+                <input type="number" id="lmRateUpChance" value="0.269" step="0.001" min="0" max="1">
+                    <p id="lmRateUpChanceError" class="error-message hidden"></p>
+            </div>
+            <p class="text-sm text-gray-500 mt-2">Note: "Fail three times" guarantee for Limited Mythic is hardcoded based on your game rules.</p>
+        </div>
+
+        <div class="mb-8 p-4 bg-green-50 rounded-lg shadow-inner">
+            <h2 class="text-xl font-semibold mb-4">Configure Shard Bleed Systems</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <h3 class="font-medium text-lg mb-2 text-green-700">Current Bleed System</h3>
+                    <p class="text-sm text-gray-700">Limited Mythic (LM) Shards: 40</p>
+                    <p class="text-sm text-gray-700">Non-Limited Mythic (NM) Shards: 0</p>
+                </div>
+                <div>
+                    <h3 class="font-medium text-lg mb-2 text-green-700">Proposed Bleed System</h3>
+                    <p class="text-sm text-gray-700">Limited Mythic (LM) Shards: 25</p>
+                    <p class="text-sm text-gray-700">Non-Limited Mythic (NM) Shards: 5</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-8 p-4 bg-purple-50 rounded-lg shadow-inner">
+            <h2 class="text-xl font-semibold mb-4">Select Target Star Level</h2>
+            <div class="input-group">
+                <label for="targetStarLevel" class="block text-sm">Choose Star Level:</label>
+                <select id="targetStarLevel" class="block w-full">
+                    </select>
+            </div>
+        </div>
+
+        <button id="calculateBtn" class="btn-primary w-full flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            Calculate Anvils
+        </button>
+
+        <div id="results" class="mt-8">
+            <h2 class="text-xl font-semibold mb-4">Calculation Results</h2>
+            <div id="resultCurrent" class="result-box mb-4">
+                <p><strong>Current Bleed System:</strong> <span id="anvilsCurrent">--</span> Anvils</p>
+            </div>
+            <div id="resultProposed" class="result-box mb-4">
+                <p><strong>Proposed Bleed System:</strong> <span id="anvilsProposed">--</span> Anvils</p>
+            </div>
+            <p id="conclusion" class="text-center text-gray-700 font-medium mt-6"></p>
+        </div>
+    </div>
+
+    <script>
+        // --- Core Calculation Functions ---
+
+        /**
+         * Calculates the expected number of draws (Anvils) needed to get one Mythic character,
+         * considering a base probability and a hard pity system.
+         */
+        function calculateExpectedDrawsPerMythic(mythicProbability, hardPity) {
+            if (!(mythicProbability > 0 && mythicProbability <= 1)) {
+                return NaN; // Indicate invalid input
+            }
+            if (hardPity < 1) {
+                return NaN; // Indicate invalid input
+            }
+
+            let expectedDraws = 0.0;
+            // Sum for pulls before pity
+            for (let k = 1; k < hardPity; k++) {
+                // Probability of success on the k-th trial
+                const p_k = Math.pow(1 - mythicProbability, k - 1) * mythicProbability;
+                expectedDraws += k * p_k;
+            }
+
+            // Add the contribution of hitting the hard pity
+            const p_hit_pity = Math.pow(1 - mythicProbability, hardPity - 1);
+            expectedDraws += hardPity * p_hit_pity;
+
+            return expectedDraws;
+        }
+
+        /**
+         * Calculates the average shards gained per Mythic pull, considering Limited Mythic
+         * rate-up chances and the 'fail three times' guarantee.
+         */
+        function calculateAverageShardsPerMythicPull(lmShardYield, nmShardYield, lmRateUpChance, nmGuaranteeThreshold) {
+            if (!(lmRateUpChance >= 0 && lmRateUpChance <= 1)) {
+                return NaN;
+            }
+            if (nmGuaranteeThreshold < 0) {
+                return NaN;
+            }
+
+            const nmRateUpChance = 1.0 - lmRateUpChance;
+
+            let expectedShardsPerLmEvent = 0.0;
+            let expectedMythicPullsPerLmEvent = 0.0;
+
+            // Scenario 1: LM on 1st Mythic pull in cycle
+            const p_lm_1st = lmRateUpChance;
+            expectedShardsPerLmEvent += lmShardYield * p_lm_1st;
+            expectedMythicPullsPerLmEvent += 1 * p_lm_1st;
+
+            // Scenarios for (1 to nmGuaranteeThreshold - 1) NMs, then LM
+            for (let i = 1; i < nmGuaranteeThreshold; i++) {
+                const p_n_n_lm = Math.pow(nmRateUpChance, i) * lmRateUpChance;
+                const shardsGained = (nmShardYield * i) + lmShardYield;
+                expectedShardsPerLmEvent += shardsGained * p_n_n_lm;
+                expectedMythicPullsPerLmEvent += (i + 1) * p_n_n_lm;
+            }
+
+            // Scenario: Hit the guarantee (nmGuaranteeThreshold NMs, then guaranteed LM)
+            const p_guarantee_lm = Math.pow(nmRateUpChance, nmGuaranteeThreshold);
+            const shardsGainedGuarantee = (nmShardYield * nmGuaranteeThreshold) + lmShardYield;
+            expectedShardsPerLmEvent += shardsGainedGuarantee * p_guarantee_lm;
+            expectedMythicPullsPerLmEvent += (nmGuaranteeThreshold + 1) * p_guarantee_lm;
+
+            if (expectedMythicPullsPerLmEvent === 0) {
+                return 0.0; // Avoid division by zero if probabilities are somehow zero
+            }
+            return expectedShardsPerLmEvent / expectedMythicPullsPerLmEvent;
+        }
+
+        /**
+         * Calculates the expected Anvils needed for a given target shard count for one bleed system.
+         */
+        function calculateGachaAnvils(targetShards, avgShardsPerMythic, drawsPerMythic) {
+            if (avgShardsPerMythic <= 0) {
+                return Infinity; // Cannot gain shards, so infinite anvils needed
+            }
+            const expectedMythicPulls = targetShards / avgShardsPerMythic;
+            const anvilsNeeded = expectedMythicPulls * drawsPerMythic;
+            return anvilsNeeded;
+        }
+
+        // --- DOM Elements and Event Listeners ---
+        const mythicProbabilityInput = document.getElementById('mythicProbability');
+        const mythicHardPityInput = document.getElementById('mythicHardPity');
+        const lmRateUpChanceInput = document.getElementById('lmRateUpChance');
+        const targetStarLevelSelect = document.getElementById('targetStarLevel');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const anvilsCurrentSpan = document.getElementById('anvilsCurrent');
+        const anvilsProposedSpan = document.getElementById('anvilsProposed');
+        const conclusionParagraph = document.getElementById('conclusion');
+
+        // Error message elements
+        const mythicProbabilityError = document.getElementById('mythicProbabilityError');
+        const mythicHardPityError = document.getElementById('mythicHardPityError');
+        const lmRateUpChanceError = document.getElementById('lmRateUpChanceError');
+
+        // --- Game Constants and Shard Data ---
+        const NM_GUARANTEE_THRESHOLD = 3; // "Fail three times" before next LM is guaranteed
+
+        const SHARD_REQUIREMENTS = {
+            "White 1-Star": 2,
+            "White 2-Star": 5,   // 2 + 3
+            "White 3-Star": 10,  // 5 + 5
+            "White 4-Star": 20,  // 10 + 10
+            "White 5-Star": 40,  // 20 + 20
+            "Blue 1-Star": 60,   // 40 + 20
+            "Blue 2-Star": 80,   // 60 + 20
+            "Blue 3-Star": 100,  // 80 + 20
+            "Blue 4-Star": 130,  // 100 + 30
+            "Blue 5-Star": 160,  // 130 + 30
+            "Purple 1-Star": 200, // 160 + 40
+            "Purple 2-Star": 240, // 200 + 40
+            "Purple 3-Star": 280, // 240 + 40
+            "Purple 4-Star": 320, // 280 + 40
+            "Purple 5-Star": 360, // 320 + 40
+            "Gold 1-Star": 400,  // 360 + 40
+            "Gold 2-Star": 440,  // 400 + 40
+            "Gold 3-Star": 480,  // 440 + 40
+            "Gold 4-Star": 540,  // 480 + 60
+            "Gold 5-Star": 600,  // 540 + 60
+            "Red 1-Star": 680,   // 600 + 80
+            "Red 2-Star": 760,   // 680 + 80
+            "Red 3-Star": 840,   // 760 + 80
+            "Red 4-Star": 920,   // 840 + 80
+            "Red 5-Star": 1000  // 920 + 80
+        };
+
+        // Populate the Star Level dropdown
+        function populateStarLevels() {
+            for (const level in SHARD_REQUIREMENTS) {
+                const option = document.createElement('option');
+                option.value = level;
+                option.textContent = level;
+                targetStarLevelSelect.appendChild(option);
+            }
+        }
+
+        // --- Main Calculation Logic ---
+        function updateCalculator() {
+            // Clear previous errors and results
+            mythicProbabilityError.classList.add('hidden');
+            mythicHardPityError.classList.add('hidden');
+            lmRateUpChanceError.classList.add('hidden');
+            anvilsCurrentSpan.textContent = '--';
+            anvilsProposedSpan.textContent = '--';
+            conclusionParagraph.textContent = '';
+
+            let isValid = true;
+
+            // Get and validate inputs
+            const mythicProbability = parseFloat(mythicProbabilityInput.value);
+            if (isNaN(mythicProbability) || mythicProbability <= 0 || mythicProbability > 1) {
+                mythicProbabilityError.textContent = 'Please enter a valid probability (0-1).';
+                mythicProbabilityError.classList.remove('hidden');
+                isValid = false;
+            }
+
+            const mythicHardPity = parseInt(mythicHardPityInput.value);
+            if (isNaN(mythicHardPity) || mythicHardPity < 1) {
+                mythicHardPityError.textContent = 'Please enter a valid integer for pity (>=1).';
+                mythicHardPityError.classList.remove('hidden');
+                isValid = false;
+            }
+
+            const lmRateUpChance = parseFloat(lmRateUpChanceInput.value);
+            if (isNaN(lmRateUpChance) || lmRateUpChance < 0 || lmRateUpChance > 1) {
+                lmRateUpChanceError.textContent = 'Please enter a valid probability (0-1).';
+                lmRateUpChanceError.classList.remove('hidden');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                return; // Stop if any input is invalid
+            }
+
+            // Calculate core game mechanics
+            const drawsPerMythic = calculateExpectedDrawsPerMythic(mythicProbability, mythicHardPity);
+            if (isNaN(drawsPerMythic)) {
+                anvilsCurrentSpan.textContent = 'Error';
+                anvilsProposedSpan.textContent = 'Error';
+                conclusionParagraph.textContent = 'Could not calculate draws per Mythic. Check inputs.';
+                return;
+            }
+
+            // Define bleed system shard yields
+            const LM_SHARDS_CURRENT = 40;
+            const NM_SHARDS_CURRENT = 0;
+            const LM_SHARDS_PROPOSED = 25;
+            const NM_SHARDS_PROPOSED = 5;
+
+            // Calculate average shards per Mythic pull for each system
+            const avgShardsPerMythicCurrent = calculateAverageShardsPerMythicPull(
+                LM_SHARDS_CURRENT, NM_SHARDS_CURRENT, lmRateUpChance, NM_GUARANTEE_THRESHOLD
+            );
+            const avgShardsPerMythicProposed = calculateAverageShardsPerMythicPull(
+                LM_SHARDS_PROPOSED, NM_SHARDS_PROPOSED, lmRateUpChance, NM_GUARANTEE_THRESHOLD
+            );
+
+            if (isNaN(avgShardsPerMythicCurrent) || isNaN(avgShardsPerMythicProposed)) {
+                anvilsCurrentSpan.textContent = 'Error';
+                anvilsProposedSpan.textContent = 'Error';
+                conclusionParagraph.textContent = 'Could not calculate average shards per Mythic. Check LM rate-up chance.';
+                return;
+            }
+
+            const targetStarLevel = targetStarLevelSelect.value;
+            const targetShards = SHARD_REQUIREMENTS[targetStarLevel];
+
+            // Calculate Anvils for each system
+            const anvilsCurrent = calculateGachaAnvils(targetShards, avgShardsPerMythicCurrent, drawsPerMythic);
+            const anvilsProposed = calculateGachaAnvils(targetShards, avgShardsPerMythicProposed, drawsPerMythic);
+
+            // Display results, rounded to nearest whole number
+            anvilsCurrentSpan.textContent = isFinite(anvilsCurrent) ? Math.round(anvilsCurrent).toString() : 'Infinity';
+            anvilsProposedSpan.textContent = isFinite(anvilsProposed) ? Math.round(anvilsProposed).toString() : 'Infinity';
+
+            // Provide conclusion, rounding difference UP
+            if (anvilsCurrent < anvilsProposed) {
+                const difference = anvilsProposed - anvilsCurrent;
+                conclusionParagraph.textContent = `The Current Bleed System is more efficient for this goal, saving approximately ${Math.ceil(difference)} Anvils.`;
+            } else if (anvilsProposed < anvilsCurrent) {
+                const difference = anvilsCurrent - anvilsProposed;
+                conclusionParagraph.textContent = `The Proposed Bleed System is more efficient for this goal, saving approximately ${Math.ceil(difference)} Anvils.`;
+            } else {
+                conclusionParagraph.textContent = 'Both systems require approximately the same number of Anvils for this goal.';
+            }
+        }
+
+        // Initialize calculator on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            populateStarLevels();
+            calculateBtn.addEventListener('click', updateCalculator);
+            // Also update on input changes for a more interactive experience
+            mythicProbabilityInput.addEventListener('input', updateCalculator);
+            mythicHardPityInput.addEventListener('input', updateCalculator);
+            lmRateUpChanceInput.addEventListener('input', updateCalculator);
+            targetStarLevelSelect.addEventListener('change', updateCalculator);
+            updateCalculator(); // Perform initial calculation on load
+        });
+    </script>
+</body>
+</html>
