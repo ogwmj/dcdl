@@ -76,6 +76,16 @@
             transform: translateY(-1px);
             box-shadow: 0 6px 8px rgba(100, 116, 139, 0.3);
         }
+         .btn-success { /* For probability button */
+            background-color: #10b981; /* Emerald 500 */
+            color: white;
+            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+        }
+        .btn-success:hover {
+            background-color: #059669; /* Emerald 600 */
+            transform: translateY(-1px);
+            box-shadow: 0 6px 8px rgba(16, 185, 129, 0.3);
+        }
         .btn-danger {
             background-color: #ef4444; /* Red 500 */
             color: white;
@@ -96,6 +106,16 @@
         }
         .result-box strong {
             color: #1e40af; /* Blue 800 */
+        }
+        .probability-result-box { /* For probability results */
+            background-color: #f0fdfa; /* Cyan 50 */
+            border-left: 4px solid #06b6d4; /* Cyan 500 */
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-top: 0.5rem;
+        }
+        .probability-result-box strong {
+            color: #0e7490; /* Cyan 700 */
         }
         .error-message {
             color: #ef4444; /* Red 500 */
@@ -366,11 +386,29 @@
 
             <button id="calculateBtn" class="btn btn-primary w-full text-lg py-3">
                 <span class="spinner"></span>
-                <span class="btn-text">Calculate Anvils</span>
+                <span class="btn-text">Calculate Anvils (Expected Value)</span>
             </button>
 
+            <div class="calc-section mt-8">
+                <h2 class="text-xl font-semibold mb-4">Probability of Success within Budget</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+                    <div class="input-group">
+                        <label for="anvilBudget" class="block text-sm">Your Anvil Budget:</label>
+                        <input type="number" id="anvilBudget" value="100" step="10" min="1" class="w-full">
+                    </div>
+                    <button id="calculateProbabilityBtn" class="btn btn-success py-2.5 w-full md:w-auto">
+                         <span class="spinner"></span>
+                         <span class="btn-text">Calculate Probability</span>
+                    </button>
+                </div>
+                <div id="probabilityStatus" class="status-message mt-3 h-8"></div>
+                <div id="probabilityResultsArea" class="mt-4 hidden">
+                    </div>
+            </div>
+
+
             <div id="results" class="mt-8 calc-section">
-                <h2 class="text-xl font-semibold mb-4">Calculation Results</h2>
+                <h2 class="text-xl font-semibold mb-4">Expected Value Calculation Results</h2>
                 <div id="unlockCostSection" class="hidden">
                     <h3 class="font-medium text-lg mb-2 text-indigo-700">Initial Unlock Cost (for one copy of LM)</h3>
                     <div class="result-box mb-2 bg-indigo-50 border-indigo-500">
@@ -418,7 +456,7 @@
                 <p id="conclusion" class="text-center text-gray-700 font-medium mt-6"></p>
 
                 <details class="mt-8">
-                    <summary>Detailed Calculations</summary>
+                    <summary>Detailed Calculations (Expected Value)</summary>
                     <div class="calculation-detail mt-4">
                         <h3 class="font-semibold text-md mb-2 text-gray-800">Core Pull Mechanics:</h3>
                         <p><strong title="The average number of Anvils (draws) you need to spend to obtain any Mythic character, considering base probability and hard pity.">Average Draws per Mythic Character:</strong> <span id="calcDrawsPerMythic">--</span> Anvils</p>
