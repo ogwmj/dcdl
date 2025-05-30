@@ -142,9 +142,43 @@
             border-radius: 1rem;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
         }
+        /* Floating Discord Button */
+        .discord-button {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background-color: #7289DA; /* Discord purple */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s, transform 0.1s;
+            z-index: 1000; /* Ensure it stays on top */
+            display: flex; /* Use flexbox for icon and text alignment */
+            align-items: center; /* Vertically align items */
+            gap: 0.5rem; /* Space between icon and text */
+        }
+        .discord-button:hover {
+            background-color: #677BC4;
+            transform: translateY(-1px);
+        }
+        .discord-icon {
+            fill: currentColor; /* Inherit color from parent */
+            width: 1.25rem; /* Set icon size */
+            height: 1.25rem;
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
+    <a href="https://discord.gg/JvyzYfp8ZZ" target="_blank" class="discord-button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-discord" viewBox="0 0 16 16">
+  <path d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059l-.018-.011a9 9 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019q.127-.095.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007q.121.1.248.195a.05.05 0 0 1-.004.085 8 8 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612"/>
+</svg>
+        Join Discord
+    </a>
+
     <div class="container">
         <h1 class="text-3xl font-bold text-center mb-6">DC: Dark Legion - Anvil Calculator</h1>
         <p class="text-center text-gray-600 mb-8">Estimate the average Anvils needed to reach a specific Star Level.</p>
@@ -180,9 +214,9 @@
             </div>
         </div>
 
-        <div class="advisory-box mb-8">
+        <div class="advisory-box mt-6">
             <p class="font-bold">Important Note:</p>
-            <p>The Anvil costs displayed below are for **shard accumulation only** to reach the selected Star Level. They DO NOT include the separate, initial pull required to **unlock** the Limited Mythic character. You must first obtain that unlock pull before any shard progression can begin.</p>
+            <p>The Anvil costs displayed above are for **shard accumulation only** to reach the selected Star Level. They DO NOT include the separate, initial pull required to **unlock** the Limited Mythic character. You must first obtain that unlock pull before any shard progression can begin.</p>
         </div>
 
         <div class="mb-8 p-4 bg-green-50 rounded-lg shadow-inner">
