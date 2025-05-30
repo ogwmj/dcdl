@@ -71,7 +71,7 @@ const targetStarLevelSelect = document.getElementById('targetStarLevel');
 const calculateBtn = document.getElementById('calculateBtn');
 const calculateBtnText = calculateBtn.querySelector('.btn-text'); 
 const calculateBtnSpinner = calculateBtn.querySelector('.spinner'); 
-const includeUnlockCostCheckbox = document.getElementById('includeUnlockCost');
+const toggleUnlockCostBtn = document.getElementById('toggleUnlockCostBtn'); // MODIFIED
 
 const advisoryBox = document.getElementById('advisoryBox');
 const advisoryMessage = document.getElementById('advisoryMessage');
@@ -132,6 +132,7 @@ const lmRateUpChanceError = document.getElementById('lmRateUpChanceError');
 const starLevelError = document.getElementById('starLevelError');
 
 // --- Game Constants and Data ---
+let isUnlockCostIncluded = false; // MODIFIED: State for the toggle button
 const NM_GUARANTEE_THRESHOLD = 3;
 const SHARD_REQUIREMENTS = {
     "White 1-Star": 2, "White 2-Star": 5, "White 3-Star": 10, "White 4-Star": 20, "White 5-Star": 40,
@@ -167,7 +168,7 @@ function populateStarLevels() {
         targetStarLevelSelect.appendChild(optionTarget);
     }
     if (targetStarLevelSelect.options.length > 0) {
-            targetStarLevelSelect.selectedIndex = 0;
+        targetStarLevelSelect.selectedIndex = 0;
     }
 }
 
@@ -228,7 +229,7 @@ function saveProfile() {
         mythicProbability: mythicProbabilityInput.value,
         mythicHardPity: mythicHardPityInput.value,
         lmRateUpChance: lmRateUpChanceInput.value,
-        includeUnlockCost: includeUnlockCostCheckbox.checked,
+        includeUnlockCost: isUnlockCostIncluded, // MODIFIED: Save toggle state
         startStarLevel: startStarLevelSelect.value,
         targetStarLevel: targetStarLevelSelect.value
     };
@@ -256,7 +257,8 @@ function loadProfile() {
             mythicProbabilityInput.value = profileData.mythicProbability;
             mythicHardPityInput.value = profileData.mythicHardPity;
             lmRateUpChanceInput.value = profileData.lmRateUpChance;
-            includeUnlockCostCheckbox.checked = profileData.includeUnlockCost;
+            isUnlockCostIncluded = profileData.includeUnlockCost; // MODIFIED: Load toggle state
+            updateToggleUnlockButtonAppearance(); // Update button based on loaded state
             startStarLevelSelect.value = profileData.startStarLevel;
             targetStarLevelSelect.value = profileData.targetStarLevel;
             updateCalculator(); 
@@ -300,8 +302,8 @@ function populateSavedProfilesDropdown() {
             }
         }
     } catch (e) {
-            displayProfileStatus("Could not access localStorage to populate profiles.", true);
-            console.error("Error accessing localStorage for populating profiles:", e);
+        displayProfileStatus("Could not access localStorage to populate profiles.", true);
+        console.error("Error accessing localStorage for populating profiles:", e);
     }
 }
 
@@ -318,6 +320,20 @@ function setButtonLoadingState(isLoading) {
         if(calculateBtnSpinner) calculateBtnSpinner.style.display = 'none';
     }
 }
+
+// MODIFIED: Function to update toggle button appearance
+function updateToggleUnlockButtonAppearance() {
+    if (isUnlockCostIncluded) {
+        toggleUnlockCostBtn.textContent = 'Include Initial Unlock: ON';
+        toggleUnlockCostBtn.classList.remove('toggle-btn-off');
+        toggleUnlockCostBtn.classList.add('toggle-btn-on');
+    } else {
+        toggleUnlockCostBtn.textContent = 'Include Initial Unlock: OFF';
+        toggleUnlockCostBtn.classList.remove('toggle-btn-on');
+        toggleUnlockCostBtn.classList.add('toggle-btn-off');
+    }
+}
+
 
 function updateCalculator() {
     setButtonLoadingState(true); 
@@ -424,8 +440,8 @@ function updateCalculator() {
         let upgradeAnvilsBestProposed = calculateGachaAnvils(shardsNeededForUpgrade, bestShardsProgressionProposed, drawsPerMythicBest);
         let upgradeAnvilsWorstProposed = calculateGachaAnvils(shardsNeededForUpgrade, worstShardsProgressionProposed, drawsPerMythicWorst);
 
-        const includeUnlock = includeUnlockCostCheckbox.checked;
-        if (includeUnlock) {
+        // MODIFIED: Use isUnlockCostIncluded state variable
+        if (isUnlockCostIncluded) { 
             unlockCostSection.classList.remove('hidden');
             detailUnlockCostSection.classList.remove('hidden');
             anvilsUnlockAvgSpan.textContent = Math.round(anvilsUnlockAvg).toString();
@@ -492,8 +508,8 @@ function updateCalculator() {
         const totalCurrentAvgDisplayed = parseFloat(anvilsCurrentSpan.textContent);
         const totalProposedAvgDisplayed = parseFloat(anvilsProposedSpan.textContent);
 
-        if (shardsNeededForUpgrade <= 0 && !includeUnlock) {
-                conclusionParagraph.textContent = "No shards needed for this upgrade range. Cost is 0."
+        if (shardsNeededForUpgrade <= 0 && !isUnlockCostIncluded) { // MODIFIED: Check toggle state
+            conclusionParagraph.textContent = "No shards needed for this upgrade range. Cost is 0."
         } else if (isFinite(totalCurrentAvgDisplayed) && isFinite(totalProposedAvgDisplayed)) {
             if (totalCurrentAvgDisplayed < totalProposedAvgDisplayed) {
                 conclusionParagraph.textContent = `The Current System is ~${Math.ceil(totalProposedAvgDisplayed - totalCurrentAvgDisplayed)} Anvils more efficient on average for the selected goal.`;
@@ -503,7 +519,7 @@ function updateCalculator() {
                 conclusionParagraph.textContent = 'Both systems require approximately the same Anvils on average for the selected goal.';
             }
         } else {
-                conclusionParagraph.textContent = 'Could not determine efficiency due to non-finite Anvil costs.';
+            conclusionParagraph.textContent = 'Could not determine efficiency due to non-finite Anvil costs.';
         }
 
         const allStarLevelsForChart = Object.keys(SHARD_REQUIREMENTS);
@@ -516,7 +532,7 @@ function updateCalculator() {
             chartProgressionCostsCurrent.push(isFinite(currentProgCost) ? Math.round(currentProgCost) : 0);
             chartProgressionCostsProposed.push(isFinite(proposedProgCost) ? Math.round(proposedProgCost) : 0);
         });
-        updateChart(chartProgressionCostsCurrent, chartProgressionCostsProposed, allStarLevelsForChart, includeUnlock, anvilsUnlockAvg);
+        updateChart(chartProgressionCostsCurrent, chartProgressionCostsProposed, allStarLevelsForChart, isUnlockCostIncluded, anvilsUnlockAvg); // MODIFIED
         
         setButtonLoadingState(false); 
     }, 50); 
@@ -525,6 +541,7 @@ function updateCalculator() {
 document.addEventListener('DOMContentLoaded', () => {
     populateStarLevels();
     populateSavedProfilesDropdown(); 
+    updateToggleUnlockButtonAppearance(); // Initialize toggle button appearance
 
     saveProfileBtn.addEventListener('click', saveProfile);
     loadProfileBtn.addEventListener('click', loadProfile);
@@ -536,7 +553,12 @@ document.addEventListener('DOMContentLoaded', () => {
     lmRateUpChanceInput.addEventListener('input', updateCalculator);
     startStarLevelSelect.addEventListener('change', updateCalculator);
     targetStarLevelSelect.addEventListener('change', updateCalculator);
-    includeUnlockCostCheckbox.addEventListener('change', updateCalculator);
+    // MODIFIED: Event listener for the new toggle button
+    toggleUnlockCostBtn.addEventListener('click', () => {
+        isUnlockCostIncluded = !isUnlockCostIncluded;
+        updateToggleUnlockButtonAppearance();
+        updateCalculator();
+    });
     
     updateCalculator(); 
 });
