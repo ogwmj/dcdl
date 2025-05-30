@@ -200,37 +200,42 @@
             <div class="input-group mt-4">
                 <label for="lmRateUpChance" class="block text-sm">Limited Mythic Rate-Up Chance (e.g., 0.269 for 26.9%):</label>
                 <input type="number" id="lmRateUpChance" value="0.269" step="0.001" min="0" max="1">
-                    <p id="lmRateUpChanceError" class="error-message hidden"></p>
+                <p id="lmRateUpChanceError" class="error-message hidden"></p>
             </div>
-            <p class="text-sm text-gray-500 mt-2">Note: "Fail three times" guarantee for Limited Mythic is hardcoded based on game rules.</p>
+            <p class="text-sm text-gray-500 mt-2">Note: "Fail three times" guarantee for Limited Mythic is hardcoded based on game rules (3 Non-Limited Mythics before a guaranteed Limited Mythic).</p>
+            <div class="input-group mt-4 flex items-center">
+                <input type="checkbox" id="includeUnlockCost" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" style="width: auto; margin-right: 0.5rem;">
+                <label for="includeUnlockCost" class="block text-sm">Include cost of initially unlocking the character?</label>
+            </div>
         </div>
 
         <div class="mb-8 p-4 bg-purple-50 rounded-lg shadow-inner">
             <h2 class="text-xl font-semibold mb-4">Select Target Star Level</h2>
             <div class="input-group">
-                <label for="targetStarLevel" class="block text-sm">Choose Star Level:</label>
+                <label for="targetStarLevel" class="block text-sm">Choose Star Level (shards needed *after* initial unlock):</label>
                 <select id="targetStarLevel" class="block w-full">
                     </select>
             </div>
         </div>
 
-        <div class="advisory-box mb-8">
+        <div id="advisoryBox" class="advisory-box mb-8">
             <p class="font-bold">Important Note:</p>
-            <p>The Anvil costs displayed above are for **shard accumulation only** to reach the selected Star Level. They DO NOT include the separate, initial pull required to **unlock** the Limited Mythic character. You must first obtain that unlock pull before any shard progression can begin.</p>
+            <p id="advisoryMessage">The Anvil costs displayed are for **shard accumulation only** to reach the selected Star Level. They DO NOT include the separate, initial pull required to **unlock** the Limited Mythic character. You must first obtain that unlock pull before any shard progression can begin.</p>
         </div>
 
         <div class="mb-8 p-4 bg-green-50 rounded-lg shadow-inner">
             <h2 class="text-xl font-semibold mb-4">Configure Shard Bleed Systems</h2>
+            <p class="text-xs text-gray-500 mb-2">These values define how many shards you get when pulling a duplicate Mythic that is either the Limited Mythic (LM) or a Non-Limited Mythic (NM) during an LM banner.</p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <h3 class="font-medium text-lg mb-2 text-green-700">Current Bleed System</h3>
-                    <p class="text-sm text-gray-700">Limited Mythic (LM) Shards: 40</p>
-                    <p class="text-sm text-gray-700">Non-Limited Mythic (NM) Shards: 0</p>
+                    <p class="text-sm text-gray-700">Limited Mythic (LM) Shards: <span id="currentLMS">-</span> (e.g. 40)</p>
+                    <p class="text-sm text-gray-700">Non-Limited Mythic (NM) Shards: <span id="currentNMS">-</span> (e.g. 0)</p>
                 </div>
                 <div>
                     <h3 class="font-medium text-lg mb-2 text-green-700">Proposed Bleed System</h3>
-                    <p class="text-sm text-gray-700">Limited Mythic (LM) Shards: 25</p>
-                    <p class="text-sm text-gray-700">Non-Limited Mythic (NM) Shards: 5</p>
+                    <p class="text-sm text-gray-700">Limited Mythic (LM) Shards: <span id="proposedLMS">-</span> (e.g. 25)</p>
+                    <p class="text-sm text-gray-700">Non-Limited Mythic (NM) Shards: <span id="proposedNMS">-</span> (e.g. 5)</p>
                 </div>
             </div>
         </div>
@@ -244,12 +249,27 @@
 
         <div id="results" class="mt-8">
             <h2 class="text-xl font-semibold mb-4">Calculation Results</h2>
+            <div id="unlockCostSection" class="hidden">
+                <h3 class="font-medium text-lg mb-2 text-indigo-700">Initial Unlock Cost (for one copy of LM)</h3>
+                <div class="result-box mb-2 bg-indigo-50 border-indigo-500">
+                    <p><strong>Average:</strong> <span id="anvilsUnlockAvg">--</span> Anvils</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="result-box mb-2 bg-indigo-50 border-indigo-500">
+                        <p><strong>Best Case:</strong> <span id="anvilsUnlockBest">--</span> Anvils</p>
+                    </div>
+                    <div class="result-box bg-indigo-50 border-indigo-500">
+                        <p><strong>Worst Case:</strong> <span id="anvilsUnlockWorst">--</span> Anvils</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="result-box mb-4">
-                <p><strong>Accumulated Shards for this Level:</strong> <span id="accumulatedShards">--</span></p>
+                <p><strong>Target Shards for Star Level (post-unlock):</strong> <span id="accumulatedShards">--</span></p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="col-span-1">
-                    <h3 class="font-medium text-lg mb-2 text-blue-700">Current Bleed System</h3>
+                    <h3 id="currentSystemTitle" class="font-medium text-lg mb-2 text-blue-700">Current Bleed System</h3>
                     <div class="result-box mb-2">
                         <p><strong>Average:</strong> <span id="anvilsCurrent">--</span> Anvils</p>
                     </div>
@@ -261,7 +281,7 @@
                     </div>
                 </div>
                 <div class="col-span-1">
-                    <h3 class="font-medium text-lg mb-2 text-blue-700">Proposed Bleed System</h3>
+                    <h3 id="proposedSystemTitle" class="font-medium text-lg mb-2 text-blue-700">Proposed Bleed System</h3>
                     <div class="result-box mb-2">
                         <p><strong>Average:</strong> <span id="anvilsProposed">--</span> Anvils</p>
                     </div>
@@ -280,29 +300,32 @@
                 <div class="calculation-detail mt-4">
                     <h3 class="font-semibold text-md mb-2 text-gray-800">Core Gacha Mechanics:</h3>
                     <p>Average Draws per Mythic Character: <strong id="calcDrawsPerMythic">--</strong> Anvils</p>
+                    <div id="detailUnlockCostSection" class="hidden">
+                        <h4 class="font-medium text-sm text-gray-700 mt-2 mb-1">Initial Unlock Cost:</h4>
+                        <p>Avg Mythics for 1st LM: <strong id="detailAvgMythicsForLM">--</strong></p>
+                        <p>Anvils for Unlock (Avg): <strong id="detailAnvilsUnlockAvg">--</strong> | (Best): <strong id="detailAnvilsUnlockBest">--</strong> | (Worst): <strong id="detailAnvilsUnlockWorst">--</strong></p>
+                    </div>
 
-                    <h3 class="font-semibold text-md mt-4 mb-2 text-gray-800">Shard Gain per Mythic Pull:</h3>
-                    <p>Current Bleed System (LM=40, NM=0): Average Shards per Mythic Pull: <strong id="calcAvgShardsCurrent">--</strong></p>
-                    <p>Proposed Bleed System (LM=25, NM=5): Average Shards per Mythic Pull: <strong id="calcAvgShardsProposed">--</strong></p>
+                    <h3 class="font-semibold text-md mt-4 mb-2 text-gray-800">Shard Gain per Mythic Pull (for progression after unlock):</h3>
+                    <p>Current Bleed System (LM=<span id="detailLMSCurrent">40</span>, NM=<span id="detailNMSCurrent">0</span>): Avg Effective Shards per Mythic: <strong id="calcAvgShardsCurrent">--</strong></p>
+                    <p>Proposed Bleed System (LM=<span id="detailLMSProposed">25</span>, NM=<span id="detailNMSProposed">5</span>): Avg Effective Shards per Mythic: <strong id="calcAvgShardsProposed">--</strong></p>
 
-                    <h3 class="font-semibold text-md mt-4 mb-2 text-gray-800">Anvil Cost Breakdown:</h3>
+                    <h3 class="font-semibold text-md mt-4 mb-2 text-gray-800">Anvil Cost Breakdown (for Shard Progression):</h3>
+                    <p id="anvilCostBreakdownNote">(Costs below are for shard progression only unless "Include Initial Unlock" is checked, then they are total costs.)</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <h4 class="font-medium text-sm text-gray-700 mb-1">Current Bleed System:</h4>
                             <p>Target Shards: <strong id="detailTargetShardsCurrent">--</strong></p>
                             <p>Effective Shards/Mythic (Avg): <strong id="detailAvgShardsCurrent">--</strong></p>
                             <p>Calculated Mythic Pulls (Avg): <strong id="detailMythicPullsAvgCurrent">--</strong></p>
-                            <p>Effective Draws/Mythic (Avg): <strong id="detailDrawsPerMythicAvgCurrent">--</strong></p>
                             <p>Total Anvils (Avg): <strong id="detailAnvilsAvgCurrent">--</strong></p>
 
                             <p class="mt-2">Effective Shards/Mythic (Best): <strong id="detailBestShardsCurrent">--</strong></p>
                             <p>Calculated Mythic Pulls (Best): <strong id="detailMythicPullsBestCurrent">--</strong></p>
-                            <p>Effective Draws/Mythic (Best): <strong id="detailDrawsPerMythicBestCurrent">--</strong></p>
                             <p>Total Anvils (Best): <strong id="detailAnvilsBestCurrent">--</strong></p>
 
                             <p class="mt-2">Effective Shards/Mythic (Worst): <strong id="detailWorstShardsCurrent">--</strong></p>
                             <p>Calculated Mythic Pulls (Worst): <strong id="detailMythicPullsWorstCurrent">--</strong></p>
-                            <p>Effective Draws/Mythic (Worst): <strong id="detailDrawsPerMythicWorstCurrent">--</strong></p>
                             <p>Total Anvils (Worst): <strong id="detailAnvilsWorstCurrent">--</strong></p>
                         </div>
                         <div>
@@ -310,17 +333,14 @@
                             <p>Target Shards: <strong id="detailTargetShardsProposed">--</strong></p>
                             <p>Effective Shards/Mythic (Avg): <strong id="detailAvgShardsProposed">--</strong></p>
                             <p>Calculated Mythic Pulls (Avg): <strong id="detailMythicPullsAvgProposed">--</strong></p>
-                            <p>Effective Draws/Mythic (Avg): <strong id="detailDrawsPerMythicAvgProposed">--</strong></p>
                             <p>Total Anvils (Avg): <strong id="detailAnvilsAvgProposed">--</strong></p>
 
                             <p class="mt-2">Effective Shards/Mythic (Best): <strong id="detailBestShardsProposed">--</strong></p>
                             <p>Calculated Mythic Pulls (Best): <strong id="detailMythicPullsBestProposed">--</strong></p>
-                            <p>Effective Draws/Mythic (Best): <strong id="detailDrawsPerMythicBestProposed">--</strong></strong></p>
                             <p>Total Anvils (Best): <strong id="detailAnvilsBestProposed">--</strong></p>
 
                             <p class="mt-2">Effective Shards/Mythic (Worst): <strong id="detailWorstShardsProposed">--</strong></p>
                             <p>Calculated Mythic Pulls (Worst): <strong id="detailMythicPullsWorstProposed">--</strong></p>
-                            <p>Effective Draws/Mythic (Worst): <strong id="detailDrawsPerMythicWorstProposed">--</strong></p>
                             <p>Total Anvils (Worst): <strong id="detailAnvilsWorstProposed">--</strong></p>
                         </div>
                     </div>
@@ -342,85 +362,101 @@
          * considering a base probability and a hard pity system.
          */
         function calculateExpectedDrawsPerMythic(mythicProbability, hardPity) {
-            if (!(mythicProbability > 0 && mythicProbability <= 1)) {
-                return NaN; // Indicate invalid input
+            // Validate inputs: probability must be between 0 (exclusive) and 1 (inclusive). Pity must be at least 1.
+            if (!(mythicProbability > 0 && mythicProbability <= 1) || hardPity < 1) {
+                return NaN; // Return NaN if inputs are invalid
             }
-            if (hardPity < 1) {
-                return NaN; // Indicate invalid input
-            }
-
             let expectedDraws = 0.0;
-            // Sum for pulls before pity
+            // Sum of (k * P(success on k-th draw)) for k from 1 to hardPity-1
             for (let k = 1; k < hardPity; k++) {
-                // Probability of success on the k-th trial
+                // P(success on k-th draw) = P(fail k-1 times) * P(success)
                 const p_k = Math.pow(1 - mythicProbability, k - 1) * mythicProbability;
                 expectedDraws += k * p_k;
             }
-
-            // Add the contribution of hitting the hard pity
+            // Add the contribution of hitting the hard pity: hardPity * P(fail hardPity-1 times)
+            // P(hitting pity) is P(failing all draws before pity)
             const p_hit_pity = Math.pow(1 - mythicProbability, hardPity - 1);
             expectedDraws += hardPity * p_hit_pity;
-
             return expectedDraws;
         }
 
+        // MODIFIED: Renamed and enhanced function
         /**
-         * Calculates the average shards gained per Mythic pull, considering Limited Mythic
-         * rate-up chances and the 'fail three times' guarantee.
+         * Calculates metrics related to obtaining a Limited Mythic (LM),
+         * considering LM rate-up and the 'fail N times' guarantee.
+         * This function calculates the average number of mythic characters one needs to pull
+         * to obtain one LM, and the average shards obtained per mythic pull during such a cycle.
+         * @param {number} lmShardYield - Shards gained if the pulled Mythic is the LM.
+         * @param {number} nmShardYield - Shards gained if the pulled Mythic is a Non-LM.
+         * @param {number} lmRateUpChance - Probability of a Mythic being the LM (0 to 1).
+         * @param {number} nmGuaranteeThreshold - Number of NMs pulled before an LM is guaranteed.
+         * @returns {object} {
+         * averageShardsPerEffectiveMythic: Average shards gained per Mythic pull during an LM acquisition cycle,
+         * expectedMythicPullsPerLmCycle: Average number of Mythic characters pulled to complete one LM acquisition cycle (i.e., to get one LM),
+         * worstCaseMythicPullsPerLmCycle: Worst-case number of Mythic characters pulled to get one LM (hitting guarantee)
+         * }
          */
-        function calculateAverageShardsPerMythicPull(lmShardYield, nmShardYield, lmRateUpChance, nmGuaranteeThreshold) {
-            if (!(lmRateUpChance >= 0 && lmRateUpChance <= 1)) {
-                return NaN;
-            }
-            if (nmGuaranteeThreshold < 0) {
-                return NaN;
+        function calculateLmCycleMetrics(lmShardYield, nmShardYield, lmRateUpChance, nmGuaranteeThreshold) {
+            // Validate inputs
+            if (!(lmRateUpChance >= 0 && lmRateUpChance <= 1) || nmGuaranteeThreshold < 0) {
+                return { averageShardsPerEffectiveMythic: NaN, expectedMythicPullsPerLmCycle: NaN, worstCaseMythicPullsPerLmCycle: NaN };
             }
 
-            const nmRateUpChance = 1.0 - lmRateUpChance;
+            const nmRateUpChance = 1.0 - lmRateUpChance; // Probability of pulling a Non-Limited Mythic
+            let totalExpectedShardsInCycle = 0.0;       // Weighted sum of shards obtained in each path to getting an LM
+            let totalExpectedMythicPullsInCycle = 0.0;  // Weighted sum of mythic pulls in each path to getting an LM
 
-            let expectedShardsPerLmEvent = 0.0;
-            let expectedMythicPullsPerLmEvent = 0.0;
-
-            // Scenario 1: LM on 1st Mythic pull in cycle
+            // Path 1: LM on the 1st Mythic pull of the cycle
             const p_lm_1st = lmRateUpChance;
-            expectedShardsPerLmEvent += lmShardYield * p_lm_1st;
-            expectedMythicPullsPerLmEvent += 1 * p_lm_1st;
+            totalExpectedShardsInCycle += lmShardYield * p_lm_1st;
+            totalExpectedMythicPullsInCycle += 1 * p_lm_1st; // 1 mythic pull
 
-            // Scenarios for (1 to nmGuaranteeThreshold - 1) NMs, then LM
+            // Paths 2 to nmGuaranteeThreshold: (i) NMs, then an LM
+            // Loop from i=1 (1 NM then LM) to i=nmGuaranteeThreshold-1 (nmGuaranteeThreshold-1 NMs then LM)
             for (let i = 1; i < nmGuaranteeThreshold; i++) {
-                const p_n_n_lm = Math.pow(nmRateUpChance, i) * lmRateUpChance;
-                const shardsGained = (nmShardYield * i) + lmShardYield;
-                expectedShardsPerLmEvent += shardsGained * p_n_n_lm;
-                expectedMythicPullsPerLmEvent += (i + 1) * p_n_n_lm;
+                const p_sequence = Math.pow(nmRateUpChance, i) * lmRateUpChance; // Prob of (i NMs) * Prob of (LM)
+                const shardsInSequence = (nmShardYield * i) + lmShardYield;      // Shards from i NMs + 1 LM
+                const mythicPullsInSequence = i + 1;                             // i NMs + 1 LM
+                totalExpectedShardsInCycle += shardsInSequence * p_sequence;
+                totalExpectedMythicPullsInCycle += mythicPullsInSequence * p_sequence;
             }
 
-            // Scenario: Hit the guarantee (nmGuaranteeThreshold NMs, then guaranteed LM)
-            const p_guarantee_lm = Math.pow(nmRateUpChance, nmGuaranteeThreshold);
-            const shardsGainedGuarantee = (nmShardYield * nmGuaranteeThreshold) + lmShardYield;
-            expectedShardsPerLmEvent += shardsGainedGuarantee * p_guarantee_lm;
-            expectedMythicPullsPerLmEvent += (nmGuaranteeThreshold + 1) * p_guarantee_lm;
-
-            if (expectedMythicPullsPerLmEvent === 0) {
-                return 0.0; // Avoid division by zero if probabilities are somehow zero
-            }
-            return expectedShardsPerLmEvent / expectedMythicPullsPerLmEvent;
+            // Path (nmGuaranteeThreshold + 1): Hit the guarantee
+            // This means nmGuaranteeThreshold NMs are pulled, then the next Mythic is a guaranteed LM.
+            const p_guarantee_hit = Math.pow(nmRateUpChance, nmGuaranteeThreshold); // Prob of nmGuaranteeThreshold NMs in a row
+            const shardsInGuaranteeSequence = (nmShardYield * nmGuaranteeThreshold) + lmShardYield; // Shards from NMs + guaranteed LM
+            const mythicPullsInGuaranteeSequence = nmGuaranteeThreshold + 1;                       // NMs + guaranteed LM
+            totalExpectedShardsInCycle += shardsInGuaranteeSequence * p_guarantee_hit;
+            totalExpectedMythicPullsInCycle += mythicPullsInGuaranteeSequence * p_guarantee_hit;
+            
+            // Calculate the average shards per mythic pull *within* an LM acquisition cycle.
+            // This is total expected shards from one cycle / total expected mythic pulls in one cycle.
+            const averageShards = (totalExpectedMythicPullsInCycle === 0 || totalExpectedShardsInCycle === 0) ? 0.0 : totalExpectedShardsInCycle / totalExpectedMythicPullsInCycle;
+            
+            return {
+                averageShardsPerEffectiveMythic: averageShards,
+                expectedMythicPullsPerLmCycle: totalExpectedMythicPullsInCycle, 
+                worstCaseMythicPullsPerLmCycle: nmGuaranteeThreshold + 1 // Max Mythics: NM_GUARANTEE_THRESHOLD NMs + 1 LM
+            };
         }
+
 
         /**
          * Calculates the expected Anvils needed for a given target shard count for one bleed system.
+         * @param {number} targetShards - The number of shards needed.
+         * @param {number} avgShardsPerMythic - Average shards obtained per mythic pull (effective for progression).
+         * @param {number} drawsPerMythic - Average Anvils (draws) needed to get one mythic character.
          */
         function calculateGachaAnvils(targetShards, avgShardsPerMythic, drawsPerMythic) {
-            if (avgShardsPerMythic <= 0) {
-                return Infinity; // Cannot gain shards, so infinite anvils needed
+            if (targetShards === 0) return 0; // No shards needed, no cost.
+            // If avgShardsPerMythic is zero or negative (e.g., error or no way to get shards), cost is infinite.
+            // Same if drawsPerMythic is zero or negative.
+            if (avgShardsPerMythic <= 0 || drawsPerMythic <= 0) {
+                return Infinity; 
             }
-            // If targetShards is 0, cost is 0
-            if (targetShards === 0) {
-                return 0;
-            }
-            // Use Math.ceil for mythic pulls as you can't have a fraction of a pull
+            // Number of mythic pulls needed. Must be whole number, so ceil.
             const expectedMythicPulls = Math.ceil(targetShards / avgShardsPerMythic);
-            const anvilsNeeded = expectedMythicPulls * drawsPerMythic;
-            return anvilsNeeded;
+            return expectedMythicPulls * drawsPerMythic; // Total anvils
         }
 
         // --- DOM Elements and Event Listeners ---
@@ -429,9 +465,14 @@
         const lmRateUpChanceInput = document.getElementById('lmRateUpChance');
         const targetStarLevelSelect = document.getElementById('targetStarLevel');
         const calculateBtn = document.getElementById('calculateBtn');
+        const includeUnlockCostCheckbox = document.getElementById('includeUnlockCost'); // ADDED
+
+        // Advisory box elements
+        const advisoryBox = document.getElementById('advisoryBox'); // ADDED
+        const advisoryMessage = document.getElementById('advisoryMessage'); // ADDED
 
         // Result display spans
-        const accumulatedShardsSpan = document.getElementById('accumulatedShards'); // New span for accumulated shards
+        const accumulatedShardsSpan = document.getElementById('accumulatedShards');
         const anvilsCurrentSpan = document.getElementById('anvilsCurrent');
         const anvilsProposedSpan = document.getElementById('anvilsProposed');
         const anvilsBestCurrentSpan = document.getElementById('anvilsBestCurrent');
@@ -439,38 +480,55 @@
         const anvilsBestProposedSpan = document.getElementById('anvilsBestProposed');
         const anvilsWorstProposedSpan = document.getElementById('anvilsWorstProposed');
         const conclusionParagraph = document.getElementById('conclusion');
+        const currentSystemTitle = document.getElementById('currentSystemTitle'); // ADDED
+        const proposedSystemTitle = document.getElementById('proposedSystemTitle'); // ADDED
+
+        // ADDED: Unlock cost display spans
+        const unlockCostSection = document.getElementById('unlockCostSection');
+        const anvilsUnlockAvgSpan = document.getElementById('anvilsUnlockAvg');
+        const anvilsUnlockBestSpan = document.getElementById('anvilsUnlockBest');
+        const anvilsUnlockWorstSpan = document.getElementById('anvilsUnlockWorst');
+
 
         // Detailed calculations display spans
         const calcDrawsPerMythicSpan = document.getElementById('calcDrawsPerMythic');
         const calcAvgShardsCurrentSpan = document.getElementById('calcAvgShardsCurrent');
         const calcAvgShardsProposedSpan = document.getElementById('calcAvgShardsProposed');
-        // New spans for detailed breakdown
+        const detailLMSCurrentSpan = document.getElementById('detailLMSCurrent'); // ADDED
+        const detailNMSCurrentSpan = document.getElementById('detailNMSCurrent'); // ADDED
+        const detailLMSProposedSpan = document.getElementById('detailLMSProposed'); // ADDED
+        const detailNMSProposedSpan = document.getElementById('detailNMSProposed'); // ADDED
+        const anvilCostBreakdownNote = document.getElementById('anvilCostBreakdownNote'); // ADDED
+
+
+        // ADDED: Detailed unlock cost spans
+        const detailUnlockCostSection = document.getElementById('detailUnlockCostSection');
+        const detailAvgMythicsForLMSpan = document.getElementById('detailAvgMythicsForLM');
+        const detailAnvilsUnlockAvgSpan = document.getElementById('detailAnvilsUnlockAvg');
+        const detailAnvilsUnlockBestSpan = document.getElementById('detailAnvilsUnlockBest');
+        const detailAnvilsUnlockWorstSpan = document.getElementById('detailAnvilsUnlockWorst');
+
+        // Spans for detailed breakdown of shard progression costs
         const detailTargetShardsCurrentSpan = document.getElementById('detailTargetShardsCurrent');
         const detailAvgShardsCurrentSpan = document.getElementById('detailAvgShardsCurrent');
         const detailMythicPullsAvgCurrentSpan = document.getElementById('detailMythicPullsAvgCurrent');
-        const detailDrawsPerMythicAvgCurrentSpan = document.getElementById('detailDrawsPerMythicAvgCurrent');
         const detailAnvilsAvgCurrentSpan = document.getElementById('detailAnvilsAvgCurrent');
         const detailBestShardsCurrentSpan = document.getElementById('detailBestShardsCurrent');
         const detailMythicPullsBestCurrentSpan = document.getElementById('detailMythicPullsBestCurrent');
-        const detailDrawsPerMythicBestCurrentSpan = document.getElementById('detailDrawsPerMythicBestCurrent');
         const detailAnvilsBestCurrentSpan = document.getElementById('detailAnvilsBestCurrent');
         const detailWorstShardsCurrentSpan = document.getElementById('detailWorstShardsCurrent');
         const detailMythicPullsWorstCurrentSpan = document.getElementById('detailMythicPullsWorstCurrent');
-        const detailDrawsPerMythicWorstCurrentSpan = document.getElementById('detailDrawsPerMythicWorstCurrent');
         const detailAnvilsWorstCurrentSpan = document.getElementById('detailAnvilsWorstCurrent');
 
         const detailTargetShardsProposedSpan = document.getElementById('detailTargetShardsProposed');
         const detailAvgShardsProposedSpan = document.getElementById('detailAvgShardsProposed');
         const detailMythicPullsAvgProposedSpan = document.getElementById('detailMythicPullsAvgProposed');
-        const detailDrawsPerMythicAvgProposedSpan = document.getElementById('detailDrawsPerMythicAvgProposed');
         const detailAnvilsAvgProposedSpan = document.getElementById('detailAnvilsAvgProposed');
         const detailBestShardsProposedSpan = document.getElementById('detailBestShardsProposed');
         const detailMythicPullsBestProposedSpan = document.getElementById('detailMythicPullsBestProposed');
-        const detailDrawsPerMythicBestProposedSpan = document.getElementById('detailDrawsPerMythicBestProposed');
         const detailAnvilsBestProposedSpan = document.getElementById('detailAnvilsBestProposed');
         const detailWorstShardsProposedSpan = document.getElementById('detailWorstShardsProposed');
         const detailMythicPullsWorstProposedSpan = document.getElementById('detailMythicPullsWorstProposed');
-        const detailDrawsPerMythicWorstProposedSpan = document.getElementById('detailDrawsPerMythicWorstProposed');
         const detailAnvilsWorstProposedSpan = document.getElementById('detailAnvilsWorstProposed');
 
 
@@ -480,40 +538,28 @@
         const lmRateUpChanceError = document.getElementById('lmRateUpChanceError');
 
         // --- Game Constants and Shard Data ---
-        const NM_GUARANTEE_THRESHOLD = 3; // "Fail three times" before next LM is guaranteed
+        const NM_GUARANTEE_THRESHOLD = 3; // "Fail three times" (pull 3 NMs) before next LM is guaranteed
 
+        // Shard requirements for each star level, post-initial unlock
         const SHARD_REQUIREMENTS = {
-            "White 1-Star": 2,
-            "White 2-Star": 5,
-            "White 3-Star": 10,
-            "White 4-Star": 20,
-            "White 5-Star": 40,
-            "Blue 1-Star": 60,
-            "Blue 2-Star": 80,
-            "Blue 3-Star": 100,
-            "Blue 4-Star": 130,
-            "Blue 5-Star": 160,
-            "Purple 1-Star": 200,
-            "Purple 2-Star": 240,
-            "Purple 3-Star": 280,
-            "Purple 4-Star": 320,
-            "Purple 5-Star": 360,
-            "Gold 1-Star": 400,
-            "Gold 2-Star": 440,
-            "Gold 3-Star": 480,
-            "Gold 4-Star": 540,
-            "Gold 5-Star": 600,
-            "Red 1-Star": 680,
-            "Red 2-Star": 760,
-            "Red 3-Star": 840,
-            "Red 4-Star": 920,
-            "Red 5-Star": 1000
+            "White 1-Star": 2, "White 2-Star": 5, "White 3-Star": 10, "White 4-Star": 20, "White 5-Star": 40,
+            "Blue 1-Star": 60, "Blue 2-Star": 80, "Blue 3-Star": 100, "Blue 4-Star": 130, "Blue 5-Star": 160,
+            "Purple 1-Star": 200, "Purple 2-Star": 240, "Purple 3-Star": 280, "Purple 4-Star": 320, "Purple 5-Star": 360,
+            "Gold 1-Star": 400, "Gold 2-Star": 440, "Gold 3-Star": 480, "Gold 4-Star": 540, "Gold 5-Star": 600,
+            "Red 1-Star": 680, "Red 2-Star": 760, "Red 3-Star": 840, "Red 4-Star": 920, "Red 5-Star": 1000
         };
 
-        // Chart instance
+        // Bleed system shard yields (can be made configurable later by reading from input fields)
+        const LM_SHARDS_CURRENT = 40;
+        const NM_SHARDS_CURRENT = 0;
+        const LM_SHARDS_PROPOSED = 25;
+        const NM_SHARDS_PROPOSED = 5;
+
+
+        // Chart instance variable
         let anvilCostChart;
 
-        // Populate the Star Level dropdown
+        // Populate the Star Level dropdown from SHARD_REQUIREMENTS
         function populateStarLevels() {
             for (const level in SHARD_REQUIREMENTS) {
                 const option = document.createElement('option');
@@ -523,13 +569,18 @@
             }
         }
 
-        // Function to update the chart
-        function updateChart(currentCosts, proposedCosts, labels) {
+        // Function to update or create the results chart
+        function updateChart(currentCosts, proposedCosts, labels, includeUnlock, unlockCostAvgForChart) {
             const ctx = document.getElementById('anvilCostChart').getContext('2d');
-
             if (anvilCostChart) {
                 anvilCostChart.destroy(); // Destroy existing chart before creating a new one
             }
+
+            // If including unlock, add the average unlock cost to each shard progression cost for the chart
+            const finalCurrentCosts = currentCosts.map(cost => includeUnlock ? cost + unlockCostAvgForChart : cost);
+            const finalProposedCosts = proposedCosts.map(cost => includeUnlock ? cost + unlockCostAvgForChart : cost);
+            const yAxisLabel = includeUnlock ? 'Total Average Anvils (Unlock + Shards)' : 'Average Anvils for Shards (Post-Unlock)';
+
 
             anvilCostChart = new Chart(ctx, {
                 type: 'bar',
@@ -537,47 +588,39 @@
                     labels: labels,
                     datasets: [
                         {
-                            label: 'Current Bleed System',
-                            data: currentCosts,
-                            backgroundColor: 'rgba(59, 130, 246, 0.7)', // Blue
-                            borderColor: 'rgba(59, 130, 246, 1)',
+                            label: 'Current Bleed System (Avg Total)',
+                            data: finalCurrentCosts,
+                            backgroundColor: 'rgba(59, 130, 246, 0.7)', 
+                            borderColor: 'rgba(59, 130, 246, 1)', 
                             borderWidth: 1
                         },
                         {
-                            label: 'Proposed Bleed System',
-                            data: proposedCosts,
-                            backgroundColor: 'rgba(16, 185, 129, 0.7)', // Green
-                            borderColor: 'rgba(16, 185, 129, 1)',
+                            label: 'Proposed Bleed System (Avg Total)',
+                            data: finalProposedCosts,
+                            backgroundColor: 'rgba(16, 185, 129, 0.7)', 
+                            borderColor: 'rgba(16, 185, 129, 1)', 
                             borderWidth: 1
                         }
                     ]
                 },
                 options: {
-                    responsive: true,
+                    responsive: true, 
                     maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Average Anvils Needed'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Star Level'
-                            }
-                        }
+                    scales: { 
+                        y: { 
+                            beginAtZero: true, 
+                            title: { display: true, text: yAxisLabel } 
+                        }, 
+                        x: { 
+                            title: { display: true, text: 'Star Level' } 
+                        } 
                     },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.dataset.label + ': ' + Math.round(context.raw) + ' Anvils';
-                                }
-                            }
-                        }
+                    plugins: { 
+                        tooltip: { 
+                            callbacks: { 
+                                label: context => context.dataset.label + ': ' + Math.round(context.raw) + ' Anvils' 
+                            } 
+                        } 
                     }
                 }
             });
@@ -586,221 +629,239 @@
 
         // --- Main Calculation Logic ---
         function updateCalculator() {
-            // Clear previous errors and results
+            // Clear previous errors and reset result fields to '--'
             mythicProbabilityError.classList.add('hidden');
             mythicHardPityError.classList.add('hidden');
             lmRateUpChanceError.classList.add('hidden');
-            accumulatedShardsSpan.textContent = '--'; // Clear new span
-            anvilsCurrentSpan.textContent = '--';
-            anvilsProposedSpan.textContent = '--';
-            anvilsBestCurrentSpan.textContent = '--';
-            anvilsWorstCurrentSpan.textContent = '--';
-            anvilsBestProposedSpan.textContent = '--';
-            anvilsWorstProposedSpan.textContent = '--';
-            conclusionParagraph.textContent = '';
+            conclusionParagraph.textContent = ''; // Clear conclusion
 
-            // Clear detailed calculation spans
-            calcDrawsPerMythicSpan.textContent = '--';
-            calcAvgShardsCurrentSpan.textContent = '--';
-            calcAvgShardsProposedSpan.textContent = '--';
-            detailTargetShardsCurrentSpan.textContent = '--';
-            detailAvgShardsCurrentSpan.textContent = '--';
-            detailMythicPullsAvgCurrentSpan.textContent = '--';
-            detailDrawsPerMythicAvgCurrentSpan.textContent = '--';
-            detailAnvilsAvgCurrentSpan.textContent = '--';
-            detailBestShardsCurrentSpan.textContent = '--';
-            detailMythicPullsBestCurrentSpan.textContent = '--';
-            detailDrawsPerMythicBestCurrentSpan.textContent = '--';
-            detailAnvilsBestCurrentSpan.textContent = '--';
-            detailWorstShardsCurrentSpan.textContent = '--';
-            detailMythicPullsWorstCurrentSpan.textContent = '--';
-            detailDrawsPerMythicWorstCurrentSpan.textContent = '--';
-            detailAnvilsWorstCurrentSpan.textContent = '--';
-
-            detailTargetShardsProposedSpan.textContent = '--';
-            detailAvgShardsProposedSpan.textContent = '--';
-            detailMythicPullsAvgProposedSpan.textContent = '--';
-            detailDrawsPerMythicAvgProposedSpan.textContent = '--';
-            detailAnvilsAvgProposedSpan.textContent = '--';
-            detailBestShardsProposedSpan.textContent = '--';
-            detailMythicPullsBestProposedSpan.textContent = '--';
-            detailDrawsPerMythicBestProposedSpan.textContent = '--';
-            detailAnvilsBestProposedSpan.textContent = '--';
-            detailWorstShardsProposedSpan.textContent = '--';
-            detailMythicPullsWorstProposedSpan.textContent = '--';
-            detailDrawsPerMythicWorstProposedSpan.textContent = '--';
-            detailAnvilsWorstProposedSpan.textContent = '--';
+            // Reset all dynamic span contents
+            const allSpans = document.querySelectorAll('#results span, .calculation-detail strong');
+            allSpans.forEach(span => span.textContent = '--');
+            
+            // Display hardcoded bleed system values (these could be inputs later)
+            document.getElementById('currentLMS').textContent = LM_SHARDS_CURRENT;
+            document.getElementById('currentNMS').textContent = NM_SHARDS_CURRENT;
+            document.getElementById('proposedLMS').textContent = LM_SHARDS_PROPOSED;
+            document.getElementById('proposedNMS').textContent = NM_SHARDS_PROPOSED;
+            detailLMSCurrentSpan.textContent = LM_SHARDS_CURRENT; // For details section
+            detailNMSCurrentSpan.textContent = NM_SHARDS_CURRENT;
+            detailLMSProposedSpan.textContent = LM_SHARDS_PROPOSED;
+            detailNMSProposedSpan.textContent = NM_SHARDS_PROPOSED;
 
 
-            let isValid = true;
-
+            let isValid = true; // Flag to track input validity
             // Get and validate inputs
             const mythicProbability = parseFloat(mythicProbabilityInput.value);
             if (isNaN(mythicProbability) || mythicProbability <= 0 || mythicProbability > 1) {
-                mythicProbabilityError.textContent = 'Please enter a valid probability (0-1).';
-                mythicProbabilityError.classList.remove('hidden');
-                isValid = false;
+                mythicProbabilityError.textContent = 'Invalid probability (must be > 0 and <= 1).'; mythicProbabilityError.classList.remove('hidden'); isValid = false;
             }
-
             const mythicHardPity = parseInt(mythicHardPityInput.value);
             if (isNaN(mythicHardPity) || mythicHardPity < 1) {
-                mythicHardPityError.textContent = 'Please enter a valid integer for pity (>=1).';
-                mythicHardPityError.classList.remove('hidden');
-                isValid = false;
+                mythicHardPityError.textContent = 'Invalid pity (must be >= 1).'; mythicHardPityError.classList.remove('hidden'); isValid = false;
             }
-
             const lmRateUpChance = parseFloat(lmRateUpChanceInput.value);
             if (isNaN(lmRateUpChance) || lmRateUpChance < 0 || lmRateUpChance > 1) {
-                lmRateUpChanceError.textContent = 'Please enter a valid probability (0-1).';
-                lmRateUpChanceError.classList.remove('hidden');
-                isValid = false;
+                lmRateUpChanceError.textContent = 'Invalid rate-up chance (must be 0-1).'; lmRateUpChanceError.classList.remove('hidden'); isValid = false;
             }
 
-            if (!isValid) {
-                return; // Stop if any input is invalid
-            }
+            if (!isValid) return; // Stop if any input is invalid
 
-            // Calculate core game mechanics
+            // Calculate base mythic acquisition rates
             const drawsPerMythicAverage = calculateExpectedDrawsPerMythic(mythicProbability, mythicHardPity);
             const drawsPerMythicBest = 1; // Best case: Mythic on 1st pull
-            const drawsPerMythicWorst = mythicHardPity; // Worst case: Hit hard pity every time
+            const drawsPerMythicWorst = mythicHardPity; // Worst case: Hit hard pity every time for each mythic
+
+            calcDrawsPerMythicSpan.textContent = drawsPerMythicAverage.toFixed(2);
 
             if (isNaN(drawsPerMythicAverage)) {
-                anvilsCurrentSpan.textContent = 'Error';
-                anvilsProposedSpan.textContent = 'Error';
-                conclusionParagraph.textContent = 'Could not calculate draws per Mythic. Check inputs.';
-                return;
+                conclusionParagraph.textContent = 'Error in base Mythic calculation. Check inputs.'; return;
             }
 
-            // Define bleed system shard yields
-            const LM_SHARDS_CURRENT = 40;
-            const NM_SHARDS_CURRENT = 0;
-            const LM_SHARDS_PROPOSED = 25;
-            const NM_SHARDS_PROPOSED = 5;
+            // --- Initial Unlock Cost Calculation ---
+            // For the initial unlock, we care about getting *one* LM. The shard yields during this process don't contribute to *progression* shards.
+            // So, we use lmShardYield=1, nmShardYield=0 in calculateLmCycleMetrics just to get the pull counts.
+            const unlockCycleMetrics = calculateLmCycleMetrics(1, 0, lmRateUpChance, NM_GUARANTEE_THRESHOLD); 
+            
+            let anvilsUnlockAvg = 0, anvilsUnlockBest = 0, anvilsUnlockWorst = 0;
+            let avgMythicsNeededForOneLM = 0; // How many mythics on average to get the first LM.
 
-            // Calculate average shards per Mythic pull for each system
-            const avgShardsPerMythicCurrent = calculateAverageShardsPerMythicPull(
-                LM_SHARDS_CURRENT, NM_SHARDS_CURRENT, lmRateUpChance, NM_GUARANTEE_THRESHOLD
-            );
-            const avgShardsPerMythicProposed = calculateAverageShardsPerMythicPull(
-                LM_SHARDS_PROPOSED, NM_SHARDS_PROPOSED, lmRateUpChance, NM_GUARANTEE_THRESHOLD
-            );
-
-            // Best case shards per Mythic pull (always get LM)
-            const bestShardsPerMythicCurrent = LM_SHARDS_CURRENT;
-            const bestShardsPerMythicProposed = LM_SHARDS_PROPOSED;
-
-            // Worst case shards per Mythic pull (worst LM guarantee cycle: 3 NMs + 1 LM = 4 Mythic pulls for 40 shards total)
-            const worstShardsPerMythicCurrent = (NM_SHARDS_CURRENT * NM_GUARANTEE_THRESHOLD + LM_SHARDS_CURRENT) / (NM_GUARANTEE_THRESHOLD + 1);
-            const worstShardsPerMythicProposed = (NM_SHARDS_PROPOSED * NM_GUARANTEE_THRESHOLD + LM_SHARDS_PROPOSED) / (NM_GUARANTEE_THRESHOLD + 1);
-
-
-            if (isNaN(avgShardsPerMythicCurrent) || isNaN(avgShardsPerMythicProposed)) {
-                anvilsCurrentSpan.textContent = 'Error';
-                anvilsProposedSpan.textContent = 'Error';
-                conclusionParagraph.textContent = 'Could not calculate average shards per Mythic. Check LM rate-up chance.';
-                return;
+            if (!isNaN(unlockCycleMetrics.expectedMythicPullsPerLmCycle)) {
+                avgMythicsNeededForOneLM = unlockCycleMetrics.expectedMythicPullsPerLmCycle;
+                anvilsUnlockAvg = avgMythicsNeededForOneLM * drawsPerMythicAverage;
+                // Best case for unlock: Get LM on the first mythic, and that mythic is on the first draw.
+                anvilsUnlockBest = 1 * drawsPerMythicBest; 
+                // Worst case for unlock: Hit LM guarantee (worstCaseMythicPullsPerLmCycle) AND hit hard pity for each of those mythics.
+                anvilsUnlockWorst = unlockCycleMetrics.worstCaseMythicPullsPerLmCycle * drawsPerMythicWorst;
+            } else {
+                 conclusionParagraph.textContent = 'Error calculating LM cycle for initial unlock. Check LM rate-up.'; return;
             }
+
+
+            // --- Shard Progression Cost Calculation (after initial unlock) ---
+            // Now calculate effective shard gain for progression using actual bleed system shard yields.
+            const lmCycleMetricsCurrentSystem = calculateLmCycleMetrics(LM_SHARDS_CURRENT, NM_SHARDS_CURRENT, lmRateUpChance, NM_GUARANTEE_THRESHOLD);
+            const lmCycleMetricsProposedSystem = calculateLmCycleMetrics(LM_SHARDS_PROPOSED, NM_SHARDS_PROPOSED, lmRateUpChance, NM_GUARANTEE_THRESHOLD);
+
+            const avgEffectiveShardsCurrent = lmCycleMetricsCurrentSystem.averageShardsPerEffectiveMythic;
+            const avgEffectiveShardsProposed = lmCycleMetricsProposedSystem.averageShardsPerEffectiveMythic;
+
+            if (isNaN(avgEffectiveShardsCurrent) || isNaN(avgEffectiveShardsProposed)) {
+                conclusionParagraph.textContent = 'Error calculating average shards per mythic for progression. Check LM rate-up.'; return;
+            }
+
+            calcAvgShardsCurrentSpan.textContent = avgEffectiveShardsCurrent.toFixed(2);
+            calcAvgShardsProposedSpan.textContent = avgEffectiveShardsProposed.toFixed(2);
 
             const targetStarLevel = targetStarLevelSelect.value;
-            const targetShards = SHARD_REQUIREMENTS[targetStarLevel];
-            accumulatedShardsSpan.textContent = targetShards.toString(); // Display accumulated shards
+            const targetShardsForLevel = SHARD_REQUIREMENTS[targetStarLevel] || 0; // Shards needed for this specific level from 0
+            accumulatedShardsSpan.textContent = targetShardsForLevel.toString();
 
-            // Calculate Anvils for each system (Average, Best, Worst)
-            const anvilsCurrent = calculateGachaAnvils(targetShards, avgShardsPerMythicCurrent, drawsPerMythicAverage);
-            const anvilsProposed = calculateGachaAnvils(targetShards, avgShardsPerMythicProposed, drawsPerMythicAverage);
+            // Best case shards per Mythic pull for progression (always get LM which gives max shards for that system)
+            const bestShardsProgressionCurrent = LM_SHARDS_CURRENT; 
+            const bestShardsProgressionProposed = LM_SHARDS_PROPOSED;
 
-            const anvilsBestCurrent = calculateGachaAnvils(targetShards, bestShardsPerMythicCurrent, drawsPerMythicBest);
-            const anvilsWorstCurrent = calculateGachaAnvils(targetShards, worstShardsPerMythicCurrent, drawsPerMythicWorst);
+            // Worst case effective shards per Mythic for progression (hitting LM guarantee, average over that specific cycle)
+            // This is the average shards per mythic *if* you always go through the worst LM guarantee cycle.
+            const worstShardsProgressionCurrent = (NM_SHARDS_CURRENT * NM_GUARANTEE_THRESHOLD + LM_SHARDS_CURRENT) / (NM_GUARANTEE_THRESHOLD + 1);
+            const worstShardsProgressionProposed = (NM_SHARDS_PROPOSED * NM_GUARANTEE_THRESHOLD + LM_SHARDS_PROPOSED) / (NM_GUARANTEE_THRESHOLD + 1);
 
-            const anvilsBestProposed = calculateGachaAnvils(targetShards, bestShardsPerMythicProposed, drawsPerMythicBest);
-            const anvilsWorstProposed = calculateGachaAnvils(targetShards, worstShardsPerMythicProposed, drawsPerMythicWorst);
+            // Calculate Anvil costs for shard progression ONLY
+            let shardAnvilsCurrent = calculateGachaAnvils(targetShardsForLevel, avgEffectiveShardsCurrent, drawsPerMythicAverage);
+            let shardAnvilsProposed = calculateGachaAnvils(targetShardsForLevel, avgEffectiveShardsProposed, drawsPerMythicAverage);
+            let shardAnvilsBestCurrent = calculateGachaAnvils(targetShardsForLevel, bestShardsProgressionCurrent, drawsPerMythicBest);
+            let shardAnvilsWorstCurrent = calculateGachaAnvils(targetShardsForLevel, worstShardsProgressionCurrent, drawsPerMythicWorst);
+            let shardAnvilsBestProposed = calculateGachaAnvils(targetShardsForLevel, bestShardsProgressionProposed, drawsPerMythicBest);
+            let shardAnvilsWorstProposed = calculateGachaAnvils(targetShardsForLevel, worstShardsProgressionProposed, drawsPerMythicWorst);
 
+            // --- Combine with Unlock Cost if selected & Update UI ---
+            const includeUnlock = includeUnlockCostCheckbox.checked;
+            if (includeUnlock) {
+                unlockCostSection.classList.remove('hidden'); // Show unlock cost section
+                detailUnlockCostSection.classList.remove('hidden'); // Show detailed unlock cost
+                anvilsUnlockAvgSpan.textContent = Math.round(anvilsUnlockAvg).toString();
+                anvilsUnlockBestSpan.textContent = Math.round(anvilsUnlockBest).toString();
+                anvilsUnlockWorstSpan.textContent = Math.round(anvilsUnlockWorst).toString();
 
-            // Display results, rounded to nearest whole number
-            anvilsCurrentSpan.textContent = isFinite(anvilsCurrent) ? Math.round(anvilsCurrent).toString() : 'Infinity';
-            anvilsProposedSpan.textContent = isFinite(anvilsProposed) ? Math.round(anvilsProposed).toString() : 'Infinity';
-            anvilsBestCurrentSpan.textContent = isFinite(anvilsBestCurrent) ? Math.round(anvilsBestCurrent).toString() : 'Infinity';
-            anvilsWorstCurrentSpan.textContent = isFinite(anvilsWorstCurrent) ? Math.round(anvilsWorstCurrent).toString() : 'Infinity';
-            anvilsBestProposedSpan.textContent = isFinite(anvilsBestProposed) ? Math.round(anvilsBestProposed).toString() : 'Infinity';
-            anvilsWorstProposedSpan.textContent = isFinite(anvilsWorstProposed) ? Math.round(anvilsWorstProposed).toString() : 'Infinity';
+                // Detailed unlock cost info
+                detailAvgMythicsForLMSpan.textContent = avgMythicsNeededForOneLM.toFixed(2);
+                detailAnvilsUnlockAvgSpan.textContent = Math.round(anvilsUnlockAvg).toString();
+                detailAnvilsUnlockBestSpan.textContent = Math.round(anvilsUnlockBest).toString();
+                detailAnvilsUnlockWorstSpan.textContent = Math.round(anvilsUnlockWorst).toString();
 
-            // Populate detailed calculations
-            calcDrawsPerMythicSpan.textContent = drawsPerMythicAverage.toFixed(2);
-            calcAvgShardsCurrentSpan.textContent = avgShardsPerMythicCurrent.toFixed(2);
-            calcAvgShardsProposedSpan.textContent = avgShardsPerMythicProposed.toFixed(2);
-
-            // Detailed Anvil Cost Breakdown
-            detailTargetShardsCurrentSpan.textContent = targetShards.toString();
-            detailAvgShardsCurrentSpan.textContent = avgShardsPerMythicCurrent.toFixed(2);
-            detailMythicPullsAvgCurrentSpan.textContent = Math.ceil(targetShards / avgShardsPerMythicCurrent).toString();
-            detailDrawsPerMythicAvgCurrentSpan.textContent = drawsPerMythicAverage.toFixed(2);
-            detailAnvilsAvgCurrentSpan.textContent = Math.round(anvilsCurrent).toString();
-
-            detailBestShardsCurrentSpan.textContent = bestShardsPerMythicCurrent.toString();
-            detailMythicPullsBestCurrentSpan.textContent = Math.ceil(targetShards / bestShardsPerMythicCurrent).toString();
-            detailDrawsPerMythicBestCurrentSpan.textContent = drawsPerMythicBest.toString();
-            detailAnvilsBestCurrentSpan.textContent = Math.round(anvilsBestCurrent).toString();
-
-            detailWorstShardsCurrentSpan.textContent = worstShardsPerMythicCurrent.toFixed(2);
-            detailMythicPullsWorstCurrentSpan.textContent = Math.ceil(targetShards / worstShardsPerMythicCurrent).toString();
-            detailDrawsPerMythicWorstCurrentSpan.textContent = drawsPerMythicWorst.toString();
-            detailAnvilsWorstCurrentSpan.textContent = Math.round(anvilsWorstCurrent).toString();
-
-            detailTargetShardsProposedSpan.textContent = targetShards.toString();
-            detailAvgShardsProposedSpan.textContent = avgShardsPerMythicProposed.toFixed(2);
-            detailMythicPullsAvgProposedSpan.textContent = Math.ceil(targetShards / avgShardsPerMythicProposed).toString();
-            detailDrawsPerMythicAvgProposedSpan.textContent = drawsPerMythicAverage.toFixed(2);
-            detailAnvilsAvgProposedSpan.textContent = Math.round(anvilsProposed).toString();
-
-            detailBestShardsProposedSpan.textContent = bestShardsPerMythicProposed.toString();
-            detailMythicPullsBestProposedSpan.textContent = Math.ceil(targetShards / bestShardsPerMythicProposed).toString();
-            detailDrawsPerMythicBestProposedSpan.textContent = drawsPerMythicBest.toString();
-            detailAnvilsBestProposedSpan.textContent = Math.round(anvilsBestProposed).toString();
-
-            detailWorstShardsProposedSpan.textContent = worstShardsPerMythicProposed.toFixed(2);
-            detailMythicPullsWorstProposedSpan.textContent = Math.ceil(targetShards / worstShardsPerMythicProposed).toString();
-            detailDrawsPerMythicWorstProposedSpan.textContent = drawsPerMythicWorst.toString();
-            detailAnvilsWorstProposedSpan.textContent = Math.round(anvilsWorstProposed).toString();
+                // Update advisory message and styling
+                advisoryMessage.innerHTML = `The Anvil costs displayed below now **INCLUDE** the initial pull to unlock the Limited Mythic character. Shard costs are for progression *after* unlock.`;
+                advisoryBox.classList.remove('bg-yellow-50', 'border-yellow-500', 'text-yellow-700'); // Default styling
+                advisoryBox.classList.add('bg-indigo-50', 'border-indigo-500', 'text-indigo-700'); // Unlock included styling
+                currentSystemTitle.textContent = "Current System (Total: Unlock + Shards)";
+                proposedSystemTitle.textContent = "Proposed System (Total: Unlock + Shards)";
+                anvilCostBreakdownNote.textContent = "Anvil Cost Breakdown below shows totals (Unlock + Shard Progression).";
 
 
-            // Provide conclusion, rounding difference UP
-            if (anvilsCurrent < anvilsProposed) {
-                const difference = anvilsProposed - anvilsCurrent;
-                conclusionParagraph.textContent = `The Current Bleed System is more efficient for this goal, saving approximately ${Math.ceil(difference)} Anvils.`;
-            } else if (anvilsProposed < anvilsCurrent) {
-                const difference = anvilsCurrent - anvilsProposed;
-                conclusionParagraph.textContent = `The Proposed Bleed System is more efficient for this goal, saving approximately ${Math.ceil(difference)} Anvils.`;
+                // Display total costs (Unlock + Shards)
+                anvilsCurrentSpan.textContent = Math.round(anvilsUnlockAvg + shardAnvilsCurrent).toString();
+                anvilsProposedSpan.textContent = Math.round(anvilsUnlockAvg + shardAnvilsProposed).toString();
+                anvilsBestCurrentSpan.textContent = Math.round(anvilsUnlockBest + shardAnvilsBestCurrent).toString();
+                anvilsWorstCurrentSpan.textContent = Math.round(anvilsUnlockWorst + shardAnvilsWorstCurrent).toString();
+                anvilsBestProposedSpan.textContent = Math.round(anvilsUnlockBest + shardAnvilsBestProposed).toString();
+                anvilsWorstProposedSpan.textContent = Math.round(anvilsUnlockWorst + shardAnvilsWorstProposed).toString();
             } else {
-                conclusionParagraph.textContent = 'Both systems require approximately the same number of Anvils for this goal.';
+                unlockCostSection.classList.add('hidden'); // Hide unlock cost section
+                detailUnlockCostSection.classList.add('hidden'); // Hide detailed unlock cost
+                // Reset advisory message and styling to default
+                advisoryMessage.innerHTML = `The Anvil costs displayed are for **shard accumulation only** to reach the selected Star Level. They DO NOT include the separate, initial pull required to **unlock** the Limited Mythic character. You must first obtain that unlock pull before any shard progression can begin.`;
+                advisoryBox.classList.add('bg-yellow-50', 'border-yellow-500', 'text-yellow-700');
+                advisoryBox.classList.remove('bg-indigo-50', 'border-indigo-500', 'text-indigo-700');
+                currentSystemTitle.textContent = "Current Bleed System (Shards Only)";
+                proposedSystemTitle.textContent = "Proposed Bleed System (Shards Only)";
+                anvilCostBreakdownNote.textContent = "Anvil Cost Breakdown below is for shard progression only.";
+
+                // Display shard progression costs only
+                anvilsCurrentSpan.textContent = Math.round(shardAnvilsCurrent).toString();
+                anvilsProposedSpan.textContent = Math.round(shardAnvilsProposed).toString();
+                anvilsBestCurrentSpan.textContent = Math.round(shardAnvilsBestCurrent).toString();
+                anvilsWorstCurrentSpan.textContent = Math.round(shardAnvilsWorstCurrent).toString();
+                anvilsBestProposedSpan.textContent = Math.round(shardAnvilsBestProposed).toString();
+                anvilsWorstProposedSpan.textContent = Math.round(shardAnvilsWorstProposed).toString();
             }
 
+
+            // Populate detailed calculations for SHARD PROGRESSION part
+            detailTargetShardsCurrentSpan.textContent = targetShardsForLevel.toString();
+            detailAvgShardsCurrentSpan.textContent = avgEffectiveShardsCurrent.toFixed(2);
+            detailMythicPullsAvgCurrentSpan.textContent = (avgEffectiveShardsCurrent > 0 ? Math.ceil(targetShardsForLevel / avgEffectiveShardsCurrent) : 'Inf').toString();
+            detailAnvilsAvgCurrentSpan.textContent = isFinite(shardAnvilsCurrent) ? Math.round(shardAnvilsCurrent).toString() : 'Infinity';
+            
+            detailBestShardsCurrentSpan.textContent = bestShardsProgressionCurrent.toFixed(2);
+            detailMythicPullsBestCurrentSpan.textContent = (bestShardsProgressionCurrent > 0 ? Math.ceil(targetShardsForLevel / bestShardsProgressionCurrent) : 'Inf').toString();
+            detailAnvilsBestCurrentSpan.textContent = isFinite(shardAnvilsBestCurrent) ? Math.round(shardAnvilsBestCurrent).toString() : 'Infinity';
+
+            detailWorstShardsCurrentSpan.textContent = worstShardsProgressionCurrent.toFixed(2);
+            detailMythicPullsWorstCurrentSpan.textContent = (worstShardsProgressionCurrent > 0 ? Math.ceil(targetShardsForLevel / worstShardsProgressionCurrent) : 'Inf').toString();
+            detailAnvilsWorstCurrentSpan.textContent = isFinite(shardAnvilsWorstCurrent) ? Math.round(shardAnvilsWorstCurrent).toString() : 'Infinity';
+
+
+            detailTargetShardsProposedSpan.textContent = targetShardsForLevel.toString();
+            detailAvgShardsProposedSpan.textContent = avgEffectiveShardsProposed.toFixed(2);
+            detailMythicPullsAvgProposedSpan.textContent = (avgEffectiveShardsProposed > 0 ? Math.ceil(targetShardsForLevel / avgEffectiveShardsProposed) : 'Inf').toString();
+            detailAnvilsAvgProposedSpan.textContent = isFinite(shardAnvilsProposed) ? Math.round(shardAnvilsProposed).toString() : 'Infinity';
+
+            detailBestShardsProposedSpan.textContent = bestShardsProgressionProposed.toFixed(2);
+            detailMythicPullsBestProposedSpan.textContent = (bestShardsProgressionProposed > 0 ? Math.ceil(targetShardsForLevel / bestShardsProgressionProposed) : 'Inf').toString();
+            detailAnvilsBestProposedSpan.textContent = isFinite(shardAnvilsBestProposed) ? Math.round(shardAnvilsBestProposed).toString() : 'Infinity';
+
+            detailWorstShardsProposedSpan.textContent = worstShardsProgressionProposed.toFixed(2);
+            detailMythicPullsWorstProposedSpan.textContent = (worstShardsProgressionProposed > 0 ? Math.ceil(targetShardsForLevel / worstShardsProgressionProposed) : 'Inf').toString();
+            detailAnvilsWorstProposedSpan.textContent = isFinite(shardAnvilsWorstProposed) ? Math.round(shardAnvilsWorstProposed).toString() : 'Infinity';
+
+
+            // Final conclusion based on displayed TOTALS (which depend on checkbox)
+            const totalCurrentAvgDisplayed = parseFloat(anvilsCurrentSpan.textContent);
+            const totalProposedAvgDisplayed = parseFloat(anvilsProposedSpan.textContent);
+
+            if (isFinite(totalCurrentAvgDisplayed) && isFinite(totalProposedAvgDisplayed)) {
+                if (totalCurrentAvgDisplayed < totalProposedAvgDisplayed) {
+                    conclusionParagraph.textContent = `The Current System is ~${Math.ceil(totalProposedAvgDisplayed - totalCurrentAvgDisplayed)} Anvils more efficient on average for the selected goal.`;
+                } else if (totalProposedAvgDisplayed < totalCurrentAvgDisplayed) {
+                    conclusionParagraph.textContent = `The Proposed System is ~${Math.ceil(totalCurrentAvgDisplayed - totalProposedAvgDisplayed)} Anvils more efficient on average for the selected goal.`;
+                } else {
+                    conclusionParagraph.textContent = 'Both systems require approximately the same Anvils on average for the selected goal.';
+                }
+            } else {
+                 conclusionParagraph.textContent = 'Could not determine efficiency due to non-finite Anvil costs (likely an issue with shard gain rates being zero or invalid inputs).';
+            }
+
+
             // --- Update Chart ---
-            const allStarLevels = Object.keys(SHARD_REQUIREMENTS);
-            const allCurrentCosts = [];
-            const allProposedCosts = [];
+            // Chart always shows costs for ALL star levels, based on current settings.
+            const allStarLevelsForChart = Object.keys(SHARD_REQUIREMENTS);
+            const chartProgressionCostsCurrent = [];
+            const chartProgressionCostsProposed = [];
 
-            allStarLevels.forEach(level => {
-                const shards = SHARD_REQUIREMENTS[level];
-                const currentCost = calculateGachaAnvils(shards, avgShardsPerMythicCurrent, drawsPerMythicAverage);
-                const proposedCost = calculateGachaAnvils(shards, avgShardsPerMythicProposed, drawsPerMythicAverage);
-                allCurrentCosts.push(isFinite(currentCost) ? Math.round(currentCost) : 0); // Use 0 for Infinity in chart
-                allProposedCosts.push(isFinite(proposedCost) ? Math.round(proposedCost) : 0);
+            allStarLevelsForChart.forEach(level => {
+                const s = SHARD_REQUIREMENTS[level]; // Shards for this level
+                // Calculate progression costs for this level
+                const currentProgCost = calculateGachaAnvils(s, avgEffectiveShardsCurrent, drawsPerMythicAverage);
+                const proposedProgCost = calculateGachaAnvils(s, avgEffectiveShardsProposed, drawsPerMythicAverage);
+                chartProgressionCostsCurrent.push(isFinite(currentProgCost) ? Math.round(currentProgCost) : 0); // Use 0 for Infinity in chart
+                chartProgressionCostsProposed.push(isFinite(proposedProgCost) ? Math.round(proposedProgCost) : 0);
             });
-
-            updateChart(allCurrentCosts, allProposedCosts, allStarLevels);
+            // Pass the single anvilsUnlockAvg for the chart, it will be added if includeUnlock is true
+            updateChart(chartProgressionCostsCurrent, chartProgressionCostsProposed, allStarLevelsForChart, includeUnlock, anvilsUnlockAvg);
         }
 
         // Initialize calculator on page load
         document.addEventListener('DOMContentLoaded', () => {
-            populateStarLevels();
+            populateStarLevels(); // Fill the dropdown
+            // Add event listeners to all inputs and the button
             calculateBtn.addEventListener('click', updateCalculator);
-            // Also update on input changes for a more interactive experience
             mythicProbabilityInput.addEventListener('input', updateCalculator);
             mythicHardPityInput.addEventListener('input', updateCalculator);
             lmRateUpChanceInput.addEventListener('input', updateCalculator);
             targetStarLevelSelect.addEventListener('change', updateCalculator);
-            updateCalculator(); // Perform initial calculation on load
+            includeUnlockCostCheckbox.addEventListener('change', updateCalculator); // ADDED listener
+            
+            updateCalculator(); // Perform an initial calculation on page load with default values
         });
     </script>
 </body>
