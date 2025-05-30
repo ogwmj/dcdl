@@ -86,6 +86,51 @@
                 max-width: 768px; /* Even larger for desktop */
             }
         }
+        details {
+            background-color: #f8fafc; /* Lightest blue-gray */
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+        }
+        summary {
+            font-weight: 600;
+            cursor: pointer;
+            color: #475569; /* Slate 600 */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        summary::-webkit-details-marker {
+            display: none;
+        }
+        summary::after {
+            content: '+';
+            font-size: 1.5rem;
+            transition: transform 0.2s;
+        }
+        details[open] summary::after {
+            content: '-';
+            transform: rotate(0deg);
+        }
+        .calculation-detail p {
+            margin-bottom: 0.5rem;
+            color: #4a5568; /* Gray 700 */
+            font-size: 0.9rem;
+        }
+        .calculation-detail strong {
+            color: #2d3748; /* Gray 800 */
+        }
+        .advisory-box {
+            background-color: #fffbeb; /* Light yellow */
+            border-left: 4px solid #f59e0b; /* Amber 500 */
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-top: 1.5rem;
+            color: #78350f; /* Amber 900 */
+            font-size: 0.95rem;
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
@@ -149,6 +194,9 @@
 
         <div id="results" class="mt-8">
             <h2 class="text-xl font-semibold mb-4">Calculation Results</h2>
+            <div class="result-box mb-4">
+                <p><strong>Accumulated Shards for this Level:</strong> <span id="accumulatedShards">--</span></p>
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="col-span-1">
                     <h3 class="font-medium text-lg mb-2 text-blue-700">Current Bleed System</h3>
@@ -176,6 +224,11 @@
                 </div>
             </div>
             <p id="conclusion" class="text-center text-gray-700 font-medium mt-6"></p>
+
+            <div class="advisory-box mt-6">
+                <p class="font-bold">Important Note:</p>
+                <p>The Anvil costs displayed above are for **shard accumulation only** to reach the selected Star Level. They DO NOT include the separate, initial pull required to **unlock** the Limited Mythic character. You must first obtain that unlock pull before any shard progression can begin.</p>
+            </div>
         </div>
     </div>
 
@@ -272,6 +325,7 @@
         const calculateBtn = document.getElementById('calculateBtn');
 
         // Result display spans
+        const accumulatedShardsSpan = document.getElementById('accumulatedShards'); // New span for accumulated shards
         const anvilsCurrentSpan = document.getElementById('anvilsCurrent');
         const anvilsProposedSpan = document.getElementById('anvilsProposed');
         const anvilsBestCurrentSpan = document.getElementById('anvilsBestCurrent');
@@ -332,6 +386,7 @@
             mythicProbabilityError.classList.add('hidden');
             mythicHardPityError.classList.add('hidden');
             lmRateUpChanceError.classList.add('hidden');
+            accumulatedShardsSpan.textContent = '--'; // Clear new span
             anvilsCurrentSpan.textContent = '--';
             anvilsProposedSpan.textContent = '--';
             anvilsBestCurrentSpan.textContent = '--';
@@ -410,6 +465,7 @@
 
             const targetStarLevel = targetStarLevelSelect.value;
             const targetShards = SHARD_REQUIREMENTS[targetStarLevel];
+            accumulatedShardsSpan.textContent = targetShards.toString(); // Display accumulated shards
 
             // Calculate Anvils for each system (Average, Best, Worst)
             const anvilsCurrent = calculateGachaAnvils(targetShards, avgShardsPerMythicCurrent, drawsPerMythicAverage);
