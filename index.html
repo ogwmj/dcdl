@@ -220,15 +220,15 @@
         }
         /* UI/UX Enhancement: Section Styling */
         .calc-section {
-            background-color: #ffffff; /* Keep white or slightly off-white like #f8fafc */
+            background-color: #ffffff; 
             padding: 1.5rem;
             border-radius: 0.75rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Softer shadow */
-            margin-bottom: 2rem; /* Space between sections */
-            border: 1px solid #e2e8f0; /* Light border for definition */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
+            margin-bottom: 2rem; 
+            border: 1px solid #e2e8f0; 
         }
         .calc-section h2 {
-            margin-top: 0; /* Remove default margin if any */
+            margin-top: 0; 
         }
 
         /* Loading indicator for button */
@@ -237,226 +237,257 @@
         }
         .btn-loading .spinner {
             display: inline-block;
-            width: 1.25rem; /* 20px */
-            height: 1.25rem; /* 20px */
+            width: 1.25rem; 
+            height: 1.25rem; 
             border: 2px solid rgba(255,255,255,0.3);
             border-radius: 50%;
             border-top-color: #fff;
             animation: spin 1s ease-in-out infinite;
         }
         .spinner {
-            display: none; /* Hidden by default */
+            display: none; 
         }
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        /* Toggle Button Styles */
+        .toggle-btn {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            border: 1px solid transparent;
+            width: 100%; /* Make it full width within its grid cell */
+            text-align: center;
+        }
+        .toggle-btn-on {
+            background-color: #10b981; /* Emerald 500 */
+            color: white;
+            border-color: #059669; /* Emerald 600 */
+        }
+        .toggle-btn-off {
+            background-color: #d1d5db; /* Gray 300 */
+            color: #4b5563; /* Gray 600 */
+            border-color: #9ca3af; /* Gray 400 */
         }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
     <a href="https://discord.gg/JvyzYfp8ZZ" target="_blank" class="discord-button">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-discord" viewBox="0 0 16 16">
-  <path d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059l-.018-.011a9 9 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019q.127-.095.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007q.121.1.248.195a.05.05 0 0 1-.004.085 8 8 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612"/>
-</svg>
-        Join Discord
-    </a>
+    <path d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059l-.018-.011a9 9 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019q.127-.095.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007q.121.1.248.195a.05.05 0 0 1-.004.085 8 8 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612"/>
+    </svg>
+            Join Discord
+        </a>
 
-    <div class="container">
-        <h1 class="text-3xl font-bold text-center mb-6">DC: Dark Legion - Anvil Calculator</h1>
-        <p class="text-center text-gray-600 mb-8">Estimate the average Anvils needed for a specific character upgrade.</p>
+        <div class="container">
+            <h1 class="text-3xl font-bold text-center mb-6">DC: Dark Legion - Anvil Calculator</h1>
+            <p class="text-center text-gray-600 mb-8">Estimate the average Anvils needed for a specific character upgrade.</p>
 
-        <div class="calc-section bg-gray-50"> <h2 class="text-xl font-semibold mb-4">Manage Profiles</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
-                <div class="input-group">
-                    <label for="profileName" class="block text-sm">Profile Name:</label>
-                    <input type="text" id="profileName" placeholder="Enter profile name">
+            <div class="calc-section bg-gray-50">
+                <h2 class="text-xl font-semibold mb-4">Manage Profiles</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+                    <div class="input-group">
+                        <label for="profileName" class="block text-sm">Profile Name:</label>
+                        <input type="text" id="profileName" placeholder="Enter profile name">
+                    </div>
+                    <button id="saveProfileBtn" class="btn btn-primary py-2.5">Save Current Settings</button>
                 </div>
-                <button id="saveProfileBtn" class="btn btn-primary py-2.5">Save Current Settings</button>
-            </div>
-            <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-                <div class="input-group md:col-span-1">
-                    <label for="savedProfiles" class="block text-sm">Load Profile:</label>
-                    <select id="savedProfiles">
-                        <option value="">-- Select a Profile --</option>
-                    </select>
-                </div>
-                <button id="loadProfileBtn" class="btn btn-secondary py-2.5">Load Selected</button>
-                <button id="deleteProfileBtn" class="btn btn-danger py-2.5">Delete Selected</button>
-            </div>
-            <div id="profileStatus" class="status-message mt-3 h-8"></div>
-        </div>
-
-        <div class="calc-section">
-            <h2 class="text-xl font-semibold mb-4">Configure Base Pull Rates</h2> <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="input-group">
-                    <label for="mythicProbability" class="block text-sm" title="The base chance of pulling any Mythic character (e.g., 0.0384 for 3.84%).">Mythic Base Probability:</label>
-                    <input type="number" id="mythicProbability" value="0.0384" step="0.0001" min="0" max="1">
-                    <p id="mythicProbabilityError" class="error-message hidden"></p>
-                </div>
-                <div class="input-group">
-                    <label for="mythicHardPity" class="block text-sm" title="The maximum number of pulls after which a Mythic character is guaranteed.">Mythic Hard Pity:</label>
-                    <input type="number" id="mythicHardPity" value="50" step="1" min="1">
-                    <p id="mythicHardPityError" class="error-message hidden"></p>
-                </div>
-            </div>
-            <div class="input-group mt-4">
-                <label for="lmRateUpChance" class="block text-sm" title="When you pull a Mythic, this is the chance it's the featured Limited Mythic (e.g., 0.269 for 26.9%).">Limited Mythic Rate-Up Chance:</label>
-                <input type="number" id="lmRateUpChance" value="0.269" step="0.001" min="0" max="1">
-                <p id="lmRateUpChanceError" class="error-message hidden"></p>
-            </div>
-            <p class="text-sm text-gray-500 mt-2">Note: "Fail three times" guarantee for Limited Mythic is hardcoded (3 Non-LM before guaranteed LM).</p>
-            <div class="input-group mt-4 flex items-center">
-                <input type="checkbox" id="includeUnlockCost" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" style="width: auto; margin-right: 0.5rem;">
-                <label for="includeUnlockCost" class="block text-sm">Include cost of initially unlocking the character?</label>
-            </div>
-        </div>
-
-        <div class="calc-section">
-            <h2 class="text-xl font-semibold mb-4">Select Upgrade Range</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="input-group">
-                    <label for="startStarLevel" class="block text-sm">Starting Star Level:</label>
-                    <select id="startStarLevel" class="block w-full">
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                    <div class="input-group md:col-span-1">
+                        <label for="savedProfiles" class="block text-sm">Load Profile:</label>
+                        <select id="savedProfiles">
+                            <option value="">-- Select a Profile --</option>
                         </select>
+                    </div>
+                    <button id="loadProfileBtn" class="btn btn-secondary py-2.5">Load Selected</button>
+                    <button id="deleteProfileBtn" class="btn btn-danger py-2.5">Delete Selected</button>
                 </div>
-                <div class="input-group">
-                    <label for="targetStarLevel" class="block text-sm">Target Star Level:</label>
-                    <select id="targetStarLevel" class="block w-full">
+                <div id="profileStatus" class="status-message mt-3 h-8"></div>
+            </div>
+
+            <div class="calc-section">
+                <h2 class="text-xl font-semibold mb-4">Configure Base Pull Rates</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="input-group">
+                        <label for="mythicProbability" class="block text-sm" title="The base chance of pulling any Mythic character (e.g., 0.0384 for 3.84%).">Mythic Base Probability:</label>
+                        <input type="number" id="mythicProbability" value="0.0384" step="0.0001" min="0" max="1">
+                        <p id="mythicProbabilityError" class="error-message hidden"></p>
+                    </div>
+                    <div class="input-group">
+                        <label for="mythicHardPity" class="block text-sm" title="The maximum number of pulls after which a Mythic character is guaranteed.">Mythic Hard Pity:</label>
+                        <input type="number" id="mythicHardPity" value="50" step="1" min="1">
+                        <p id="mythicHardPityError" class="error-message hidden"></p>
+                    </div>
+                </div>
+                <div class="input-group mt-4">
+                    <label for="lmRateUpChance" class="block text-sm" title="When you pull a Mythic, this is the chance it's the featured Limited Mythic (e.g., 0.269 for 26.9%).">Limited Mythic Rate-Up Chance:</label>
+                    <input type="number" id="lmRateUpChance" value="0.269" step="0.001" min="0" max="1">
+                    <p id="lmRateUpChanceError" class="error-message hidden"></p>
+                </div>
+                <p class="text-sm text-gray-500 mt-2">Note: "Fail three times" guarantee for Limited Mythic is hardcoded (3 Non-LM before guaranteed LM).</p>
+            </div>
+
+            <div class="calc-section">
+                <h2 class="text-xl font-semibold mb-4">Select Upgrade Range</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center"> <div class="input-group">
+                        <label for="startStarLevel" class="block text-sm">Starting Star Level:</label>
+                        <select id="startStarLevel" class="block w-full">
                         </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="targetStarLevel" class="block text-sm">Target Star Level:</label>
+                        <select id="targetStarLevel" class="block w-full">
+                        </select>
+                    </div>
+                </div>
+                 <div class="mt-4">
+                     <label class="block text-sm font-medium text-gray-700 mb-1">Initial Unlock Cost:</label>
+                    <button id="toggleUnlockCostBtn" type="button" class="toggle-btn toggle-btn-off w-full">
+                        Include Initial Unlock: OFF
+                    </button>
+                </div>
+                <p id="starLevelError" class="error-message hidden text-center mt-2"></p>
+            </div>
+
+            <div id="advisoryBox" class="advisory-box mb-8 calc-section">
+                <p class="font-bold">Important Note:</p>
+                <p id="advisoryMessage">The Anvil costs displayed are for **shard accumulation only** for the selected upgrade. They DO NOT include the separate, initial pull required to **unlock** the Limited Mythic character, unless explicitly selected above.</p>
+            </div>
+
+            <div class="calc-section">
+                <h2 class="text-xl font-semibold mb-4">Configure Shard Bleed Systems</h2>
+                <p class="text-xs text-gray-500 mb-2">These values define how many shards you get when pulling a duplicate Mythic that is either the Limited Mythic (LM) or a Non-Limited Mythic (NM) during an LM banner.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <h3 class="font-medium text-lg mb-2 text-green-700">Current Bleed System</h3>
+                        <p class="text-sm text-gray-700">Limited Mythic (LM) Shards: <span id="currentLMS">-</span> (e.g. 40)</p>
+                        <p class="text-sm text-gray-700">Non-Limited Mythic (NM) Shards: <span id="currentNMS">-</span> (e.g. 0)</p>
+                    </div>
+                    <div>
+                        <h3 class="font-medium text-lg mb-2 text-green-700">Proposed Bleed System</h3>
+                        <p class="text-sm text-gray-700">Limited Mythic (LM) Shards: <span id="proposedLMS">-</span> (e.g. 25)</p>
+                        <p class="text-sm text-gray-700">Non-Limited Mythic (NM) Shards: <span id="proposedNMS">-</span> (e.g. 5)</p>
+                    </div>
                 </div>
             </div>
-            <p id="starLevelError" class="error-message hidden text-center mt-2"></p>
-        </div>
 
-        <div id="advisoryBox" class="advisory-box mb-8 calc-section"> <p class="font-bold">Important Note:</p>
-            <p id="advisoryMessage">The Anvil costs displayed are for **shard accumulation only** for the selected upgrade. They DO NOT include the separate, initial pull required to **unlock** the Limited Mythic character, unless explicitly selected above.</p>
-        </div>
+            <button id="calculateBtn" class="btn btn-primary w-full text-lg py-3">
+                <span class="spinner"></span>
+                <span class="btn-text">Calculate Anvils</span>
+            </button>
 
-        <div class="calc-section">
-            <h2 class="text-xl font-semibold mb-4">Configure Shard Bleed Systems</h2>
-            <p class="text-xs text-gray-500 mb-2">These values define how many shards you get when pulling a duplicate Mythic that is either the Limited Mythic (LM) or a Non-Limited Mythic (NM) during an LM banner.</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <h3 class="font-medium text-lg mb-2 text-green-700">Current Bleed System</h3>
-                    <p class="text-sm text-gray-700">Limited Mythic (LM) Shards: <span id="currentLMS">-</span> (e.g. 40)</p>
-                    <p class="text-sm text-gray-700">Non-Limited Mythic (NM) Shards: <span id="currentNMS">-</span> (e.g. 0)</p>
+            <div id="results" class="mt-8 calc-section">
+                <h2 class="text-xl font-semibold mb-4">Calculation Results</h2>
+                <div id="unlockCostSection" class="hidden">
+                    <h3 class="font-medium text-lg mb-2 text-indigo-700">Initial Unlock Cost (for one copy of LM)</h3>
+                    <div class="result-box mb-2 bg-indigo-50 border-indigo-500">
+                        <p><strong>Average:</strong> <span id="anvilsUnlockAvg">--</span> Anvils</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="result-box mb-2 bg-indigo-50 border-indigo-500">
+                            <p><strong>Best Case:</strong> <span id="anvilsUnlockBest">--</span> Anvils</p>
+                        </div>
+                        <div class="result-box bg-indigo-50 border-indigo-500">
+                            <p><strong>Worst Case:</strong> <span id="anvilsUnlockWorst">--</span> Anvils</p>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <h3 class="font-medium text-lg mb-2 text-green-700">Proposed Bleed System</h3>
-                    <p class="text-sm text-gray-700">Limited Mythic (LM) Shards: <span id="proposedLMS">-</span> (e.g. 25)</p>
-                    <p class="text-sm text-gray-700">Non-Limited Mythic (NM) Shards: <span id="proposedNMS">-</span> (e.g. 5)</p>
-                </div>
-            </div>
-        </div>
 
-        <button id="calculateBtn" class="btn btn-primary w-full text-lg py-3">
-            <span class="spinner"></span>
-            <span class="btn-text">Calculate Anvils</span>
-        </button>
-
-        <div id="results" class="mt-8 calc-section"> <h2 class="text-xl font-semibold mb-4">Calculation Results</h2>
-            <div id="unlockCostSection" class="hidden">
-                <h3 class="font-medium text-lg mb-2 text-indigo-700">Initial Unlock Cost (for one copy of LM)</h3>
-                <div class="result-box mb-2 bg-indigo-50 border-indigo-500">
-                    <p><strong>Average:</strong> <span id="anvilsUnlockAvg">--</span> Anvils</p>
+                <div class="result-box mb-4">
+                    <p><strong>Shards Needed for This Upgrade:</strong> <span id="shardsNeededForUpgrade">--</span></p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="result-box mb-2 bg-indigo-50 border-indigo-500">
-                        <p><strong>Best Case:</strong> <span id="anvilsUnlockBest">--</span> Anvils</p>
-                    </div>
-                    <div class="result-box bg-indigo-50 border-indigo-500">
-                        <p><strong>Worst Case:</strong> <span id="anvilsUnlockWorst">--</span> Anvils</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="result-box mb-4">
-                <p><strong>Shards Needed for This Upgrade:</strong> <span id="shardsNeededForUpgrade">--</span></p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="col-span-1">
-                    <h3 id="currentSystemTitle" class="font-medium text-lg mb-2 text-blue-700">Current Bleed System</h3>
-                    <div class="result-box mb-2">
-                        <p><strong>Average:</strong> <span id="anvilsCurrent">--</span> Anvils</p>
-                    </div>
-                    <div class="result-box mb-2">
-                        <p><strong>Best Case:</strong> <span id="anvilsBestCurrent">--</span> Anvils</p>
-                    </div>
-                    <div class="result-box">
-                        <p><strong>Worst Case:</strong> <span id="anvilsWorstCurrent">--</span> Anvils</p>
-                    </div>
-                </div>
-                <div class="col-span-1">
-                    <h3 id="proposedSystemTitle" class="font-medium text-lg mb-2 text-blue-700">Proposed Bleed System</h3>
-                    <div class="result-box mb-2">
-                        <p><strong>Average:</strong> <span id="anvilsProposed">--</span> Anvils</p>
-                    </div>
-                    <div class="result-box mb-2">
-                        <p><strong>Best Case:</strong> <span id="anvilsBestProposed">--</span> Anvils</p>
-                    </div>
-                    <div class="result-box">
-                        <p><strong>Worst Case:</strong> <span id="anvilsWorstProposed">--</span> Anvils</p>
-                    </div>
-                </div>
-            </div>
-            <p id="conclusion" class="text-center text-gray-700 font-medium mt-6"></p>
-
-            <details class="mt-8"> <summary>Detailed Calculations</summary>
-                <div class="calculation-detail mt-4">
-                    <h3 class="font-semibold text-md mb-2 text-gray-800">Core Pull Mechanics:</h3> <p><strong title="The average number of Anvils (draws) you need to spend to obtain any Mythic character, considering base probability and hard pity.">Average Draws per Mythic Character:</strong> <span id="calcDrawsPerMythic">--</span> Anvils</p>
-                    <p><strong title="The maximum number of Mythic characters you might have to pull to trigger the guarantee for one Limited Mythic (e.g., 3 Non-LMs + 1 LM = 4 Mythics).">Worst-Case Mythic Pulls to Guarantee one LM:</strong> <span id="calcWorstCaseMythicsForLM">--</span></p>
-                    <div id="detailUnlockCostSection" class="hidden">
-                        <h4 class="font-medium text-sm text-gray-700 mt-2 mb-1">Initial Unlock Cost:</h4>
-                        <p><strong title="On average, how many Mythic characters (LM or Non-LM) you'll pull before getting your first copy of the featured Limited Mythic.">Avg Mythics for 1st LM:</strong> <span id="detailAvgMythicsForLM">--</span></p>
-                        <p>Anvils for Unlock (Avg): <span id="detailAnvilsUnlockAvg">--</span> | (Best): <span id="detailAnvilsUnlockBest">--</span> | (Worst): <span id="detailAnvilsUnlockWorst">--</span></p>
-                    </div>
-
-                    <h3 class="font-semibold text-md mt-4 mb-2 text-gray-800">Shard Gain per Mythic Pull (for progression after unlock):</h3>
-                    <p>Current Bleed System (LM=<span id="detailLMSCurrent">40</span>, NM=<span id="detailNMSCurrent">0</span>): <strong title="Considering the LM rate-up and guarantee, this is the average number of shards for the *featured LM* you effectively gain each time you pull *any* Mythic character during the LM's banner.">Avg Effective Shards per Mythic:</strong> <span id="calcAvgShardsCurrent">--</span></p>
-                    <p>Proposed Bleed System (LM=<span id="detailLMSProposed">25</span>, NM=<span id="detailNMSProposed">5</span>): <strong title="Considering the LM rate-up and guarantee, this is the average number of shards for the *featured LM* you effectively gain each time you pull *any* Mythic character during the LM's banner.">Avg Effective Shards per Mythic:</strong> <span id="calcAvgShardsProposed">--</span></p>
-
-                    <h3 class="font-semibold text-md mt-4 mb-2 text-gray-800">Anvil Cost Breakdown (for Selected Shard Upgrade):</h3>
-                    <p id="anvilCostBreakdownNote">(Costs below are for the selected shard upgrade. Total costs may include initial unlock if selected above.)</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <h4 class="font-medium text-sm text-gray-700 mb-1">Current Bleed System:</h4>
-                            <p>Shards for This Upgrade: <strong id="detailTargetShardsCurrent">--</strong></p>
-                            <p>Effective Shards/Mythic (Avg): <strong id="detailAvgShardsCurrent">--</strong></p>
-                            <p>Calculated Mythic Pulls (Avg): <strong id="detailMythicPullsAvgCurrent">--</strong></p>
-                            <p>Total Anvils for Upgrade (Avg): <strong id="detailAnvilsAvgCurrent">--</strong></p>
-
-                            <p class="mt-2">Effective Shards/Mythic (Best): <strong id="detailBestShardsCurrent">--</strong></p>
-                            <p>Calculated Mythic Pulls (Best): <strong id="detailMythicPullsBestCurrent">--</strong></p>
-                            <p>Total Anvils for Upgrade (Best): <strong id="detailAnvilsBestCurrent">--</strong></p>
-
-                            <p class="mt-2">Effective Shards/Mythic (Worst): <strong id="detailWorstShardsCurrent">--</strong></p>
-                            <p>Calculated Mythic Pulls (Worst): <strong id="detailMythicPullsWorstCurrent">--</strong></p>
-                            <p>Total Anvils for Upgrade (Worst): <strong id="detailAnvilsWorstCurrent">--</strong></p>
+                    <div class="col-span-1">
+                        <h3 id="currentSystemTitle" class="font-medium text-lg mb-2 text-blue-700">Current Bleed System</h3>
+                        <div class="result-box mb-2">
+                            <p><strong>Average:</strong> <span id="anvilsCurrent">--</span> Anvils</p>
                         </div>
-                        <div>
-                            <h4 class="font-medium text-sm text-gray-700 mb-1">Proposed Bleed System:</h4>
-                            <p>Shards for This Upgrade: <strong id="detailTargetShardsProposed">--</strong></p>
-                            <p>Effective Shards/Mythic (Avg): <strong id="detailAvgShardsProposed">--</strong></p>
-                            <p>Calculated Mythic Pulls (Avg): <strong id="detailMythicPullsAvgProposed">--</strong></p>
-                            <p>Total Anvils for Upgrade (Avg): <strong id="detailAnvilsAvgProposed">--</strong></p>
-
-                            <p class="mt-2">Effective Shards/Mythic (Best): <strong id="detailBestShardsProposed">--</strong></p>
-                            <p>Calculated Mythic Pulls (Best): <strong id="detailMythicPullsBestProposed">--</strong></p>
-                            <p>Total Anvils for Upgrade (Best): <strong id="detailAnvilsBestProposed">--</strong></p>
-
-                            <p class="mt-2">Effective Shards/Mythic (Worst): <strong id="detailWorstShardsProposed">--</strong></p>
-                            <p>Calculated Mythic Pulls (Worst): <strong id="detailMythicPullsWorstProposed">--</strong></p>
-                            <p>Total Anvils for Upgrade (Worst): <strong id="detailAnvilsWorstProposed">--</strong></p>
+                        <div class="result-box mb-2">
+                            <p><strong>Best Case:</strong> <span id="anvilsBestCurrent">--</span> Anvils</p>
+                        </div>
+                        <div class="result-box">
+                            <p><strong>Worst Case:</strong> <span id="anvilsWorstCurrent">--</span> Anvils</p>
+                        </div>
+                    </div>
+                    <div class="col-span-1">
+                        <h3 id="proposedSystemTitle" class="font-medium text-lg mb-2 text-blue-700">Proposed Bleed System</h3>
+                        <div class="result-box mb-2">
+                            <p><strong>Average:</strong> <span id="anvilsProposed">--</span> Anvils</p>
+                        </div>
+                        <div class="result-box mb-2">
+                            <p><strong>Best Case:</strong> <span id="anvilsBestProposed">--</span> Anvils</p>
+                        </div>
+                        <div class="result-box">
+                            <p><strong>Worst Case:</strong> <span id="anvilsWorstProposed">--</span> Anvils</p>
                         </div>
                     </div>
                 </div>
-            </details>
+                <p id="conclusion" class="text-center text-gray-700 font-medium mt-6"></p>
 
-            <div class="chart-container calc-section"> <h3 class="font-semibold text-xl mb-4 text-gray-800 text-center">Average Anvil Costs by Star Level (Total from Base)</h3>
-                <canvas id="anvilCostChart"></canvas>
+                <details class="mt-8">
+                    <summary>Detailed Calculations</summary>
+                    <div class="calculation-detail mt-4">
+                        <h3 class="font-semibold text-md mb-2 text-gray-800">Core Pull Mechanics:</h3>
+                        <p><strong title="The average number of Anvils (draws) you need to spend to obtain any Mythic character, considering base probability and hard pity.">Average Draws per Mythic Character:</strong> <span id="calcDrawsPerMythic">--</span> Anvils</p>
+                        <p><strong title="The maximum number of Mythic characters you might have to pull to trigger the guarantee for one Limited Mythic (e.g., 3 Non-LMs + 1 LM = 4 Mythics).">Worst-Case Mythic Pulls to Guarantee one LM:</strong> <span id="calcWorstCaseMythicsForLM">--</span></p>
+                        <div id="detailUnlockCostSection" class="hidden">
+                            <h4 class="font-medium text-sm text-gray-700 mt-2 mb-1">Initial Unlock Cost:</h4>
+                            <p><strong title="On average, how many Mythic characters (LM or Non-LM) you'll pull before getting your first copy of the featured Limited Mythic.">Avg Mythics for 1st LM:</strong> <span id="detailAvgMythicsForLM">--</span></p>
+                            <p>Anvils for Unlock (Avg): <span id="detailAnvilsUnlockAvg">--</span> | (Best): <span id="detailAnvilsUnlockBest">--</span> | (Worst): <span id="detailAnvilsUnlockWorst">--</span></p>
+                        </div>
+
+                        <h3 class="font-semibold text-md mt-4 mb-2 text-gray-800">Shard Gain per Mythic Pull (for progression after unlock):</h3>
+                        <p>Current Bleed System (LM=<span id="detailLMSCurrent">40</span>, NM=<span id="detailNMSCurrent">0</span>): <strong title="Considering the LM rate-up and guarantee, this is the average number of shards for the *featured LM* you effectively gain each time you pull *any* Mythic character during the LM's banner.">Avg Effective Shards per Mythic:</strong> <span id="calcAvgShardsCurrent">--</span></p>
+                        <p>Proposed Bleed System (LM=<span id="detailLMSProposed">25</span>, NM=<span id="detailNMSProposed">5</span>): <strong title="Considering the LM rate-up and guarantee, this is the average number of shards for the *featured LM* you effectively gain each time you pull *any* Mythic character during the LM's banner.">Avg Effective Shards per Mythic:</strong> <span id="calcAvgShardsProposed">--</span></p>
+
+                        <h3 class="font-semibold text-md mt-4 mb-2 text-gray-800">Anvil Cost Breakdown (for Selected Shard Upgrade):</h3>
+                        <p id="anvilCostBreakdownNote">(Costs below are for the selected shard upgrade. Total costs may include initial unlock if selected above.)</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <h4 class="font-medium text-sm text-gray-700 mb-1">Current Bleed System:</h4>
+                                <p>Shards for This Upgrade: <strong id="detailTargetShardsCurrent">--</strong></p>
+                                <p>Effective Shards/Mythic (Avg): <strong id="detailAvgShardsCurrent">--</strong></p>
+                                <p>Calculated Mythic Pulls (Avg): <strong id="detailMythicPullsAvgCurrent">--</strong></p>
+                                <p>Total Anvils for Upgrade (Avg): <strong id="detailAnvilsAvgCurrent">--</strong></p>
+
+                                <p class="mt-2">Effective Shards/Mythic (Best): <strong id="detailBestShardsCurrent">--</strong></p>
+                                <p>Calculated Mythic Pulls (Best): <strong id="detailMythicPullsBestCurrent">--</strong></p>
+                                <p>Total Anvils for Upgrade (Best): <strong id="detailAnvilsBestCurrent">--</strong></p>
+
+                                <p class="mt-2">Effective Shards/Mythic (Worst): <strong id="detailWorstShardsCurrent">--</strong></p>
+                                <p>Calculated Mythic Pulls (Worst): <strong id="detailMythicPullsWorstCurrent">--</strong></p>
+                                <p>Total Anvils for Upgrade (Worst): <strong id="detailAnvilsWorstCurrent">--</strong></p>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-sm text-gray-700 mb-1">Proposed Bleed System:</h4>
+                                <p>Shards for This Upgrade: <strong id="detailTargetShardsProposed">--</strong></p>
+                                <p>Effective Shards/Mythic (Avg): <strong id="detailAvgShardsProposed">--</strong></p>
+                                <p>Calculated Mythic Pulls (Avg): <strong id="detailMythicPullsAvgProposed">--</strong></p>
+                                <p>Total Anvils for Upgrade (Avg): <strong id="detailAnvilsAvgProposed">--</strong></p>
+
+                                <p class="mt-2">Effective Shards/Mythic (Best): <strong id="detailBestShardsProposed">--</strong></p>
+                                <p>Calculated Mythic Pulls (Best): <strong id="detailMythicPullsBestProposed">--</strong></p>
+                                <p>Total Anvils for Upgrade (Best): <strong id="detailAnvilsBestProposed">--</strong></p>
+
+                                <p class="mt-2">Effective Shards/Mythic (Worst): <strong id="detailWorstShardsProposed">--</strong></p>
+                                <p>Calculated Mythic Pulls (Worst): <strong id="detailMythicPullsWorstProposed">--</strong></p>
+                                <p>Total Anvils for Upgrade (Worst): <strong id="detailAnvilsWorstProposed">--</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <div class="chart-container calc-section">
+                    <h3 class="font-semibold text-xl mb-4 text-gray-800 text-center">Average Anvil Costs by Star Level (Total from Base)</h3>
+                    <canvas id="anvilCostChart"></canvas>
+                </div>
             </div>
         </div>
-    </div>
 
-    <script src="js/bleed.js"></script>
-</body>
+        <script src="js/bleed.js"></script>
+
+    </body>
 </html>
