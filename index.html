@@ -38,47 +38,54 @@
             border-color: #3b82f6; /* Blue 500 */
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
         }
-        .btn-primary {
-            background-color: #3b82f6; /* Blue 500 */
-            color: white;
+        .btn { /* General button class */
             padding: 0.8rem 1.5rem;
             border-radius: 0.75rem; /* More rounded */
             font-weight: 700;
             cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn-primary {
+            background-color: #3b82f6; /* Blue 500 */
+            color: white;
             box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
         }
         .btn-primary:hover {
             background-color: #2563eb; /* Blue 600 */
             transform: translateY(-1px);
+            box-shadow: 0 6px 8px rgba(59, 130, 246, 0.3);
+        }
+        .btn-primary:disabled {
+            background-color: #93c5fd; /* Blue 300 */
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
         }
         .btn-secondary {
             background-color: #64748b; /* Slate 500 */
             color: white;
-            padding: 0.6rem 1.2rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
+            padding: 0.6rem 1.2rem; /* Slightly smaller padding for secondary */
             box-shadow: 0 4px 6px rgba(100, 116, 139, 0.2);
         }
         .btn-secondary:hover {
             background-color: #475569; /* Slate 600 */
             transform: translateY(-1px);
+            box-shadow: 0 6px 8px rgba(100, 116, 139, 0.3);
         }
         .btn-danger {
             background-color: #ef4444; /* Red 500 */
             color: white;
-             padding: 0.6rem 1.2rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
+            padding: 0.6rem 1.2rem; /* Slightly smaller padding for danger */
             box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
         }
         .btn-danger:hover {
             background-color: #dc2626; /* Red 600 */
             transform: translateY(-1px);
+            box-shadow: 0 6px 8px rgba(239, 68, 68, 0.3);
         }
         .result-box {
             background-color: #e0f2fe; /* Light blue */
@@ -211,6 +218,38 @@
             width: 1.25rem; /* Set icon size */
             height: 1.25rem;
         }
+        /* UI/UX Enhancement: Section Styling */
+        .calc-section {
+            background-color: #ffffff; /* Keep white or slightly off-white like #f8fafc */
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Softer shadow */
+            margin-bottom: 2rem; /* Space between sections */
+            border: 1px solid #e2e8f0; /* Light border for definition */
+        }
+        .calc-section h2 {
+            margin-top: 0; /* Remove default margin if any */
+        }
+
+        /* Loading indicator for button */
+        .btn-loading .btn-text {
+            display: none;
+        }
+        .btn-loading .spinner {
+            display: inline-block;
+            width: 1.25rem; /* 20px */
+            height: 1.25rem; /* 20px */
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        .spinner {
+            display: none; /* Hidden by default */
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
@@ -225,14 +264,13 @@
         <h1 class="text-3xl font-bold text-center mb-6">DC: Dark Legion - Anvil Calculator</h1>
         <p class="text-center text-gray-600 mb-8">Estimate the average Anvils needed for a specific character upgrade.</p>
 
-        <div class="mb-8 p-4 bg-gray-100 rounded-lg shadow-inner">
-            <h2 class="text-xl font-semibold mb-4">Manage Profiles</h2>
+        <div class="calc-section bg-gray-50"> <h2 class="text-xl font-semibold mb-4">Manage Profiles</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
                 <div class="input-group">
                     <label for="profileName" class="block text-sm">Profile Name:</label>
                     <input type="text" id="profileName" placeholder="Enter profile name">
                 </div>
-                <button id="saveProfileBtn" class="btn-primary py-2.5">Save Current Settings</button>
+                <button id="saveProfileBtn" class="btn btn-primary py-2.5">Save Current Settings</button>
             </div>
             <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                 <div class="input-group md:col-span-1">
@@ -241,38 +279,38 @@
                         <option value="">-- Select a Profile --</option>
                     </select>
                 </div>
-                <button id="loadProfileBtn" class="btn-secondary py-2.5">Load Selected</button>
-                <button id="deleteProfileBtn" class="btn-danger py-2.5">Delete Selected</button>
+                <button id="loadProfileBtn" class="btn btn-secondary py-2.5">Load Selected</button>
+                <button id="deleteProfileBtn" class="btn btn-danger py-2.5">Delete Selected</button>
             </div>
-            <div id="profileStatus" class="status-message mt-3 h-8"></div> </div>
+            <div id="profileStatus" class="status-message mt-3 h-8"></div>
+        </div>
 
-        <div class="mb-8 p-4 bg-blue-50 rounded-lg shadow-inner">
-            <h2 class="text-xl font-semibold mb-4">Configure Base Gacha Rates</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="calc-section">
+            <h2 class="text-xl font-semibold mb-4">Configure Base Pull Rates</h2> <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="input-group">
-                    <label for="mythicProbability" class="block text-sm">Mythic Base Probability (e.g., 0.0384 for 3.84%):</label>
+                    <label for="mythicProbability" class="block text-sm" title="The base chance of pulling any Mythic character (e.g., 0.0384 for 3.84%).">Mythic Base Probability:</label>
                     <input type="number" id="mythicProbability" value="0.0384" step="0.0001" min="0" max="1">
                     <p id="mythicProbabilityError" class="error-message hidden"></p>
                 </div>
                 <div class="input-group">
-                    <label for="mythicHardPity" class="block text-sm">Mythic Hard Pity (e.g., 50):</label>
+                    <label for="mythicHardPity" class="block text-sm" title="The maximum number of pulls after which a Mythic character is guaranteed.">Mythic Hard Pity:</label>
                     <input type="number" id="mythicHardPity" value="50" step="1" min="1">
                     <p id="mythicHardPityError" class="error-message hidden"></p>
                 </div>
             </div>
             <div class="input-group mt-4">
-                <label for="lmRateUpChance" class="block text-sm">Limited Mythic Rate-Up Chance (e.g., 0.269 for 26.9%):</label>
+                <label for="lmRateUpChance" class="block text-sm" title="When you pull a Mythic, this is the chance it's the featured Limited Mythic (e.g., 0.269 for 26.9%).">Limited Mythic Rate-Up Chance:</label>
                 <input type="number" id="lmRateUpChance" value="0.269" step="0.001" min="0" max="1">
                 <p id="lmRateUpChanceError" class="error-message hidden"></p>
             </div>
-            <p class="text-sm text-gray-500 mt-2">Note: "Fail three times" guarantee for Limited Mythic is hardcoded based on game rules (3 Non-Limited Mythics before a guaranteed Limited Mythic).</p>
+            <p class="text-sm text-gray-500 mt-2">Note: "Fail three times" guarantee for Limited Mythic is hardcoded (3 Non-LM before guaranteed LM).</p>
             <div class="input-group mt-4 flex items-center">
                 <input type="checkbox" id="includeUnlockCost" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" style="width: auto; margin-right: 0.5rem;">
                 <label for="includeUnlockCost" class="block text-sm">Include cost of initially unlocking the character?</label>
             </div>
         </div>
 
-        <div class="mb-8 p-4 bg-purple-50 rounded-lg shadow-inner">
+        <div class="calc-section">
             <h2 class="text-xl font-semibold mb-4">Select Upgrade Range</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="input-group">
@@ -289,12 +327,11 @@
             <p id="starLevelError" class="error-message hidden text-center mt-2"></p>
         </div>
 
-        <div id="advisoryBox" class="advisory-box mb-8">
-            <p class="font-bold">Important Note:</p>
+        <div id="advisoryBox" class="advisory-box mb-8 calc-section"> <p class="font-bold">Important Note:</p>
             <p id="advisoryMessage">The Anvil costs displayed are for **shard accumulation only** for the selected upgrade. They DO NOT include the separate, initial pull required to **unlock** the Limited Mythic character, unless explicitly selected above.</p>
         </div>
 
-        <div class="mb-8 p-4 bg-green-50 rounded-lg shadow-inner">
+        <div class="calc-section">
             <h2 class="text-xl font-semibold mb-4">Configure Shard Bleed Systems</h2>
             <p class="text-xs text-gray-500 mb-2">These values define how many shards you get when pulling a duplicate Mythic that is either the Limited Mythic (LM) or a Non-Limited Mythic (NM) during an LM banner.</p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -311,15 +348,12 @@
             </div>
         </div>
 
-        <button id="calculateBtn" class="btn-primary w-full flex items-center justify-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            Calculate Anvils
+        <button id="calculateBtn" class="btn btn-primary w-full text-lg py-3">
+            <span class="spinner"></span>
+            <span class="btn-text">Calculate Anvils</span>
         </button>
 
-        <div id="results" class="mt-8">
-            <h2 class="text-xl font-semibold mb-4">Calculation Results</h2>
+        <div id="results" class="mt-8 calc-section"> <h2 class="text-xl font-semibold mb-4">Calculation Results</h2>
             <div id="unlockCostSection" class="hidden">
                 <h3 class="font-medium text-lg mb-2 text-indigo-700">Initial Unlock Cost (for one copy of LM)</h3>
                 <div class="result-box mb-2 bg-indigo-50 border-indigo-500">
@@ -366,20 +400,19 @@
             </div>
             <p id="conclusion" class="text-center text-gray-700 font-medium mt-6"></p>
 
-            <details class="mt-8">
-                <summary>Detailed Calculations</summary>
+            <details class="mt-8"> <summary>Detailed Calculations</summary>
                 <div class="calculation-detail mt-4">
-                    <h3 class="font-semibold text-md mb-2 text-gray-800">Core Gacha Mechanics:</h3>
-                    <p>Average Draws per Mythic Character: <strong id="calcDrawsPerMythic">--</strong> Anvils</p>
+                    <h3 class="font-semibold text-md mb-2 text-gray-800">Core Pull Mechanics:</h3> <p><strong title="The average number of Anvils (draws) you need to spend to obtain any Mythic character, considering base probability and hard pity.">Average Draws per Mythic Character:</strong> <span id="calcDrawsPerMythic">--</span> Anvils</p>
+                    <p><strong title="The maximum number of Mythic characters you might have to pull to trigger the guarantee for one Limited Mythic (e.g., 3 Non-LMs + 1 LM = 4 Mythics).">Worst-Case Mythic Pulls to Guarantee one LM:</strong> <span id="calcWorstCaseMythicsForLM">--</span></p>
                     <div id="detailUnlockCostSection" class="hidden">
                         <h4 class="font-medium text-sm text-gray-700 mt-2 mb-1">Initial Unlock Cost:</h4>
-                        <p>Avg Mythics for 1st LM: <strong id="detailAvgMythicsForLM">--</strong></p>
-                        <p>Anvils for Unlock (Avg): <strong id="detailAnvilsUnlockAvg">--</strong> | (Best): <strong id="detailAnvilsUnlockBest">--</strong> | (Worst): <strong id="detailAnvilsUnlockWorst">--</strong></p>
+                        <p><strong title="On average, how many Mythic characters (LM or Non-LM) you'll pull before getting your first copy of the featured Limited Mythic.">Avg Mythics for 1st LM:</strong> <span id="detailAvgMythicsForLM">--</span></p>
+                        <p>Anvils for Unlock (Avg): <span id="detailAnvilsUnlockAvg">--</span> | (Best): <span id="detailAnvilsUnlockBest">--</span> | (Worst): <span id="detailAnvilsUnlockWorst">--</span></p>
                     </div>
 
                     <h3 class="font-semibold text-md mt-4 mb-2 text-gray-800">Shard Gain per Mythic Pull (for progression after unlock):</h3>
-                    <p>Current Bleed System (LM=<span id="detailLMSCurrent">40</span>, NM=<span id="detailNMSCurrent">0</span>): Avg Effective Shards per Mythic: <strong id="calcAvgShardsCurrent">--</strong></p>
-                    <p>Proposed Bleed System (LM=<span id="detailLMSProposed">25</span>, NM=<span id="detailNMSProposed">5</span>): Avg Effective Shards per Mythic: <strong id="calcAvgShardsProposed">--</strong></p>
+                    <p>Current Bleed System (LM=<span id="detailLMSCurrent">40</span>, NM=<span id="detailNMSCurrent">0</span>): <strong title="Considering the LM rate-up and guarantee, this is the average number of shards for the *featured LM* you effectively gain each time you pull *any* Mythic character during the LM's banner.">Avg Effective Shards per Mythic:</strong> <span id="calcAvgShardsCurrent">--</span></p>
+                    <p>Proposed Bleed System (LM=<span id="detailLMSProposed">25</span>, NM=<span id="detailNMSProposed">5</span>): <strong title="Considering the LM rate-up and guarantee, this is the average number of shards for the *featured LM* you effectively gain each time you pull *any* Mythic character during the LM's banner.">Avg Effective Shards per Mythic:</strong> <span id="calcAvgShardsProposed">--</span></p>
 
                     <h3 class="font-semibold text-md mt-4 mb-2 text-gray-800">Anvil Cost Breakdown (for Selected Shard Upgrade):</h3>
                     <p id="anvilCostBreakdownNote">(Costs below are for the selected shard upgrade. Total costs may include initial unlock if selected above.)</p>
@@ -418,14 +451,12 @@
                 </div>
             </details>
 
-            <div class="chart-container">
-                <h3 class="font-semibold text-xl mb-4 text-gray-800 text-center">Average Anvil Costs by Star Level (Total from Base)</h3>
+            <div class="chart-container calc-section"> <h3 class="font-semibold text-xl mb-4 text-gray-800 text-center">Average Anvil Costs by Star Level (Total from Base)</h3>
                 <canvas id="anvilCostChart"></canvas>
             </div>
         </div>
     </div>
 
     <script src="js/bleed.js"></script>
-</body>
 </body>
 </html>
