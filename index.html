@@ -287,26 +287,16 @@
             <p class="text-center text-gray-600 mb-8">Estimate the average Anvils needed for a specific character upgrade.</p>
 
             <div class="calc-section bg-gray-50">
-                <h2 class="text-xl font-semibold mb-4">Manage Profiles</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+                <h2 class="text-xl font-semibold mb-4">Manage Champions</h2> <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
                     <div class="input-group">
-                        <label for="profileName" class="block text-sm">Profile Name:</label>
-                        <input type="text" id="profileName" placeholder="Enter profile name">
-                    </div>
-                    <button id="saveProfileBtn" class="btn btn-primary py-2.5">Save Current Settings</button>
-                </div>
+                        <label for="championName" class="block text-sm">Champion Name:</label> <input type="text" id="championName" placeholder="Enter champion name"> </div>
+                    <button id="saveChampionBtn" class="btn btn-primary py-2.5">Save Current Settings</button> </div>
                 <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                     <div class="input-group md:col-span-1">
-                        <label for="savedProfiles" class="block text-sm">Load Profile:</label>
-                        <select id="savedProfiles">
-                            <option value="">-- Select a Profile --</option>
-                        </select>
+                        <label for="savedChampions" class="block text-sm">Load Champion:</label> <select id="savedChampions"> <option value="">-- Select a Champion --</option> </select>
                     </div>
-                    <button id="loadProfileBtn" class="btn btn-secondary py-2.5">Load Selected</button>
-                    <button id="deleteProfileBtn" class="btn btn-danger py-2.5">Delete Selected</button>
-                </div>
-                <div id="profileStatus" class="status-message mt-3 h-8"></div>
-            </div>
+                    <button id="loadChampionBtn" class="btn btn-secondary py-2.5">Load Selected</button> <button id="deleteChampionBtn" class="btn btn-danger py-2.5">Delete Selected</button> </div>
+                <div id="championStatus" class="status-message mt-3 h-8"></div> </div>
 
             <div class="calc-section">
                 <h2 class="text-xl font-semibold mb-4">Configure Base Pull Rates</h2>
@@ -488,6 +478,5 @@
         </div>
 
         <script src="js/bleed.js"></script>
-
     </body>
-</html>
+    </html>
