@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DC: Dark Legion - Anvil Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* Custom font for Inter */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
@@ -131,6 +132,16 @@
             color: #78350f; /* Amber 900 */
             font-size: 0.95rem;
         }
+        .chart-container {
+            position: relative;
+            height: 400px; /* Fixed height for the chart */
+            width: 100%;
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
@@ -160,6 +171,20 @@
             <p class="text-sm text-gray-500 mt-2">Note: "Fail three times" guarantee for Limited Mythic is hardcoded based on game rules.</p>
         </div>
 
+        <div class="mb-8 p-4 bg-purple-50 rounded-lg shadow-inner">
+            <h2 class="text-xl font-semibold mb-4">Select Target Star Level</h2>
+            <div class="input-group">
+                <label for="targetStarLevel" class="block text-sm">Choose Star Level:</label>
+                <select id="targetStarLevel" class="block w-full">
+                    </select>
+            </div>
+        </div>
+
+        <div class="advisory-box mt-6">
+            <p class="font-bold">Important Note:</p>
+            <p>The Anvil costs displayed below are for **shard accumulation only** to reach the selected Star Level. They DO NOT include the separate, initial pull required to **unlock** the Limited Mythic character. You must first obtain that unlock pull before any shard progression can begin.</p>
+        </div>
+
         <div class="mb-8 p-4 bg-green-50 rounded-lg shadow-inner">
             <h2 class="text-xl font-semibold mb-4">Configure Shard Bleed Systems</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -173,15 +198,6 @@
                     <p class="text-sm text-gray-700">Limited Mythic (LM) Shards: 25</p>
                     <p class="text-sm text-gray-700">Non-Limited Mythic (NM) Shards: 5</p>
                 </div>
-            </div>
-        </div>
-
-        <div class="mb-8 p-4 bg-purple-50 rounded-lg shadow-inner">
-            <h2 class="text-xl font-semibold mb-4">Select Target Star Level</h2>
-            <div class="input-group">
-                <label for="targetStarLevel" class="block text-sm">Choose Star Level:</label>
-                <select id="targetStarLevel" class="block w-full">
-                    </select>
             </div>
         </div>
 
@@ -225,9 +241,61 @@
             </div>
             <p id="conclusion" class="text-center text-gray-700 font-medium mt-6"></p>
 
-            <div class="advisory-box mt-6">
-                <p class="font-bold">Important Note:</p>
-                <p>The Anvil costs displayed above are for **shard accumulation only** to reach the selected Star Level. They DO NOT include the separate, initial pull required to **unlock** the Limited Mythic character. You must first obtain that unlock pull before any shard progression can begin.</p>
+            <details class="mt-8">
+                <summary>Detailed Calculations</summary>
+                <div class="calculation-detail mt-4">
+                    <h3 class="font-semibold text-md mb-2 text-gray-800">Core Gacha Mechanics:</h3>
+                    <p>Average Draws per Mythic Character: <strong id="calcDrawsPerMythic">--</strong> Anvils</p>
+
+                    <h3 class="font-semibold text-md mt-4 mb-2 text-gray-800">Shard Gain per Mythic Pull:</h3>
+                    <p>Current Bleed System (LM=40, NM=0): Average Shards per Mythic Pull: <strong id="calcAvgShardsCurrent">--</strong></p>
+                    <p>Proposed Bleed System (LM=25, NM=5): Average Shards per Mythic Pull: <strong id="calcAvgShardsProposed">--</strong></p>
+
+                    <h3 class="font-semibold text-md mt-4 mb-2 text-gray-800">Anvil Cost Breakdown:</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="font-medium text-sm text-gray-700 mb-1">Current Bleed System:</h4>
+                            <p>Target Shards: <strong id="detailTargetShardsCurrent">--</strong></p>
+                            <p>Effective Shards/Mythic (Avg): <strong id="detailAvgShardsCurrent">--</strong></p>
+                            <p>Calculated Mythic Pulls (Avg): <strong id="detailMythicPullsAvgCurrent">--</strong></p>
+                            <p>Effective Draws/Mythic (Avg): <strong id="detailDrawsPerMythicAvgCurrent">--</strong></p>
+                            <p>Total Anvils (Avg): <strong id="detailAnvilsAvgCurrent">--</strong></p>
+
+                            <p class="mt-2">Effective Shards/Mythic (Best): <strong id="detailBestShardsCurrent">--</strong></p>
+                            <p>Calculated Mythic Pulls (Best): <strong id="detailMythicPullsBestCurrent">--</strong></p>
+                            <p>Effective Draws/Mythic (Best): <strong id="detailDrawsPerMythicBestCurrent">--</strong></p>
+                            <p>Total Anvils (Best): <strong id="detailAnvilsBestCurrent">--</strong></p>
+
+                            <p class="mt-2">Effective Shards/Mythic (Worst): <strong id="detailWorstShardsCurrent">--</strong></p>
+                            <p>Calculated Mythic Pulls (Worst): <strong id="detailMythicPullsWorstCurrent">--</strong></p>
+                            <p>Effective Draws/Mythic (Worst): <strong id="detailDrawsPerMythicWorstCurrent">--</strong></p>
+                            <p>Total Anvils (Worst): <strong id="detailAnvilsWorstCurrent">--</strong></p>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-sm text-gray-700 mb-1">Proposed Bleed System:</h4>
+                            <p>Target Shards: <strong id="detailTargetShardsProposed">--</strong></p>
+                            <p>Effective Shards/Mythic (Avg): <strong id="detailAvgShardsProposed">--</strong></p>
+                            <p>Calculated Mythic Pulls (Avg): <strong id="detailMythicPullsAvgProposed">--</strong></p>
+                            <p>Effective Draws/Mythic (Avg): <strong id="detailDrawsPerMythicAvgProposed">--</strong></p>
+                            <p>Total Anvils (Avg): <strong id="detailAnvilsAvgProposed">--</strong></p>
+
+                            <p class="mt-2">Effective Shards/Mythic (Best): <strong id="detailBestShardsProposed">--</strong></p>
+                            <p>Calculated Mythic Pulls (Best): <strong id="detailMythicPullsBestProposed">--</strong></p>
+                            <p>Effective Draws/Mythic (Best): <strong id="detailDrawsPerMythicBestProposed">--</strong></strong</p>
+                            <p>Total Anvils (Best): <strong id="detailAnvilsBestProposed">--</strong></p>
+
+                            <p class="mt-2">Effective Shards/Mythic (Worst): <strong id="detailWorstShardsProposed">--</strong></p>
+                            <p>Calculated Mythic Pulls (Worst): <strong id="detailMythicPullsWorstProposed">--</strong></p>
+                            <p>Effective Draws/Mythic (Worst): <strong id="detailDrawsPerMythicWorstProposed">--</strong></p>
+                            <p>Total Anvils (Worst): <strong id="detailAnvilsWorstProposed">--</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <div class="chart-container">
+                <h3 class="font-semibold text-xl mb-4 text-gray-800 text-center">Average Anvil Costs by Star Level</h3>
+                <canvas id="anvilCostChart"></canvas>
             </div>
         </div>
     </div>
@@ -311,6 +379,10 @@
             if (avgShardsPerMythic <= 0) {
                 return Infinity; // Cannot gain shards, so infinite anvils needed
             }
+            // If targetShards is 0, cost is 0
+            if (targetShards === 0) {
+                return 0;
+            }
             // Use Math.ceil for mythic pulls as you can't have a fraction of a pull
             const expectedMythicPulls = Math.ceil(targetShards / avgShardsPerMythic);
             const anvilsNeeded = expectedMythicPulls * drawsPerMythic;
@@ -334,6 +406,40 @@
         const anvilsWorstProposedSpan = document.getElementById('anvilsWorstProposed');
         const conclusionParagraph = document.getElementById('conclusion');
 
+        // Detailed calculations display spans
+        const calcDrawsPerMythicSpan = document.getElementById('calcDrawsPerMythic');
+        const calcAvgShardsCurrentSpan = document.getElementById('calcAvgShardsCurrent');
+        const calcAvgShardsProposedSpan = document.getElementById('calcAvgShardsProposed');
+        // New spans for detailed breakdown
+        const detailTargetShardsCurrentSpan = document.getElementById('detailTargetShardsCurrent');
+        const detailAvgShardsCurrentSpan = document.getElementById('detailAvgShardsCurrent');
+        const detailMythicPullsAvgCurrentSpan = document.getElementById('detailMythicPullsAvgCurrent');
+        const detailDrawsPerMythicAvgCurrentSpan = document.getElementById('detailDrawsPerMythicAvgCurrent');
+        const detailAnvilsAvgCurrentSpan = document.getElementById('detailAnvilsAvgCurrent');
+        const detailBestShardsCurrentSpan = document.getElementById('detailBestShardsCurrent');
+        const detailMythicPullsBestCurrentSpan = document.getElementById('detailMythicPullsBestCurrent');
+        const detailDrawsPerMythicBestCurrentSpan = document.getElementById('detailDrawsPerMythicBestCurrent');
+        const detailAnvilsBestCurrentSpan = document.getElementById('detailAnvilsBestCurrent');
+        const detailWorstShardsCurrentSpan = document.getElementById('detailWorstShardsCurrent');
+        const detailMythicPullsWorstCurrentSpan = document.getElementById('detailMythicPullsWorstCurrent');
+        const detailDrawsPerMythicWorstCurrentSpan = document.getElementById('detailDrawsPerMythicWorstCurrent');
+        const detailAnvilsWorstCurrentSpan = document.getElementById('detailAnvilsWorstCurrent');
+
+        const detailTargetShardsProposedSpan = document.getElementById('detailTargetShardsProposed');
+        const detailAvgShardsProposedSpan = document.getElementById('detailAvgShardsProposed');
+        const detailMythicPullsAvgProposedSpan = document.getElementById('detailMythicPullsAvgProposed');
+        const detailDrawsPerMythicAvgProposedSpan = document.getElementById('detailDrawsPerMythicAvgProposed');
+        const detailAnvilsAvgProposedSpan = document.getElementById('detailAnvilsAvgProposed');
+        const detailBestShardsProposedSpan = document.getElementById('detailBestShardsProposed');
+        const detailMythicPullsBestProposedSpan = document.getElementById('detailMythicPullsBestProposed');
+        const detailDrawsPerMythicBestProposedSpan = document.getElementById('detailDrawsPerMythicBestProposed');
+        const detailAnvilsBestProposedSpan = document.getElementById('detailAnvilsBestProposed');
+        const detailWorstShardsProposedSpan = document.getElementById('detailWorstShardsProposed');
+        const detailMythicPullsWorstProposedSpan = document.getElementById('detailMythicPullsWorstProposed');
+        const detailDrawsPerMythicWorstProposedSpan = document.getElementById('detailDrawsPerMythicWorstProposed');
+        const detailAnvilsWorstProposedSpan = document.getElementById('detailAnvilsWorstProposed');
+
+
         // Error message elements
         const mythicProbabilityError = document.getElementById('mythicProbabilityError');
         const mythicHardPityError = document.getElementById('mythicHardPityError');
@@ -344,31 +450,34 @@
 
         const SHARD_REQUIREMENTS = {
             "White 1-Star": 2,
-            "White 2-Star": 5,   // 2 + 3
-            "White 3-Star": 10,  // 5 + 5
-            "White 4-Star": 20,  // 10 + 10
-            "White 5-Star": 40,  // 20 + 20
-            "Blue 1-Star": 60,   // 40 + 20
-            "Blue 2-Star": 80,   // 60 + 20
-            "Blue 3-Star": 100,  // 80 + 20
-            "Blue 4-Star": 130,  // 100 + 30
-            "Blue 5-Star": 160,  // 130 + 30
-            "Purple 1-Star": 200, // 160 + 40
-            "Purple 2-Star": 240, // 200 + 40
-            "Purple 3-Star": 280, // 240 + 40
-            "Purple 4-Star": 320, // 280 + 40
-            "Purple 5-Star": 360, // 320 + 40
-            "Gold 1-Star": 400,  // 360 + 40
-            "Gold 2-Star": 440,  // 400 + 40
-            "Gold 3-Star": 480,  // 440 + 40
-            "Gold 4-Star": 540,  // 480 + 60
-            "Gold 5-Star": 600,  // 540 + 60
-            "Red 1-Star": 680,   // 600 + 80
-            "Red 2-Star": 760,   // 680 + 80
-            "Red 3-Star": 840,   // 760 + 80
-            "Red 4-Star": 920,   // 840 + 80
-            "Red 5-Star": 1000  // 920 + 80
+            "White 2-Star": 5,
+            "White 3-Star": 10,
+            "White 4-Star": 20,
+            "White 5-Star": 40,
+            "Blue 1-Star": 60,
+            "Blue 2-Star": 80,
+            "Blue 3-Star": 100,
+            "Blue 4-Star": 130,
+            "Blue 5-Star": 160,
+            "Purple 1-Star": 200,
+            "Purple 2-Star": 240,
+            "Purple 3-Star": 280,
+            "Purple 4-Star": 320,
+            "Purple 5-Star": 360,
+            "Gold 1-Star": 400,
+            "Gold 2-Star": 440,
+            "Gold 3-Star": 480,
+            "Gold 4-Star": 540,
+            "Gold 5-Star": 600,
+            "Red 1-Star": 680,
+            "Red 2-Star": 760,
+            "Red 3-Star": 840,
+            "Red 4-Star": 920,
+            "Red 5-Star": 1000
         };
+
+        // Chart instance
+        let anvilCostChart;
 
         // Populate the Star Level dropdown
         function populateStarLevels() {
@@ -379,6 +488,67 @@
                 targetStarLevelSelect.appendChild(option);
             }
         }
+
+        // Function to update the chart
+        function updateChart(currentCosts, proposedCosts, labels) {
+            const ctx = document.getElementById('anvilCostChart').getContext('2d');
+
+            if (anvilCostChart) {
+                anvilCostChart.destroy(); // Destroy existing chart before creating a new one
+            }
+
+            anvilCostChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Current Bleed System',
+                            data: currentCosts,
+                            backgroundColor: 'rgba(59, 130, 246, 0.7)', // Blue
+                            borderColor: 'rgba(59, 130, 246, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Proposed Bleed System',
+                            data: proposedCosts,
+                            backgroundColor: 'rgba(16, 185, 129, 0.7)', // Green
+                            borderColor: 'rgba(16, 185, 129, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Average Anvils Needed'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Star Level'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + Math.round(context.raw) + ' Anvils';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
 
         // --- Main Calculation Logic ---
         function updateCalculator() {
@@ -394,6 +564,39 @@
             anvilsBestProposedSpan.textContent = '--';
             anvilsWorstProposedSpan.textContent = '--';
             conclusionParagraph.textContent = '';
+
+            // Clear detailed calculation spans
+            calcDrawsPerMythicSpan.textContent = '--';
+            calcAvgShardsCurrentSpan.textContent = '--';
+            calcAvgShardsProposedSpan.textContent = '--';
+            detailTargetShardsCurrentSpan.textContent = '--';
+            detailAvgShardsCurrentSpan.textContent = '--';
+            detailMythicPullsAvgCurrentSpan.textContent = '--';
+            detailDrawsPerMythicAvgCurrentSpan.textContent = '--';
+            detailAnvilsAvgCurrentSpan.textContent = '--';
+            detailBestShardsCurrentSpan.textContent = '--';
+            detailMythicPullsBestCurrentSpan.textContent = '--';
+            detailDrawsPerMythicBestCurrentSpan.textContent = '--';
+            detailAnvilsBestCurrentSpan.textContent = '--';
+            detailWorstShardsCurrentSpan.textContent = '--';
+            detailMythicPullsWorstCurrentSpan.textContent = '--';
+            detailDrawsPerMythicWorstCurrentSpan.textContent = '--';
+            detailAnvilsWorstCurrentSpan.textContent = '--';
+
+            detailTargetShardsProposedSpan.textContent = '--';
+            detailAvgShardsProposedSpan.textContent = '--';
+            detailMythicPullsAvgProposedSpan.textContent = '--';
+            detailDrawsPerMythicAvgProposedSpan.textContent = '--';
+            detailAnvilsAvgProposedSpan.textContent = '--';
+            detailBestShardsProposedSpan.textContent = '--';
+            detailMythicPullsBestProposedSpan.textContent = '--';
+            detailDrawsPerMythicBestProposedSpan.textContent = '--';
+            detailAnvilsBestProposedSpan.textContent = '--';
+            detailWorstShardsProposedSpan.textContent = '--';
+            detailMythicPullsWorstProposedSpan.textContent = '--';
+            detailDrawsPerMythicWorstProposedSpan.textContent = '--';
+            detailAnvilsWorstProposedSpan.textContent = '--';
+
 
             let isValid = true;
 
@@ -454,7 +657,9 @@
             const bestShardsPerMythicProposed = LM_SHARDS_PROPOSED;
 
             // Worst case shards per Mythic pull (worst LM guarantee cycle: 3 NMs + 1 LM = 4 Mythic pulls for 40 shards total)
-            const WORST_SHARDS_PER_MYTHIC_EFFECTIVE = 10; // (3*0 + 40) / 4 or (3*5 + 25) / 4
+            const worstShardsPerMythicCurrent = (NM_SHARDS_CURRENT * NM_GUARANTEE_THRESHOLD + LM_SHARDS_CURRENT) / (NM_GUARANTEE_THRESHOLD + 1);
+            const worstShardsPerMythicProposed = (NM_SHARDS_PROPOSED * NM_GUARANTEE_THRESHOLD + LM_SHARDS_PROPOSED) / (NM_GUARANTEE_THRESHOLD + 1);
+
 
             if (isNaN(avgShardsPerMythicCurrent) || isNaN(avgShardsPerMythicProposed)) {
                 anvilsCurrentSpan.textContent = 'Error';
@@ -472,10 +677,10 @@
             const anvilsProposed = calculateGachaAnvils(targetShards, avgShardsPerMythicProposed, drawsPerMythicAverage);
 
             const anvilsBestCurrent = calculateGachaAnvils(targetShards, bestShardsPerMythicCurrent, drawsPerMythicBest);
-            const anvilsWorstCurrent = calculateGachaAnvils(targetShards, WORST_SHARDS_PER_MYTHIC_EFFECTIVE, drawsPerMythicWorst);
+            const anvilsWorstCurrent = calculateGachaAnvils(targetShards, worstShardsPerMythicCurrent, drawsPerMythicWorst);
 
             const anvilsBestProposed = calculateGachaAnvils(targetShards, bestShardsPerMythicProposed, drawsPerMythicBest);
-            const anvilsWorstProposed = calculateGachaAnvils(targetShards, WORST_SHARDS_PER_MYTHIC_EFFECTIVE, drawsPerMythicWorst);
+            const anvilsWorstProposed = calculateGachaAnvils(targetShards, worstShardsPerMythicProposed, drawsPerMythicWorst);
 
 
             // Display results, rounded to nearest whole number
@@ -485,6 +690,44 @@
             anvilsWorstCurrentSpan.textContent = isFinite(anvilsWorstCurrent) ? Math.round(anvilsWorstCurrent).toString() : 'Infinity';
             anvilsBestProposedSpan.textContent = isFinite(anvilsBestProposed) ? Math.round(anvilsBestProposed).toString() : 'Infinity';
             anvilsWorstProposedSpan.textContent = isFinite(anvilsWorstProposed) ? Math.round(anvilsWorstProposed).toString() : 'Infinity';
+
+            // Populate detailed calculations
+            calcDrawsPerMythicSpan.textContent = drawsPerMythicAverage.toFixed(2);
+            calcAvgShardsCurrentSpan.textContent = avgShardsPerMythicCurrent.toFixed(2);
+            calcAvgShardsProposedSpan.textContent = avgShardsPerMythicProposed.toFixed(2);
+
+            // Detailed Anvil Cost Breakdown
+            detailTargetShardsCurrentSpan.textContent = targetShards.toString();
+            detailAvgShardsCurrentSpan.textContent = avgShardsPerMythicCurrent.toFixed(2);
+            detailMythicPullsAvgCurrentSpan.textContent = Math.ceil(targetShards / avgShardsPerMythicCurrent).toString();
+            detailDrawsPerMythicAvgCurrentSpan.textContent = drawsPerMythicAverage.toFixed(2);
+            detailAnvilsAvgCurrentSpan.textContent = Math.round(anvilsCurrent).toString();
+
+            detailBestShardsCurrentSpan.textContent = bestShardsPerMythicCurrent.toString();
+            detailMythicPullsBestCurrentSpan.textContent = Math.ceil(targetShards / bestShardsPerMythicCurrent).toString();
+            detailDrawsPerMythicBestCurrentSpan.textContent = drawsPerMythicBest.toString();
+            detailAnvilsBestCurrentSpan.textContent = Math.round(anvilsBestCurrent).toString();
+
+            detailWorstShardsCurrentSpan.textContent = worstShardsPerMythicCurrent.toFixed(2);
+            detailMythicPullsWorstCurrentSpan.textContent = Math.ceil(targetShards / worstShardsPerMythicCurrent).toString();
+            detailDrawsPerMythicWorstCurrentSpan.textContent = drawsPerMythicWorst.toString();
+            detailAnvilsWorstCurrentSpan.textContent = Math.round(anvilsWorstCurrent).toString();
+
+            detailTargetShardsProposedSpan.textContent = targetShards.toString();
+            detailAvgShardsProposedSpan.textContent = avgShardsPerMythicProposed.toFixed(2);
+            detailMythicPullsAvgProposedSpan.textContent = Math.ceil(targetShards / avgShardsPerMythicProposed).toString();
+            detailDrawsPerMythicAvgProposedSpan.textContent = drawsPerMythicAverage.toFixed(2);
+            detailAnvilsAvgProposedSpan.textContent = Math.round(anvilsProposed).toString();
+
+            detailBestShardsProposedSpan.textContent = bestShardsPerMythicProposed.toString();
+            detailMythicPullsBestProposedSpan.textContent = Math.ceil(targetShards / bestShardsPerMythicProposed).toString();
+            detailDrawsPerMythicBestProposedSpan.textContent = drawsPerMythicBest.toString();
+            detailAnvilsBestProposedSpan.textContent = Math.round(anvilsBestProposed).toString();
+
+            detailWorstShardsProposedSpan.textContent = worstShardsPerMythicProposed.toFixed(2);
+            detailMythicPullsWorstProposedSpan.textContent = Math.ceil(targetShards / worstShardsPerMythicProposed).toString();
+            detailDrawsPerMythicWorstProposedSpan.textContent = drawsPerMythicWorst.toString();
+            detailAnvilsWorstProposedSpan.textContent = Math.round(anvilsWorstProposed).toString();
 
 
             // Provide conclusion, rounding difference UP
@@ -497,6 +740,21 @@
             } else {
                 conclusionParagraph.textContent = 'Both systems require approximately the same number of Anvils for this goal.';
             }
+
+            // --- Update Chart ---
+            const allStarLevels = Object.keys(SHARD_REQUIREMENTS);
+            const allCurrentCosts = [];
+            const allProposedCosts = [];
+
+            allStarLevels.forEach(level => {
+                const shards = SHARD_REQUIREMENTS[level];
+                const currentCost = calculateGachaAnvils(shards, avgShardsPerMythicCurrent, drawsPerMythicAverage);
+                const proposedCost = calculateGachaAnvils(shards, avgShardsPerMythicProposed, drawsPerMythicAverage);
+                allCurrentCosts.push(isFinite(currentCost) ? Math.round(currentCost) : 0); // Use 0 for Infinity in chart
+                allProposedCosts.push(isFinite(proposedCost) ? Math.round(proposedCost) : 0);
+            });
+
+            updateChart(allCurrentCosts, allProposedCosts, allStarLevels);
         }
 
         // Initialize calculator on page load
