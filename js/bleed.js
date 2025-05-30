@@ -1,11 +1,19 @@
 // --- DOM Elements (Champion Management) ---
-const championNameInput = document.getElementById('championName'); // MODIFIED
-const saveChampionBtn = document.getElementById('saveChampionBtn'); // MODIFIED
-const savedChampionsSelect = document.getElementById('savedChampions'); // MODIFIED
-const loadChampionBtn = document.getElementById('loadChampionBtn'); // MODIFIED
-const deleteChampionBtn = document.getElementById('deleteChampionBtn'); // MODIFIED
-const championStatusDiv = document.getElementById('championStatus'); // MODIFIED
-const CHAMPION_STORAGE_PREFIX = 'gachaCalcChampion_'; // MODIFIED
+const championNameInput = document.getElementById('championName'); 
+const saveChampionBtn = document.getElementById('saveChampionBtn'); 
+const savedChampionsSelect = document.getElementById('savedChampions'); 
+const loadChampionBtn = document.getElementById('loadChampionBtn'); 
+const deleteChampionBtn = document.getElementById('deleteChampionBtn'); 
+const championStatusDiv = document.getElementById('championStatus'); 
+const CHAMPION_STORAGE_PREFIX = 'gachaCalcChampion_'; 
+
+// --- DOM Elements (Probability Simulation) ---
+const anvilBudgetInput = document.getElementById('anvilBudget');
+const calculateProbabilityBtn = document.getElementById('calculateProbabilityBtn');
+const probabilityStatusDiv = document.getElementById('probabilityStatus');
+const probabilityResultsArea = document.getElementById('probabilityResultsArea');
+const probabilityBtnText = calculateProbabilityBtn.querySelector('.btn-text');
+const probabilityBtnSpinner = calculateProbabilityBtn.querySelector('.spinner');
 
 
 // --- Core Calculation Functions ---
@@ -205,29 +213,27 @@ function updateChart(currentCosts, proposedCosts, labels, includeUnlock, unlockC
     });
 }
 
-// MODIFIED: Renamed function and updated references
 function displayChampionStatus(message, isError = false) {
-    championStatusDiv.textContent = message; // MODIFIED
+    championStatusDiv.textContent = message; 
     championStatusDiv.className = 'status-message text-center py-1'; 
     if (isError) {
-        championStatusDiv.classList.add('status-error'); // MODIFIED
+        championStatusDiv.classList.add('status-error'); 
     } else {
-        championStatusDiv.classList.add('status-success'); // MODIFIED
+        championStatusDiv.classList.add('status-success'); 
     }
     setTimeout(() => {
-        championStatusDiv.textContent = ''; // MODIFIED
+        championStatusDiv.textContent = ''; 
         championStatusDiv.className = 'status-message h-8'; 
     }, 3000);
 }
 
-// MODIFIED: Renamed function and updated references
 function saveChampion() {
-    const championName = championNameInput.value.trim(); // MODIFIED
+    const championName = championNameInput.value.trim(); 
     if (!championName) {
-        displayChampionStatus("Champion name cannot be empty.", true); // MODIFIED
+        displayChampionStatus("Champion name cannot be empty.", true); 
         return;
     }
-    const championData = { // MODIFIED
+    const championData = { 
         mythicProbability: mythicProbabilityInput.value,
         mythicHardPity: mythicHardPityInput.value,
         lmRateUpChance: lmRateUpChanceInput.value,
@@ -236,27 +242,26 @@ function saveChampion() {
         targetStarLevel: targetStarLevelSelect.value
     };
     try {
-        localStorage.setItem(CHAMPION_STORAGE_PREFIX + championName, JSON.stringify(championData)); // MODIFIED
-        displayChampionStatus(`Champion "${championName}" saved successfully!`); // MODIFIED
-        populateSavedChampionsDropdown(); // MODIFIED
+        localStorage.setItem(CHAMPION_STORAGE_PREFIX + championName, JSON.stringify(championData)); 
+        displayChampionStatus(`Champion "${championName}" saved successfully!`); 
+        populateSavedChampionsDropdown(); 
         championNameInput.value = ''; 
     } catch (e) {
-        displayChampionStatus("Error saving champion. LocalStorage might be full or disabled.", true); // MODIFIED
+        displayChampionStatus("Error saving champion. LocalStorage might be full or disabled.", true); 
         console.error("Error saving to localStorage:", e);
     }
 }
 
-// MODIFIED: Renamed function and updated references
 function loadChampion() {
-    const championName = savedChampionsSelect.value; // MODIFIED
+    const championName = savedChampionsSelect.value; 
     if (!championName) {
-        displayChampionStatus("No champion selected to load.", true); // MODIFIED
+        displayChampionStatus("No champion selected to load.", true); 
         return;
     }
     try {
-        const championDataString = localStorage.getItem(CHAMPION_STORAGE_PREFIX + championName); // MODIFIED
+        const championDataString = localStorage.getItem(CHAMPION_STORAGE_PREFIX + championName); 
         if (championDataString) {
-            const championData = JSON.parse(championDataString); // MODIFIED
+            const championData = JSON.parse(championDataString); 
             mythicProbabilityInput.value = championData.mythicProbability;
             mythicHardPityInput.value = championData.mythicHardPity;
             lmRateUpChanceInput.value = championData.lmRateUpChance;
@@ -265,64 +270,62 @@ function loadChampion() {
             startStarLevelSelect.value = championData.startStarLevel;
             targetStarLevelSelect.value = championData.targetStarLevel;
             updateCalculator(); 
-            displayChampionStatus(`Champion "${championName}" loaded.`); // MODIFIED
+            displayChampionStatus(`Champion "${championName}" loaded.`); 
         } else {
-            displayChampionStatus(`Champion "${championName}" not found.`, true); // MODIFIED
+            displayChampionStatus(`Champion "${championName}" not found.`, true); 
         }
     } catch (e) {
-        displayChampionStatus("Error loading champion. Data might be corrupted.", true); // MODIFIED
+        displayChampionStatus("Error loading champion. Data might be corrupted.", true); 
         console.error("Error loading from localStorage:", e);
     }
 }
 
-// MODIFIED: Renamed function and updated references
 function deleteChampion() {
-    const championName = savedChampionsSelect.value; // MODIFIED
+    const championName = savedChampionsSelect.value; 
     if (!championName) {
-        displayChampionStatus("No champion selected to delete.", true); // MODIFIED
+        displayChampionStatus("No champion selected to delete.", true); 
         return;
     }
     try {
-        localStorage.removeItem(CHAMPION_STORAGE_PREFIX + championName); // MODIFIED
-        displayChampionStatus(`Champion "${championName}" deleted.`); // MODIFIED
-        populateSavedChampionsDropdown(); // MODIFIED
+        localStorage.removeItem(CHAMPION_STORAGE_PREFIX + championName); 
+        displayChampionStatus(`Champion "${championName}" deleted.`); 
+        populateSavedChampionsDropdown(); 
     } catch (e) {
-        displayChampionStatus("Error deleting champion.", true); // MODIFIED
+        displayChampionStatus("Error deleting champion.", true); 
         console.error("Error deleting from localStorage:", e);
     }
 }
 
-// MODIFIED: Renamed function and updated references
 function populateSavedChampionsDropdown() {
-    savedChampionsSelect.innerHTML = '<option value="">-- Select a Champion --</option>'; // MODIFIED
+    savedChampionsSelect.innerHTML = '<option value="">-- Select a Champion --</option>'; 
     try {
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            if (key.startsWith(CHAMPION_STORAGE_PREFIX)) { // MODIFIED
-                const championName = key.substring(CHAMPION_STORAGE_PREFIX.length); // MODIFIED
+            if (key.startsWith(CHAMPION_STORAGE_PREFIX)) { 
+                const championName = key.substring(CHAMPION_STORAGE_PREFIX.length); 
                 const option = document.createElement('option');
                 option.value = championName;
                 option.textContent = championName;
-                savedChampionsSelect.appendChild(option); // MODIFIED
+                savedChampionsSelect.appendChild(option); 
             }
         }
     } catch (e) {
-        displayChampionStatus("Could not access localStorage to populate champions.", true); // MODIFIED
+        displayChampionStatus("Could not access localStorage to populate champions.", true); 
         console.error("Error accessing localStorage for populating champions:", e);
     }
 }
 
-function setButtonLoadingState(isLoading) {
+function setButtonLoadingState(buttonElement, buttonTextElement, buttonSpinnerElement, isLoading) {
     if (isLoading) {
-        calculateBtn.classList.add('btn-loading');
-        calculateBtn.disabled = true;
-        if(calculateBtnText) calculateBtnText.style.display = 'none';
-        if(calculateBtnSpinner) calculateBtnSpinner.style.display = 'inline-block';
+        buttonElement.classList.add('btn-loading');
+        buttonElement.disabled = true;
+        if(buttonTextElement) buttonTextElement.style.display = 'none';
+        if(buttonSpinnerElement) buttonSpinnerElement.style.display = 'inline-block';
     } else {
-        calculateBtn.classList.remove('btn-loading');
-        calculateBtn.disabled = false;
-        if(calculateBtnText) calculateBtnText.style.display = 'inline-block';
-        if(calculateBtnSpinner) calculateBtnSpinner.style.display = 'none';
+        buttonElement.classList.remove('btn-loading');
+        buttonElement.disabled = false;
+        if(buttonTextElement) buttonTextElement.style.display = 'inline-block';
+        if(buttonSpinnerElement) buttonSpinnerElement.style.display = 'none';
     }
 }
 
@@ -338,9 +341,143 @@ function updateToggleUnlockButtonAppearance() {
     }
 }
 
+// --- Probability Simulation Functions ---
+function displayProbabilityStatus(message, isError = false) {
+    probabilityStatusDiv.textContent = message;
+    probabilityStatusDiv.className = 'status-message text-center py-1';
+    if (isError) {
+        probabilityStatusDiv.classList.add('status-error');
+    } else {
+        probabilityStatusDiv.classList.add('status-success');
+    }
+        setTimeout(() => {
+        probabilityStatusDiv.textContent = '';
+        probabilityStatusDiv.className = 'status-message h-8';
+    }, 5000); // Keep message a bit longer
+}
 
+function simulateSingleSuccessAttempt(budget, mythicProb, hardPity, lmRateUp, nmGuarantee, 
+                                        includeUnlock, targetShardsForUpgrade, 
+                                        lmShardsYield, nmShardsYield) {
+    let totalAnvilsSpent = 0;
+    let currentShards = 0;
+    let mythicPityCounter = 0;
+    let nmFailStreak = 0;
+    let isUnlocked = !includeUnlock; // If not including unlock, consider it already unlocked
+
+    // Phase 1: Unlock (if needed and within budget)
+    if (includeUnlock && !isUnlocked) {
+        while (totalAnvilsSpent < budget) {
+            mythicPityCounter++;
+            totalAnvilsSpent++;
+            if (mythicPityCounter >= hardPity || Math.random() < mythicProb) {
+                mythicPityCounter = 0;
+                if (nmFailStreak >= nmGuarantee || Math.random() < lmRateUp) {
+                    isUnlocked = true;
+                    nmFailStreak = 0;
+                    break; // Unlocked
+                } else {
+                    nmFailStreak++;
+                }
+            }
+        }
+        if (!isUnlocked) return false; // Failed to unlock within budget
+    }
+
+    // Phase 2: Shard Accumulation (if needed and within budget)
+    if (targetShardsForUpgrade > 0) {
+        while (currentShards < targetShardsForUpgrade && totalAnvilsSpent < budget) {
+            mythicPityCounter++;
+            totalAnvilsSpent++;
+            if (mythicPityCounter >= hardPity || Math.random() < mythicProb) {
+                mythicPityCounter = 0;
+                let isLMThisPull = false;
+                if (nmFailStreak >= nmGuarantee || Math.random() < lmRateUp) {
+                    isLMThisPull = true;
+                    nmFailStreak = 0;
+                } else {
+                    nmFailStreak++;
+                }
+                currentShards += isLMThisPull ? lmShardsYield : nmShardsYield;
+            }
+        }
+        if (currentShards < targetShardsForUpgrade) return false; // Failed to get shards within budget
+    }
+    return true; // Goal achieved within budget
+}
+
+function runProbabilitySimulation() {
+    setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, true);
+    displayProbabilityStatus("Calculating probability... this may take a moment.", false);
+    probabilityResultsArea.classList.add('hidden');
+    probabilityResultsArea.innerHTML = '';
+
+    setTimeout(() => { // Allow UI to update
+        const budget = parseInt(anvilBudgetInput.value);
+        if (isNaN(budget) || budget <= 0) {
+            displayProbabilityStatus("Please enter a valid Anvil budget.", true);
+            setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, false);
+            return;
+        }
+
+        const mythicProb = parseFloat(mythicProbabilityInput.value);
+        const hardPity = parseInt(mythicHardPityInput.value);
+        const lmRateUp = parseFloat(lmRateUpChanceInput.value);
+        const includeUnlock = isUnlockCostIncluded;
+
+        const startStarVal = startStarLevelSelect.value;
+        const targetStarVal = targetStarLevelSelect.value;
+        const startS = (startStarVal === "0_shards") ? 0 : (SHARD_REQUIREMENTS[startStarVal] || 0);
+        const targetS = SHARD_REQUIREMENTS[targetStarVal] || 0;
+        const shardsNeeded = Math.max(0, targetS - startS);
+
+        if (isNaN(mythicProb) || isNaN(hardPity) || isNaN(lmRateUp)) {
+                displayProbabilityStatus("Invalid base pull rates for simulation.", true);
+                setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, false);
+                return;
+        }
+        
+        const NUM_SIMULATION_RUNS_PROBABILITY = 10000; // Fixed number of runs for this feature
+        let successesCurrent = 0;
+        let successesProposed = 0;
+
+        for (let i = 0; i < NUM_SIMULATION_RUNS_PROBABILITY; i++) {
+            if (simulateSingleSuccessAttempt(budget, mythicProb, hardPity, lmRateUp, NM_GUARANTEE_THRESHOLD, includeUnlock, shardsNeeded, LM_SHARDS_CURRENT, NM_SHARDS_CURRENT)) {
+                successesCurrent++;
+            }
+            if (simulateSingleSuccessAttempt(budget, mythicProb, hardPity, lmRateUp, NM_GUARANTEE_THRESHOLD, includeUnlock, shardsNeeded, LM_SHARDS_PROPOSED, NM_SHARDS_PROPOSED)) {
+                successesProposed++;
+            }
+        }
+
+        const probCurrent = (successesCurrent / NUM_SIMULATION_RUNS_PROBABILITY) * 100;
+        const probProposed = (successesProposed / NUM_SIMULATION_RUNS_PROBABILITY) * 100;
+
+        let resultsHTML = `<p class="mb-2">Goal: Reach ${targetStarVal} from ${startStarVal}${includeUnlock ? " (including initial unlock)" : ""}.</p>`;
+        resultsHTML += `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
+        resultsHTML += `<div><h4 class="font-medium text-md text-blue-700 mb-1">Current Bleed System</h4>
+                            <div class="probability-result-box">
+                                <p><strong>Probability of Success:</strong> ${probCurrent.toFixed(2)}%</p>
+                            </div></div>`;
+        resultsHTML += `<div><h4 class="font-medium text-md text-blue-700 mb-1">Proposed Bleed System</h4>
+                            <div class="probability-result-box">
+                                <p><strong>Probability of Success:</strong> ${probProposed.toFixed(2)}%</p>
+                            </div></div>`;
+        resultsHTML += `</div>`;
+        resultsHTML += `<p class="text-xs text-gray-500 mt-3">Based on ${NUM_SIMULATION_RUNS_PROBABILITY} simulated attempts with a budget of ${budget} Anvils.</p>`;
+
+
+        probabilityResultsArea.innerHTML = resultsHTML;
+        probabilityResultsArea.classList.remove('hidden');
+        displayProbabilityStatus("Probability calculation complete.", false);
+        setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, false);
+    }, 50);
+}
+
+
+// --- Main Expected Value Calculation Logic ---
 function updateCalculator() {
-    setButtonLoadingState(true); 
+    setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, true); 
 
     setTimeout(() => {
         mythicProbabilityError.classList.add('hidden');
@@ -389,7 +526,7 @@ function updateCalculator() {
         shardsNeededForUpgradeSpan.textContent = shardsNeededForUpgrade.toString();
 
         if (!isValid) {
-            setButtonLoadingState(false); 
+            setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, false); 
             return;
         }
 
@@ -399,7 +536,7 @@ function updateCalculator() {
         calcDrawsPerMythicSpan.textContent = drawsPerMythicAverage.toFixed(2);
         if (isNaN(drawsPerMythicAverage)) {
             conclusionParagraph.textContent = 'Error in base Mythic calculation.'; 
-            setButtonLoadingState(false); return;
+            setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, false); return;
         }
 
         const unlockCycleMetrics = calculateLmCycleMetrics(1, 0, lmRateUpChance, NM_GUARANTEE_THRESHOLD);
@@ -415,7 +552,7 @@ function updateCalculator() {
             anvilsUnlockWorst = worstCaseMythicsForLM * drawsPerMythicWorst;
         } else {
             conclusionParagraph.textContent = 'Error calculating LM cycle for unlock.'; 
-            setButtonLoadingState(false); return;
+            setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, false); return;
         }
         if(calcWorstCaseMythicsForLMSpan) { 
             calcWorstCaseMythicsForLMSpan.textContent = worstCaseMythicsForLM.toString();
@@ -427,7 +564,7 @@ function updateCalculator() {
         const avgEffectiveShardsProposed = lmCycleMetricsProposedSystem.averageShardsPerEffectiveMythic;
         if (isNaN(avgEffectiveShardsCurrent) || isNaN(avgEffectiveShardsProposed)) {
             conclusionParagraph.textContent = 'Error in shard per mythic calculation.'; 
-            setButtonLoadingState(false); return;
+            setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, false); return;
         }
         calcAvgShardsCurrentSpan.textContent = avgEffectiveShardsCurrent.toFixed(2);
         calcAvgShardsProposedSpan.textContent = avgEffectiveShardsProposed.toFixed(2);
@@ -537,19 +674,19 @@ function updateCalculator() {
         });
         updateChart(chartProgressionCostsCurrent, chartProgressionCostsProposed, allStarLevelsForChart, isUnlockCostIncluded, anvilsUnlockAvg); 
         
-        setButtonLoadingState(false); 
+        setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, false); 
     }, 50); 
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     populateStarLevels();
-    populateSavedChampionsDropdown(); // MODIFIED
+    populateSavedChampionsDropdown(); 
     updateToggleUnlockButtonAppearance(); 
 
-    // MODIFIED Event Listeners for Champion Management
     saveChampionBtn.addEventListener('click', saveChampion);
     loadChampionBtn.addEventListener('click', loadChampion);
     deleteChampionBtn.addEventListener('click', deleteChampion);
+    calculateProbabilityBtn.addEventListener('click', runProbabilitySimulation); // ADDED
 
     calculateBtn.addEventListener('click', updateCalculator);
     mythicProbabilityInput.addEventListener('input', updateCalculator);
