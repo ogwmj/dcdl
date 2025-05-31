@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DC: Dark Legion - Anvil Calculator</title>
+    <title>DC : Dark Legion - Anvil Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -297,6 +297,46 @@
             border: 1px solid #9ca3af; /* gray-400 */
         }
 
+        /* Explanation Section Styles */
+        #explanationSection h3 {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; /* font-semibold */
+            margin-top: 1.5rem; /* mt-6 */
+            margin-bottom: 0.75rem; /* mb-3 */
+            padding-bottom: 0.5rem; /* pb-2 */
+            border-bottom: 1px solid #e2e8f0; /* border-slate-200 */
+        }
+         #explanationSection h3:first-child {
+            margin-top: 0;
+        }
+        #explanationSection h4 {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600;
+            margin-top: 1rem; /* mt-4 */
+            margin-bottom: 0.5rem; /* mb-2 */
+        }
+        #explanationSection p, #explanationSection li {
+            margin-bottom: 0.75rem; /* mb-3 */
+            line-height: 1.6;
+            color: #374151; /* gray-700 */
+        }
+        #explanationSection ul {
+            list-style-type: disc;
+            margin-left: 1.5rem; /* ml-6 */
+        }
+        #explanationSection strong {
+            font-weight: 600;
+            color: #1f2937; /* gray-800 */
+        }
+        #explanationSection code {
+            background-color: #e5e7eb; /* gray-200 */
+            color: #be185d; /* pink-700 */
+            padding: 0.125rem 0.375rem; /* px-1.5 py-0.5 */
+            border-radius: 0.25rem; /* rounded */
+            font-size: 0.875em;
+        }
+
+
         /* Responsive adjustments */
         @media (min-width: 640px) { .container { max-width: 600px; } }
         @media (min-width: 1024px) { .container { max-width: 768px; } }
@@ -305,7 +345,8 @@
     </style>
 </head>
 
-<body class="min-h-screen flex items-center justify-center p-4">
+<body class="min-h-screen flex items-center justify-center p-4"> 
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="ogwmj" data-description="Support me on Buy me a coffee!" data-message="No pressure." data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
 
     <div class="container">
         <h1 class="text-3xl font-bold text-center mb-2">DC: Dark Legion - Anvil Calculator</h1>
@@ -344,7 +385,7 @@
 
             <div id="basePullRatesSection" class="calc-section" data-section-name="Base Pull Rates">
                 <h2 class="text-xl font-semibold mb-4">Configure Base Pull Rates</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6"> 
                     <div class="input-group">
                         <label for="mythicProbability" class="block text-sm"
                             title="The base chance of pulling any Mythic character (e.g., 0.0384 for 3.84%).">Mythic Base
@@ -359,7 +400,7 @@
                         <input type="number" id="mythicHardPity" value="50" step="1" min="1">
                         <p id="mythicHardPityError" class="error-message hidden"></p>
                     </div>
-                </div>
+                    </div>
                 <div class="input-group mt-4">
                     <label for="lmRateUpChance" class="block text-sm"
                         title="When you pull a Mythic, this is the chance it's the featured Limited Mythic (e.g., 0.269 for 26.9%).">Limited
@@ -429,6 +470,18 @@
 
             <div id="probabilitySection" class="calc-section" data-section-name="Probability Simulation">
                 <h2 class="text-xl font-semibold mb-4">Probability of Success within Budget</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4"> <div class="input-group">
+                        <label for="currentMythicPity" class="block text-sm"
+                               title="How many pulls you've made since your last Mythic.">Current Mythic Pity Count:</label>
+                        <input type="number" id="currentMythicPity" value="0" step="1" min="0">
+                        <p id="currentMythicPityError" class="error-message hidden"></p>
+                    </div>
+                    <div class="input-group">
+                        <label for="currentLMPity" class="block text-sm"
+                               title="How many Non-LM Mythics you've pulled since your last LM (for LM guarantee). Max is 2 if guarantee is at 3.">Non-LM Mythics Pulled (for LM Guarantee):</label>
+                        <input type="number" id="currentLMPity" value="0" step="1" min="0" max="2"> <p id="currentLMPityError" class="error-message hidden"></p>
+                    </div>
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
                     <div class="input-group">
                         <label for="anvilBudget" class="block text-sm">Your Anvil Budget:</label>
@@ -597,6 +650,119 @@
                     <canvas id="anvilCostChart"></canvas>
                 </div>
             </div> 
+
+            <div id="explanationSection" class="calc-section" data-section-name="Features & Terminology Guide">
+                <h2 class="text-2xl font-bold mb-6 text-center">Anvil Calculator Guide</h2>
+
+                <h3>Introduction</h3>
+                <p>This calculator is designed to help you estimate the resources (primarily "Anvils") needed to unlock and upgrade Limited Mythic (LM) characters in gacha games that use a similar pull and pity system. It provides both long-term average costs (Expected Value) and short-term probability distributions based on your current progress and budget.</p>
+
+                <h3>Core Concepts & Terminology</h3>
+                <ul>
+                    <li><strong>Anvils:</strong> The in-game currency or item used to perform a "pull" or "summon" on a character banner.</li>
+                    <li><strong>Mythic Character:</strong> A high-rarity character type. This calculator focuses on "Limited Mythic" characters.</li>
+                    <li><strong>Limited Mythic (LM):</strong> A specific, featured Mythic character available on a banner for a limited time. This is usually the primary target for players.</li>
+                    <li><strong>Mythic Base Probability:</strong> The fundamental chance (e.g., 3.84% or 0.0384) of pulling *any* Mythic character on a single Anvil pull, before any pity systems are considered.</li>
+                    <li><strong>Mythic Hard Pity:</strong> The maximum number of Anvil pulls after which you are guaranteed to receive *any* Mythic character if you haven't pulled one already. For example, if hard pity is 50, your 50th pull will be a Mythic if the previous 49 were not.</li>
+                    <li><strong>Limited Mythic Rate-Up Chance:</strong> When you do pull a Mythic character, this is the probability that the Mythic you pulled is the featured Limited Mythic (LM) character. For example, a 26.9% (or 0.269) rate-up means if you pull a Mythic, there's a 26.9% chance it's the LM.</li>
+                    <li><strong>LM Guarantee (Non-LM Pity / "Fail Three Times"):</strong> Many games have a system to ensure you eventually get the featured LM. This calculator hardcodes a common version: if you pull a certain number of Mythic characters that are *not* the featured LM (e.g., 3 Non-LM Mythics in a row), your *next* Mythic pull is guaranteed to be the featured LM. The "Non-LM Mythics Pulled (for LM Guarantee)" input lets you track this.</li>
+                    <li><strong>Star Levels & Shards:</strong> Characters often have star levels (e.g., 1-Star White to 5-Star Red). Upgrading to the next star level requires a specific number of "shards" (or character-specific fragments/duplicates).</li>
+                    <li><strong>Shard Bleed Systems:</strong> When you pull a duplicate of a Mythic character you already own (or sometimes any Mythic during an LM banner), you often receive shards for the *featured LM* instead of (or in addition to) shards for the character you actually pulled. This calculator compares two such "bleed" systems:
+                        <ul>
+                            <li><strong>Current System:</strong> Defines how many LM shards and Non-LM character shards you get.</li>
+                            <li><strong>Proposed System:</strong> A hypothetical alternative system for comparison.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Expected Value (EV):</strong> In this context, the average number of Anvils you would expect to spend to achieve a goal (like unlocking an LM or getting enough shards for an upgrade) if you repeated the process many, many times. It's a long-term average and doesn't guarantee your individual experience will match it.</li>
+                    <li><strong>Probability Distribution:</strong> Shows the likelihood of different Anvil cost outcomes for achieving your goal within a specific budget, based on many simulated attempts. This gives a better sense of risk and potential cost variation than EV alone.</li>
+                </ul>
+
+                <h3>Calculator Features Explained</h3>
+                <h4>1. Champion Configurations</h4>
+                <ul>
+                    <li><strong>Configuration Name:</strong> Give your current set of inputs a unique name.</li>
+                    <li><strong>Save Current Settings:</strong> Saves all your current inputs (probabilities, pity, star levels, etc.) to your browser's local storage under the entered name. This allows you to quickly reload settings later. (Note: If using an environment with Firebase, this saves to your cloud account).</li>
+                    <li><strong>Load Configuration:</strong> Select a previously saved configuration from the dropdown.</li>
+                    <li><strong>Load Selected:</strong> Populates all calculator fields with the values from the selected configuration.</li>
+                    <li><strong>Delete Selected:</strong> Removes the selected configuration from your saved list.</li>
+                </ul>
+
+                <h4>2. Base Pull Rates</h4>
+                <ul>
+                    <li><strong>Mythic Base Probability:</strong> Enter the game's stated base chance of pulling any Mythic character (e.g., for 3.84%, enter <code>0.0384</code>).</li>
+                    <li><strong>Mythic Hard Pity:</strong> Enter the number of pulls at which a Mythic is guaranteed (e.g., <code>50</code>).</li>
+                    <li><strong>Limited Mythic Rate-Up Chance:</strong> When a Mythic is pulled, what's the chance it's the featured LM? (e.g., for 26.9%, enter <code>0.269</code>).</li>
+                </ul>
+
+                <h4>3. Select Upgrade Range</h4>
+                <ul>
+                    <li><strong>Starting Star Level:</strong> The current star level of your character. "Base Character (0 Shards)" means you haven't unlocked them or have no progression shards.</li>
+                    <li><strong>Target Star Level:</strong> The star level you want to reach.</li>
+                    <li><strong>Initial Unlock Cost (Toggle):</strong>
+                        <ul>
+                            <li><strong>OFF:</strong> Calculations assume you have *already unlocked* the LM character (i.e., you have at least one copy). The costs shown will be for accumulating shards for the selected star upgrade *only*.</li>
+                            <li><strong>ON:</strong> Calculations will *include* the estimated cost to pull your first copy of the LM character, *in addition* to the shards needed for the selected upgrade. This is useful if you are starting from scratch.</li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <h4>4. Shard Bleed Systems</h4>
+                <p>This section displays the hardcoded values for how many LM-specific shards and Non-LM-specific shards are awarded when pulling a duplicate Mythic under the "Current" and "Proposed" systems. These are used in the EV calculations to determine the effective shard gain rate.</p>
+
+                <h4>5. Calculate Anvils (Expected Value) Button</h4>
+                <p>This is the main calculation button. It uses the inputs from "Base Pull Rates," "Upgrade Range," and "Shard Bleed Systems" to compute the average (Expected Value) Anvils needed. Results are shown in the "Expected Value Calculation Results" section.</p>
+
+                <h4>6. Probability of Success within Budget</h4>
+                <ul>
+                    <li><strong>Current Mythic Pity Count:</strong> How many pulls have you made since your *last* Mythic character? If you just got a Mythic, this is 0. This value should be less than your "Mythic Hard Pity".</li>
+                    <li><strong>Non-LM Mythics Pulled (for LM Guarantee):</strong> How many *non-featured* Mythics have you pulled in a row since your last *featured LM*? If the LM guarantee is "after 3 non-LMs", this value can be 0, 1, or 2.</li>
+                    <li><strong>Your Anvil Budget:</strong> How many Anvils are you willing to spend for this attempt?</li>
+                    <li><strong>Calculate Probability & Show Distribution Button:</strong> Runs thousands of simulated pulling sessions based on *all* your current inputs (including pity and budget). It then displays:
+                        <ul>
+                            <li>A summary of success rate (chance to achieve your goal within budget).</li>
+                            <li>Median and 90th percentile (P90) Anvil costs for *successful* attempts.</li>
+                            <li>Two histogram charts showing the distribution of Anvil costs for both the "Current" and "Proposed" bleed systems. This helps visualize the likelihood of different cost outcomes.</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h4>7. Results Sections</h4>
+                <ul>
+                    <li><strong>Expected Value Calculation Results:</strong>
+                        <ul>
+                            <li><strong>Initial Unlock Cost (if toggled ON):</strong> Average, Best, and Worst-case Anvils to get the *first copy* of the LM.</li>
+                            <li><strong>Shards Needed for This Upgrade:</strong> Calculated based on your Start/Target Star Levels.</li>
+                            <li><strong>Current/Proposed Bleed System Costs:</strong> Shows Average, Best, and Worst-case Anvils for the selected shard upgrade (or total including unlock if toggled ON). "Best Case" usually assumes you get LMs frequently. "Worst Case" assumes you hit pity for every Mythic and hit the LM guarantee pity.</li>
+                            <li><strong>Conclusion:</strong> A brief comparison of the two bleed systems based on average costs.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Detailed Calculations (Expected Value) (Expandable):</strong> Provides a breakdown of intermediate values used in the EV calculations, such as average draws per Mythic, effective shards per Mythic under each system, etc. This is for users interested in the underlying numbers.</li>
+                    <li><strong>Anvil Cost Chart (EV):</strong> Visualizes the *total average* Anvils needed to reach each star level from a base character (0 shards), for both bleed systems. If "Include Initial Unlock" is ON, this chart also includes the unlock cost.</li>
+                </ul>
+                
+                <h4>8. Customize Visible Sections & Order</h4>
+                <p>This expandable section at the top allows you to:
+                    <ul>
+                        <li><strong>Hide/Show Sections:</strong> Uncheck a box to hide a section you don't frequently use, or check it to show it again.</li>
+                        <li><strong>Reorder Sections:</strong> Use the Up (↑) and Down (↓) arrows next to each section name to change its display order on the page.</li>
+                    </ul>
+                    Your preferences for visibility and order are saved in your browser.
+                </p>
+
+                <h3>Understanding the Math (Conceptual)</h3>
+                <ul>
+                    <li><strong>Expected Value (EV):</strong> The EV calculations are based on statistical averages. For example, "Average Draws per Mythic" considers the base probability and the hard pity to determine, on average, how many pulls it takes to get one Mythic. Similarly, "Avg Effective Shards per Mythic" considers the LM rate-up, LM guarantee, and shard yields to find the average number of LM-specific shards gained per Mythic pulled. These averages are then used to estimate the total Anvils.</li>
+                    <li><strong>Probability Simulation:</strong> This feature runs many (e.g., 10,000) simulated "pulling sessions" using random number generation according to the probabilities you've set. It starts each simulated session from your specified "Current Pity" values. By observing how many Anvils each simulated session takes to reach your goal (or if it fails within the budget), it can build a distribution of outcomes and calculate success rates.</li>
+                </ul>
+
+                <h3>Tips for Using the Calculator</h3>
+                <ul>
+                    <li>Use this tool for planning your resource allocation and understanding potential costs.</li>
+                    <li>Remember that gacha games are based on randomness. The "Expected Value" is an average over many trials; your personal experience in a single attempt can vary significantly.</li>
+                    <li>The "Probability Distribution" gives a better sense of this variance and the risk involved for a specific budget.</li>
+                    <li>Keep your "Current Pity" inputs updated for the most accurate personal probability simulations.</li>
+                </ul>
+            </div>
         </div> 
     </div>
 
@@ -621,7 +787,7 @@
 
 
         // --- App and Firebase Config ---
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'anvil-calculator-dev-customview'; // Reverted appId
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'anvil-calculator-v2.0'; 
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
             apiKey: "AIzaSyAzSQbS4LtAz20syWI2HREPR7UnYh6ldbI",
             authDomain: "dc-dark-legion-tools.firebaseapp.com",
@@ -641,8 +807,18 @@
         const championStatusDiv = document.getElementById('championStatus');
         const userIdDisplay = document.getElementById('userIdDisplay');
 
-        // --- DOM Elements (Data Management) ---
-        // DOM elements for import/export removed
+        // --- DOM Elements (Base Pull Rates & Pity) ---
+        const mythicProbabilityInput = document.getElementById('mythicProbability');
+        const mythicHardPityInput = document.getElementById('mythicHardPity');
+        const currentMythicPityInput = document.getElementById('currentMythicPity');
+        const currentLMPityInput = document.getElementById('currentLMPity');
+        const lmRateUpChanceInput = document.getElementById('lmRateUpChance');
+        const mythicProbabilityError = document.getElementById('mythicProbabilityError');
+        const mythicHardPityError = document.getElementById('mythicHardPityError');
+        const currentMythicPityError = document.getElementById('currentMythicPityError');
+        const currentLMPityError = document.getElementById('currentLMPityError');
+        const lmRateUpChanceError = document.getElementById('lmRateUpChanceError');
+
 
         // --- DOM Elements (Probability Simulation) ---
         const anvilBudgetInput = document.getElementById('anvilBudget');
@@ -700,9 +876,6 @@
         }
 
         // --- DOM Elements (Calculator Inputs & Outputs) (Identical) ---
-        const mythicProbabilityInput = document.getElementById('mythicProbability');
-        const mythicHardPityInput = document.getElementById('mythicHardPity');
-        const lmRateUpChanceInput = document.getElementById('lmRateUpChance');
         const startStarLevelSelect = document.getElementById('startStarLevel');
         const targetStarLevelSelect = document.getElementById('targetStarLevel');
         const calculateBtn = document.getElementById('calculateBtn');
@@ -759,14 +932,11 @@
         const detailWorstShardsProposedSpan = document.getElementById('detailWorstShardsProposed');
         const detailMythicPullsWorstProposedSpan = document.getElementById('detailMythicPullsWorstProposed');
         const detailAnvilsWorstProposedSpan = document.getElementById('detailAnvilsWorstProposed');
-        const mythicProbabilityError = document.getElementById('mythicProbabilityError');
-        const mythicHardPityError = document.getElementById('mythicHardPityError');
-        const lmRateUpChanceError = document.getElementById('lmRateUpChanceError');
         const starLevelError = document.getElementById('starLevelError');
 
         // --- Game Constants and Data (Identical) ---
         let isUnlockCostIncluded = false;
-        const NM_GUARANTEE_THRESHOLD = 3;
+        const NM_GUARANTEE_THRESHOLD = 3; // This is the number of Non-LM mythics before a guaranteed LM
         const SHARD_REQUIREMENTS = {
             "White 1-Star": 2, "White 2-Star": 5, "White 3-Star": 10, "White 4-Star": 20, "White 5-Star": 40,
             "Blue 1-Star": 60, "Blue 2-Star": 80, "Blue 3-Star": 100, "Blue 4-Star": 130, "Blue 5-Star": 160,
@@ -802,7 +972,6 @@
                         championsColRef = collection(fbDb, `artifacts/${appId}/users/${currentUserId}/champions`);
                         await populateSavedChampionsDropdownFromFirestore();
                         disableChampionManagementFeatures(false);
-                        // Data management buttons removed from here
                     } else {
                         currentUserId = null;
                         console.log("User is signed out.");
@@ -811,7 +980,6 @@
                         if (unsubscribeChampionsListener) { unsubscribeChampionsListener(); unsubscribeChampionsListener = null; }
                         savedChampionsSelect.innerHTML = '<option value="">-- Sign in to manage configurations --</option>';
                         disableChampionManagementFeatures(true, "Please sign in.");
-                        // Data management buttons removed from here
                     }
                 });
 
@@ -837,9 +1005,6 @@
             loadChampionBtn.disabled = disable;
             deleteChampionBtn.disabled = disable;
             savedChampionsSelect.disabled = disable;
-            
-            // Data management buttons removed from here
-
             if (disable && reason) {
                  savedChampionsSelect.innerHTML = `<option value="">-- ${reason} --</option>`;
             }
@@ -883,6 +1048,8 @@
                 mythicProbability: mythicProbabilityInput.value,
                 mythicHardPity: mythicHardPityInput.value,
                 lmRateUpChance: lmRateUpChanceInput.value,
+                currentMythicPity: currentMythicPityInput.value, 
+                currentLMPity: currentLMPityInput.value,       
                 includeUnlockCost: isUnlockCostIncluded,
                 startStarLevel: startStarLevelSelect.value,
                 targetStarLevel: targetStarLevelSelect.value,
@@ -920,12 +1087,14 @@
                     mythicProbabilityInput.value = championData.mythicProbability;
                     mythicHardPityInput.value = championData.mythicHardPity;
                     lmRateUpChanceInput.value = championData.lmRateUpChance;
+                    currentMythicPityInput.value = championData.currentMythicPity || 0; 
+                    currentLMPityInput.value = championData.currentLMPity || 0;       
                     isUnlockCostIncluded = championData.includeUnlockCost;
                     updateToggleUnlockButtonAppearance();
                     startStarLevelSelect.value = championData.startStarLevel;
                     targetStarLevelSelect.value = championData.targetStarLevel;
                     championNameInput.value = championData.name || championConfigName;
-                    updateCalculator();
+                    updateCalculator(); 
                     displayChampionStatus(`Private config "${championConfigName}" loaded.`, false, 'success');
                 } else {
                     displayChampionStatus(`Configuration "${championConfigName}" not found.`, true, 'error');
@@ -993,7 +1162,7 @@
         // --- Section Visibility and Order Customization ---
         let currentSectionOrder = []; 
 
-        const allToggleableSections = [ // dataManagementSection removed from this list
+        const allToggleableSections = [ 
             { id: 'championManagementSection', name: 'Champion Configurations', defaultVisible: true },
             { id: 'basePullRatesSection', name: 'Base Pull Rates', defaultVisible: true },
             { id: 'upgradeRangeSection', name: 'Upgrade Range', defaultVisible: true },
@@ -1002,7 +1171,8 @@
             { id: 'probabilitySection', name: 'Probability Simulation', defaultVisible: true },
             { id: 'results', name: 'Expected Value Results', defaultVisible: true }, 
             { id: 'detailedCalculationsDetails', name: 'Detailed EV Calculations', defaultVisible: true },
-            { id: 'mainAnvilCostChartContainer', name: 'Anvil Cost Chart (EV)', defaultVisible: true }
+            { id: 'mainAnvilCostChartContainer', name: 'Anvil Cost Chart (EV)', defaultVisible: true },
+            { id: 'explanationSection', name: 'Features & Terminology Guide', defaultVisible: false } // New section, default to hidden
         ];
 
         function initializeSectionCustomization() {
@@ -1161,9 +1331,7 @@
             reorderableSectionsContainer.innerHTML = ''; 
             reorderableSectionsContainer.appendChild(fragment);
         }
-
-        // Data Management functions (exportAllConfigurations, importConfigurationsFromFile, displayDataManagementStatus) removed
-
+        
         // --- Other utility functions (populateStarLevels, updateChart, etc.) ---
         function populateStarLevels() {
             startStarLevelSelect.innerHTML = ''; targetStarLevelSelect.innerHTML = '';
@@ -1259,11 +1427,13 @@
 
         function simulateSingleSuccessAttemptForDistribution(budget, mythicProb, hardPity, lmRateUp, nmGuarantee,
             includeUnlock, targetShardsForUpgrade,
-            lmShardsYield, nmShardsYield) {
+            lmShardsYield, nmShardsYield, 
+            initialMythicPity = 0, initialLMPityStreak = 0) { 
+            
             let totalAnvilsSpent = 0;
             let currentShards = 0;
-            let mythicPityCounter = 0;
-            let nmFailStreak = 0;
+            let mythicPityCounter = initialMythicPity; 
+            let nmFailStreak = initialLMPityStreak;   
             let isUnlocked = !includeUnlock;
 
             if (includeUnlock && !isUnlocked) {
@@ -1271,10 +1441,10 @@
                     mythicPityCounter++;
                     totalAnvilsSpent++;
                     if (mythicPityCounter >= hardPity || Math.random() < mythicProb) {
-                        mythicPityCounter = 0;
+                        mythicPityCounter = 0; 
                         if (nmFailStreak >= nmGuarantee || Math.random() < lmRateUp) {
                             isUnlocked = true;
-                            nmFailStreak = 0;
+                            nmFailStreak = 0; 
                             break; 
                         } else {
                             nmFailStreak++;
@@ -1291,9 +1461,9 @@
                     mythicPityCounter++;
                     totalAnvilsSpent++;
                     if (mythicPityCounter >= hardPity || Math.random() < mythicProb) {
-                        mythicPityCounter = 0;
+                        mythicPityCounter = 0; 
                         let isLMThisPull = (nmFailStreak >= nmGuarantee || Math.random() < lmRateUp);
-                        if (isLMThisPull) nmFailStreak = 0; else nmFailStreak++;
+                        if (isLMThisPull) nmFailStreak = 0; else nmFailStreak++; 
                         currentShards += isLMThisPull ? lmShardsYield : nmShardsYield;
                     }
                 }
@@ -1425,7 +1595,25 @@
                 const budget = parseInt(anvilBudgetInput.value);
                 if (isNaN(budget) || budget <= 0) { displayProbabilityStatus("Please enter a valid Anvil budget.", true, 'error'); setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, false); return; }
                 
-                const mythicProb = parseFloat(mythicProbabilityInput.value), hardPity = parseInt(mythicHardPityInput.value), lmRateUp = parseFloat(lmRateUpChanceInput.value);
+                const mythicProb = parseFloat(mythicProbabilityInput.value);
+                const hardPity = parseInt(mythicHardPityInput.value);
+                const lmRateUp = parseFloat(lmRateUpChanceInput.value);
+                
+                // Get current pity states
+                const initialMythicPity = parseInt(currentMythicPityInput.value) || 0;
+                const initialLMPityStreak = parseInt(currentLMPityInput.value) || 0;
+
+                // Validate pity inputs
+                if (initialMythicPity < 0 || initialMythicPity >= hardPity) {
+                    displayProbabilityStatus(`Current Mythic Pity must be between 0 and ${hardPity - 1}.`, true, 'error');
+                    setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, false); return;
+                }
+                if (initialLMPityStreak < 0 || initialLMPityStreak >= NM_GUARANTEE_THRESHOLD) {
+                     displayProbabilityStatus(`Non-LM Mythics Pulled must be between 0 and ${NM_GUARANTEE_THRESHOLD - 1}.`, true, 'error');
+                     setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, false); return;
+                }
+
+
                 const includeUnlock = isUnlockCostIncluded;
                 const startS = (startStarLevelSelect.value === "0_shards") ? 0 : (SHARD_REQUIREMENTS[startStarLevelSelect.value] || 0);
                 const targetS = SHARD_REQUIREMENTS[targetStarLevelSelect.value] || 0;
@@ -1438,8 +1626,8 @@
                 const anvilCostsProposed = [];
 
                 for (let i = 0; i < NUM_SIM_RUNS; i++) {
-                    anvilCostsCurrent.push(simulateSingleSuccessAttemptForDistribution(budget, mythicProb, hardPity, lmRateUp, NM_GUARANTEE_THRESHOLD, includeUnlock, shardsNeeded, LM_SHARDS_CURRENT, NM_SHARDS_CURRENT));
-                    anvilCostsProposed.push(simulateSingleSuccessAttemptForDistribution(budget, mythicProb, hardPity, lmRateUp, NM_GUARANTEE_THRESHOLD, includeUnlock, shardsNeeded, LM_SHARDS_PROPOSED, NM_SHARDS_PROPOSED));
+                    anvilCostsCurrent.push(simulateSingleSuccessAttemptForDistribution(budget, mythicProb, hardPity, lmRateUp, NM_GUARANTEE_THRESHOLD, includeUnlock, shardsNeeded, LM_SHARDS_CURRENT, NM_SHARDS_CURRENT, initialMythicPity, initialLMPityStreak));
+                    anvilCostsProposed.push(simulateSingleSuccessAttemptForDistribution(budget, mythicProb, hardPity, lmRateUp, NM_GUARANTEE_THRESHOLD, includeUnlock, shardsNeeded, LM_SHARDS_PROPOSED, NM_SHARDS_PROPOSED, initialMythicPity, initialLMPityStreak));
                 }
                 
                 const numBins = Math.min(20, Math.max(5, Math.floor(budget/25))); 
@@ -1460,7 +1648,7 @@
                                               (isNaN(histDataProposed.p90Cost) ? '' : `P90 Cost (Success): <strong>${Math.round(histDataProposed.p90Cost)}</strong>.`);
 
 
-                probabilitySimulationDetailsEl.textContent = `Based on ${NUM_SIM_RUNS} simulated attempts for each system.`;
+                probabilitySimulationDetailsEl.textContent = `Based on ${NUM_SIM_RUNS} simulated attempts for each system, starting with ${initialMythicPity} mythic pity and ${initialLMPityStreak} non-LM pulls.`;
                 probabilityResultsArea.classList.remove('hidden');
                 displayProbabilityStatus("Probability distribution calculation complete.", false, 'success');
                 setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, false);
@@ -1469,6 +1657,10 @@
 
         function updateCalculator() {
             setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, true);
+            // Clear previous pity errors
+            currentMythicPityError.classList.add('hidden');
+            currentLMPityError.classList.add('hidden');
+
             setTimeout(() => {
                 [mythicProbabilityError, mythicHardPityError, lmRateUpChanceError, starLevelError].forEach(el => el.classList.add('hidden'));
                 conclusionParagraph.textContent = '';
@@ -1479,10 +1671,27 @@
                 ['detailNMSCurrent', 'detailNMSProposed'].forEach((id, i) => document.getElementById(id).textContent = [NM_SHARDS_CURRENT, NM_SHARDS_PROPOSED][i]);
 
                 let isValid = true;
-                const mythicProbability = parseFloat(mythicProbabilityInput.value), mythicHardPity = parseInt(mythicHardPityInput.value), lmRateUpChance = parseFloat(lmRateUpChanceInput.value);
+                const mythicProbability = parseFloat(mythicProbabilityInput.value);
+                const mythicHardPity = parseInt(mythicHardPityInput.value);
+                const lmRateUpChance = parseFloat(lmRateUpChanceInput.value);
+                const currentMythicPity = parseInt(currentMythicPityInput.value) || 0;
+                const currentLMPity = parseInt(currentLMPityInput.value) || 0;
+
+
                 if (isNaN(mythicProbability) || mythicProbability <= 0 || mythicProbability > 1) { mythicProbabilityError.textContent = 'Invalid probability.'; mythicProbabilityError.classList.remove('hidden'); isValid = false; }
                 if (isNaN(mythicHardPity) || mythicHardPity < 1) { mythicHardPityError.textContent = 'Invalid pity.'; mythicHardPityError.classList.remove('hidden'); isValid = false; }
                 if (isNaN(lmRateUpChance) || lmRateUpChance < 0 || lmRateUpChance > 1) { lmRateUpChanceError.textContent = 'Invalid rate-up chance.'; lmRateUpChanceError.classList.remove('hidden'); isValid = false; }
+                
+                if (isNaN(currentMythicPity) || currentMythicPity < 0 || (mythicHardPity > 0 && currentMythicPity >= mythicHardPity) ) {
+                    currentMythicPityError.textContent = `Must be 0 to ${mythicHardPity > 0 ? mythicHardPity -1 : 'N/A'}.`; 
+                    currentMythicPityError.classList.remove('hidden'); isValid = false;
+                }
+                 if (isNaN(currentLMPity) || currentLMPity < 0 || currentLMPity >= NM_GUARANTEE_THRESHOLD ) { // Max is NM_GUARANTEE_THRESHOLD - 1
+                    currentLMPityError.textContent = `Must be 0 to ${NM_GUARANTEE_THRESHOLD - 1}.`; 
+                    currentLMPityError.classList.remove('hidden'); isValid = false;
+                }
+
+
                 const startShards = (startStarLevelSelect.value === "0_shards") ? 0 : (SHARD_REQUIREMENTS[startStarLevelSelect.value] || 0);
                 const targetTotalShards = SHARD_REQUIREMENTS[targetStarLevelSelect.value] || 0;
                 let shardsNeededForUpgrade = targetTotalShards - startShards;
@@ -1589,24 +1798,19 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // Theme functions removed from here
             populateStarLevels();
             updateToggleUnlockButtonAppearance();
             initializeSectionCustomization(); 
             
             await initializeFirebaseAndAuth(); 
 
-            // Theme toggle listener removed
-
             saveChampionBtn.addEventListener('click', saveChampionToFirestore);
             loadChampionBtn.addEventListener('click', () => loadChampionFromFirestore());
             deleteChampionBtn.addEventListener('click', deleteChampionFromFirestore);
             
-            // Event listeners for import/export removed
-
             calculateProbabilityBtn.addEventListener('click', runProbabilitySimulation); 
             calculateBtn.addEventListener('click', updateCalculator);
-            [mythicProbabilityInput, mythicHardPityInput, lmRateUpChanceInput].forEach(el => el.addEventListener('input', updateCalculator));
+            [mythicProbabilityInput, mythicHardPityInput, lmRateUpChanceInput, currentMythicPityInput, currentLMPityInput].forEach(el => el.addEventListener('input', updateCalculator));
             [startStarLevelSelect, targetStarLevelSelect].forEach(el => el.addEventListener('change', updateCalculator));
             toggleUnlockCostBtn.addEventListener('click', () => {
                 isUnlockCostIncluded = !isUnlockCostIncluded;
