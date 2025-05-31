@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,38 +10,50 @@
     <style>
         /* Custom font for Inter */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f4f8; /* Light gray background */
+            background-color: #f0f4f8; 
+            color: #1e293b; /* slate-800 */
         }
+
         .container {
-            max-width: 90%; /* Fluid width for responsiveness */
+            background-color: #ffffff;
+            max-width: 90%;
             margin: 2rem auto;
             padding: 1.5rem;
-            background-color: #ffffff;
-            border-radius: 1rem; /* Rounded corners */
+            border-radius: 1rem;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
+
         .input-group label {
+            color: #334155; /* slate-700 */
             font-weight: 600;
-            color: #334155; /* Slate 700 */
         }
-        .input-group input, .input-group select {
-            border: 1px solid #cbd5e1; /* Slate 300 */
-            border-radius: 0.5rem; /* Rounded corners for inputs */
+
+        .input-group input,
+        .input-group select {
+            border: 1px solid #cbd5e1; /* slate-300 */
+            background-color: #ffffff;
+            color: #0f172a; /* slate-900 */
+            border-radius: 0.5rem;
             padding: 0.6rem 0.8rem;
             margin-top: 0.3rem;
             width: 100%;
             transition: border-color 0.2s;
         }
-        .input-group input:focus, .input-group select:focus {
-            outline: none;
-            border-color: #3b82f6; /* Blue 500 */
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+         .input-group input::placeholder {
+            color: #94a3b8; /* slate-400 */
         }
-        .btn { /* General button class */
+        .input-group input:focus,
+        .input-group select:focus {
+             border-color: #3b82f6; /* blue-500 */
+             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); /* ring-blue-500/30 */
+        }
+        
+        .btn {
             padding: 0.8rem 1.5rem;
-            border-radius: 0.75rem; /* More rounded */
+            border-radius: 0.75rem;
             font-weight: 700;
             cursor: pointer;
             transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
@@ -49,300 +62,319 @@
             justify-content: center;
             gap: 0.5rem;
         }
+
+        .btn:disabled {
+            background-color: #9ca3af; /* Gray 400 */
+            color: #e5e7eb; /* Gray 200 */
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        
         .btn-primary {
             background-color: #3b82f6; /* Blue 500 */
             color: white;
             box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
         }
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             background-color: #2563eb; /* Blue 600 */
             transform: translateY(-1px);
             box-shadow: 0 6px 8px rgba(59, 130, 246, 0.3);
         }
         .btn-primary:disabled {
             background-color: #93c5fd; /* Blue 300 */
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
         }
+
         .btn-secondary {
             background-color: #64748b; /* Slate 500 */
             color: white;
-            padding: 0.6rem 1.2rem; /* Slightly smaller padding for secondary */
+            padding: 0.6rem 1.2rem;
             box-shadow: 0 4px 6px rgba(100, 116, 139, 0.2);
         }
-        .btn-secondary:hover {
+        .btn-secondary:hover:not(:disabled) {
             background-color: #475569; /* Slate 600 */
             transform: translateY(-1px);
             box-shadow: 0 6px 8px rgba(100, 116, 139, 0.3);
         }
-         .btn-success { /* For probability button */
+        
+        .btn-success {
             background-color: #10b981; /* Emerald 500 */
             color: white;
             box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
         }
-        .btn-success:hover {
+        .btn-success:hover:not(:disabled) {
             background-color: #059669; /* Emerald 600 */
             transform: translateY(-1px);
             box-shadow: 0 6px 8px rgba(16, 185, 129, 0.3);
         }
+
         .btn-danger {
             background-color: #ef4444; /* Red 500 */
             color: white;
-            padding: 0.6rem 1.2rem; /* Slightly smaller padding for danger */
+            padding: 0.6rem 1.2rem;
             box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
         }
-        .btn-danger:hover {
+        .btn-danger:hover:not(:disabled) {
             background-color: #dc2626; /* Red 600 */
             transform: translateY(-1px);
             box-shadow: 0 6px 8px rgba(239, 68, 68, 0.3);
         }
+        
         .result-box {
-            background-color: #e0f2fe; /* Light blue */
-            border-left: 4px solid #3b82f6; /* Blue 500 */
-            padding: 1rem;
-            border-radius: 0.75rem;
-            margin-top: 1rem;
+             background-color: #eff6ff; /* blue-50 */
+             border-left: 4px solid #3b82f6; /* blue-500 */
+             padding: 1rem;
+             border-radius: 0.75rem;
+             margin-top: 1rem;
         }
         .result-box strong {
-            color: #1e40af; /* Blue 800 */
+             color: #1e40af; /* blue-800 */
         }
-        .probability-result-box { /* For probability results */
-            background-color: #f0fdfa; /* Cyan 50 */
-            border-left: 4px solid #06b6d4; /* Cyan 500 */
-            padding: 1rem;
-            border-radius: 0.75rem;
-            margin-top: 0.5rem;
+        #unlockCostSection .result-box { 
+            background-color: #eef2ff; /* indigo-50 */
+            border-left-color: #6366f1; /* indigo-500 */
         }
-        .probability-result-box strong {
-            color: #0e7490; /* Cyan 700 */
+         #unlockCostSection .result-box strong {
+            color: #3730a3; /* indigo-800 */
         }
-        .error-message {
-            color: #ef4444; /* Red 500 */
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
+
+        .status-success {
+            color: #047857; /* emerald-700 */
+            background-color: #d1fae5; /* emerald-100 */
+        }
+        .status-error {
+            color: #b91c1c; /* red-700 */
+            background-color: #fee2e2; /* red-100 */
+        }
+        .status-info { 
+            color: #0369a1; /* sky-700 */
+            background-color: #e0f2fe; /* sky-100 */
         }
         .status-message {
             font-size: 0.875rem;
             margin-top: 0.5rem;
             padding: 0.5rem;
             border-radius: 0.5rem;
+            min-height: 2rem; 
         }
-        .status-success {
-            color: #059669; /* Emerald 600 */
-            background-color: #d1fae5; /* Emerald 100 */
-        }
-        .status-error {
-            color: #dc2626; /* Red 600 */
-            background-color: #fee2e2; /* Red 100 */
-        }
-        h1 {
-            color: #1e293b; /* Slate 800 */
-        }
-        h2 {
-            color: #334155; /* Slate 700 */
-            border-bottom: 1px solid #e2e8f0; /* Slate 200 */
-            padding-bottom: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        /* Responsive adjustments */
-        @media (min-width: 640px) {
-            .container {
-                max-width: 600px; /* Max width for larger screens */
-            }
-        }
-        @media (min-width: 1024px) {
-            .container {
-                max-width: 768px; /* Even larger for desktop */
-            }
-        }
+      
+        h1 { color: #1e293b; /* slate-800 */ }
+        h2 { color: #334155; /* slate-700 */ border-bottom: 1px solid #e2e8f0; /* slate-200 */ padding-bottom: 0.5rem; margin-bottom: 1rem; }
+        h3, h4 { color: #334155; /* slate-700 */ }
+        #currentSystemTitle, #proposedSystemTitle { color: #1d4ed8; /* blue-700 */ }
+        #unlockCostSection h3 { color: #4338ca; /* indigo-700 */ }
+        .calculation-detail h3, .calculation-detail h4 { color: #1e293b; /* gray-800 equiv */ }
+        .calculation-detail p { color: #374151; /* gray-700 equiv */ }
+        .calculation-detail strong { color: #1f2937; /* gray-800 equiv */ }
+
         details {
-            background-color: #f8fafc; /* Lightest blue-gray */
-            border: 1px solid #e2e8f0;
+            background-color: #f8fafc; /* slate-50 */
+            border: 1px solid #e2e8f0; /* slate-200 */
             border-radius: 0.75rem;
             padding: 1rem;
             margin-top: 1.5rem;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
         }
-        summary {
+        details summary {
+            color: #475569; /* slate-600 */
             font-weight: 600;
             cursor: pointer;
-            color: #475569; /* Slate 600 */
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
-        summary::-webkit-details-marker {
-            display: none;
+        details summary::-webkit-details-marker { display: none; }
+        details summary::after { content: '+'; font-size: 1.5rem; transition: transform 0.2s; }
+        details[open] summary::after { content: '-'; }
+        
+        #customizeViewDetails {
+            background-color: #eef2ff; /* indigo-50 */
+            border-color: #c7d2fe; /* indigo-200 */
         }
-        summary::after {
-            content: '+';
-            font-size: 1.5rem;
-            transition: transform 0.2s;
+        #customizeViewDetails summary {
+            color: #4f46e5; /* blue-600 equiv */
         }
-        details[open] summary::after {
-            content: '-';
-            transform: rotate(0deg);
+        #sectionToggleContainer {
+            background-color: #ffffff; /* white */
         }
-        .calculation-detail p {
-            margin-bottom: 0.5rem;
-            color: #4a5568; /* Gray 700 */
-            font-size: 0.9rem;
+        .toggle-item {
+            border-bottom: 1px solid #e2e8f0; /* slate-200 */
+            display: flex;
+            align-items: center;
+            justify-content: space-between; 
+            padding: 0.3rem 0;
         }
-        .calculation-detail strong {
-            color: #2d3748; /* Gray 800 */
+        .toggle-item:last-child { border-bottom: none; }
+        .toggle-label {
+            color: #334155; /* slate-700 */
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            flex-grow: 1;
         }
-        .advisory-box {
-            background-color: #fffbeb; /* Light yellow */
-            border-left: 4px solid #f59e0b; /* Amber 500 */
+        .toggle-label input[type="checkbox"] {
+            accent-color: #3b82f6; /* blue-500 */
+            margin-right: 0.5rem;
+        }
+        .order-buttons button {
+            background-color: #e5e7eb; /* slate-200 / gray-200 */
+            color: #4b5563; /* slate-600 / gray-600 */
+            border: 1px solid #9ca3af; /* slate-400 / gray-400 */
+            padding: 0.25rem 0.5rem; 
+            font-size: 0.8rem;
+            line-height: 1;
+            margin-left: 0.25rem;
+        }
+        .order-buttons button:hover:not(:disabled) {
+            background-color: #d1d5db; /* slate-300 / gray-300 */
+        }
+        .order-buttons button:disabled {
+            background-color: #f3f4f6; /* slate-100 / gray-100 */
+            color: #9ca3af; /* slate-400 / gray-400 */
+            cursor: not-allowed;
+        }
+
+        .advisory-box { 
+            background-color: #fffbeb; /* amber-50 */
+            border-left: 4px solid #f59e0b; /* amber-500 */
+            color: #78350f; /* amber-800 */
             padding: 1rem;
             border-radius: 0.75rem;
             margin-top: 1.5rem;
-            color: #78350f; /* Amber 900 */
             font-size: 0.95rem;
         }
-        .chart-container {
+        .advisory-box.advisory-indigo-theme { 
+            background-color: #eef2ff; /* indigo-50 */
+            border-left-color: #6366f1; /* indigo-500 */
+            color: #3730a3; /* indigo-800 */
+        }
+
+        .chart-container { 
+            background-color: #ffffff; /* white */
             position: relative;
-            height: 400px; /* Fixed height for the chart */
             width: 100%;
-            margin-top: 2rem;
+            margin-top: 1rem; 
             padding: 1rem;
-            background-color: #ffffff;
             border-radius: 1rem;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
         }
-        /* Floating Discord Button */
-        .discord-button {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            background-color: #7289DA; /* Discord purple */
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            text-decoration: none;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.2s, transform 0.1s;
-            z-index: 1000; /* Ensure it stays on top */
-            display: flex; /* Use flexbox for icon and text alignment */
-            align-items: center; /* Vertically align items */
-            gap: 0.5rem; /* Space between icon and text */
+        .main-chart-container { height: 400px; margin-top: 2rem; }
+        .prob-chart-container { height: 300px; }
+        .main-chart-container h3, .prob-chart-container h4 { color: #1e293b; /* slate-800 */ }
+        .prob-chart-container h4 { color: #1d4ed8; /* blue-700 */ }
+        #probSummaryCurrent, #probSummaryProposed, #probabilitySimulationDetails { color: #4b5563; /* gray-600 */ }
+        
+        .calc-section { 
+            padding: 1.5rem; border-radius: 0.75rem; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+            margin-bottom: 2rem; border: 1px solid #e2e8f0; /* slate-200 */
+            background-color: #ffffff; /* Default for calc-section */
         }
-        .discord-button:hover {
-            background-color: #677BC4;
-            transform: translateY(-1px);
-        }
-        .discord-icon {
-            fill: currentColor; /* Inherit color from parent */
-            width: 1.25rem; /* Set icon size */
-            height: 1.25rem;
-        }
-        /* UI/UX Enhancement: Section Styling */
-        .calc-section {
-            background-color: #ffffff; 
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
-            margin-bottom: 2rem; 
-            border: 1px solid #e2e8f0; 
-        }
-        .calc-section h2 {
-            margin-top: 0; 
-        }
-
-        /* Loading indicator for button */
-        .btn-loading .btn-text {
-            display: none;
-        }
-        .btn-loading .spinner {
-            display: inline-block;
-            width: 1.25rem; 
-            height: 1.25rem; 
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-        }
-        .spinner {
-            display: none; 
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Toggle Button Styles */
+        .calc-section.bg-gray-50 { background-color: #f9fafb; /* slate-50 / gray-50 */ } 
+        .btn-loading .btn-text { display: none; }
+        .btn-loading .spinner { display: inline-block; width: 1.25rem; height: 1.25rem; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; }
+        .spinner { display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
         .toggle-btn {
             cursor: pointer;
             padding: 0.5rem 1rem;
             border-radius: 0.5rem;
             font-weight: 600;
             transition: background-color 0.3s ease, color 0.3s ease;
-            border: 1px solid transparent;
-            width: 100%; /* Make it full width within its grid cell */
+            width: 100%;
             text-align: center;
         }
-        .toggle-btn-on {
-            background-color: #10b981; /* Emerald 500 */
-            color: white;
-            border-color: #059669; /* Emerald 600 */
+        .toggle-btn-on { 
+            background-color: #10b981; /* emerald-500 */
+            color: white; 
+            border: 1px solid #059669; /* emerald-600 */
         }
-        .toggle-btn-off {
-            background-color: #d1d5db; /* Gray 300 */
-            color: #4b5563; /* Gray 600 */
-            border-color: #9ca3af; /* Gray 400 */
+        .toggle-btn-off { 
+            background-color: #d1d5db; /* gray-300 */
+            color: #4b5563; /* gray-600 */
+            border: 1px solid #9ca3af; /* gray-400 */
         }
+
+        /* Responsive adjustments */
+        @media (min-width: 640px) { .container { max-width: 600px; } }
+        @media (min-width: 1024px) { .container { max-width: 768px; } }
+        @media (min-width: 1280px) { .container { max-width: 1024px; } }
+
     </style>
 </head>
+
 <body class="min-h-screen flex items-center justify-center p-4">
-    <a href="https://discord.gg/JvyzYfp8ZZ" target="_blank" class="discord-button">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-discord" viewBox="0 0 16 16">
-    <path d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059l-.018-.011a9 9 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019q.127-.095.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007q.121.1.248.195a.05.05 0 0 1-.004.085 8 8 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612"/>
-    </svg>
-            Join our Discord
-        </a>
 
-        <div class="container">
-            <h1 class="text-3xl font-bold text-center mb-6">DC: Dark Legion - Anvil Calculator</h1>
-            <p class="text-center text-gray-600 mb-8">Estimate the average Anvils needed for a specific character upgrade.</p>
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center mb-2">DC: Dark Legion - Anvil Calculator</h1>
+        <p id="userIdDisplay" class="text-xs text-center text-gray-500 mb-1">User ID: Initializing...</p>
+        <p class="text-center text-gray-600 mb-6">Estimate the average Anvils needed for any Limited Mythic character upgrade.
+        </p>
 
-            <div class="calc-section bg-gray-50">
-                <h2 class="text-xl font-semibold mb-4">Manage Champions</h2> <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+        <details id="customizeViewDetails" class="mb-6">
+            <summary class="text-lg">Customize Visible Sections & Order</summary>
+            <div id="sectionToggleContainer" class="mt-4 p-4 rounded-md shadow-inner">
+                </div>
+        </details>
+        
+        <div id="reorderableSectionsContainer">
+            <div id="championManagementSection" class="calc-section bg-gray-50" data-section-name="Champion Configurations">
+                <h2 class="text-xl font-semibold mb-4">Manage Champion Configurations</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
                     <div class="input-group">
-                        <label for="championName" class="block text-sm">Champion Name:</label> <input type="text" id="championName" placeholder="Enter champion name"> </div>
-                    <button id="saveChampionBtn" class="btn btn-primary py-2.5">Save Current Settings</button> </div>
+                        <label for="championName" class="block text-sm">Configuration Name:</label> <input type="text"
+                            id="championName" placeholder="Enter unique configuration name">
+                    </div>
+                    <button id="saveChampionBtn" class="btn btn-primary py-2.5" disabled>Save Current Settings</button>
+                </div>
                 <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                     <div class="input-group md:col-span-1">
-                        <label for="savedChampions" class="block text-sm">Load Champion:</label> <select id="savedChampions"> <option value="">-- Select a Champion --</option> </select>
+                        <label for="savedChampions" class="block text-sm">Load Configuration:</label> <select
+                            id="savedChampions" disabled>
+                            <option value="">-- Select a Configuration --</option>
+                        </select>
                     </div>
-                    <button id="loadChampionBtn" class="btn btn-secondary py-2.5">Load Selected</button> <button id="deleteChampionBtn" class="btn btn-danger py-2.5">Delete Selected</button> </div>
-                <div id="championStatus" class="status-message mt-3 h-8"></div> </div>
+                    <button id="loadChampionBtn" class="btn btn-secondary py-2.5" disabled>Load Selected</button>
+                    <button id="deleteChampionBtn" class="btn btn-danger py-2.5" disabled>Delete Selected</button>
+                </div>
+                <div id="championStatus" class="status-message mt-3"></div>
+            </div>
 
-            <div class="calc-section">
+            <div id="basePullRatesSection" class="calc-section" data-section-name="Base Pull Rates">
                 <h2 class="text-xl font-semibold mb-4">Configure Base Pull Rates</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="input-group">
-                        <label for="mythicProbability" class="block text-sm" title="The base chance of pulling any Mythic character (e.g., 0.0384 for 3.84%).">Mythic Base Probability:</label>
+                        <label for="mythicProbability" class="block text-sm"
+                            title="The base chance of pulling any Mythic character (e.g., 0.0384 for 3.84%).">Mythic Base
+                            Probability:</label>
                         <input type="number" id="mythicProbability" value="0.0384" step="0.0001" min="0" max="1">
                         <p id="mythicProbabilityError" class="error-message hidden"></p>
                     </div>
                     <div class="input-group">
-                        <label for="mythicHardPity" class="block text-sm" title="The maximum number of pulls after which a Mythic character is guaranteed.">Mythic Hard Pity:</label>
+                        <label for="mythicHardPity" class="block text-sm"
+                            title="The maximum number of pulls after which a Mythic character is guaranteed.">Mythic Hard
+                            Pity:</label>
                         <input type="number" id="mythicHardPity" value="50" step="1" min="1">
                         <p id="mythicHardPityError" class="error-message hidden"></p>
                     </div>
                 </div>
                 <div class="input-group mt-4">
-                    <label for="lmRateUpChance" class="block text-sm" title="When you pull a Mythic, this is the chance it's the featured Limited Mythic (e.g., 0.269 for 26.9%).">Limited Mythic Rate-Up Chance:</label>
+                    <label for="lmRateUpChance" class="block text-sm"
+                        title="When you pull a Mythic, this is the chance it's the featured Limited Mythic (e.g., 0.269 for 26.9%).">Limited
+                        Mythic Rate-Up Chance:</label>
                     <input type="number" id="lmRateUpChance" value="0.269" step="0.001" min="0" max="1">
                     <p id="lmRateUpChanceError" class="error-message hidden"></p>
                 </div>
-                <p class="text-sm text-gray-500 mt-2">Note: "Fail three times" guarantee for Limited Mythic is hardcoded (3 Non-LM before guaranteed LM).</p>
+                <p class="text-sm text-gray-500 mt-2">Note: "Fail three times" guarantee for Limited Mythic is hardcoded (3
+                    Non-LM before guaranteed LM).</p>
             </div>
 
-            <div class="calc-section">
+            <div id="upgradeRangeSection" class="calc-section" data-section-name="Upgrade Range">
                 <h2 class="text-xl font-semibold mb-4">Select Upgrade Range</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center"> <div class="input-group">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                    <div class="input-group">
                         <label for="startStarLevel" class="block text-sm">Starting Star Level:</label>
                         <select id="startStarLevel" class="block w-full">
                         </select>
@@ -353,8 +385,8 @@
                         </select>
                     </div>
                 </div>
-                 <div class="mt-4">
-                     <label class="block text-sm font-medium text-gray-700 mb-1">Initial Unlock Cost:</label>
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Initial Unlock Cost:</label>
                     <button id="toggleUnlockCostBtn" type="button" class="toggle-btn toggle-btn-off w-full">
                         Include Initial Unlock: OFF
                     </button>
@@ -362,34 +394,40 @@
                 <p id="starLevelError" class="error-message hidden text-center mt-2"></p>
             </div>
 
-            <div id="advisoryBox" class="advisory-box mb-8 calc-section">
+            <div id="advisoryBox" class="advisory-box mb-8 calc-section" data-section-name="Advisory Note">
                 <p class="font-bold">Important Note:</p>
-                <p id="advisoryMessage">The Anvil costs displayed are for **shard accumulation only** for the selected upgrade. They DO NOT include the separate, initial pull required to **unlock** the Limited Mythic character, unless explicitly selected above.</p>
+                <p id="advisoryMessage">The Anvil costs displayed are for **shard accumulation only** for the selected
+                    upgrade. They DO NOT include the separate, initial pull required to **unlock** the Limited Mythic
+                    character, unless explicitly selected above.</p>
             </div>
 
-            <div class="calc-section">
+            <div id="shardBleedSystemsSection" class="calc-section" data-section-name="Shard Bleed Systems">
                 <h2 class="text-xl font-semibold mb-4">Configure Shard Bleed Systems</h2>
-                <p class="text-xs text-gray-500 mb-2">These values define how many shards you get when pulling a duplicate Mythic that is either the Limited Mythic (LM) or a Non-Limited Mythic (NM) during an LM banner.</p>
+                <p class="text-xs text-gray-500 mb-2">These values define how many shards you get when pulling a duplicate
+                    Mythic that is either the Limited Mythic (LM) or a Non-Limited Mythic (NM) during an LM banner.</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <h3 class="font-medium text-lg mb-2 text-green-700">Current Bleed System</h3>
-                        <p class="text-sm text-gray-700">Limited Mythic (LM) Shards: <span id="currentLMS">-</span> (e.g. 40)</p>
-                        <p class="text-sm text-gray-700">Non-Limited Mythic (NM) Shards: <span id="currentNMS">-</span> (e.g. 0)</p>
+                        <p class="text-sm text-gray-700">Limited Mythic (LM) Shards: <span id="currentLMS">-</span> (e.g.
+                            40)</p>
+                        <p class="text-sm text-gray-700">Non-Limited Mythic (NM) Shards: <span id="currentNMS">-</span>
+                            (e.g. 0)</p>
                     </div>
                     <div>
                         <h3 class="font-medium text-lg mb-2 text-green-700">Proposed Bleed System</h3>
-                        <p class="text-sm text-gray-700">Limited Mythic (LM) Shards: <span id="proposedLMS">-</span> (e.g. 25)</p>
-                        <p class="text-sm text-gray-700">Non-Limited Mythic (NM) Shards: <span id="proposedNMS">-</span> (e.g. 5)</p>
+                        <p class="text-sm text-gray-700">Limited Mythic (LM) Shards: <span id="proposedLMS">-</span> (e.g.
+                            25)</p>
+                        <p class="text-sm text-gray-700">Non-Limited Mythic (NM) Shards: <span id="proposedNMS">-</span>
+                            (e.g. 5)</p>
                     </div>
                 </div>
             </div>
 
-            <button id="calculateBtn" class="btn btn-primary w-full text-lg py-3">
-                <span class="spinner"></span>
+            <button id="calculateBtn" class="btn btn-primary w-full text-lg py-3 mb-8"> <span class="spinner"></span>
                 <span class="btn-text">Calculate Anvils (Expected Value)</span>
             </button>
 
-            <div class="calc-section mt-8">
+            <div id="probabilitySection" class="calc-section" data-section-name="Probability Simulation">
                 <h2 class="text-xl font-semibold mb-4">Probability of Success within Budget</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
                     <div class="input-group">
@@ -397,28 +435,47 @@
                         <input type="number" id="anvilBudget" value="100" step="10" min="1" class="w-full">
                     </div>
                     <button id="calculateProbabilityBtn" class="btn btn-success py-2.5 w-full md:w-auto">
-                         <span class="spinner"></span>
-                         <span class="btn-text">Calculate Probability</span>
+                        <span class="spinner"></span>
+                        <span class="btn-text">Calculate Probability & Show Distribution</span>
                     </button>
                 </div>
-                <div id="probabilityStatus" class="status-message mt-3 h-8"></div>
+                <div id="probabilityStatus" class="status-message mt-3"></div>
+                
                 <div id="probabilityResultsArea" class="mt-4 hidden">
+                    <p id="probabilitySummaryText" class="mb-2 text-center font-medium"></p>
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold text-lg text-center mb-1">Current System - Anvil Cost Distribution</h4>
+                            <div class="chart-container prob-chart-container"> 
+                                <canvas id="probChartCurrent"></canvas>
+                            </div>
+                            <p id="probSummaryCurrent" class="text-sm text-center mt-2"></p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg text-center mb-1">Proposed System - Anvil Cost Distribution</h4>
+                            <div class="chart-container prob-chart-container">
+                                <canvas id="probChartProposed"></canvas>
+                            </div>
+                            <p id="probSummaryProposed" class="text-sm text-center mt-2"></p>
+                        </div>
                     </div>
+                    <p id="probabilitySimulationDetails" class="text-xs mt-4 text-center"></p>
+                </div>
             </div>
 
 
-            <div id="results" class="mt-8 calc-section">
+            <div id="results" class="calc-section" data-section-name="Expected Value Results">
                 <h2 class="text-xl font-semibold mb-4">Expected Value Calculation Results</h2>
                 <div id="unlockCostSection" class="hidden">
-                    <h3 class="font-medium text-lg mb-2 text-indigo-700">Initial Unlock Cost (for one copy of LM)</h3>
-                    <div class="result-box mb-2 bg-indigo-50 border-indigo-500">
+                    <h3 class="font-medium text-lg mb-2">Initial Unlock Cost (for one copy of LM)</h3>
+                    <div class="result-box mb-2">
                         <p><strong>Average:</strong> <span id="anvilsUnlockAvg">--</span> Anvils</p>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="result-box mb-2 bg-indigo-50 border-indigo-500">
+                        <div class="result-box mb-2">
                             <p><strong>Best Case:</strong> <span id="anvilsUnlockBest">--</span> Anvils</p>
                         </div>
-                        <div class="result-box bg-indigo-50 border-indigo-500">
+                        <div class="result-box">
                             <p><strong>Worst Case:</strong> <span id="anvilsUnlockWorst">--</span> Anvils</p>
                         </div>
                     </div>
@@ -429,7 +486,7 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="col-span-1">
-                        <h3 id="currentSystemTitle" class="font-medium text-lg mb-2 text-blue-700">Current Bleed System</h3>
+                        <h3 id="currentSystemTitle" class="font-medium text-lg mb-2">Current Bleed System</h3>
                         <div class="result-box mb-2">
                             <p><strong>Average:</strong> <span id="anvilsCurrent">--</span> Anvils</p>
                         </div>
@@ -441,7 +498,8 @@
                         </div>
                     </div>
                     <div class="col-span-1">
-                        <h3 id="proposedSystemTitle" class="font-medium text-lg mb-2 text-blue-700">Proposed Bleed System</h3>
+                        <h3 id="proposedSystemTitle" class="font-medium text-lg mb-2">Proposed Bleed System
+                        </h3>
                         <div class="result-box mb-2">
                             <p><strong>Average:</strong> <span id="anvilsProposed">--</span> Anvils</p>
                         </div>
@@ -453,68 +511,1111 @@
                         </div>
                     </div>
                 </div>
-                <p id="conclusion" class="text-center text-gray-700 font-medium mt-6"></p>
+                <p id="conclusion" class="text-center font-medium mt-6"></p>
 
-                <details class="mt-8">
+                <details id="detailedCalculationsDetails" data-section-name="Detailed Calculations (EV)">
                     <summary>Detailed Calculations (Expected Value)</summary>
                     <div class="calculation-detail mt-4">
-                        <h3 class="font-semibold text-md mb-2 text-gray-800">Core Pull Mechanics:</h3>
-                        <p><strong title="The average number of Anvils (draws) you need to spend to obtain any Mythic character, considering base probability and hard pity.">Average Draws per Mythic Character:</strong> <span id="calcDrawsPerMythic">--</span> Anvils</p>
-                        <p><strong title="The maximum number of Mythic characters you might have to pull to trigger the guarantee for one Limited Mythic (e.g., 3 Non-LMs + 1 LM = 4 Mythics).">Worst-Case Mythic Pulls to Guarantee one LM:</strong> <span id="calcWorstCaseMythicsForLM">--</span></p>
+                        <h3 class="font-semibold text-md mb-2">Core Pull Mechanics:</h3>
+                        <p><strong
+                                title="The average number of Anvils (draws) you need to spend to obtain any Mythic character, considering base probability and hard pity.">Average
+                                Draws per Mythic Character:</strong> <span id="calcDrawsPerMythic">--</span> Anvils</p>
+                        <p><strong
+                                title="The maximum number of Mythic characters you might have to pull to trigger the guarantee for one Limited Mythic (e.g., 3 Non-LMs + 1 LM = 4 Mythics).">Worst-Case
+                                Mythic Pulls to Guarantee one LM:</strong> <span id="calcWorstCaseMythicsForLM">--</span>
+                        </p>
                         <div id="detailUnlockCostSection" class="hidden">
-                            <h4 class="font-medium text-sm text-gray-700 mt-2 mb-1">Initial Unlock Cost:</h4>
-                            <p><strong title="On average, how many Mythic characters (LM or Non-LM) you'll pull before getting your first copy of the featured Limited Mythic.">Avg Mythics for 1st LM:</strong> <span id="detailAvgMythicsForLM">--</span></p>
-                            <p>Anvils for Unlock (Avg): <span id="detailAnvilsUnlockAvg">--</span> | (Best): <span id="detailAnvilsUnlockBest">--</span> | (Worst): <span id="detailAnvilsUnlockWorst">--</span></p>
+                            <h4 class="font-medium text-sm mt-2 mb-1">Initial Unlock Cost:</h4>
+                            <p><strong
+                                    title="On average, how many Mythic characters (LM or Non-LM) you'll pull before getting your first copy of the featured Limited Mythic.">Avg
+                                    Mythics for 1st LM:</strong> <span id="detailAvgMythicsForLM">--</span></p>
+                            <p>Anvils for Unlock (Avg): <span id="detailAnvilsUnlockAvg">--</span> | (Best): <span
+                                    id="detailAnvilsUnlockBest">--</span> | (Worst): <span
+                                    id="detailAnvilsUnlockWorst">--</span></p>
                         </div>
 
-                        <h3 class="font-semibold text-md mt-4 mb-2 text-gray-800">Shard Gain per Mythic Pull (for progression after unlock):</h3>
-                        <p>Current Bleed System (LM=<span id="detailLMSCurrent">40</span>, NM=<span id="detailNMSCurrent">0</span>): <strong title="Considering the LM rate-up and guarantee, this is the average number of shards for the *featured LM* you effectively gain each time you pull *any* Mythic character during the LM's banner.">Avg Effective Shards per Mythic:</strong> <span id="calcAvgShardsCurrent">--</span></p>
-                        <p>Proposed Bleed System (LM=<span id="detailLMSProposed">25</span>, NM=<span id="detailNMSProposed">5</span>): <strong title="Considering the LM rate-up and guarantee, this is the average number of shards for the *featured LM* you effectively gain each time you pull *any* Mythic character during the LM's banner.">Avg Effective Shards per Mythic:</strong> <span id="calcAvgShardsProposed">--</span></p>
+                        <h3 class="font-semibold text-md mt-4 mb-2">Shard Gain per Mythic Pull (for
+                            progression after unlock):</h3>
+                        <p>Current Bleed System (LM=<span id="detailLMSCurrent">40</span>, NM=<span
+                                id="detailNMSCurrent">0</span>): <strong
+                                title="Considering the LM rate-up and guarantee, this is the average number of shards for the *featured LM* you effectively gain each time you pull *any* Mythic character during the LM's banner.">Avg
+                                Effective Shards per Mythic:</strong> <span id="calcAvgShardsCurrent">--</span></p>
+                        <p>Proposed Bleed System (LM=<span id="detailLMSProposed">25</span>, NM=<span
+                                id="detailNMSProposed">5</span>): <strong
+                                title="Considering the LM rate-up and guarantee, this is the average number of shards for the *featured LM* you effectively gain each time you pull *any* Mythic character during the LM's banner.">Avg
+                                Effective Shards per Mythic:</strong> <span id="calcAvgShardsProposed">--</span></p>
 
-                        <h3 class="font-semibold text-md mt-4 mb-2 text-gray-800">Anvil Cost Breakdown (for Selected Shard Upgrade):</h3>
-                        <p id="anvilCostBreakdownNote">(Costs below are for the selected shard upgrade. Total costs may include initial unlock if selected above.)</p>
+                        <h3 class="font-semibold text-md mt-4 mb-2">Anvil Cost Breakdown (for Selected Shard
+                            Upgrade):</h3>
+                        <p id="anvilCostBreakdownNote">(Costs below are for the selected shard upgrade. Total costs may
+                            include initial unlock if selected above.)</p>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <h4 class="font-medium text-sm text-gray-700 mb-1">Current Bleed System:</h4>
+                                <h4 class="font-medium text-sm mb-1">Current Bleed System:</h4>
                                 <p>Shards for This Upgrade: <strong id="detailTargetShardsCurrent">--</strong></p>
                                 <p>Effective Shards/Mythic (Avg): <strong id="detailAvgShardsCurrent">--</strong></p>
                                 <p>Calculated Mythic Pulls (Avg): <strong id="detailMythicPullsAvgCurrent">--</strong></p>
                                 <p>Total Anvils for Upgrade (Avg): <strong id="detailAnvilsAvgCurrent">--</strong></p>
 
-                                <p class="mt-2">Effective Shards/Mythic (Best): <strong id="detailBestShardsCurrent">--</strong></p>
+                                <p class="mt-2">Effective Shards/Mythic (Best): <strong
+                                        id="detailBestShardsCurrent">--</strong></p>
                                 <p>Calculated Mythic Pulls (Best): <strong id="detailMythicPullsBestCurrent">--</strong></p>
                                 <p>Total Anvils for Upgrade (Best): <strong id="detailAnvilsBestCurrent">--</strong></p>
 
-                                <p class="mt-2">Effective Shards/Mythic (Worst): <strong id="detailWorstShardsCurrent">--</strong></p>
-                                <p>Calculated Mythic Pulls (Worst): <strong id="detailMythicPullsWorstCurrent">--</strong></p>
+                                <p class="mt-2">Effective Shards/Mythic (Worst): <strong
+                                        id="detailWorstShardsCurrent">--</strong></p>
+                                <p>Calculated Mythic Pulls (Worst): <strong id="detailMythicPullsWorstCurrent">--</strong>
+                                </p>
                                 <p>Total Anvils for Upgrade (Worst): <strong id="detailAnvilsWorstCurrent">--</strong></p>
                             </div>
                             <div>
-                                <h4 class="font-medium text-sm text-gray-700 mb-1">Proposed Bleed System:</h4>
+                                <h4 class="font-medium text-sm mb-1">Proposed Bleed System:</h4>
                                 <p>Shards for This Upgrade: <strong id="detailTargetShardsProposed">--</strong></p>
                                 <p>Effective Shards/Mythic (Avg): <strong id="detailAvgShardsProposed">--</strong></p>
                                 <p>Calculated Mythic Pulls (Avg): <strong id="detailMythicPullsAvgProposed">--</strong></p>
                                 <p>Total Anvils for Upgrade (Avg): <strong id="detailAnvilsAvgProposed">--</strong></p>
 
-                                <p class="mt-2">Effective Shards/Mythic (Best): <strong id="detailBestShardsProposed">--</strong></p>
-                                <p>Calculated Mythic Pulls (Best): <strong id="detailMythicPullsBestProposed">--</strong></p>
+                                <p class="mt-2">Effective Shards/Mythic (Best): <strong
+                                        id="detailBestShardsProposed">--</strong></p>
+                                <p>Calculated Mythic Pulls (Best): <strong id="detailMythicPullsBestProposed">--</strong>
+                                </p>
                                 <p>Total Anvils for Upgrade (Best): <strong id="detailAnvilsBestProposed">--</strong></p>
 
-                                <p class="mt-2">Effective Shards/Mythic (Worst): <strong id="detailWorstShardsProposed">--</strong></p>
-                                <p>Calculated Mythic Pulls (Worst): <strong id="detailMythicPullsWorstProposed">--</strong></p>
+                                <p class="mt-2">Effective Shards/Mythic (Worst): <strong
+                                        id="detailWorstShardsProposed">--</strong></p>
+                                <p>Calculated Mythic Pulls (Worst): <strong id="detailMythicPullsWorstProposed">--</strong>
+                                </p>
                                 <p>Total Anvils for Upgrade (Worst): <strong id="detailAnvilsWorstProposed">--</strong></p>
                             </div>
                         </div>
                     </div>
                 </details>
 
-                <div class="chart-container calc-section">
-                    <h3 class="font-semibold text-xl mb-4 text-gray-800 text-center">Average Anvil Costs by Star Level (Total from Base)</h3>
+                <div id="mainAnvilCostChartContainer" class="chart-container main-chart-container calc-section" data-section-name="Anvil Cost Chart (EV)">
+                    <h3 class="font-semibold text-xl mb-4 text-center">Average Anvil Costs by Star Level
+                        (Total from Base)</h3>
                     <canvas id="anvilCostChart"></canvas>
                 </div>
-            </div>
-        </div>
+            </div> 
+        </div> 
+    </div>
 
-        <script src="js/bleed.js"></script>
-    </body>
-    </html>
+    <script type="module">
+        // Firebase SDK imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, deleteDoc, onSnapshot, query, serverTimestamp, orderBy, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- Global Firebase Variables ---
+        let fbApp;
+        let fbAuth;
+        let fbDb;
+        let currentUserId = null;
+        let championsColRef = null; 
+        let unsubscribeChampionsListener = null;
+
+        // Chart instances
+        let probChartCurrentInstance = null;
+        let probChartProposedInstance = null;
+        let anvilCostChart = null; 
+
+
+        // --- App and Firebase Config ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'anvil-calculator-dev-customview'; // Reverted appId
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "AIzaSyAzSQbS4LtAz20syWI2HREPR7UnYh6ldbI",
+            authDomain: "dc-dark-legion-tools.firebaseapp.com",
+            projectId: "dc-dark-legion-tools",
+            storageBucket: "dc-dark-legion-tools.firebasestorage.app",
+            messagingSenderId: "786517074225",
+            appId: "1:786517074225:web:9f14dc4dcae0705fcfd010",
+            measurementId: "G-FTF00DHGV6"
+        };
+
+        // --- DOM Elements (Champion Management) ---
+        const championNameInput = document.getElementById('championName');
+        const saveChampionBtn = document.getElementById('saveChampionBtn');
+        const savedChampionsSelect = document.getElementById('savedChampions');
+        const loadChampionBtn = document.getElementById('loadChampionBtn');
+        const deleteChampionBtn = document.getElementById('deleteChampionBtn');
+        const championStatusDiv = document.getElementById('championStatus');
+        const userIdDisplay = document.getElementById('userIdDisplay');
+
+        // --- DOM Elements (Data Management) ---
+        // DOM elements for import/export removed
+
+        // --- DOM Elements (Probability Simulation) ---
+        const anvilBudgetInput = document.getElementById('anvilBudget');
+        const calculateProbabilityBtn = document.getElementById('calculateProbabilityBtn');
+        const probabilityStatusDiv = document.getElementById('probabilityStatus');
+        const probabilityResultsArea = document.getElementById('probabilityResultsArea');
+        const probabilitySummaryTextEl = document.getElementById('probabilitySummaryText');
+        const probSummaryCurrentEl = document.getElementById('probSummaryCurrent');
+        const probSummaryProposedEl = document.getElementById('probSummaryProposed');
+        const probabilitySimulationDetailsEl = document.getElementById('probabilitySimulationDetails');
+        const probabilityBtnText = calculateProbabilityBtn.querySelector('.btn-text');
+        const probabilityBtnSpinner = calculateProbabilityBtn.querySelector('.spinner');
+        
+        // --- DOM Elements (Customize View & Theme) ---
+        const sectionToggleContainer = document.getElementById('sectionToggleContainer');
+        const reorderableSectionsContainer = document.getElementById('reorderableSectionsContainer'); 
+        const SECTION_VISIBILITY_STORAGE_KEY = 'anvilCalcSectionVisibility_v2'; 
+        const SECTION_ORDER_STORAGE_KEY = 'anvilCalcSectionOrder_v2';
+
+
+        // --- Core Calculation Functions (Identical) ---
+        function calculateExpectedDrawsPerMythic(mythicProbability, hardPity) {
+            if (!(mythicProbability > 0 && mythicProbability <= 1) || hardPity < 1) { return NaN; }
+            let expectedDraws = 0.0;
+            for (let k = 1; k < hardPity; k++) {
+                const p_k = Math.pow(1 - mythicProbability, k - 1) * mythicProbability;
+                expectedDraws += k * p_k;
+            }
+            expectedDraws += hardPity * Math.pow(1 - mythicProbability, hardPity - 1);
+            return expectedDraws;
+        }
+
+        function calculateLmCycleMetrics(lmShardYield, nmShardYield, lmRateUpChance, nmGuaranteeThreshold) {
+            if (!(lmRateUpChance >= 0 && lmRateUpChance <= 1) || nmGuaranteeThreshold < 0) { return { averageShardsPerEffectiveMythic: NaN, expectedMythicPullsPerLmCycle: NaN, worstCaseMythicPullsPerLmCycle: NaN };}
+            const nmRateUpChance = 1.0 - lmRateUpChance;
+            let totalExpectedShardsInCycle = 0.0, totalExpectedMythicPullsInCycle = 0.0;
+            totalExpectedShardsInCycle += lmShardYield * lmRateUpChance;
+            totalExpectedMythicPullsInCycle += 1 * lmRateUpChance;
+            for (let i = 1; i < nmGuaranteeThreshold; i++) {
+                const p_sequence = Math.pow(nmRateUpChance, i) * lmRateUpChance;
+                totalExpectedShardsInCycle += ((nmShardYield * i) + lmShardYield) * p_sequence;
+                totalExpectedMythicPullsInCycle += (i + 1) * p_sequence;
+            }
+            const p_guarantee_hit = Math.pow(nmRateUpChance, nmGuaranteeThreshold);
+            totalExpectedShardsInCycle += ((nmShardYield * nmGuaranteeThreshold) + lmShardYield) * p_guarantee_hit;
+            totalExpectedMythicPullsInCycle += (nmGuaranteeThreshold + 1) * p_guarantee_hit;
+            const averageShards = (totalExpectedMythicPullsInCycle === 0 || totalExpectedShardsInCycle === 0) ? 0.0 : totalExpectedShardsInCycle / totalExpectedMythicPullsInCycle;
+            return { averageShardsPerEffectiveMythic: averageShards, expectedMythicPullsPerLmCycle: totalExpectedMythicPullsInCycle, worstCaseMythicPullsPerLmCycle: nmGuaranteeThreshold + 1 };
+        }
+
+        function calculateGachaAnvils(targetShards, avgShardsPerMythic, drawsPerMythic) {
+            if (targetShards <= 0) return 0;
+            if (avgShardsPerMythic <= 0 || drawsPerMythic <= 0) { return Infinity; }
+            return Math.ceil(targetShards / avgShardsPerMythic) * drawsPerMythic;
+        }
+
+        // --- DOM Elements (Calculator Inputs & Outputs) (Identical) ---
+        const mythicProbabilityInput = document.getElementById('mythicProbability');
+        const mythicHardPityInput = document.getElementById('mythicHardPity');
+        const lmRateUpChanceInput = document.getElementById('lmRateUpChance');
+        const startStarLevelSelect = document.getElementById('startStarLevel');
+        const targetStarLevelSelect = document.getElementById('targetStarLevel');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const calculateBtnText = calculateBtn.querySelector('.btn-text');
+        const calculateBtnSpinner = calculateBtn.querySelector('.spinner');
+        const toggleUnlockCostBtn = document.getElementById('toggleUnlockCostBtn');
+        const advisoryBox = document.getElementById('advisoryBox');
+        const advisoryMessage = document.getElementById('advisoryMessage');
+        const shardsNeededForUpgradeSpan = document.getElementById('shardsNeededForUpgrade');
+        const anvilsCurrentSpan = document.getElementById('anvilsCurrent');
+        const anvilsProposedSpan = document.getElementById('anvilsProposed');
+        const anvilsBestCurrentSpan = document.getElementById('anvilsBestCurrent');
+        const anvilsWorstCurrentSpan = document.getElementById('anvilsWorstCurrent');
+        const anvilsBestProposedSpan = document.getElementById('anvilsBestProposed');
+        const anvilsWorstProposedSpan = document.getElementById('anvilsWorstProposed');
+        const conclusionParagraph = document.getElementById('conclusion');
+        const currentSystemTitle = document.getElementById('currentSystemTitle');
+        const proposedSystemTitle = document.getElementById('proposedSystemTitle');
+        const unlockCostSection = document.getElementById('unlockCostSection');
+        const anvilsUnlockAvgSpan = document.getElementById('anvilsUnlockAvg');
+        const anvilsUnlockBestSpan = document.getElementById('anvilsUnlockBest');
+        const anvilsUnlockWorstSpan = document.getElementById('anvilsUnlockWorst');
+        const calcDrawsPerMythicSpan = document.getElementById('calcDrawsPerMythic');
+        const calcWorstCaseMythicsForLMSpan = document.getElementById('calcWorstCaseMythicsForLM');
+        const calcAvgShardsCurrentSpan = document.getElementById('calcAvgShardsCurrent');
+        const calcAvgShardsProposedSpan = document.getElementById('calcAvgShardsProposed');
+        const detailLMSCurrentSpan = document.getElementById('detailLMSCurrent');
+        const detailNMSCurrentSpan = document.getElementById('detailNMSCurrent');
+        const detailLMSProposedSpan = document.getElementById('detailLMSProposed');
+        const detailNMSProposedSpan = document.getElementById('detailNMSProposed');
+        const anvilCostBreakdownNote = document.getElementById('anvilCostBreakdownNote');
+        const detailUnlockCostSection = document.getElementById('detailUnlockCostSection');
+        const detailAvgMythicsForLMSpan = document.getElementById('detailAvgMythicsForLM');
+        const detailAnvilsUnlockAvgSpan = document.getElementById('detailAnvilsUnlockAvg');
+        const detailAnvilsUnlockBestSpan = document.getElementById('detailAnvilsUnlockBest');
+        const detailAnvilsUnlockWorstSpan = document.getElementById('detailAnvilsUnlockWorst');
+        const detailTargetShardsCurrentSpan = document.getElementById('detailTargetShardsCurrent');
+        const detailAvgShardsCurrentSpan = document.getElementById('detailAvgShardsCurrent');
+        const detailMythicPullsAvgCurrentSpan = document.getElementById('detailMythicPullsAvgCurrent');
+        const detailAnvilsAvgCurrentSpan = document.getElementById('detailAnvilsAvgCurrent');
+        const detailBestShardsCurrentSpan = document.getElementById('detailBestShardsCurrent');
+        const detailMythicPullsBestCurrentSpan = document.getElementById('detailMythicPullsBestCurrent');
+        const detailAnvilsBestCurrentSpan = document.getElementById('detailAnvilsBestCurrent');
+        const detailWorstShardsCurrentSpan = document.getElementById('detailWorstShardsCurrent');
+        const detailMythicPullsWorstCurrentSpan = document.getElementById('detailMythicPullsWorstCurrent');
+        const detailAnvilsWorstCurrentSpan = document.getElementById('detailAnvilsWorstCurrent');
+        const detailTargetShardsProposedSpan = document.getElementById('detailTargetShardsProposed');
+        const detailAvgShardsProposedSpan = document.getElementById('detailAvgShardsProposed');
+        const detailMythicPullsAvgProposedSpan = document.getElementById('detailMythicPullsAvgProposed');
+        const detailAnvilsAvgProposedSpan = document.getElementById('detailAnvilsAvgProposed');
+        const detailBestShardsProposedSpan = document.getElementById('detailBestShardsProposed');
+        const detailMythicPullsBestProposedSpan = document.getElementById('detailMythicPullsBestProposed');
+        const detailAnvilsBestProposedSpan = document.getElementById('detailAnvilsBestProposed');
+        const detailWorstShardsProposedSpan = document.getElementById('detailWorstShardsProposed');
+        const detailMythicPullsWorstProposedSpan = document.getElementById('detailMythicPullsWorstProposed');
+        const detailAnvilsWorstProposedSpan = document.getElementById('detailAnvilsWorstProposed');
+        const mythicProbabilityError = document.getElementById('mythicProbabilityError');
+        const mythicHardPityError = document.getElementById('mythicHardPityError');
+        const lmRateUpChanceError = document.getElementById('lmRateUpChanceError');
+        const starLevelError = document.getElementById('starLevelError');
+
+        // --- Game Constants and Data (Identical) ---
+        let isUnlockCostIncluded = false;
+        const NM_GUARANTEE_THRESHOLD = 3;
+        const SHARD_REQUIREMENTS = {
+            "White 1-Star": 2, "White 2-Star": 5, "White 3-Star": 10, "White 4-Star": 20, "White 5-Star": 40,
+            "Blue 1-Star": 60, "Blue 2-Star": 80, "Blue 3-Star": 100, "Blue 4-Star": 130, "Blue 5-Star": 160,
+            "Purple 1-Star": 200, "Purple 2-Star": 240, "Purple 3-Star": 280, "Purple 4-Star": 320, "Purple 5-Star": 360,
+            "Gold 1-Star": 400, "Gold 2-Star": 440, "Gold 3-Star": 480, "Gold 4-Star": 540, "Gold 5-Star": 600,
+            "Red 1-Star": 680, "Red 2-Star": 760, "Red 3-Star": 840, "Red 4-Star": 920, "Red 5-Star": 1000
+        };
+        const LM_SHARDS_CURRENT = 40;
+        const NM_SHARDS_CURRENT = 0;
+        const LM_SHARDS_PROPOSED = 25;
+        const NM_SHARDS_PROPOSED = 5;
+        // anvilCostChart is now global
+
+        // --- Firebase Initialization and Auth ---
+        async function initializeFirebaseAndAuth() {
+            if (!firebaseConfig.projectId) {
+                console.error("Firebase config is not fully provided. Firestore features will be disabled.");
+                userIdDisplay.textContent = "User ID: Firebase not configured";
+                disableChampionManagementFeatures(true, "Firebase not configured.");
+                return false; 
+            }
+            try {
+                fbApp = initializeApp(firebaseConfig);
+                fbAuth = getAuth(fbApp);
+                fbDb = getFirestore(fbApp);
+                setLogLevel('debug');
+
+                onAuthStateChanged(fbAuth, async (user) => {
+                    if (user) {
+                        currentUserId = user.uid;
+                        console.log("User is signed in with UID:", currentUserId);
+                        userIdDisplay.textContent = `User ID: ${currentUserId}`;
+                        championsColRef = collection(fbDb, `artifacts/${appId}/users/${currentUserId}/champions`);
+                        await populateSavedChampionsDropdownFromFirestore();
+                        disableChampionManagementFeatures(false);
+                        // Data management buttons removed from here
+                    } else {
+                        currentUserId = null;
+                        console.log("User is signed out.");
+                        userIdDisplay.textContent = "User ID: Not signed in";
+                        championsColRef = null;
+                        if (unsubscribeChampionsListener) { unsubscribeChampionsListener(); unsubscribeChampionsListener = null; }
+                        savedChampionsSelect.innerHTML = '<option value="">-- Sign in to manage configurations --</option>';
+                        disableChampionManagementFeatures(true, "Please sign in.");
+                        // Data management buttons removed from here
+                    }
+                });
+
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    console.log("Attempting to sign in with custom token...");
+                    await signInWithCustomToken(fbAuth, __initial_auth_token);
+                } else {
+                    console.log("No custom token, attempting to sign in anonymously...");
+                    await signInAnonymously(fbAuth);
+                }
+                return true;
+            } catch (error) { 
+                console.error("Firebase Initialization or Authentication Error:", error); 
+                displayChampionStatus("Authentication failed. Cloud features disabled.", true, 'error');
+                userIdDisplay.textContent = `User ID: Auth Error (${error.code || error.message})`;
+                disableChampionManagementFeatures(true, "Authentication error.");
+                return false;
+            }
+        }
+
+        function disableChampionManagementFeatures(disable, reason = "") {
+            saveChampionBtn.disabled = disable;
+            loadChampionBtn.disabled = disable;
+            deleteChampionBtn.disabled = disable;
+            savedChampionsSelect.disabled = disable;
+            
+            // Data management buttons removed from here
+
+            if (disable && reason) {
+                 savedChampionsSelect.innerHTML = `<option value="">-- ${reason} --</option>`;
+            }
+        }
+
+        // --- Champion Management Functions (Firestore) ---
+        function displayChampionStatus(message, isError = false, type = '') { 
+            championStatusDiv.textContent = message;
+            championStatusDiv.className = 'status-message text-center py-1'; 
+            if (type === 'info' ) { 
+                 championStatusDiv.classList.add('status-info');
+            } else if (isError || type === 'error') {
+                championStatusDiv.classList.add('status-error');
+            } else { 
+                 championStatusDiv.classList.add('status-success');
+            }
+            
+            setTimeout(() => {
+                championStatusDiv.textContent = '';
+                championStatusDiv.className = 'status-message mt-3';
+            }, 4000);
+        }
+
+        async function saveChampionToFirestore() {
+            if (!currentUserId || !championsColRef) {
+                displayChampionStatus("Not signed in. Cannot save configuration.", true, 'error');
+                return;
+            }
+            const championConfigName = championNameInput.value.trim();
+            if (!championConfigName) {
+                displayChampionStatus("Configuration name cannot be empty.", true, 'error');
+                return;
+            }
+            if (/[.#$[\]/]/.test(championConfigName) || championConfigName.length > 100) {
+                displayChampionStatus("Config name invalid (no .#$[]/) or too long.", true, 'error');
+                return;
+            }
+
+            const championData = {
+                name: championConfigName,
+                mythicProbability: mythicProbabilityInput.value,
+                mythicHardPity: mythicHardPityInput.value,
+                lmRateUpChance: lmRateUpChanceInput.value,
+                includeUnlockCost: isUnlockCostIncluded,
+                startStarLevel: startStarLevelSelect.value,
+                targetStarLevel: targetStarLevelSelect.value,
+                savedAt: serverTimestamp()
+            };
+
+            try {
+                const championDocRef = doc(championsColRef, championConfigName);
+                await setDoc(championDocRef, championData, { merge: true });
+                displayChampionStatus(`Configuration "${championConfigName}" saved successfully!`, false, 'success');
+                championNameInput.value = ''; 
+            } catch (e) {
+                displayChampionStatus(`Error saving: ${e.message}`, true, 'error');
+                console.error("Error saving to Firestore:", e);
+            }
+        }
+
+        async function loadChampionFromFirestore(configNameToLoad = null) {
+            if (!currentUserId || !championsColRef) {
+                displayChampionStatus("Not signed in. Cannot load configurations.", true, 'error');
+                return;
+            }
+            const championConfigName = configNameToLoad || savedChampionsSelect.value;
+            if (!championConfigName) {
+                displayChampionStatus("No configuration selected/provided to load.", true, 'error');
+                return;
+            }
+
+            try {
+                const championDocRef = doc(championsColRef, championConfigName);
+                const docSnap = await getDoc(championDocRef);
+
+                if (docSnap.exists()) {
+                    const championData = docSnap.data();
+                    mythicProbabilityInput.value = championData.mythicProbability;
+                    mythicHardPityInput.value = championData.mythicHardPity;
+                    lmRateUpChanceInput.value = championData.lmRateUpChance;
+                    isUnlockCostIncluded = championData.includeUnlockCost;
+                    updateToggleUnlockButtonAppearance();
+                    startStarLevelSelect.value = championData.startStarLevel;
+                    targetStarLevelSelect.value = championData.targetStarLevel;
+                    championNameInput.value = championData.name || championConfigName;
+                    updateCalculator();
+                    displayChampionStatus(`Private config "${championConfigName}" loaded.`, false, 'success');
+                } else {
+                    displayChampionStatus(`Configuration "${championConfigName}" not found.`, true, 'error');
+                }
+            } catch (e) {
+                displayChampionStatus(`Error loading: ${e.message}`, true, 'error');
+                console.error("Error loading from Firestore:", e);
+            }
+        }
+        
+        async function deleteChampionFromFirestore() {
+            if (!currentUserId || !championsColRef) {
+                displayChampionStatus("Not signed in. Cannot delete configurations.", true, 'error');
+                return;
+            }
+            const championConfigName = savedChampionsSelect.value;
+            if (!championConfigName) {
+                displayChampionStatus("No configuration selected to delete.", true, 'error');
+                return;
+            }
+            try {
+                const championDocRef = doc(championsColRef, championConfigName);
+                await deleteDoc(championDocRef);
+                displayChampionStatus(`Configuration "${championConfigName}" deleted.`, false, 'success');
+                championNameInput.value = '';
+            } catch (e) {
+                displayChampionStatus(`Error deleting: ${e.message}`, true, 'error');
+                console.error("Error deleting from Firestore:", e);
+            }
+        }
+
+        async function populateSavedChampionsDropdownFromFirestore() {
+            if (!currentUserId || !championsColRef) {
+                savedChampionsSelect.innerHTML = '<option value="">-- Not signed in --</option>';
+                return;
+            }
+            if (unsubscribeChampionsListener) { unsubscribeChampionsListener(); }
+            
+            const q = query(championsColRef, orderBy("name"));
+
+            unsubscribeChampionsListener = onSnapshot(q, (querySnapshot) => {
+                const hadSelection = savedChampionsSelect.value;
+                savedChampionsSelect.innerHTML = '<option value="">-- Select a Configuration --</option>';
+                if (querySnapshot.empty) {
+                    savedChampionsSelect.innerHTML = '<option value="">-- No configurations saved --</option>';
+                } else {
+                    querySnapshot.forEach((docSnap) => {
+                        const championData = docSnap.data();
+                        const option = document.createElement('option');
+                        option.value = docSnap.id; 
+                        option.textContent = championData.name || docSnap.id; 
+                        savedChampionsSelect.appendChild(option);
+                    });
+                }
+                if (hadSelection && Array.from(savedChampionsSelect.options).some(opt => opt.value === hadSelection)) {
+                    savedChampionsSelect.value = hadSelection;
+                }
+            }, (error) => { 
+                console.error("Error listening to champion configurations:", error);
+                displayChampionStatus("Error fetching configurations. Try refreshing.", true, 'error');
+                savedChampionsSelect.innerHTML = '<option value="">-- Error loading --</option>';
+            });
+        }
+
+        // --- Section Visibility and Order Customization ---
+        let currentSectionOrder = []; 
+
+        const allToggleableSections = [ // dataManagementSection removed from this list
+            { id: 'championManagementSection', name: 'Champion Configurations', defaultVisible: true },
+            { id: 'basePullRatesSection', name: 'Base Pull Rates', defaultVisible: true },
+            { id: 'upgradeRangeSection', name: 'Upgrade Range', defaultVisible: true },
+            { id: 'advisoryBox', name: 'Advisory Note', defaultVisible: true },
+            { id: 'shardBleedSystemsSection', name: 'Shard Bleed Systems', defaultVisible: true },
+            { id: 'probabilitySection', name: 'Probability Simulation', defaultVisible: true },
+            { id: 'results', name: 'Expected Value Results', defaultVisible: true }, 
+            { id: 'detailedCalculationsDetails', name: 'Detailed EV Calculations', defaultVisible: true },
+            { id: 'mainAnvilCostChartContainer', name: 'Anvil Cost Chart (EV)', defaultVisible: true }
+        ];
+
+        function initializeSectionCustomization() {
+            const visibilityPrefs = loadSectionVisibilityPreferences();
+            const orderPrefs = loadSectionOrderPreferences();
+
+            currentSectionOrder = orderPrefs.length > 0 ? orderPrefs : allToggleableSections.map(s => s.id);
+            
+            const validSectionIds = new Set(allToggleableSections.map(s => s.id));
+            currentSectionOrder = currentSectionOrder.filter(id => validSectionIds.has(id));
+            allToggleableSections.forEach(s => {
+                if (!currentSectionOrder.includes(s.id)) {
+                    currentSectionOrder.push(s.id); 
+                }
+            });
+            saveSectionOrderPreferences(); 
+
+            renderSectionToggles();
+            renderSectionsInOrder();
+        }
+
+        function renderSectionToggles() {
+            sectionToggleContainer.innerHTML = ''; 
+
+            currentSectionOrder.forEach((sectionId, index) => {
+                const sectionConfig = allToggleableSections.find(s => s.id === sectionId);
+                if (!sectionConfig) return;
+
+                const sectionElement = document.getElementById(sectionConfig.id);
+                 if (!sectionElement) {
+                    console.warn(`Section element with ID '${sectionConfig.id}' not found for toggling.`);
+                    return;
+                }
+
+                const visibilityPrefs = loadSectionVisibilityPreferences();
+                const isVisible = visibilityPrefs[sectionConfig.id] !== undefined ? visibilityPrefs[sectionConfig.id] : sectionConfig.defaultVisible;
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'toggle-item';
+
+                const label = document.createElement('label');
+                label.className = 'toggle-label text-sm';
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = isVisible;
+                checkbox.dataset.targetSectionId = sectionConfig.id;
+                checkbox.className = 'form-checkbox h-4 w-4 rounded';
+                checkbox.addEventListener('change', handleVisibilityChange);
+
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(` ${sectionConfig.name}`));
+                itemDiv.appendChild(label);
+
+                const buttonsDiv = document.createElement('div');
+                buttonsDiv.className = 'order-buttons';
+
+                const upButton = document.createElement('button');
+                upButton.innerHTML = '&uarr;'; 
+                upButton.title = "Move Up";
+                upButton.disabled = index === 0;
+                upButton.addEventListener('click', () => moveSection(index, -1));
+                
+                const downButton = document.createElement('button');
+                downButton.innerHTML = '&darr;'; 
+                downButton.title = "Move Down";
+                downButton.disabled = index === currentSectionOrder.length - 1;
+                downButton.addEventListener('click', () => moveSection(index, 1));
+
+                buttonsDiv.appendChild(upButton);
+                buttonsDiv.appendChild(downButton);
+                itemDiv.appendChild(buttonsDiv);
+                
+                sectionToggleContainer.appendChild(itemDiv);
+
+                sectionElement.classList.toggle('hidden', !isVisible);
+            });
+        }
+        
+        function handleVisibilityChange(event) {
+            const targetId = event.target.dataset.targetSectionId;
+            const sectionToToggle = document.getElementById(targetId);
+            if (sectionToToggle) {
+                sectionToToggle.classList.toggle('hidden', !event.target.checked);
+                saveSectionVisibilityPreferences();
+            }
+        }
+        
+        function moveSection(currentIndex, direction) {
+            const newIndex = currentIndex + direction;
+            if (newIndex < 0 || newIndex >= currentSectionOrder.length) return;
+
+            const itemToMove = currentSectionOrder.splice(currentIndex, 1)[0];
+            currentSectionOrder.splice(newIndex, 0, itemToMove);
+
+            saveSectionOrderPreferences();
+            renderSectionToggles(); 
+            renderSectionsInOrder(); 
+        }
+
+
+        function saveSectionVisibilityPreferences() {
+            const preferences = {};
+            sectionToggleContainer.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                preferences[checkbox.dataset.targetSectionId] = checkbox.checked;
+            });
+            try {
+                localStorage.setItem(SECTION_VISIBILITY_STORAGE_KEY, JSON.stringify(preferences));
+            } catch (e) {
+                console.error("Error saving section visibility to localStorage:", e);
+            }
+        }
+
+        function loadSectionVisibilityPreferences() {
+            try {
+                const savedPrefs = localStorage.getItem(SECTION_VISIBILITY_STORAGE_KEY);
+                return savedPrefs ? JSON.parse(savedPrefs) : {};
+            } catch (e) {
+                console.error("Error loading section visibility from localStorage:", e);
+                return {};
+            }
+        }
+
+        function saveSectionOrderPreferences() {
+            try {
+                localStorage.setItem(SECTION_ORDER_STORAGE_KEY, JSON.stringify(currentSectionOrder));
+            } catch (e) {
+                console.error("Error saving section order to localStorage:", e);
+            }
+        }
+
+        function loadSectionOrderPreferences() {
+            try {
+                const savedOrder = localStorage.getItem(SECTION_ORDER_STORAGE_KEY);
+                return savedOrder ? JSON.parse(savedOrder) : [];
+            } catch (e) {
+                console.error("Error loading section order from localStorage:", e);
+                return [];
+            }
+        }
+
+        function renderSectionsInOrder() {
+            if (!reorderableSectionsContainer) {
+                console.error("Reorderable sections container not found.");
+                return;
+            }
+            const fragment = document.createDocumentFragment();
+            currentSectionOrder.forEach(sectionId => {
+                const sectionElement = document.getElementById(sectionId);
+                if (sectionElement) {
+                    fragment.appendChild(sectionElement);
+                } else {
+                    console.warn(`Element with ID ${sectionId} not found for reordering.`);
+                }
+            });
+            reorderableSectionsContainer.innerHTML = ''; 
+            reorderableSectionsContainer.appendChild(fragment);
+        }
+
+        // Data Management functions (exportAllConfigurations, importConfigurationsFromFile, displayDataManagementStatus) removed
+
+        // --- Other utility functions (populateStarLevels, updateChart, etc.) ---
+        function populateStarLevels() {
+            startStarLevelSelect.innerHTML = ''; targetStarLevelSelect.innerHTML = '';
+            const baseOption = document.createElement('option');
+            baseOption.value = "0_shards"; baseOption.textContent = "Base Character (0 Shards)";
+            startStarLevelSelect.appendChild(baseOption);
+            for (const level in SHARD_REQUIREMENTS) {
+                const optS = document.createElement('option'); optS.value = level; optS.textContent = level; startStarLevelSelect.appendChild(optS);
+                const optT = document.createElement('option'); optT.value = level; optT.textContent = level; targetStarLevelSelect.appendChild(optT);
+            }
+            if (targetStarLevelSelect.options.length > 0) targetStarLevelSelect.selectedIndex = 0;
+            if (startStarLevelSelect.options.length > 0) startStarLevelSelect.selectedIndex = 0;
+        }
+
+        function updateChart(currentCosts, proposedCosts, labels, includeUnlock, unlockCostAvgForChart) {
+            const ctx = document.getElementById('anvilCostChart').getContext('2d');
+            if (anvilCostChart) { anvilCostChart.destroy(); } 
+            const finalCurrentCosts = currentCosts.map(cost => includeUnlock ? cost + unlockCostAvgForChart : cost);
+            const finalProposedCosts = proposedCosts.map(cost => includeUnlock ? cost + unlockCostAvgForChart : cost);
+            const yAxisLabel = includeUnlock ? 'Total Average Anvils (Unlock + Shards to Level)' : 'Average Anvils for Shards (Post-Unlock to Level)';
+            
+            const gridColor = 'rgba(0, 0, 0, 0.1)';
+            const textColor = '#334155'; 
+            const titleColor = '#1e293b'; 
+
+            anvilCostChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Current System (Avg Total to Level)', data: finalCurrentCosts, backgroundColor: 'rgba(59, 130, 246, 0.7)', borderColor: 'rgba(59, 130, 246, 1)', borderWidth: 1 },
+                        { label: 'Proposed System (Avg Total to Level)', data: finalProposedCosts, backgroundColor: 'rgba(16, 185, 129, 0.7)', borderColor: 'rgba(16, 185, 129, 1)', borderWidth: 1 }
+                    ]
+                },
+                options: { 
+                    responsive: true, maintainAspectRatio: false, 
+                    scales: { 
+                        y: { beginAtZero: true, title: { display: true, text: yAxisLabel, color: titleColor }, grid: { color: gridColor }, ticks: { color: textColor } }, 
+                        x: { title: { display: true, text: 'Star Level (Total Accumulation from Base)', color: titleColor }, grid: { color: gridColor }, ticks: { color: textColor } } 
+                    }, 
+                    plugins: { 
+                        tooltip: { 
+                            callbacks: { label: context => `${context.dataset.label}: ${Math.round(context.raw)} Anvils` },
+                            titleColor: titleColor, bodyColor: textColor, backgroundColor: 'rgba(255,255,255,0.9)', borderColor: gridColor, borderWidth:1
+                        },
+                        legend: { labels: { color: textColor } },
+                        title: { display: false } 
+                    } 
+                }
+            });
+        }
+        
+        function setButtonLoadingState(buttonElement, buttonTextElement, buttonSpinnerElement, isLoading) {
+            const isGloballyDisabled = buttonElement.disabled && !buttonElement.classList.contains('btn-loading'); 
+            if (isLoading) {
+                buttonElement.classList.add('btn-loading');
+                buttonElement.disabled = true;
+                if (buttonTextElement) buttonTextElement.style.display = 'none';
+                if (buttonSpinnerElement) buttonSpinnerElement.style.display = 'inline-block';
+            } else {
+                buttonElement.classList.remove('btn-loading');
+                if (!isGloballyDisabled) { 
+                    buttonElement.disabled = false;
+                }
+                if (buttonTextElement) buttonTextElement.style.display = 'inline-block';
+                if (buttonSpinnerElement) buttonSpinnerElement.style.display = 'none';
+            }
+        }
+
+        function updateToggleUnlockButtonAppearance() {
+            if (isUnlockCostIncluded) {
+                toggleUnlockCostBtn.textContent = 'Include Initial Unlock: ON';
+                toggleUnlockCostBtn.classList.remove('toggle-btn-off'); toggleUnlockCostBtn.classList.add('toggle-btn-on');
+            } else {
+                toggleUnlockCostBtn.textContent = 'Include Initial Unlock: OFF';
+                toggleUnlockCostBtn.classList.remove('toggle-btn-on'); toggleUnlockCostBtn.classList.add('toggle-btn-off');
+            }
+        }
+
+        // --- Probability Simulation & Distribution Functions ---
+        function displayProbabilityStatus(message, isError = false, type = '') { 
+            probabilityStatusDiv.textContent = message;
+            probabilityStatusDiv.className = 'status-message text-center py-1';
+            if (type === 'info' ) { 
+                 probabilityStatusDiv.classList.add('status-info');
+            } else if (isError || type === 'error') {
+                probabilityStatusDiv.classList.add('status-error');
+            } else { 
+                 probabilityStatusDiv.classList.add('status-success');
+            }
+            setTimeout(() => { probabilityStatusDiv.textContent = ''; probabilityStatusDiv.className = 'status-message mt-3'; }, 5000);
+        }
+
+        function simulateSingleSuccessAttemptForDistribution(budget, mythicProb, hardPity, lmRateUp, nmGuarantee,
+            includeUnlock, targetShardsForUpgrade,
+            lmShardsYield, nmShardsYield) {
+            let totalAnvilsSpent = 0;
+            let currentShards = 0;
+            let mythicPityCounter = 0;
+            let nmFailStreak = 0;
+            let isUnlocked = !includeUnlock;
+
+            if (includeUnlock && !isUnlocked) {
+                while (totalAnvilsSpent < budget) {
+                    mythicPityCounter++;
+                    totalAnvilsSpent++;
+                    if (mythicPityCounter >= hardPity || Math.random() < mythicProb) {
+                        mythicPityCounter = 0;
+                        if (nmFailStreak >= nmGuarantee || Math.random() < lmRateUp) {
+                            isUnlocked = true;
+                            nmFailStreak = 0;
+                            break; 
+                        } else {
+                            nmFailStreak++;
+                        }
+                    }
+                }
+                if (!isUnlocked) return budget + 1; 
+            }
+
+            if (targetShardsForUpgrade > 0) {
+                while (currentShards < targetShardsForUpgrade) {
+                    if (totalAnvilsSpent >= budget) return budget + 1; 
+
+                    mythicPityCounter++;
+                    totalAnvilsSpent++;
+                    if (mythicPityCounter >= hardPity || Math.random() < mythicProb) {
+                        mythicPityCounter = 0;
+                        let isLMThisPull = (nmFailStreak >= nmGuarantee || Math.random() < lmRateUp);
+                        if (isLMThisPull) nmFailStreak = 0; else nmFailStreak++;
+                        currentShards += isLMThisPull ? lmShardsYield : nmShardsYield;
+                    }
+                }
+                return totalAnvilsSpent; 
+            } else { 
+                return totalAnvilsSpent <= budget ? totalAnvilsSpent : budget + 1;
+            }
+        }
+        
+        function getPercentile(sortedData, percentile) {
+            if (!sortedData || sortedData.length === 0) return NaN;
+            const index = (percentile / 100) * (sortedData.length -1) ; 
+            if (index === Math.floor(index)) {
+                return sortedData[index];
+            } else {
+                const lower = Math.floor(index);
+                const upper = Math.ceil(index);
+                return sortedData[lower] * (upper - index) + sortedData[upper] * (index - lower);
+            }
+        }
+
+
+        function createHistogramData(anvilCosts, budget, numBins = 20) {
+            const successfulRuns = anvilCosts.filter(cost => cost <= budget);
+            if (successfulRuns.length === 0) {
+                return { labels: [`> ${budget} (Failures)`], data: [anvilCosts.length], successRate: 0, medianCost: NaN, p90Cost: NaN };
+            }
+
+            const minCost = Math.min(...successfulRuns);
+            const maxCost = Math.max(...successfulRuns); 
+            
+            const binSize = Math.max(1, Math.ceil((maxCost - minCost + 1) / numBins));
+            const bins = [];
+            const labels = [];
+            
+            for (let i = 0; i < numBins; i++) {
+                const binStart = minCost + (i * binSize);
+                const binEnd = binStart + binSize - 1;
+                if (binStart > maxCost && bins.length > 0) break; 
+                bins.push({ start: binStart, end: binEnd, count: 0 });
+                labels.push(`${binStart}-${binEnd}`);
+            }
+             if (bins.length > 0 && bins[bins.length - 1].end < maxCost) {
+                 bins[bins.length - 1].end = maxCost;
+                 labels[labels.length -1] = `${bins[bins.length - 1].start}-${maxCost}`;
+             }
+
+
+            let failures = 0;
+            anvilCosts.forEach(cost => {
+                if (cost <= budget) {
+                    for (const bin of bins) {
+                        if (cost >= bin.start && cost <= bin.end) {
+                            bin.count++;
+                            break;
+                        }
+                    }
+                } else {
+                    failures++;
+                }
+            });
+
+            const chartData = bins.map(bin => bin.count);
+            const chartLabels = bins.map(bin => `${bin.start}-${bin.end}`);
+
+            if (failures > 0) {
+                chartLabels.push(`> ${budget} (Failed)`);
+                chartData.push(failures);
+            }
+            
+            const successRate = (successfulRuns.length / anvilCosts.length) * 100;
+            successfulRuns.sort((a, b) => a - b);
+            const medianCost = getPercentile(successfulRuns, 50);
+            const p90Cost = getPercentile(successfulRuns, 90);
+
+
+            return { labels: chartLabels, data: chartData, successRate, medianCost, p90Cost };
+        }
+
+        function displayProbabilityDistributionChart(canvasId, histogram, systemLabel, budget) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            if (window[canvasId + 'Instance']) {
+                window[canvasId + 'Instance'].destroy();
+            }
+
+            const gridColor = 'rgba(0, 0, 0, 0.1)';
+            const textColor = '#334155';
+            const titleColor = '#1e293b';
+
+            window[canvasId + 'Instance'] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: histogram.labels,
+                    datasets: [{
+                        label: `Anvil Cost Frequency`,
+                        data: histogram.data,
+                        backgroundColor: systemLabel.toLowerCase().includes('current') ? 'rgba(59, 130, 246, 0.7)' : 'rgba(16, 185, 129, 0.7)',
+                        borderColor: systemLabel.toLowerCase().includes('current') ? 'rgba(59, 130, 246, 1)' : 'rgba(16, 185, 129, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'Number of Simulation Runs', color: titleColor }, grid: { color: gridColor }, ticks: { color: textColor } },
+                        x: { title: { display: true, text: 'Anvils Spent', color: titleColor }, grid: { color: gridColor }, ticks: { color: textColor } }
+                    },
+                    plugins: {
+                        tooltip: { 
+                            titleColor: titleColor, bodyColor: textColor, 
+                            backgroundColor: 'rgba(255,255,255,0.9)', 
+                            borderColor: gridColor, borderWidth:1,
+                            callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y} runs` } 
+                        },
+                        legend: { labels: { color: textColor } },
+                        title: { display: false } 
+                    }
+                }
+            });
+        }
+
+
+        function runProbabilitySimulation() {
+            setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, true);
+            displayProbabilityStatus("Calculating probability distribution... this may take a moment.", false, 'info');
+            probabilityResultsArea.classList.add('hidden'); 
+
+            setTimeout(() => { 
+                const budget = parseInt(anvilBudgetInput.value);
+                if (isNaN(budget) || budget <= 0) { displayProbabilityStatus("Please enter a valid Anvil budget.", true, 'error'); setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, false); return; }
+                
+                const mythicProb = parseFloat(mythicProbabilityInput.value), hardPity = parseInt(mythicHardPityInput.value), lmRateUp = parseFloat(lmRateUpChanceInput.value);
+                const includeUnlock = isUnlockCostIncluded;
+                const startS = (startStarLevelSelect.value === "0_shards") ? 0 : (SHARD_REQUIREMENTS[startStarLevelSelect.value] || 0);
+                const targetS = SHARD_REQUIREMENTS[targetStarLevelSelect.value] || 0;
+                const shardsNeeded = Math.max(0, targetS - startS);
+
+                if (isNaN(mythicProb) || isNaN(hardPity) || isNaN(lmRateUp)) { displayProbabilityStatus("Invalid base pull rates for simulation.", true, 'error'); setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, false); return; }
+
+                const NUM_SIM_RUNS = 10000; 
+                const anvilCostsCurrent = [];
+                const anvilCostsProposed = [];
+
+                for (let i = 0; i < NUM_SIM_RUNS; i++) {
+                    anvilCostsCurrent.push(simulateSingleSuccessAttemptForDistribution(budget, mythicProb, hardPity, lmRateUp, NM_GUARANTEE_THRESHOLD, includeUnlock, shardsNeeded, LM_SHARDS_CURRENT, NM_SHARDS_CURRENT));
+                    anvilCostsProposed.push(simulateSingleSuccessAttemptForDistribution(budget, mythicProb, hardPity, lmRateUp, NM_GUARANTEE_THRESHOLD, includeUnlock, shardsNeeded, LM_SHARDS_PROPOSED, NM_SHARDS_PROPOSED));
+                }
+                
+                const numBins = Math.min(20, Math.max(5, Math.floor(budget/25))); 
+
+                const histDataCurrent = createHistogramData(anvilCostsCurrent, budget, numBins);
+                const histDataProposed = createHistogramData(anvilCostsProposed, budget, numBins);
+
+                probabilitySummaryTextEl.textContent = `Goal: Reach ${targetStarLevelSelect.value} from ${startStarLevelSelect.value}${includeUnlock ? " (including initial unlock)" : ""} with a budget of ${budget} Anvils.`;
+                
+                displayProbabilityDistributionChart('probChartCurrent', histDataCurrent, 'Current System', budget);
+                probSummaryCurrentEl.innerHTML = `Success Rate: <strong>${histDataCurrent.successRate.toFixed(1)}%</strong>. ` +
+                                              (isNaN(histDataCurrent.medianCost) ? '' : `Median Cost (Success): <strong>${Math.round(histDataCurrent.medianCost)}</strong>. `) +
+                                              (isNaN(histDataCurrent.p90Cost) ? '' : `P90 Cost (Success): <strong>${Math.round(histDataCurrent.p90Cost)}</strong>.`);
+
+                displayProbabilityDistributionChart('probChartProposed', histDataProposed, 'Proposed System', budget);
+                 probSummaryProposedEl.innerHTML = `Success Rate: <strong>${histDataProposed.successRate.toFixed(1)}%</strong>. ` +
+                                              (isNaN(histDataProposed.medianCost) ? '' : `Median Cost (Success): <strong>${Math.round(histDataProposed.medianCost)}</strong>. `) +
+                                              (isNaN(histDataProposed.p90Cost) ? '' : `P90 Cost (Success): <strong>${Math.round(histDataProposed.p90Cost)}</strong>.`);
+
+
+                probabilitySimulationDetailsEl.textContent = `Based on ${NUM_SIM_RUNS} simulated attempts for each system.`;
+                probabilityResultsArea.classList.remove('hidden');
+                displayProbabilityStatus("Probability distribution calculation complete.", false, 'success');
+                setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, false);
+            }, 50);
+        }
+
+        function updateCalculator() {
+            setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, true);
+            setTimeout(() => {
+                [mythicProbabilityError, mythicHardPityError, lmRateUpChanceError, starLevelError].forEach(el => el.classList.add('hidden'));
+                conclusionParagraph.textContent = '';
+                document.querySelectorAll('#results span, .calculation-detail span').forEach(span => { if (!span.closest('.btn')) span.textContent = '--'; });
+                ['currentLMS', 'proposedLMS'].forEach((id, i) => document.getElementById(id).textContent = [LM_SHARDS_CURRENT, LM_SHARDS_PROPOSED][i]);
+                ['currentNMS', 'proposedNMS'].forEach((id, i) => document.getElementById(id).textContent = [NM_SHARDS_CURRENT, NM_SHARDS_PROPOSED][i]);
+                ['detailLMSCurrent', 'detailLMSProposed'].forEach((id, i) => document.getElementById(id).textContent = [LM_SHARDS_CURRENT, LM_SHARDS_PROPOSED][i]);
+                ['detailNMSCurrent', 'detailNMSProposed'].forEach((id, i) => document.getElementById(id).textContent = [NM_SHARDS_CURRENT, NM_SHARDS_PROPOSED][i]);
+
+                let isValid = true;
+                const mythicProbability = parseFloat(mythicProbabilityInput.value), mythicHardPity = parseInt(mythicHardPityInput.value), lmRateUpChance = parseFloat(lmRateUpChanceInput.value);
+                if (isNaN(mythicProbability) || mythicProbability <= 0 || mythicProbability > 1) { mythicProbabilityError.textContent = 'Invalid probability.'; mythicProbabilityError.classList.remove('hidden'); isValid = false; }
+                if (isNaN(mythicHardPity) || mythicHardPity < 1) { mythicHardPityError.textContent = 'Invalid pity.'; mythicHardPityError.classList.remove('hidden'); isValid = false; }
+                if (isNaN(lmRateUpChance) || lmRateUpChance < 0 || lmRateUpChance > 1) { lmRateUpChanceError.textContent = 'Invalid rate-up chance.'; lmRateUpChanceError.classList.remove('hidden'); isValid = false; }
+                const startShards = (startStarLevelSelect.value === "0_shards") ? 0 : (SHARD_REQUIREMENTS[startStarLevelSelect.value] || 0);
+                const targetTotalShards = SHARD_REQUIREMENTS[targetStarLevelSelect.value] || 0;
+                let shardsNeededForUpgrade = targetTotalShards - startShards;
+                if (shardsNeededForUpgrade < 0) { starLevelError.textContent = "Target level cannot be lower than starting level. Cost will be 0."; starLevelError.classList.remove('hidden'); shardsNeededForUpgrade = 0; }
+                shardsNeededForUpgradeSpan.textContent = shardsNeededForUpgrade.toString();
+                if (!isValid) { setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, false); return; }
+
+                const drawsPerMythicAverage = calculateExpectedDrawsPerMythic(mythicProbability, mythicHardPity);
+                calcDrawsPerMythicSpan.textContent = drawsPerMythicAverage.toFixed(2);
+                if (isNaN(drawsPerMythicAverage)) { conclusionParagraph.textContent = 'Error in base Mythic calculation.'; setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, false); return; }
+
+                const unlockCycleMetrics = calculateLmCycleMetrics(1, 0, lmRateUpChance, NM_GUARANTEE_THRESHOLD);
+                let anvilsUnlockAvg = 0, anvilsUnlockBest = 1, anvilsUnlockWorst = (NM_GUARANTEE_THRESHOLD + 1) * mythicHardPity; 
+                if (!isNaN(unlockCycleMetrics.expectedMythicPullsPerLmCycle)) {
+                    anvilsUnlockAvg = unlockCycleMetrics.expectedMythicPullsPerLmCycle * drawsPerMythicAverage;
+                    anvilsUnlockBest = 1 * 1; 
+                    anvilsUnlockWorst = unlockCycleMetrics.worstCaseMythicPullsPerLmCycle * mythicHardPity;
+                } else { conclusionParagraph.textContent = 'Error calculating LM cycle for unlock.'; setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, false); return; }
+                if(calcWorstCaseMythicsForLMSpan) calcWorstCaseMythicsForLMSpan.textContent = unlockCycleMetrics.worstCaseMythicPullsPerLmCycle.toString();
+                
+                const {averageShardsPerEffectiveMythic: avgEffShardsCurr} = calculateLmCycleMetrics(LM_SHARDS_CURRENT, NM_SHARDS_CURRENT, lmRateUpChance, NM_GUARANTEE_THRESHOLD);
+                const {averageShardsPerEffectiveMythic: avgEffShardsProp} = calculateLmCycleMetrics(LM_SHARDS_PROPOSED, NM_SHARDS_PROPOSED, lmRateUpChance, NM_GUARANTEE_THRESHOLD);
+                if (isNaN(avgEffShardsCurr) || isNaN(avgEffShardsProp)) { conclusionParagraph.textContent = 'Error in shard per mythic calculation.'; setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, false); return; }
+                calcAvgShardsCurrentSpan.textContent = avgEffShardsCurr.toFixed(2); calcAvgShardsProposedSpan.textContent = avgEffShardsProp.toFixed(2);
+
+                const bestShardsCurr = LM_SHARDS_CURRENT, bestShardsProp = LM_SHARDS_PROPOSED;
+                const worstShardsCurr = (NM_SHARDS_CURRENT * NM_GUARANTEE_THRESHOLD + LM_SHARDS_CURRENT) / (NM_GUARANTEE_THRESHOLD + 1);
+                const worstShardsProp = (NM_SHARDS_PROPOSED * NM_GUARANTEE_THRESHOLD + LM_SHARDS_PROPOSED) / (NM_GUARANTEE_THRESHOLD + 1);
+
+                let upAnvCurr = calculateGachaAnvils(shardsNeededForUpgrade, avgEffShardsCurr, drawsPerMythicAverage);
+                let upAnvProp = calculateGachaAnvils(shardsNeededForUpgrade, avgEffShardsProp, drawsPerMythicAverage);
+                let upAnvBestCurr = calculateGachaAnvils(shardsNeededForUpgrade, bestShardsCurr, 1);
+                let upAnvWorstCurr = calculateGachaAnvils(shardsNeededForUpgrade, worstShardsCurr, mythicHardPity);
+                let upAnvBestProp = calculateGachaAnvils(shardsNeededForUpgrade, bestShardsProp, 1);
+                let upAnvWorstProp = calculateGachaAnvils(shardsNeededForUpgrade, worstShardsProp, mythicHardPity);
+
+                if (isUnlockCostIncluded) {
+                    advisoryBox.classList.add('advisory-indigo-theme'); 
+                    advisoryMessage.innerHTML = `Costs displayed below **INCLUDE** initial unlock. Shard upgrade costs are for the selected range.`;
+                    currentSystemTitle.textContent = "Current System (Total: Unlock + Upgrade)"; 
+                    proposedSystemTitle.textContent = "Proposed System (Total: Unlock + Upgrade)";
+                    anvilCostBreakdownNote.textContent = "Anvil Cost Breakdown below shows costs for the selected shard upgrade. Overall total includes unlock if checked.";
+                    
+                    unlockCostSection.classList.remove('hidden'); 
+                    detailUnlockCostSection.classList.remove('hidden');
+                    [anvilsUnlockAvgSpan, detailAnvilsUnlockAvgSpan].forEach(s => s.textContent = Math.round(anvilsUnlockAvg).toString());
+                    [anvilsUnlockBestSpan, detailAnvilsUnlockBestSpan].forEach(s => s.textContent = Math.round(anvilsUnlockBest).toString());
+                    [anvilsUnlockWorstSpan, detailAnvilsUnlockWorstSpan].forEach(s => s.textContent = Math.round(anvilsUnlockWorst).toString());
+                    if(detailAvgMythicsForLMSpan) detailAvgMythicsForLMSpan.textContent = unlockCycleMetrics.expectedMythicPullsPerLmCycle.toFixed(2);
+
+                    anvilsCurrentSpan.textContent = Math.round(anvilsUnlockAvg + upAnvCurr).toString(); 
+                    anvilsProposedSpan.textContent = Math.round(anvilsUnlockAvg + upAnvProp).toString();
+                    anvilsBestCurrentSpan.textContent = Math.round(anvilsUnlockBest + upAnvBestCurr).toString(); 
+                    anvilsWorstCurrentSpan.textContent = Math.round(anvilsUnlockWorst + upAnvWorstCurr).toString();
+                    anvilsBestProposedSpan.textContent = Math.round(anvilsUnlockBest + upAnvBestProp).toString(); 
+                    anvilsWorstProposedSpan.textContent = Math.round(anvilsUnlockWorst + upAnvWorstProp).toString();
+                } else {
+                    advisoryBox.classList.remove('advisory-indigo-theme'); 
+                    advisoryMessage.innerHTML = `Costs displayed are for the **selected shard upgrade only**. Initial unlock cost is NOT included unless checked above.`;
+                    currentSystemTitle.textContent = "Current Bleed System (Upgrade Only)"; 
+                    proposedSystemTitle.textContent = "Proposed Bleed System (Upgrade Only)";
+                    anvilCostBreakdownNote.textContent = "Anvil Cost Breakdown below is for the selected shard upgrade only.";
+
+                    unlockCostSection.classList.add('hidden'); 
+                    detailUnlockCostSection.classList.add('hidden');
+                    anvilsCurrentSpan.textContent = Math.round(upAnvCurr).toString(); 
+                    anvilsProposedSpan.textContent = Math.round(upAnvProp).toString();
+                    anvilsBestCurrentSpan.textContent = Math.round(upAnvBestCurr).toString(); 
+                    anvilsWorstCurrentSpan.textContent = Math.round(upAnvWorstCurr).toString();
+                    anvilsBestProposedSpan.textContent = Math.round(upAnvBestProp).toString(); 
+                    anvilsWorstProposedSpan.textContent = Math.round(upAnvWorstProp).toString();
+                }
+
+
+                const setDetail = (el, val, fix=2) => el.textContent = isFinite(val) ? (fix===-1 ? val.toString() : val.toFixed(fix)) : (shardsNeededForUpgrade <= 0 ? '0' : 'Inf');
+                const setDetailAnvil = (el, val) => el.textContent = isFinite(val) ? Math.round(val).toString() : (shardsNeededForUpgrade <= 0 ? '0' : 'Infinity');
+                const setDetailMythicPulls = (el, shards, effShards) => el.textContent = (effShards > 0 && shards > 0 ? Math.ceil(shards / effShards) : (shards <= 0 ? 0 : 'Inf')).toString();
+
+                detailTargetShardsCurrentSpan.textContent = shardsNeededForUpgrade.toString();
+                setDetail(detailAvgShardsCurrentSpan, avgEffShardsCurr); setDetailMythicPulls(detailMythicPullsAvgCurrentSpan, shardsNeededForUpgrade, avgEffShardsCurr); setDetailAnvil(detailAnvilsAvgCurrentSpan, upAnvCurr);
+                setDetail(detailBestShardsCurrentSpan, bestShardsCurr); setDetailMythicPulls(detailMythicPullsBestCurrentSpan, shardsNeededForUpgrade, bestShardsCurr); setDetailAnvil(detailAnvilsBestCurrentSpan, upAnvBestCurr);
+                setDetail(detailWorstShardsCurrentSpan, worstShardsCurr); setDetailMythicPulls(detailMythicPullsWorstCurrentSpan, shardsNeededForUpgrade, worstShardsCurr); setDetailAnvil(detailAnvilsWorstCurrentSpan, upAnvWorstCurr);
+                
+                detailTargetShardsProposedSpan.textContent = shardsNeededForUpgrade.toString();
+                setDetail(detailAvgShardsProposedSpan, avgEffShardsProp); setDetailMythicPulls(detailMythicPullsAvgProposedSpan, shardsNeededForUpgrade, avgEffShardsProp); setDetailAnvil(detailAnvilsAvgProposedSpan, upAnvProp);
+                setDetail(detailBestShardsProposedSpan, bestShardsProp); setDetailMythicPulls(detailMythicPullsBestProposedSpan, shardsNeededForUpgrade, bestShardsProp); setDetailAnvil(detailAnvilsBestProposedSpan, upAnvBestProp);
+                setDetail(detailWorstShardsProposedSpan, worstShardsProp); setDetailMythicPulls(detailMythicPullsWorstProposedSpan, shardsNeededForUpgrade, worstShardsProp); setDetailAnvil(detailAnvilsWorstProposedSpan, upAnvWorstProp);
+
+                const totalCurrent = parseFloat(anvilsCurrentSpan.textContent), totalProposed = parseFloat(anvilsProposedSpan.textContent);
+                if (shardsNeededForUpgrade <= 0 && !isUnlockCostIncluded) { conclusionParagraph.textContent = "No shards needed for this upgrade range. Cost is 0."; }
+                else if (isFinite(totalCurrent) && isFinite(totalProposed)) {
+                    const diff = Math.ceil(Math.abs(totalCurrent - totalProposed));
+                    if (totalCurrent < totalProposed) conclusionParagraph.textContent = `The Current System is ~${diff} Anvils more efficient on average for the selected goal.`;
+                    else if (totalProposed < totalCurrent) conclusionParagraph.textContent = `The Proposed System is ~${diff} Anvils more efficient on average for the selected goal.`;
+                    else conclusionParagraph.textContent = 'Both systems require approximately the same Anvils on average for the selected goal.';
+                } else { conclusionParagraph.textContent = 'Could not determine efficiency due to non-finite Anvil costs.'; }
+
+                const chartLabels = Object.keys(SHARD_REQUIREMENTS);
+                const chartCostsCurr = chartLabels.map(lvl => isFinite(calculateGachaAnvils(SHARD_REQUIREMENTS[lvl], avgEffShardsCurr, drawsPerMythicAverage)) ? Math.round(calculateGachaAnvils(SHARD_REQUIREMENTS[lvl], avgEffShardsCurr, drawsPerMythicAverage)) : 0);
+                const chartCostsProp = chartLabels.map(lvl => isFinite(calculateGachaAnvils(SHARD_REQUIREMENTS[lvl], avgEffShardsProp, drawsPerMythicAverage)) ? Math.round(calculateGachaAnvils(SHARD_REQUIREMENTS[lvl], avgEffShardsProp, drawsPerMythicAverage)) : 0);
+                updateChart(chartCostsCurr, chartCostsProp, chartLabels, isUnlockCostIncluded, anvilsUnlockAvg);
+                setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, false);
+            }, 50);
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Theme functions removed from here
+            populateStarLevels();
+            updateToggleUnlockButtonAppearance();
+            initializeSectionCustomization(); 
+            
+            await initializeFirebaseAndAuth(); 
+
+            // Theme toggle listener removed
+
+            saveChampionBtn.addEventListener('click', saveChampionToFirestore);
+            loadChampionBtn.addEventListener('click', () => loadChampionFromFirestore());
+            deleteChampionBtn.addEventListener('click', deleteChampionFromFirestore);
+            
+            // Event listeners for import/export removed
+
+            calculateProbabilityBtn.addEventListener('click', runProbabilitySimulation); 
+            calculateBtn.addEventListener('click', updateCalculator);
+            [mythicProbabilityInput, mythicHardPityInput, lmRateUpChanceInput].forEach(el => el.addEventListener('input', updateCalculator));
+            [startStarLevelSelect, targetStarLevelSelect].forEach(el => el.addEventListener('change', updateCalculator));
+            toggleUnlockCostBtn.addEventListener('click', () => {
+                isUnlockCostIncluded = !isUnlockCostIncluded;
+                updateToggleUnlockButtonAppearance();
+                updateCalculator();
+            });
+
+            updateCalculator();
+        });
+    </script>
+</body>
+</html>
