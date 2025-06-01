@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DC : Dark Legion - Anvil Calculator</title>
+    <title>DC: Dark Legion - Anvil Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -443,22 +443,39 @@
             </div>
 
             <div id="shardBleedSystemsSection" class="calc-section" data-section-name="Shard Bleed Systems">
-                <h2 class="text-xl font-semibold mb-4">Configured Shard Bleed Systems</h2>
+                <h2 class="text-xl font-semibold mb-4">Configure Shard Bleed Systems</h2>
                 <p class="text-xs text-gray-500 mb-2">These values define how many shards you get when pulling a duplicate
                     Mythic that is either the Limited Mythic (LM) or a Non-Limited Mythic (NM) during an LM banner.</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <h3 class="font-medium text-lg mb-2 text-green-700">Current Bleed System</h3>
-                        <p class="text-sm text-gray-700">Limited Mythic (LM) Shards: <span id="currentLMS">-</span></p>
-                        <p class="text-sm text-gray-700">Non-Limited Mythic (NM) Shards: <span id="currentNMS">-</span></p>
+                        <div class="input-group mt-1">
+                            <label for="currentLMSInput" class="block text-xs">Limited Mythic (LM) Shards:</label>
+                            <input type="number" id="currentLMSInput" value="40" min="0" step="1">
+                            <p id="currentLMSError" class="error-message hidden"></p>
+                        </div>
+                        <div class="input-group mt-2">
+                            <label for="currentNMSInput" class="block text-xs">Non-Limited Mythic (NM) Shards (as LM shards):</label>
+                            <input type="number" id="currentNMSInput" value="0" min="0" step="1">
+                            <p id="currentNMSError" class="error-message hidden"></p>
+                        </div>
                     </div>
                     <div>
                         <h3 class="font-medium text-lg mb-2 text-green-700">Proposed Bleed System</h3>
-                        <p class="text-sm text-gray-700">Limited Mythic (LM) Shards: <span id="proposedLMS">-</span></p>
-                        <p class="text-sm text-gray-700">Non-Limited Mythic (NM) Shards: <span id="proposedNMS">-</span></p>
+                        <div class="input-group mt-1">
+                            <label for="proposedLMSInput" class="block text-xs">Limited Mythic (LM) Shards:</label>
+                            <input type="number" id="proposedLMSInput" value="25" min="0" step="1">
+                            <p id="proposedLMSError" class="error-message hidden"></p>
+                        </div>
+                        <div class="input-group mt-2">
+                            <label for="proposedNMSInput" class="block text-xs">Non-Limited Mythic (NM) Shards (as LM shards):</label>
+                            <input type="number" id="proposedNMSInput" value="5" min="0" step="1">
+                            <p id="proposedNMSError" class="error-message hidden"></p>
+                        </div>
                     </div>
                 </div>
             </div>
+
 
             <button id="calculateBtn" class="btn btn-primary w-full text-lg py-3 mb-8"> <span class="spinner"></span>
                 <span class="btn-text">Calculate Anvils (Expected Value)</span>
@@ -585,12 +602,12 @@
 
                         <h3 class="font-semibold text-md mt-4 mb-2">Shard Gain per Mythic Pull (for
                             progression after unlock):</h3>
-                        <p>Current Bleed System (LM=<span id="detailLMSCurrent">40</span>, NM=<span
-                                id="detailNMSCurrent">0</span>): <strong
+                        <p>Current Bleed System (LM=<span id="detailLMSCurrent"></span>, NM=<span 
+                                id="detailNMSCurrent"></span>): <strong
                                 title="Considering the LM rate-up and guarantee, this is the average number of shards for the *featured LM* you effectively gain each time you pull *any* Mythic character during the LM's banner.">Avg
                                 Effective Shards per Mythic:</strong> <span id="calcAvgShardsCurrent">--</span></p>
-                        <p>Proposed Bleed System (LM=<span id="detailLMSProposed">25</span>, NM=<span
-                                id="detailNMSProposed">5</span>): <strong
+                        <p>Proposed Bleed System (LM=<span id="detailLMSProposed"></span>, NM=<span
+                                id="detailNMSProposed"></span>): <strong
                                 title="Considering the LM rate-up and guarantee, this is the average number of shards for the *featured LM* you effectively gain each time you pull *any* Mythic character during the LM's banner.">Avg
                                 Effective Shards per Mythic:</strong> <span id="calcAvgShardsProposed">--</span></p>
 
@@ -647,20 +664,21 @@
                 </div>
             </div> 
 
-            <div id="explanationSection" class="calc-section" data-section-name="Features & Terminology Guide">
+            <div id="explanationSection" class="calc-section alt-bg" data-section-name="Features & Terminology Guide">
                 <h2 class="text-2xl font-bold mb-6 text-center">Anvil Calculator Guide</h2>
 
                 <h3>Introduction</h3>
                 <p>This calculator is designed to help you estimate the resources (primarily "Anvils") needed to unlock and upgrade Limited Mythic (LM) characters in gacha games that use a similar pull and pity system. It provides both long-term average costs (Expected Value) and short-term probability distributions based on your current progress and budget.</p>
 
                 <h3>Core Concepts & Terminology</h3>
+                <p>Understanding these terms will help you use the calculator effectively:</p>
                 <ul>
                     <li><strong>Anvils:</strong> The in-game currency or item used to perform a "pull" or "summon" on a character banner.</li>
                     <li><strong>Mythic Character:</strong> A high-rarity character type. This calculator focuses on "Limited Mythic" characters.</li>
                     <li><strong>Limited Mythic (LM):</strong> A specific, featured Mythic character available on a banner for a limited time. This is usually the primary target for players.</li>
-                    <li><strong>Mythic Base Probability:</strong> The fundamental chance (e.g., 3.84% or 0.0384) of pulling *any* Mythic character on a single Anvil pull, before any pity systems are considered.</li>
+                    <li><strong>Mythic Base Probability:</strong> The fundamental chance (e.g., 3.84% or <code>0.0384</code>) of pulling *any* Mythic character on a single Anvil pull, before any pity systems are considered.</li>
                     <li><strong>Mythic Hard Pity:</strong> The maximum number of Anvil pulls after which you are guaranteed to receive *any* Mythic character if you haven't pulled one already. For example, if hard pity is 50, your 50th pull will be a Mythic if the previous 49 were not.</li>
-                    <li><strong>Limited Mythic Rate-Up Chance:</strong> When you do pull a Mythic character, this is the probability that the Mythic you pulled is the featured Limited Mythic (LM) character. For example, a 26.9% (or 0.269) rate-up means if you pull a Mythic, there's a 26.9% chance it's the LM.</li>
+                    <li><strong>Limited Mythic Rate-Up Chance:</strong> When you do pull a Mythic character, this is the probability that the Mythic you pulled is the featured Limited Mythic (LM) character. For example, a 26.9% (or <code>0.269</code>) rate-up means if you pull a Mythic, there's a 26.9% chance it's the LM.</li>
                     <li><strong>LM Guarantee (Non-LM Pity / "Fail Three Times"):</strong> Many games have a system to ensure you eventually get the featured LM. This calculator hardcodes a common version: if you pull a certain number of Mythic characters that are *not* the featured LM (e.g., 3 Non-LM Mythics in a row), your *next* Mythic pull is guaranteed to be the featured LM. The "Non-LM Mythics Pulled (for LM Guarantee)" input lets you track this.</li>
                     <li><strong>Star Levels & Shards:</strong> Characters often have star levels (e.g., 1-Star White to 5-Star Red). Upgrading to the next star level requires a specific number of "shards" (or character-specific fragments/duplicates).</li>
                     <li><strong>Shard Bleed Systems:</strong> When you pull a duplicate of a Mythic character you already own (or sometimes any Mythic during an LM banner), you often receive shards for the *featured LM* instead of (or in addition to) shards for the character you actually pulled. This calculator compares two such "bleed" systems:
@@ -674,16 +692,19 @@
                 </ul>
 
                 <h3>Calculator Features Explained</h3>
+                
                 <h4>1. Champion Configurations</h4>
+                <p>This section allows you to save and load your calculator settings.</p>
                 <ul>
                     <li><strong>Configuration Name:</strong> Give your current set of inputs a unique name.</li>
-                    <li><strong>Save Current Settings:</strong> Saves all your current inputs (probabilities, pity, star levels, etc.) to your browser's local storage under the entered name. This allows you to quickly reload settings later. (Note: If using an environment with Firebase, this saves to your cloud account).</li>
+                    <li><strong>Save Current Settings:</strong> Saves all your current inputs (probabilities, pity, star levels, etc.) to your browser's local storage (or cloud if Firebase is active) under the entered name.</li>
                     <li><strong>Load Configuration:</strong> Select a previously saved configuration from the dropdown.</li>
                     <li><strong>Load Selected:</strong> Populates all calculator fields with the values from the selected configuration.</li>
                     <li><strong>Delete Selected:</strong> Removes the selected configuration from your saved list.</li>
                 </ul>
 
                 <h4>2. Base Pull Rates</h4>
+                <p>Configure the fundamental probabilities of your pulls.</p>
                 <ul>
                     <li><strong>Mythic Base Probability:</strong> Enter the game's stated base chance of pulling any Mythic character (e.g., for 3.84%, enter <code>0.0384</code>).</li>
                     <li><strong>Mythic Hard Pity:</strong> Enter the number of pulls at which a Mythic is guaranteed (e.g., <code>50</code>).</li>
@@ -691,13 +712,14 @@
                 </ul>
 
                 <h4>3. Select Upgrade Range</h4>
+                <p>Define your character upgrade goal.</p>
                 <ul>
                     <li><strong>Starting Star Level:</strong> The current star level of your character. "Base Character (0 Shards)" means you haven't unlocked them or have no progression shards.</li>
-                    <li><strong>Target Star Level:</strong> The star level you want to reach.</li>
+                    <li><strong>Target Star Level:</strong> The desired star level you want to reach.</li>
                     <li><strong>Initial Unlock Cost (Toggle):</strong>
                         <ul>
-                            <li><strong>OFF:</strong> Calculations assume you have *already unlocked* the LM character (i.e., you have at least one copy). The costs shown will be for accumulating shards for the selected star upgrade *only*.</li>
-                            <li><strong>ON:</strong> Calculations will *include* the estimated cost to pull your first copy of the LM character, *in addition* to the shards needed for the selected upgrade. This is useful if you are starting from scratch.</li>
+                            <li><strong>OFF:</strong> Calculations assume you have *already unlocked* the LM character. Costs shown are only for accumulating shards for the selected star upgrade.</li>
+                            <li><strong>ON:</strong> Calculations will *include* the estimated cost to pull your first copy of the LM character, *in addition* to the shards needed for the selected upgrade.</li>
                         </ul>
                     </li>
                 </ul>
@@ -709,6 +731,7 @@
                 <p>This is the main calculation button. It uses the inputs from "Base Pull Rates," "Upgrade Range," and "Shard Bleed Systems" to compute the average (Expected Value) Anvils needed. Results are shown in the "Expected Value Calculation Results" section.</p>
 
                 <h4>6. Probability of Success within Budget</h4>
+                <p>This simulation helps understand your chances with a fixed Anvil budget.</p>
                 <ul>
                     <li><strong>Current Mythic Pity Count:</strong> How many pulls have you made since your *last* Mythic character? If you just got a Mythic, this is 0. This value should be less than your "Mythic Hard Pity".</li>
                     <li><strong>Non-LM Mythics Pulled (for LM Guarantee):</strong> How many *non-featured* Mythics have you pulled in a row since your last *featured LM*? If the LM guarantee is "after 3 non-LMs", this value can be 0, 1, or 2.</li>
@@ -723,27 +746,25 @@
                 </ul>
 
                 <h4>7. Results Sections</h4>
+                <h5>Expected Value Calculation Results:</h5>
                 <ul>
-                    <li><strong>Expected Value Calculation Results:</strong>
-                        <ul>
-                            <li><strong>Initial Unlock Cost (if toggled ON):</strong> Average, Best, and Worst-case Anvils to get the *first copy* of the LM.</li>
-                            <li><strong>Shards Needed for This Upgrade:</strong> Calculated based on your Start/Target Star Levels.</li>
-                            <li><strong>Current/Proposed Bleed System Costs:</strong> Shows Average, Best, and Worst-case Anvils for the selected shard upgrade (or total including unlock if toggled ON). "Best Case" usually assumes you get LMs frequently. "Worst Case" assumes you hit pity for every Mythic and hit the LM guarantee pity.</li>
-                            <li><strong>Conclusion:</strong> A brief comparison of the two bleed systems based on average costs.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Detailed Calculations (Expected Value) (Expandable):</strong> Provides a breakdown of intermediate values used in the EV calculations, such as average draws per Mythic, effective shards per Mythic under each system, etc. This is for users interested in the underlying numbers.</li>
-                    <li><strong>Anvil Cost Chart (EV):</strong> Visualizes the *total average* Anvils needed to reach each star level from a base character (0 shards), for both bleed systems. If "Include Initial Unlock" is ON, this chart also includes the unlock cost.</li>
+                    <li><strong>Initial Unlock Cost (if toggled ON):</strong> Average, Best, and Worst-case Anvils to get the *first copy* of the LM.</li>
+                    <li><strong>Shards Needed for This Upgrade:</strong> Calculated based on your Start/Target Star Levels.</li>
+                    <li><strong>Current/Proposed Bleed System Costs:</strong> Shows Average, Best, and Worst-case Anvils for the selected shard upgrade (or total including unlock if toggled ON). "Best Case" usually assumes you get LMs frequently. "Worst Case" assumes you hit pity for every Mythic and hit the LM guarantee pity.</li>
+                    <li><strong>Conclusion:</strong> A brief comparison of the two bleed systems based on average costs.</li>
                 </ul>
+                <h5>Detailed Calculations (Expected Value) (Expandable):</h5>
+                <p>Provides a breakdown of intermediate values used in the EV calculations, such as average draws per Mythic, effective shards per Mythic under each system, etc. This is for users interested in the underlying numbers.</p>
+                <h5>Anvil Cost Chart (EV):</h5>
+                <p>Visualizes the *total average* Anvils needed to reach each star level from a base character (0 shards), for both bleed systems. If "Include Initial Unlock" is ON, this chart also includes the unlock cost.</p>
                 
                 <h4>8. Customize Visible Sections & Order</h4>
-                <p>This expandable section at the top allows you to:
+                <p>This expandable section at the top allows you to:</p>
                     <ul>
                         <li><strong>Hide/Show Sections:</strong> Uncheck a box to hide a section you don't frequently use, or check it to show it again.</li>
                         <li><strong>Reorder Sections:</strong> Use the Up (↑) and Down (↓) arrows next to each section name to change its display order on the page.</li>
                     </ul>
-                    Your preferences for visibility and order are saved in your browser.
-                </p>
+                    <p>Your preferences for visibility and order are saved in your browser.</p>
 
                 <h3>Understanding the Math (Conceptual)</h3>
                 <ul>
@@ -759,7 +780,8 @@
                     <li>Keep your "Current Pity" inputs updated for the most accurate personal probability simulations.</li>
                 </ul>
             </div>
-        </div> 
+        </details>
+
     </div>
 
     <script type="module">
@@ -785,13 +807,12 @@
         // --- App and Firebase Config ---
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'anvil-calculator-v2.0'; 
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            apiKey: "AIzaSyAzSQbS4LtAz20syWI2HREPR7UnYh6ldbI",
-            authDomain: "dc-dark-legion-tools.firebaseapp.com",
-            projectId: "dc-dark-legion-tools",
-            storageBucket: "dc-dark-legion-tools.firebasestorage.app",
-            messagingSenderId: "786517074225",
-            appId: "1:786517074225:web:9f14dc4dcae0705fcfd010",
-            measurementId: "G-FTF00DHGV6"
+            apiKey: "AIzaSyAzSQbS4LtAz20syWI2HREPR7UnYh6ldbI", // Fallback
+            authDomain: "dc-dark-legion-tools.firebaseapp.com", // Fallback
+            projectId: "dc-dark-legion-tools", // Fallback
+            storageBucket: "dc-dark-legion-tools.appspot.com", // Fallback
+            messagingSenderId: "786517074225", // Fallback
+            appId: "1:786517074225:web:9f14dc4dcae0705fcfd010" // Fallback
         };
 
         // --- DOM Elements (Champion Management) ---
@@ -833,6 +854,17 @@
         const reorderableSectionsContainer = document.getElementById('reorderableSectionsContainer'); 
         const SECTION_VISIBILITY_STORAGE_KEY = 'anvilCalcSectionVisibility_v2'; 
         const SECTION_ORDER_STORAGE_KEY = 'anvilCalcSectionOrder_v2';
+        const themeSelector = document.getElementById('themeSelector');
+
+        // --- DOM Elements (Configurable Bleed System) ---
+        const currentLMSInput = document.getElementById('currentLMSInput');
+        const currentNMSInput = document.getElementById('currentNMSInput');
+        const proposedLMSInput = document.getElementById('proposedLMSInput');
+        const proposedNMSInput = document.getElementById('proposedNMSInput');
+        const currentLMSError = document.getElementById('currentLMSError');
+        const currentNMSError = document.getElementById('currentNMSError');
+        const proposedLMSError = document.getElementById('proposedLMSError');
+        const proposedNMSError = document.getElementById('proposedNMSError');
 
 
         // --- Core Calculation Functions (Identical) ---
@@ -932,7 +964,7 @@
 
         // --- Game Constants and Data (Identical) ---
         let isUnlockCostIncluded = false;
-        const NM_GUARANTEE_THRESHOLD = 3; // This is the number of Non-LM mythics before a guaranteed LM
+        const NM_GUARANTEE_THRESHOLD = 3; 
         const SHARD_REQUIREMENTS = {
             "White 1-Star": 2, "White 2-Star": 5, "White 3-Star": 10, "White 4-Star": 20, "White 5-Star": 40,
             "Blue 1-Star": 60, "Blue 2-Star": 80, "Blue 3-Star": 100, "Blue 4-Star": 130, "Blue 5-Star": 160,
@@ -940,16 +972,12 @@
             "Gold 1-Star": 400, "Gold 2-Star": 440, "Gold 3-Star": 480, "Gold 4-Star": 540, "Gold 5-Star": 600,
             "Red 1-Star": 680, "Red 2-Star": 760, "Red 3-Star": 840, "Red 4-Star": 920, "Red 5-Star": 1000
         };
-        const LM_SHARDS_CURRENT = 40;
-        const NM_SHARDS_CURRENT = 0;
-        const LM_SHARDS_PROPOSED = 25;
-        const NM_SHARDS_PROPOSED = 5;
-        // anvilCostChart is now global
-
+        // Removed hardcoded bleed system constants, will be read from inputs
+        
         // --- Firebase Initialization and Auth ---
         async function initializeFirebaseAndAuth() {
-            if (!firebaseConfig.projectId) {
-                console.error("Firebase config is not fully provided. Firestore features will be disabled.");
+            if (!firebaseConfig.projectId || firebaseConfig.projectId === "YOUR_FALLBACK_PROJECT_ID") {
+                console.warn("Firebase config is using fallback values or is incomplete. Firestore features will be disabled.");
                 userIdDisplay.textContent = "User ID: Firebase not configured";
                 disableChampionManagementFeatures(true, "Firebase not configured.");
                 return false; 
@@ -958,13 +986,13 @@
                 fbApp = initializeApp(firebaseConfig);
                 fbAuth = getAuth(fbApp);
                 fbDb = getFirestore(fbApp);
-                setLogLevel('debug');
+                // setLogLevel('debug'); // Uncomment for Firebase debug logs
 
                 onAuthStateChanged(fbAuth, async (user) => {
                     if (user) {
                         currentUserId = user.uid;
                         console.log("User is signed in with UID:", currentUserId);
-                        userIdDisplay.textContent = `User ID: ${currentUserId}`;
+                        userIdDisplay.textContent = `User ID: ${currentUserId.substring(0,8)}...`; // Show partial ID
                         championsColRef = collection(fbDb, `artifacts/${appId}/users/${currentUserId}/champions`);
                         await populateSavedChampionsDropdownFromFirestore();
                         disableChampionManagementFeatures(false);
@@ -975,7 +1003,7 @@
                         championsColRef = null;
                         if (unsubscribeChampionsListener) { unsubscribeChampionsListener(); unsubscribeChampionsListener = null; }
                         savedChampionsSelect.innerHTML = '<option value="">-- Sign in to manage configurations --</option>';
-                        disableChampionManagementFeatures(true, "Please sign in.");
+                        disableChampionManagementFeatures(true, "Sign in to use cloud save.");
                     }
                 });
 
@@ -1002,7 +1030,7 @@
             deleteChampionBtn.disabled = disable;
             savedChampionsSelect.disabled = disable;
             if (disable && reason) {
-                 savedChampionsSelect.innerHTML = `<option value="">-- ${reason} --</option>`;
+                savedChampionsSelect.innerHTML = `<option value="">-- ${reason} --</option>`;
             }
         }
 
@@ -1011,11 +1039,11 @@
             championStatusDiv.textContent = message;
             championStatusDiv.className = 'status-message text-center py-1'; 
             if (type === 'info' ) { 
-                 championStatusDiv.classList.add('status-info');
+                championStatusDiv.classList.add('status-info');
             } else if (isError || type === 'error') {
                 championStatusDiv.classList.add('status-error');
             } else { 
-                 championStatusDiv.classList.add('status-success');
+                championStatusDiv.classList.add('status-success');
             }
             
             setTimeout(() => {
@@ -1049,6 +1077,11 @@
                 includeUnlockCost: isUnlockCostIncluded,
                 startStarLevel: startStarLevelSelect.value,
                 targetStarLevel: targetStarLevelSelect.value,
+                // Save configurable bleed system values
+                currentLMS: currentLMSInput.value,
+                currentNMS: currentNMSInput.value,
+                proposedLMS: proposedLMSInput.value,
+                proposedNMS: proposedNMSInput.value,
                 savedAt: serverTimestamp()
             };
 
@@ -1080,18 +1113,30 @@
 
                 if (docSnap.exists()) {
                     const championData = docSnap.data();
-                    mythicProbabilityInput.value = championData.mythicProbability;
-                    mythicHardPityInput.value = championData.mythicHardPity;
-                    lmRateUpChanceInput.value = championData.lmRateUpChance;
-                    currentMythicPityInput.value = championData.currentMythicPity || 0; 
-                    currentLMPityInput.value = championData.currentLMPity || 0;       
-                    isUnlockCostIncluded = championData.includeUnlockCost;
+                    mythicProbabilityInput.value = championData.mythicProbability || "0.0384";
+                    mythicHardPityInput.value = championData.mythicHardPity || "50";
+                    lmRateUpChanceInput.value = championData.lmRateUpChance || "0.269";
+                    currentMythicPityInput.value = championData.currentMythicPity || "0";
+                    currentLMPityInput.value = championData.currentLMPity || "0";
+                    isUnlockCostIncluded = championData.includeUnlockCost === true; 
                     updateToggleUnlockButtonAppearance();
-                    startStarLevelSelect.value = championData.startStarLevel;
-                    targetStarLevelSelect.value = championData.targetStarLevel;
+                    startStarLevelSelect.value = championData.startStarLevel || "0_shards";
+                    targetStarLevelSelect.value = championData.targetStarLevel || Object.keys(SHARD_REQUIREMENTS)[0];
                     championNameInput.value = championData.name || championConfigName;
-                    updateCalculator(); 
-                    displayChampionStatus(`Private config "${championConfigName}" loaded.`, false, 'success');
+
+                    // Load configurable bleed system values
+                    currentLMSInput.value = championData.currentLMS !== undefined ? championData.currentLMS : "40";
+                    currentNMSInput.value = championData.currentNMS !== undefined ? championData.currentNMS : "0";
+                    proposedLMSInput.value = championData.proposedLMS !== undefined ? championData.proposedLMS : "25";
+                    proposedNMSInput.value = championData.proposedNMS !== undefined ? championData.proposedNMS : "5";
+                    
+                    handleExpectedValueCalculation(); 
+                    probabilityResultsArea.classList.add('hidden');
+                    probabilityResultsArea.innerHTML = '';
+                    probabilityStatusDiv.textContent = '';
+
+
+                    displayChampionStatus(`Configuration "${championConfigName}" loaded.`, false, 'success');
                 } else {
                     displayChampionStatus(`Configuration "${championConfigName}" not found.`, true, 'error');
                 }
@@ -1111,6 +1156,12 @@
                 displayChampionStatus("No configuration selected to delete.", true, 'error');
                 return;
             }
+            
+            if (! (await showConfirmationModal(`Are you sure you want to delete the configuration "${championConfigName}"? This action cannot be undone.`))) {
+                displayChampionStatus("Deletion cancelled.", false, 'info');
+                return;
+            }
+
             try {
                 const championDocRef = doc(championsColRef, championConfigName);
                 await deleteDoc(championDocRef);
@@ -1157,7 +1208,6 @@
 
         // --- Section Visibility and Order Customization ---
         let currentSectionOrder = []; 
-
         const allToggleableSections = [ 
             { id: 'championManagementSection', name: 'Champion Configurations', defaultVisible: true },
             { id: 'basePullRatesSection', name: 'Base Pull Rates', defaultVisible: true },
@@ -1168,82 +1218,39 @@
             { id: 'results', name: 'Expected Value Results', defaultVisible: true }, 
             { id: 'detailedCalculationsDetails', name: 'Detailed EV Calculations', defaultVisible: true },
             { id: 'mainAnvilCostChartContainer', name: 'Anvil Cost Chart (EV)', defaultVisible: true },
-            { id: 'explanationSection', name: 'Features & Terminology Guide', defaultVisible: false } // New section, default to hidden
+            { id: 'explanationSection', name: 'Features & Terminology Guide', defaultVisible: false } 
         ];
 
         function initializeSectionCustomization() {
             const visibilityPrefs = loadSectionVisibilityPreferences();
             const orderPrefs = loadSectionOrderPreferences();
-
             currentSectionOrder = orderPrefs.length > 0 ? orderPrefs : allToggleableSections.map(s => s.id);
-            
             const validSectionIds = new Set(allToggleableSections.map(s => s.id));
             currentSectionOrder = currentSectionOrder.filter(id => validSectionIds.has(id));
-            allToggleableSections.forEach(s => {
-                if (!currentSectionOrder.includes(s.id)) {
-                    currentSectionOrder.push(s.id); 
-                }
-            });
+            allToggleableSections.forEach(s => { if (!currentSectionOrder.includes(s.id)) currentSectionOrder.push(s.id); });
             saveSectionOrderPreferences(); 
-
             renderSectionToggles();
             renderSectionsInOrder();
         }
 
         function renderSectionToggles() {
             sectionToggleContainer.innerHTML = ''; 
-
             currentSectionOrder.forEach((sectionId, index) => {
                 const sectionConfig = allToggleableSections.find(s => s.id === sectionId);
                 if (!sectionConfig) return;
-
                 const sectionElement = document.getElementById(sectionConfig.id);
-                 if (!sectionElement) {
-                    console.warn(`Section element with ID '${sectionConfig.id}' not found for toggling.`);
-                    return;
-                }
-
+                if (!sectionElement) { console.warn(`Section element with ID '${sectionConfig.id}' not found for toggling.`); return; }
                 const visibilityPrefs = loadSectionVisibilityPreferences();
                 const isVisible = visibilityPrefs[sectionConfig.id] !== undefined ? visibilityPrefs[sectionConfig.id] : sectionConfig.defaultVisible;
-
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'toggle-item';
-
-                const label = document.createElement('label');
-                label.className = 'toggle-label text-sm';
-                
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.checked = isVisible;
-                checkbox.dataset.targetSectionId = sectionConfig.id;
-                checkbox.className = 'form-checkbox h-4 w-4 rounded';
-                checkbox.addEventListener('change', handleVisibilityChange);
-
-                label.appendChild(checkbox);
-                label.appendChild(document.createTextNode(` ${sectionConfig.name}`));
-                itemDiv.appendChild(label);
-
-                const buttonsDiv = document.createElement('div');
-                buttonsDiv.className = 'order-buttons';
-
-                const upButton = document.createElement('button');
-                upButton.innerHTML = '&uarr;'; 
-                upButton.title = "Move Up";
-                upButton.disabled = index === 0;
-                upButton.addEventListener('click', () => moveSection(index, -1));
-                
-                const downButton = document.createElement('button');
-                downButton.innerHTML = '&darr;'; 
-                downButton.title = "Move Down";
-                downButton.disabled = index === currentSectionOrder.length - 1;
-                downButton.addEventListener('click', () => moveSection(index, 1));
-
-                buttonsDiv.appendChild(upButton);
-                buttonsDiv.appendChild(downButton);
-                itemDiv.appendChild(buttonsDiv);
-                
+                const itemDiv = document.createElement('div'); itemDiv.className = 'toggle-item';
+                const label = document.createElement('label'); label.className = 'toggle-label text-sm';
+                const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.checked = isVisible; checkbox.dataset.targetSectionId = sectionConfig.id; checkbox.className = 'form-checkbox h-4 w-4 rounded'; checkbox.addEventListener('change', handleVisibilityChange);
+                label.appendChild(checkbox); label.appendChild(document.createTextNode(` ${sectionConfig.name}`)); itemDiv.appendChild(label);
+                const buttonsDiv = document.createElement('div'); buttonsDiv.className = 'order-buttons';
+                const upButton = document.createElement('button'); upButton.innerHTML = '&uarr;'; upButton.title = "Move Up"; upButton.disabled = index === 0; upButton.addEventListener('click', () => moveSection(index, -1));
+                const downButton = document.createElement('button'); downButton.innerHTML = '&darr;'; downButton.title = "Move Down"; downButton.disabled = index === currentSectionOrder.length - 1; downButton.addEventListener('click', () => moveSection(index, 1));
+                buttonsDiv.appendChild(upButton); buttonsDiv.appendChild(downButton); itemDiv.appendChild(buttonsDiv);
                 sectionToggleContainer.appendChild(itemDiv);
-
                 sectionElement.classList.toggle('hidden', !isVisible);
             });
         }
@@ -1251,81 +1258,47 @@
         function handleVisibilityChange(event) {
             const targetId = event.target.dataset.targetSectionId;
             const sectionToToggle = document.getElementById(targetId);
-            if (sectionToToggle) {
-                sectionToToggle.classList.toggle('hidden', !event.target.checked);
-                saveSectionVisibilityPreferences();
-            }
+            if (sectionToToggle) { sectionToToggle.classList.toggle('hidden', !event.target.checked); saveSectionVisibilityPreferences(); }
         }
         
         function moveSection(currentIndex, direction) {
             const newIndex = currentIndex + direction;
             if (newIndex < 0 || newIndex >= currentSectionOrder.length) return;
-
             const itemToMove = currentSectionOrder.splice(currentIndex, 1)[0];
             currentSectionOrder.splice(newIndex, 0, itemToMove);
-
-            saveSectionOrderPreferences();
-            renderSectionToggles(); 
-            renderSectionsInOrder(); 
+            saveSectionOrderPreferences(); renderSectionToggles(); renderSectionsInOrder(); 
         }
-
 
         function saveSectionVisibilityPreferences() {
             const preferences = {};
-            sectionToggleContainer.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                preferences[checkbox.dataset.targetSectionId] = checkbox.checked;
-            });
-            try {
-                localStorage.setItem(SECTION_VISIBILITY_STORAGE_KEY, JSON.stringify(preferences));
-            } catch (e) {
-                console.error("Error saving section visibility to localStorage:", e);
-            }
+            sectionToggleContainer.querySelectorAll('input[type="checkbox"]').forEach(checkbox => { preferences[checkbox.dataset.targetSectionId] = checkbox.checked; });
+            try { localStorage.setItem(SECTION_VISIBILITY_STORAGE_KEY, JSON.stringify(preferences)); } catch (e) { console.error("Error saving section visibility to localStorage:", e); }
         }
 
         function loadSectionVisibilityPreferences() {
-            try {
-                const savedPrefs = localStorage.getItem(SECTION_VISIBILITY_STORAGE_KEY);
-                return savedPrefs ? JSON.parse(savedPrefs) : {};
-            } catch (e) {
-                console.error("Error loading section visibility from localStorage:", e);
-                return {};
-            }
+            try { const savedPrefs = localStorage.getItem(SECTION_VISIBILITY_STORAGE_KEY); return savedPrefs ? JSON.parse(savedPrefs) : {}; } 
+            catch (e) { console.error("Error loading section visibility from localStorage:", e); return {}; }
         }
 
         function saveSectionOrderPreferences() {
-            try {
-                localStorage.setItem(SECTION_ORDER_STORAGE_KEY, JSON.stringify(currentSectionOrder));
-            } catch (e) {
-                console.error("Error saving section order to localStorage:", e);
-            }
+            try { localStorage.setItem(SECTION_ORDER_STORAGE_KEY, JSON.stringify(currentSectionOrder)); } 
+            catch (e) { console.error("Error saving section order to localStorage:", e); }
         }
 
         function loadSectionOrderPreferences() {
-            try {
-                const savedOrder = localStorage.getItem(SECTION_ORDER_STORAGE_KEY);
-                return savedOrder ? JSON.parse(savedOrder) : [];
-            } catch (e) {
-                console.error("Error loading section order from localStorage:", e);
-                return [];
-            }
+            try { const savedOrder = localStorage.getItem(SECTION_ORDER_STORAGE_KEY); return savedOrder ? JSON.parse(savedOrder) : []; } 
+            catch (e) { console.error("Error loading section order from localStorage:", e); return []; }
         }
 
         function renderSectionsInOrder() {
-            if (!reorderableSectionsContainer) {
-                console.error("Reorderable sections container not found.");
-                return;
-            }
+            if (!reorderableSectionsContainer) { console.error("Reorderable sections container not found."); return; }
             const fragment = document.createDocumentFragment();
             currentSectionOrder.forEach(sectionId => {
                 const sectionElement = document.getElementById(sectionId);
-                if (sectionElement) {
-                    fragment.appendChild(sectionElement);
-                } else {
-                    console.warn(`Element with ID ${sectionId} not found for reordering.`);
-                }
+                if (sectionElement) fragment.appendChild(sectionElement);
+                else console.warn(`Element with ID ${sectionId} not found for reordering.`);
             });
-            reorderableSectionsContainer.innerHTML = ''; 
-            reorderableSectionsContainer.appendChild(fragment);
+            reorderableSectionsContainer.innerHTML = ''; reorderableSectionsContainer.appendChild(fragment);
         }
         
         // --- Other utility functions (populateStarLevels, updateChart, etc.) ---
@@ -1342,16 +1315,17 @@
             if (startStarLevelSelect.options.length > 0) startStarLevelSelect.selectedIndex = 0;
         }
 
-        function updateChart(currentCosts, proposedCosts, labels, includeUnlock, unlockCostAvgForChart) {
+        function updateMainAnvilCostChart(currentCosts, proposedCosts, labels, includeUnlock, unlockCostAvgForChart) {
             const ctx = document.getElementById('anvilCostChart').getContext('2d');
             if (anvilCostChart) { anvilCostChart.destroy(); } 
             const finalCurrentCosts = currentCosts.map(cost => includeUnlock ? cost + unlockCostAvgForChart : cost);
             const finalProposedCosts = proposedCosts.map(cost => includeUnlock ? cost + unlockCostAvgForChart : cost);
             const yAxisLabel = includeUnlock ? 'Total Average Anvils (Unlock + Shards to Level)' : 'Average Anvils for Shards (Post-Unlock to Level)';
             
-            const gridColor = 'rgba(0, 0, 0, 0.1)';
-            const textColor = '#334155'; 
-            const titleColor = '#1e293b'; 
+            const currentTheme = document.documentElement.dataset.theme || 'light'; // Use this if you re-add theming
+            const chartGridColor = 'rgba(0, 0, 0, 0.1)'; // Fallback or light theme default
+            const chartFontColor = '#334155'; // Fallback or light theme default
+
 
             anvilCostChart = new Chart(ctx, {
                 type: 'bar',
@@ -1365,15 +1339,18 @@
                 options: { 
                     responsive: true, maintainAspectRatio: false, 
                     scales: { 
-                        y: { beginAtZero: true, title: { display: true, text: yAxisLabel, color: titleColor }, grid: { color: gridColor }, ticks: { color: textColor } }, 
-                        x: { title: { display: true, text: 'Star Level (Total Accumulation from Base)', color: titleColor }, grid: { color: gridColor }, ticks: { color: textColor } } 
+                        y: { beginAtZero: true, title: { display: true, text: yAxisLabel, color: chartFontColor }, grid: { color: chartGridColor }, ticks: { color: chartFontColor } }, 
+                        x: { title: { display: true, text: 'Star Level (Total Accumulation from Base)', color: chartFontColor }, grid: { color: chartGridColor }, ticks: { color: chartFontColor } } 
                     }, 
                     plugins: { 
+                        legend: { labels: { color: chartFontColor } },
                         tooltip: { 
-                            callbacks: { label: context => `${context.dataset.label}: ${Math.round(context.raw)} Anvils` },
-                            titleColor: titleColor, bodyColor: textColor, backgroundColor: 'rgba(255,255,255,0.9)', borderColor: gridColor, borderWidth:1
+                            titleColor: chartFontColor, bodyColor: chartFontColor, 
+                            backgroundColor: '#ffffff', // Fallback for tooltip background
+                            borderColor: chartGridColor, 
+                            borderWidth:1,
+                            callbacks: { label: context => `${context.dataset.label}: ${Math.round(context.raw)} Anvils` } 
                         },
-                        legend: { labels: { color: textColor } },
                         title: { display: false } 
                     } 
                 }
@@ -1381,7 +1358,7 @@
         }
         
         function setButtonLoadingState(buttonElement, buttonTextElement, buttonSpinnerElement, isLoading) {
-            const isGloballyDisabled = buttonElement.disabled && !buttonElement.classList.contains('btn-loading'); 
+            const isGloballyDisabled = buttonElement.hasAttribute('data-globally-disabled');
             if (isLoading) {
                 buttonElement.classList.add('btn-loading');
                 buttonElement.disabled = true;
@@ -1406,25 +1383,25 @@
                 toggleUnlockCostBtn.classList.remove('toggle-btn-on'); toggleUnlockCostBtn.classList.add('toggle-btn-off');
             }
         }
-
-        // --- Probability Simulation & Distribution Functions ---
+        
+        // --- Probability Simulation Functions ---
         function displayProbabilityStatus(message, isError = false, type = '') { 
             probabilityStatusDiv.textContent = message;
             probabilityStatusDiv.className = 'status-message text-center py-1';
             if (type === 'info' ) { 
-                 probabilityStatusDiv.classList.add('status-info');
+                probabilityStatusDiv.classList.add('status-info');
             } else if (isError || type === 'error') {
                 probabilityStatusDiv.classList.add('status-error');
             } else { 
-                 probabilityStatusDiv.classList.add('status-success');
+                probabilityStatusDiv.classList.add('status-success');
             }
             setTimeout(() => { probabilityStatusDiv.textContent = ''; probabilityStatusDiv.className = 'status-message mt-3'; }, 5000);
         }
 
-        function simulateSingleSuccessAttemptForDistribution(budget, mythicProb, hardPity, lmRateUp, nmGuarantee,
-            includeUnlock, targetShardsForUpgrade,
-            lmShardsYield, nmShardsYield, 
-            initialMythicPity = 0, initialLMPityStreak = 0) { 
+        function simulateSingleSuccessAttemptForDistribution(budget, mythicProb, hardPity, lmRateUp, nmGuarantee, 
+                                             includeUnlock, targetShardsForUpgrade, 
+                                             lmShardsYield, nmShardsYield, 
+                                             initialMythicPity = 0, initialLMPityStreak = 0) { 
             
             let totalAnvilsSpent = 0;
             let currentShards = 0;
@@ -1481,7 +1458,6 @@
             }
         }
 
-
         function createHistogramData(anvilCosts, budget, numBins = 20) {
             const successfulRuns = anvilCosts.filter(cost => cost <= budget);
             if (successfulRuns.length === 0) {
@@ -1489,8 +1465,9 @@
             }
 
             const minCost = Math.min(...successfulRuns);
-            const maxCost = Math.max(...successfulRuns); 
-            
+            let maxCost = Math.max(...successfulRuns); 
+            if (maxCost < minCost) maxCost = minCost; // Handle case where all successful runs have the same cost
+
             const binSize = Math.max(1, Math.ceil((maxCost - minCost + 1) / numBins));
             const bins = [];
             const labels = [];
@@ -1499,23 +1476,24 @@
                 const binStart = minCost + (i * binSize);
                 const binEnd = binStart + binSize - 1;
                 if (binStart > maxCost && bins.length > 0) break; 
-                bins.push({ start: binStart, end: binEnd, count: 0 });
-                labels.push(`${binStart}-${binEnd}`);
+                bins.push({ start: binStart, end: Math.min(binEnd, maxCost), count: 0 }); // Ensure binEnd doesn't exceed maxCost
+                labels.push(`${binStart}-${Math.min(binEnd, maxCost)}`);
+                if (Math.min(binEnd, maxCost) >= maxCost) break; // Stop if last bin covers maxCost
             }
-             if (bins.length > 0 && bins[bins.length - 1].end < maxCost) {
-                 bins[bins.length - 1].end = maxCost;
-                 labels[labels.length -1] = `${bins[bins.length - 1].start}-${maxCost}`;
-             }
-
-
+            
             let failures = 0;
             anvilCosts.forEach(cost => {
                 if (cost <= budget) {
+                    let binned = false;
                     for (const bin of bins) {
                         if (cost >= bin.start && cost <= bin.end) {
                             bin.count++;
+                            binned = true;
                             break;
                         }
+                    }
+                    if (!binned && bins.length > 0 && cost <= bins[bins.length-1].end) { // Catch edge cases for last bin
+                        bins[bins.length-1].count++;
                     }
                 } else {
                     failures++;
@@ -1545,9 +1523,11 @@
                 window[canvasId + 'Instance'].destroy();
             }
 
-            const gridColor = 'rgba(0, 0, 0, 0.1)';
-            const textColor = '#334155';
-            const titleColor = '#1e293b';
+            const currentTheme = document.documentElement.dataset.theme || 'light';
+            const chartGridColor = currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+            const chartFontColor = currentTheme === 'dark' ? '#e5e7eb' : '#6b7280';
+            const titleColor = currentTheme === 'dark' ? '#f3f4f6' : '#1e293b';
+
 
             window[canvasId + 'Instance'] = new Chart(ctx, {
                 type: 'bar',
@@ -1564,17 +1544,17 @@
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     scales: {
-                        y: { beginAtZero: true, title: { display: true, text: 'Number of Simulation Runs', color: titleColor }, grid: { color: gridColor }, ticks: { color: textColor } },
-                        x: { title: { display: true, text: 'Anvils Spent', color: titleColor }, grid: { color: gridColor }, ticks: { color: textColor } }
+                        y: { beginAtZero: true, title: { display: true, text: 'Number of Simulation Runs', color: titleColor }, grid: { color: chartGridColor }, ticks: { color: chartFontColor } },
+                        x: { title: { display: true, text: 'Anvils Spent', color: titleColor }, grid: { color: chartGridColor }, ticks: { color: chartFontColor, autoSkip: true, maxTicksLimit: 10 } }
                     },
                     plugins: {
                         tooltip: { 
-                            titleColor: titleColor, bodyColor: textColor, 
-                            backgroundColor: 'rgba(255,255,255,0.9)', 
-                            borderColor: gridColor, borderWidth:1,
-                            callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y} runs` } 
+                            titleColor: titleColor, bodyColor: chartFontColor, 
+                            backgroundColor: currentTheme === 'dark' ? 'rgba(31, 41, 55, 0.9)' : 'rgba(255,255,255,0.9)', 
+                            borderColor: chartGridColor, borderWidth:1,
+                            callbacks: { label: context => `${context.dataset.label}: ${context.parsed.y} runs` } 
                         },
-                        legend: { labels: { color: textColor } },
+                        legend: { labels: { color: chartFontColor } },
                         title: { display: false } 
                     }
                 }
@@ -1586,6 +1566,7 @@
             setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, true);
             displayProbabilityStatus("Calculating probability distribution... this may take a moment.", false, 'info');
             probabilityResultsArea.classList.add('hidden'); 
+            probabilityResultsArea.innerHTML = '';
 
             setTimeout(() => { 
                 const budget = parseInt(anvilBudgetInput.value);
@@ -1594,39 +1575,35 @@
                 const mythicProb = parseFloat(mythicProbabilityInput.value);
                 const hardPity = parseInt(mythicHardPityInput.value);
                 const lmRateUp = parseFloat(lmRateUpChanceInput.value);
-                
-                // Get current pity states
                 const initialMythicPity = parseInt(currentMythicPityInput.value) || 0;
                 const initialLMPityStreak = parseInt(currentLMPityInput.value) || 0;
-
-                // Validate pity inputs
-                if (initialMythicPity < 0 || initialMythicPity >= hardPity) {
-                    displayProbabilityStatus(`Current Mythic Pity must be between 0 and ${hardPity - 1}.`, true, 'error');
-                    setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, false); return;
-                }
-                if (initialLMPityStreak < 0 || initialLMPityStreak >= NM_GUARANTEE_THRESHOLD) {
-                     displayProbabilityStatus(`Non-LM Mythics Pulled must be between 0 and ${NM_GUARANTEE_THRESHOLD - 1}.`, true, 'error');
-                     setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, false); return;
-                }
-
-
                 const includeUnlock = isUnlockCostIncluded;
                 const startS = (startStarLevelSelect.value === "0_shards") ? 0 : (SHARD_REQUIREMENTS[startStarLevelSelect.value] || 0);
                 const targetS = SHARD_REQUIREMENTS[targetStarLevelSelect.value] || 0;
                 const shardsNeeded = Math.max(0, targetS - startS);
 
-                if (isNaN(mythicProb) || isNaN(hardPity) || isNaN(lmRateUp)) { displayProbabilityStatus("Invalid base pull rates for simulation.", true, 'error'); setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, false); return; }
-
+                if (isNaN(mythicProb) || isNaN(hardPity) || isNaN(lmRateUp) || initialMythicPity < 0 || (hardPity > 0 && initialMythicPity >= hardPity) || initialLMPityStreak < 0 || initialLMPityStreak >= NM_GUARANTEE_THRESHOLD) {
+                     displayProbabilityStatus("Invalid base pull rates or pity inputs for simulation.", true, 'error');
+                     setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, false);
+                     return;
+                }
+                
                 const NUM_SIM_RUNS = 10000; 
                 const anvilCostsCurrent = [];
                 const anvilCostsProposed = [];
 
+                const lmShardsCurrentVal = parseInt(currentLMSInput.value) || 0; // Read from input
+                const nmShardsCurrentVal = parseInt(currentNMSInput.value) || 0; // Read from input
+                const lmShardsProposedVal = parseInt(proposedLMSInput.value) || 0; // Read from input
+                const nmShardsProposedVal = parseInt(proposedNMSInput.value) || 0; // Read from input
+
+
                 for (let i = 0; i < NUM_SIM_RUNS; i++) {
-                    anvilCostsCurrent.push(simulateSingleSuccessAttemptForDistribution(budget, mythicProb, hardPity, lmRateUp, NM_GUARANTEE_THRESHOLD, includeUnlock, shardsNeeded, LM_SHARDS_CURRENT, NM_SHARDS_CURRENT, initialMythicPity, initialLMPityStreak));
-                    anvilCostsProposed.push(simulateSingleSuccessAttemptForDistribution(budget, mythicProb, hardPity, lmRateUp, NM_GUARANTEE_THRESHOLD, includeUnlock, shardsNeeded, LM_SHARDS_PROPOSED, NM_SHARDS_PROPOSED, initialMythicPity, initialLMPityStreak));
+                    anvilCostsCurrent.push(simulateSingleSuccessAttemptForDistribution(budget, mythicProb, hardPity, lmRateUp, NM_GUARANTEE_THRESHOLD, includeUnlock, shardsNeeded, lmShardsCurrentVal, nmShardsCurrentVal, initialMythicPity, initialLMPityStreak));
+                    anvilCostsProposed.push(simulateSingleSuccessAttemptForDistribution(budget, mythicProb, hardPity, lmRateUp, NM_GUARANTEE_THRESHOLD, includeUnlock, shardsNeeded, lmShardsProposedVal, nmShardsProposedVal, initialMythicPity, initialLMPityStreak));
                 }
                 
-                const numBins = Math.min(20, Math.max(5, Math.floor(budget/25))); 
+                const numBins = Math.min(20, Math.max(5, Math.floor(budget/20))); 
 
                 const histDataCurrent = createHistogramData(anvilCostsCurrent, budget, numBins);
                 const histDataProposed = createHistogramData(anvilCostsProposed, budget, numBins);
@@ -1651,152 +1628,316 @@
             }, 50);
         }
 
-        function updateCalculator() {
+
+        // --- Main Expected Value Calculation Logic ---
+        function handleExpectedValueCalculation() {
             setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, true);
-            // Clear previous pity errors
-            currentMythicPityError.classList.add('hidden');
-            currentLMPityError.classList.add('hidden');
-
             setTimeout(() => {
-                [mythicProbabilityError, mythicHardPityError, lmRateUpChanceError, starLevelError].forEach(el => el.classList.add('hidden'));
-                conclusionParagraph.textContent = '';
-                document.querySelectorAll('#results span, .calculation-detail span').forEach(span => { if (!span.closest('.btn')) span.textContent = '--'; });
-                ['currentLMS', 'proposedLMS'].forEach((id, i) => document.getElementById(id).textContent = [LM_SHARDS_CURRENT, LM_SHARDS_PROPOSED][i]);
-                ['currentNMS', 'proposedNMS'].forEach((id, i) => document.getElementById(id).textContent = [NM_SHARDS_CURRENT, NM_SHARDS_PROPOSED][i]);
-                ['detailLMSCurrent', 'detailLMSProposed'].forEach((id, i) => document.getElementById(id).textContent = [LM_SHARDS_CURRENT, LM_SHARDS_PROPOSED][i]);
-                ['detailNMSCurrent', 'detailNMSProposed'].forEach((id, i) => document.getElementById(id).textContent = [NM_SHARDS_CURRENT, NM_SHARDS_PROPOSED][i]);
-
-                let isValid = true;
-                const mythicProbability = parseFloat(mythicProbabilityInput.value);
-                const mythicHardPity = parseInt(mythicHardPityInput.value);
-                const lmRateUpChance = parseFloat(lmRateUpChanceInput.value);
-                const currentMythicPity = parseInt(currentMythicPityInput.value) || 0;
-                const currentLMPity = parseInt(currentLMPityInput.value) || 0;
-
-
-                if (isNaN(mythicProbability) || mythicProbability <= 0 || mythicProbability > 1) { mythicProbabilityError.textContent = 'Invalid probability.'; mythicProbabilityError.classList.remove('hidden'); isValid = false; }
-                if (isNaN(mythicHardPity) || mythicHardPity < 1) { mythicHardPityError.textContent = 'Invalid pity.'; mythicHardPityError.classList.remove('hidden'); isValid = false; }
-                if (isNaN(lmRateUpChance) || lmRateUpChance < 0 || lmRateUpChance > 1) { lmRateUpChanceError.textContent = 'Invalid rate-up chance.'; lmRateUpChanceError.classList.remove('hidden'); isValid = false; }
-                
-                if (isNaN(currentMythicPity) || currentMythicPity < 0 || (mythicHardPity > 0 && currentMythicPity >= mythicHardPity) ) {
-                    currentMythicPityError.textContent = `Must be 0 to ${mythicHardPity > 0 ? mythicHardPity -1 : 'N/A'}.`; 
-                    currentMythicPityError.classList.remove('hidden'); isValid = false;
+                const inputs = validateAndGetEVInputs();
+                if (!inputs.isValid) {
+                    setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, false);
+                    return;
                 }
-                 if (isNaN(currentLMPity) || currentLMPity < 0 || currentLMPity >= NM_GUARANTEE_THRESHOLD ) { // Max is NM_GUARANTEE_THRESHOLD - 1
-                    currentLMPityError.textContent = `Must be 0 to ${NM_GUARANTEE_THRESHOLD - 1}.`; 
-                    currentLMPityError.classList.remove('hidden'); isValid = false;
+                const metrics = performExpectedValueCalculations(inputs.data);
+                if (!metrics.isValid) {
+                    conclusionParagraph.textContent = metrics.errorMessage || 'Error in EV calculation.';
+                    setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, false);
+                    return;
                 }
-
-
-                const startShards = (startStarLevelSelect.value === "0_shards") ? 0 : (SHARD_REQUIREMENTS[startStarLevelSelect.value] || 0);
-                const targetTotalShards = SHARD_REQUIREMENTS[targetStarLevelSelect.value] || 0;
-                let shardsNeededForUpgrade = targetTotalShards - startShards;
-                if (shardsNeededForUpgrade < 0) { starLevelError.textContent = "Target level cannot be lower than starting level. Cost will be 0."; starLevelError.classList.remove('hidden'); shardsNeededForUpgrade = 0; }
-                shardsNeededForUpgradeSpan.textContent = shardsNeededForUpgrade.toString();
-                if (!isValid) { setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, false); return; }
-
-                const drawsPerMythicAverage = calculateExpectedDrawsPerMythic(mythicProbability, mythicHardPity);
-                calcDrawsPerMythicSpan.textContent = drawsPerMythicAverage.toFixed(2);
-                if (isNaN(drawsPerMythicAverage)) { conclusionParagraph.textContent = 'Error in base Mythic calculation.'; setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, false); return; }
-
-                const unlockCycleMetrics = calculateLmCycleMetrics(1, 0, lmRateUpChance, NM_GUARANTEE_THRESHOLD);
-                let anvilsUnlockAvg = 0, anvilsUnlockBest = 1, anvilsUnlockWorst = (NM_GUARANTEE_THRESHOLD + 1) * mythicHardPity; 
-                if (!isNaN(unlockCycleMetrics.expectedMythicPullsPerLmCycle)) {
-                    anvilsUnlockAvg = unlockCycleMetrics.expectedMythicPullsPerLmCycle * drawsPerMythicAverage;
-                    anvilsUnlockBest = 1 * 1; 
-                    anvilsUnlockWorst = unlockCycleMetrics.worstCaseMythicPullsPerLmCycle * mythicHardPity;
-                } else { conclusionParagraph.textContent = 'Error calculating LM cycle for unlock.'; setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, false); return; }
-                if(calcWorstCaseMythicsForLMSpan) calcWorstCaseMythicsForLMSpan.textContent = unlockCycleMetrics.worstCaseMythicPullsPerLmCycle.toString();
-                
-                const {averageShardsPerEffectiveMythic: avgEffShardsCurr} = calculateLmCycleMetrics(LM_SHARDS_CURRENT, NM_SHARDS_CURRENT, lmRateUpChance, NM_GUARANTEE_THRESHOLD);
-                const {averageShardsPerEffectiveMythic: avgEffShardsProp} = calculateLmCycleMetrics(LM_SHARDS_PROPOSED, NM_SHARDS_PROPOSED, lmRateUpChance, NM_GUARANTEE_THRESHOLD);
-                if (isNaN(avgEffShardsCurr) || isNaN(avgEffShardsProp)) { conclusionParagraph.textContent = 'Error in shard per mythic calculation.'; setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, false); return; }
-                calcAvgShardsCurrentSpan.textContent = avgEffShardsCurr.toFixed(2); calcAvgShardsProposedSpan.textContent = avgEffShardsProp.toFixed(2);
-
-                const bestShardsCurr = LM_SHARDS_CURRENT, bestShardsProp = LM_SHARDS_PROPOSED;
-                const worstShardsCurr = (NM_SHARDS_CURRENT * NM_GUARANTEE_THRESHOLD + LM_SHARDS_CURRENT) / (NM_GUARANTEE_THRESHOLD + 1);
-                const worstShardsProp = (NM_SHARDS_PROPOSED * NM_GUARANTEE_THRESHOLD + LM_SHARDS_PROPOSED) / (NM_GUARANTEE_THRESHOLD + 1);
-
-                let upAnvCurr = calculateGachaAnvils(shardsNeededForUpgrade, avgEffShardsCurr, drawsPerMythicAverage);
-                let upAnvProp = calculateGachaAnvils(shardsNeededForUpgrade, avgEffShardsProp, drawsPerMythicAverage);
-                let upAnvBestCurr = calculateGachaAnvils(shardsNeededForUpgrade, bestShardsCurr, 1);
-                let upAnvWorstCurr = calculateGachaAnvils(shardsNeededForUpgrade, worstShardsCurr, mythicHardPity);
-                let upAnvBestProp = calculateGachaAnvils(shardsNeededForUpgrade, bestShardsProp, 1);
-                let upAnvWorstProp = calculateGachaAnvils(shardsNeededForUpgrade, worstShardsProp, mythicHardPity);
-
-                if (isUnlockCostIncluded) {
-                    advisoryBox.classList.add('advisory-indigo-theme'); 
-                    advisoryMessage.innerHTML = `Costs displayed below **INCLUDE** initial unlock. Shard upgrade costs are for the selected range.`;
-                    currentSystemTitle.textContent = "Current System (Total: Unlock + Upgrade)"; 
-                    proposedSystemTitle.textContent = "Proposed System (Total: Unlock + Upgrade)";
-                    anvilCostBreakdownNote.textContent = "Anvil Cost Breakdown below shows costs for the selected shard upgrade. Overall total includes unlock if checked.";
-                    
-                    unlockCostSection.classList.remove('hidden'); 
-                    detailUnlockCostSection.classList.remove('hidden');
-                    [anvilsUnlockAvgSpan, detailAnvilsUnlockAvgSpan].forEach(s => s.textContent = Math.round(anvilsUnlockAvg).toString());
-                    [anvilsUnlockBestSpan, detailAnvilsUnlockBestSpan].forEach(s => s.textContent = Math.round(anvilsUnlockBest).toString());
-                    [anvilsUnlockWorstSpan, detailAnvilsUnlockWorstSpan].forEach(s => s.textContent = Math.round(anvilsUnlockWorst).toString());
-                    if(detailAvgMythicsForLMSpan) detailAvgMythicsForLMSpan.textContent = unlockCycleMetrics.expectedMythicPullsPerLmCycle.toFixed(2);
-
-                    anvilsCurrentSpan.textContent = Math.round(anvilsUnlockAvg + upAnvCurr).toString(); 
-                    anvilsProposedSpan.textContent = Math.round(anvilsUnlockAvg + upAnvProp).toString();
-                    anvilsBestCurrentSpan.textContent = Math.round(anvilsUnlockBest + upAnvBestCurr).toString(); 
-                    anvilsWorstCurrentSpan.textContent = Math.round(anvilsUnlockWorst + upAnvWorstCurr).toString();
-                    anvilsBestProposedSpan.textContent = Math.round(anvilsUnlockBest + upAnvBestProp).toString(); 
-                    anvilsWorstProposedSpan.textContent = Math.round(anvilsUnlockWorst + upAnvWorstProp).toString();
-                } else {
-                    advisoryBox.classList.remove('advisory-indigo-theme'); 
-                    advisoryMessage.innerHTML = `Costs displayed are for the **selected shard upgrade only**. Initial unlock cost is NOT included unless checked above.`;
-                    currentSystemTitle.textContent = "Current Bleed System (Upgrade Only)"; 
-                    proposedSystemTitle.textContent = "Proposed Bleed System (Upgrade Only)";
-                    anvilCostBreakdownNote.textContent = "Anvil Cost Breakdown below is for the selected shard upgrade only.";
-
-                    unlockCostSection.classList.add('hidden'); 
-                    detailUnlockCostSection.classList.add('hidden');
-                    anvilsCurrentSpan.textContent = Math.round(upAnvCurr).toString(); 
-                    anvilsProposedSpan.textContent = Math.round(upAnvProp).toString();
-                    anvilsBestCurrentSpan.textContent = Math.round(upAnvBestCurr).toString(); 
-                    anvilsWorstCurrentSpan.textContent = Math.round(upAnvWorstCurr).toString();
-                    anvilsBestProposedSpan.textContent = Math.round(upAnvBestProp).toString(); 
-                    anvilsWorstProposedSpan.textContent = Math.round(upAnvWorstProp).toString();
-                }
-
-
-                const setDetail = (el, val, fix=2) => el.textContent = isFinite(val) ? (fix===-1 ? val.toString() : val.toFixed(fix)) : (shardsNeededForUpgrade <= 0 ? '0' : 'Inf');
-                const setDetailAnvil = (el, val) => el.textContent = isFinite(val) ? Math.round(val).toString() : (shardsNeededForUpgrade <= 0 ? '0' : 'Infinity');
-                const setDetailMythicPulls = (el, shards, effShards) => el.textContent = (effShards > 0 && shards > 0 ? Math.ceil(shards / effShards) : (shards <= 0 ? 0 : 'Inf')).toString();
-
-                detailTargetShardsCurrentSpan.textContent = shardsNeededForUpgrade.toString();
-                setDetail(detailAvgShardsCurrentSpan, avgEffShardsCurr); setDetailMythicPulls(detailMythicPullsAvgCurrentSpan, shardsNeededForUpgrade, avgEffShardsCurr); setDetailAnvil(detailAnvilsAvgCurrentSpan, upAnvCurr);
-                setDetail(detailBestShardsCurrentSpan, bestShardsCurr); setDetailMythicPulls(detailMythicPullsBestCurrentSpan, shardsNeededForUpgrade, bestShardsCurr); setDetailAnvil(detailAnvilsBestCurrentSpan, upAnvBestCurr);
-                setDetail(detailWorstShardsCurrentSpan, worstShardsCurr); setDetailMythicPulls(detailMythicPullsWorstCurrentSpan, shardsNeededForUpgrade, worstShardsCurr); setDetailAnvil(detailAnvilsWorstCurrentSpan, upAnvWorstCurr);
-                
-                detailTargetShardsProposedSpan.textContent = shardsNeededForUpgrade.toString();
-                setDetail(detailAvgShardsProposedSpan, avgEffShardsProp); setDetailMythicPulls(detailMythicPullsAvgProposedSpan, shardsNeededForUpgrade, avgEffShardsProp); setDetailAnvil(detailAnvilsAvgProposedSpan, upAnvProp);
-                setDetail(detailBestShardsProposedSpan, bestShardsProp); setDetailMythicPulls(detailMythicPullsBestProposedSpan, shardsNeededForUpgrade, bestShardsProp); setDetailAnvil(detailAnvilsBestProposedSpan, upAnvBestProp);
-                setDetail(detailWorstShardsProposedSpan, worstShardsProp); setDetailMythicPulls(detailMythicPullsWorstProposedSpan, shardsNeededForUpgrade, worstShardsProp); setDetailAnvil(detailAnvilsWorstProposedSpan, upAnvWorstProp);
-
-                const totalCurrent = parseFloat(anvilsCurrentSpan.textContent), totalProposed = parseFloat(anvilsProposedSpan.textContent);
-                if (shardsNeededForUpgrade <= 0 && !isUnlockCostIncluded) { conclusionParagraph.textContent = "No shards needed for this upgrade range. Cost is 0."; }
-                else if (isFinite(totalCurrent) && isFinite(totalProposed)) {
-                    const diff = Math.ceil(Math.abs(totalCurrent - totalProposed));
-                    if (totalCurrent < totalProposed) conclusionParagraph.textContent = `The Current System is ~${diff} Anvils more efficient on average for the selected goal.`;
-                    else if (totalProposed < totalCurrent) conclusionParagraph.textContent = `The Proposed System is ~${diff} Anvils more efficient on average for the selected goal.`;
-                    else conclusionParagraph.textContent = 'Both systems require approximately the same Anvils on average for the selected goal.';
-                } else { conclusionParagraph.textContent = 'Could not determine efficiency due to non-finite Anvil costs.'; }
-
-                const chartLabels = Object.keys(SHARD_REQUIREMENTS);
-                const chartCostsCurr = chartLabels.map(lvl => isFinite(calculateGachaAnvils(SHARD_REQUIREMENTS[lvl], avgEffShardsCurr, drawsPerMythicAverage)) ? Math.round(calculateGachaAnvils(SHARD_REQUIREMENTS[lvl], avgEffShardsCurr, drawsPerMythicAverage)) : 0);
-                const chartCostsProp = chartLabels.map(lvl => isFinite(calculateGachaAnvils(SHARD_REQUIREMENTS[lvl], avgEffShardsProp, drawsPerMythicAverage)) ? Math.round(calculateGachaAnvils(SHARD_REQUIREMENTS[lvl], avgEffShardsProp, drawsPerMythicAverage)) : 0);
-                updateChart(chartCostsCurr, chartCostsProp, chartLabels, isUnlockCostIncluded, anvilsUnlockAvg);
+                updateExpectedValueUI(metrics.data);
                 setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, false);
             }, 50);
         }
+
+        function resetExpectedValueDisplayFields() {
+            [mythicProbabilityError, mythicHardPityError, lmRateUpChanceError, starLevelError, currentMythicPityError, currentLMPityError, 
+             currentLMSError, currentNMSError, proposedLMSError, proposedNMSError].forEach(el => el.classList.add('hidden')); // Added bleed system errors
+            conclusionParagraph.textContent = '';
+            document.querySelectorAll('#results span, .calculation-detail span').forEach(span => {
+                if (!span.closest('.btn') && !span.closest('#championStatus') && !span.closest('#probabilityStatus')) { 
+                    span.textContent = '--';
+                }
+            });
+            // Spans for displaying configured bleed values in detailed section will be set in updateExpectedValueUI
+            unlockCostSection.classList.add('hidden');
+            detailUnlockCostSection.classList.add('hidden');
+        }
+
+        function validateAndGetEVInputs() {
+            resetExpectedValueDisplayFields();
+            let isValid = true;
+            const errors = {};
+
+            const mythicProbability = parseFloat(mythicProbabilityInput.value);
+            const mythicHardPity = parseInt(mythicHardPityInput.value);
+            const lmRateUpChance = parseFloat(lmRateUpChanceInput.value);
+            const currentMythicPity = parseInt(currentMythicPityInput.value) || 0; 
+            const currentLMPity = parseInt(currentLMPityInput.value) || 0; 
+
+            // Configurable Bleed System Values
+            const lmShardsCurrent = parseInt(currentLMSInput.value);
+            const nmShardsCurrent = parseInt(currentNMSInput.value);
+            const lmShardsProposed = parseInt(proposedLMSInput.value);
+            const nmShardsProposed = parseInt(proposedNMSInput.value);
+
+            if (isNaN(mythicProbability) || mythicProbability <= 0 || mythicProbability > 1) { mythicProbabilityError.textContent = 'Invalid probability.'; mythicProbabilityError.classList.remove('hidden'); isValid = false; errors.mythicProbability = true;}
+            if (isNaN(mythicHardPity) || mythicHardPity < 1) { mythicHardPityError.textContent = 'Invalid pity.'; mythicHardPityError.classList.remove('hidden'); isValid = false; errors.mythicHardPity = true;}
+            if (isNaN(lmRateUpChance) || lmRateUpChance < 0 || lmRateUpChance > 1) { lmRateUpChanceError.textContent = 'Invalid rate-up chance.'; lmRateUpChanceError.classList.remove('hidden'); isValid = false; errors.lmRateUpChance = true;}
+            
+            if (isNaN(currentMythicPity) || currentMythicPity < 0 || (mythicHardPity > 0 && currentMythicPity >= mythicHardPity) ) {
+                currentMythicPityError.textContent = `Must be 0 to ${mythicHardPity > 0 ? mythicHardPity -1 : 'N/A'}.`; 
+                currentMythicPityError.classList.remove('hidden'); isValid = false; errors.currentMythicPity = true;
+            }
+             if (isNaN(currentLMPity) || currentLMPity < 0 || currentLMPity >= NM_GUARANTEE_THRESHOLD ) { 
+                currentLMPityError.textContent = `Must be 0 to ${NM_GUARANTEE_THRESHOLD - 1}.`; 
+                currentLMPityError.classList.remove('hidden'); isValid = false; errors.currentLMPity = true;
+            }
+
+            // Validation for bleed system inputs
+            if (isNaN(lmShardsCurrent) || lmShardsCurrent < 0) { currentLMSError.textContent = 'Invalid.'; currentLMSError.classList.remove('hidden'); isValid = false; errors.lmShardsCurrent = true; }
+            if (isNaN(nmShardsCurrent) || nmShardsCurrent < 0) { currentNMSError.textContent = 'Invalid.'; currentNMSError.classList.remove('hidden'); isValid = false; errors.nmShardsCurrent = true; }
+            if (isNaN(lmShardsProposed) || lmShardsProposed < 0) { proposedLMSError.textContent = 'Invalid.'; proposedLMSError.classList.remove('hidden'); isValid = false; errors.lmShardsProposed = true; }
+            if (isNaN(nmShardsProposed) || nmShardsProposed < 0) { proposedNMSError.textContent = 'Invalid.'; proposedNMSError.classList.remove('hidden'); isValid = false; errors.nmShardsProposed = true; }
+
+
+            const startStarValue = startStarLevelSelect.value;
+            const targetStarValue = targetStarLevelSelect.value;
+            const startShards = (startStarValue === "0_shards") ? 0 : (SHARD_REQUIREMENTS[startStarValue] || 0);
+            const targetTotalShards = SHARD_REQUIREMENTS[targetStarValue] || 0;
+            let shardsNeededForUpgrade = targetTotalShards - startShards;
+
+            if (shardsNeededForUpgrade < 0) {
+                starLevelError.textContent = "Target level cannot be lower than starting level. Cost will be 0.";
+                starLevelError.classList.remove('hidden');
+                shardsNeededForUpgrade = 0; 
+                errors.starLevel = true;
+            }
+            shardsNeededForUpgradeSpan.textContent = shardsNeededForUpgrade.toString();
+
+            return { 
+                isValid, 
+                data: { mythicProbability, mythicHardPity, lmRateUpChance, shardsNeededForUpgrade, currentMythicPity, currentLMPity,
+                        lmShardsCurrent, nmShardsCurrent, lmShardsProposed, nmShardsProposed }, 
+                errors 
+            };
+        }
+
+        function performExpectedValueCalculations(inputs) {
+            const { mythicProbability, mythicHardPity, lmRateUpChance, shardsNeededForUpgrade,
+                    lmShardsCurrent, nmShardsCurrent, lmShardsProposed, nmShardsProposed } = inputs;
+            
+            let errorMessage = null;
+
+            const drawsPerMythicAverage = calculateExpectedDrawsPerMythic(mythicProbability, mythicHardPity);
+            if (isNaN(drawsPerMythicAverage)) return { isValid: false, errorMessage: 'Error in base Mythic calculation (drawsPerMythicAverage).' };
+
+            const unlockCycleMetrics = calculateLmCycleMetrics(1, 0, lmRateUpChance, NM_GUARANTEE_THRESHOLD);
+            if (isNaN(unlockCycleMetrics.expectedMythicPullsPerLmCycle)) return { isValid: false, errorMessage: 'Error calculating LM cycle for unlock.' };
+            
+            const anvilsUnlockAvg = unlockCycleMetrics.expectedMythicPullsPerLmCycle * drawsPerMythicAverage;
+            const anvilsUnlockBest = 1 * 1; 
+            const anvilsUnlockWorst = unlockCycleMetrics.worstCaseMythicPullsPerLmCycle * mythicHardPity;
+
+            const lmCycleMetricsCurrentSystem = calculateLmCycleMetrics(lmShardsCurrent, nmShardsCurrent, lmRateUpChance, NM_GUARANTEE_THRESHOLD);
+            const lmCycleMetricsProposedSystem = calculateLmCycleMetrics(lmShardsProposed, nmShardsProposed, lmRateUpChance, NM_GUARANTEE_THRESHOLD);
+            if (isNaN(lmCycleMetricsCurrentSystem.averageShardsPerEffectiveMythic) || isNaN(lmCycleMetricsProposedSystem.averageShardsPerEffectiveMythic)) {
+                return { isValid: false, errorMessage: 'Error in shard per mythic calculation for progression.' };
+            }
+
+            const avgEffShardsCurr = lmCycleMetricsCurrentSystem.averageShardsPerEffectiveMythic;
+            const avgEffShardsProp = lmCycleMetricsProposedSystem.averageShardsPerEffectiveMythic;
+            const bestShardsCurr = lmShardsCurrent; 
+            const bestShardsProp = lmShardsProposed;
+            const worstShardsCurr = (nmShardsCurrent * NM_GUARANTEE_THRESHOLD + lmShardsCurrent) / (NM_GUARANTEE_THRESHOLD + 1);
+            const worstShardsProp = (nmShardsProposed * NM_GUARANTEE_THRESHOLD + lmShardsProposed) / (NM_GUARANTEE_THRESHOLD + 1);
+
+            const upgradeAnvilsCurrent = calculateGachaAnvils(shardsNeededForUpgrade, avgEffShardsCurr, drawsPerMythicAverage);
+            const upgradeAnvilsProposed = calculateGachaAnvils(shardsNeededForUpgrade, avgEffShardsProp, drawsPerMythicAverage);
+            const upgradeAnvilsBestCurrent = calculateGachaAnvils(shardsNeededForUpgrade, bestShardsCurr, 1); 
+            const upgradeAnvilsWorstCurrent = calculateGachaAnvils(shardsNeededForUpgrade, worstShardsCurr, mythicHardPity);
+            const upgradeAnvilsBestProposed = calculateGachaAnvils(shardsNeededForUpgrade, bestShardsProp, 1);
+            const upgradeAnvilsWorstProposed = calculateGachaAnvils(shardsNeededForUpgrade, worstShardsProp, mythicHardPity);
+
+            return {
+                isValid: true,
+                data: {
+                    drawsPerMythicAverage, 
+                    unlockCycleMetrics, anvilsUnlockAvg, anvilsUnlockBest, anvilsUnlockWorst,
+                    avgEffShardsCurr, avgEffShardsProp,
+                    bestShardsCurr, bestShardsProp, worstShardsCurr, worstShardsProp,
+                    upgradeAnvilsCurrent, upgradeAnvilsProposed,
+                    upgradeAnvilsBestCurrent, upgradeAnvilsWorstCurrent,
+                    upgradeAnvilsBestProposed, upgradeAnvilsWorstProposed,
+                    shardsNeededForUpgrade,
+                    // Pass through configured bleed values for UI update
+                    lmShardsCurrent, nmShardsCurrent, lmShardsProposed, nmShardsProposed
+                }
+            };
+        }
+
+        function updateExpectedValueUI(metrics) {
+            const {
+                drawsPerMythicAverage, unlockCycleMetrics, anvilsUnlockAvg, anvilsUnlockBest, anvilsUnlockWorst,
+                avgEffShardsCurr, avgEffShardsProp,
+                bestShardsCurr, bestShardsProp, worstShardsCurr, worstShardsProp,
+                upgradeAnvilsCurrent, upgradeAnvilsProposed,
+                upgradeAnvilsBestCurrent, upgradeAnvilsWorstCurrent,
+                upgradeAnvilsBestProposed, upgradeAnvilsWorstProposed,
+                shardsNeededForUpgrade,
+                lmShardsCurrent, nmShardsCurrent, lmShardsProposed, nmShardsProposed // Received from metrics
+            } = metrics;
+
+            calcDrawsPerMythicSpan.textContent = drawsPerMythicAverage.toFixed(2);
+            if(calcWorstCaseMythicsForLMSpan) calcWorstCaseMythicsForLMSpan.textContent = unlockCycleMetrics.worstCaseMythicPullsPerLmCycle.toString();
+            calcAvgShardsCurrentSpan.textContent = avgEffShardsCurr.toFixed(2);
+            calcAvgShardsProposedSpan.textContent = avgEffShardsProp.toFixed(2);
+
+            // Update detail spans with configured bleed values
+            detailLMSCurrentSpan.textContent = lmShardsCurrent.toString();
+            detailNMSCurrentSpan.textContent = nmShardsCurrent.toString();
+            detailLMSProposedSpan.textContent = lmShardsProposed.toString();
+            detailNMSProposedSpan.textContent = nmShardsProposed.toString();
+
+
+            if (isUnlockCostIncluded) {
+                unlockCostSection.classList.remove('hidden');
+                detailUnlockCostSection.classList.remove('hidden');
+                [anvilsUnlockAvgSpan, detailAnvilsUnlockAvgSpan].forEach(s => s.textContent = Math.round(anvilsUnlockAvg).toString());
+                [anvilsUnlockBestSpan, detailAnvilsUnlockBestSpan].forEach(s => s.textContent = Math.round(anvilsUnlockBest).toString());
+                [anvilsUnlockWorstSpan, detailAnvilsUnlockWorstSpan].forEach(s => s.textContent = Math.round(anvilsUnlockWorst).toString());
+                if(detailAvgMythicsForLMSpan) detailAvgMythicsForLMSpan.textContent = unlockCycleMetrics.expectedMythicPullsPerLmCycle.toFixed(2);
+                
+                advisoryBox.classList.add('advisory-indigo-theme'); 
+                advisoryMessage.innerHTML = `Costs displayed below **INCLUDE** initial unlock. Shard upgrade costs are for the selected range.`;
+                currentSystemTitle.textContent = "Current System (Total: Unlock + Upgrade)"; 
+                proposedSystemTitle.textContent = "Proposed System (Total: Unlock + Upgrade)";
+                anvilCostBreakdownNote.textContent = "Anvil Cost Breakdown below shows costs for the selected shard upgrade. Overall total includes unlock if checked.";
+
+                anvilsCurrentSpan.textContent = Math.round(anvilsUnlockAvg + upgradeAnvilsCurrent).toString(); 
+                anvilsProposedSpan.textContent = Math.round(anvilsUnlockAvg + upgradeAnvilsProposed).toString();
+                anvilsBestCurrentSpan.textContent = Math.round(anvilsUnlockBest + upgradeAnvilsBestCurrent).toString(); 
+                anvilsWorstCurrentSpan.textContent = Math.round(anvilsUnlockWorst + upgradeAnvilsWorstCurrent).toString();
+                anvilsBestProposedSpan.textContent = Math.round(anvilsUnlockBest + upgradeAnvilsBestProposed).toString(); 
+                anvilsWorstProposedSpan.textContent = Math.round(anvilsUnlockWorst + upgradeAnvilsWorstProposed).toString();
+            } else {
+                unlockCostSection.classList.add('hidden'); 
+                detailUnlockCostSection.classList.add('hidden');
+                advisoryBox.classList.remove('advisory-indigo-theme'); 
+                advisoryMessage.innerHTML = `Costs displayed are for the **selected shard upgrade only**. Initial unlock cost is NOT included unless checked above.`;
+                currentSystemTitle.textContent = "Current Bleed System (Upgrade Only)"; 
+                proposedSystemTitle.textContent = "Proposed Bleed System (Upgrade Only)";
+                anvilCostBreakdownNote.textContent = "Anvil Cost Breakdown below is for the selected shard upgrade only.";
+
+                anvilsCurrentSpan.textContent = Math.round(upgradeAnvilsCurrent).toString(); 
+                anvilsProposedSpan.textContent = Math.round(upgradeAnvilsProposed).toString();
+                anvilsBestCurrentSpan.textContent = Math.round(upgradeAnvilsBestCurrent).toString(); 
+                anvilsWorstCurrentSpan.textContent = Math.round(upgradeAnvilsWorstCurrent).toString();
+                anvilsBestProposedSpan.textContent = Math.round(upgradeAnvilsBestProposed).toString(); 
+                anvilsWorstProposedSpan.textContent = Math.round(upgradeAnvilsWorstProposed).toString();
+            }
+
+            const setDetail = (el, val, fix=2) => el.textContent = isFinite(val) ? (fix===-1 ? val.toString() : val.toFixed(fix)) : (shardsNeededForUpgrade <= 0 ? '0' : 'Inf');
+            const setDetailAnvil = (el, val) => el.textContent = isFinite(val) ? Math.round(val).toString() : (shardsNeededForUpgrade <= 0 ? '0' : 'Infinity');
+            const setDetailMythicPulls = (el, shards, effShards) => el.textContent = (effShards > 0 && shards > 0 ? Math.ceil(shards / effShards) : (shards <= 0 ? 0 : 'Inf')).toString();
+
+            detailTargetShardsCurrentSpan.textContent = shardsNeededForUpgrade.toString();
+            setDetail(detailAvgShardsCurrentSpan, avgEffShardsCurr); setDetailMythicPulls(detailMythicPullsAvgCurrentSpan, shardsNeededForUpgrade, avgEffShardsCurr); setDetailAnvil(detailAnvilsAvgCurrentSpan, upgradeAnvilsCurrent);
+            setDetail(detailBestShardsCurrentSpan, bestShardsCurr); setDetailMythicPulls(detailMythicPullsBestCurrentSpan, shardsNeededForUpgrade, bestShardsCurr); setDetailAnvil(detailAnvilsBestCurrentSpan, upgradeAnvilsBestCurrent);
+            setDetail(detailWorstShardsCurrentSpan, worstShardsCurr); setDetailMythicPulls(detailMythicPullsWorstCurrentSpan, shardsNeededForUpgrade, worstShardsCurr); setDetailAnvil(detailAnvilsWorstCurrentSpan, upgradeAnvilsWorstCurrent);
+            
+            detailTargetShardsProposedSpan.textContent = shardsNeededForUpgrade.toString();
+            setDetail(detailAvgShardsProposedSpan, avgEffShardsProp); setDetailMythicPulls(detailMythicPullsAvgProposedSpan, shardsNeededForUpgrade, avgEffShardsProp); setDetailAnvil(detailAnvilsAvgProposedSpan, upgradeAnvilsProposed);
+            setDetail(detailBestShardsProposedSpan, bestShardsProp); setDetailMythicPulls(detailMythicPullsBestProposedSpan, shardsNeededForUpgrade, bestShardsProp); setDetailAnvil(detailAnvilsBestProposedSpan, upgradeAnvilsBestProposed);
+            setDetail(detailWorstShardsProposedSpan, worstShardsProp); setDetailMythicPulls(detailMythicPullsWorstProposedSpan, shardsNeededForUpgrade, worstShardsProp); setDetailAnvil(detailAnvilsWorstProposedSpan, upgradeAnvilsWorstProposed);
+            
+            const totalCurrent = parseFloat(anvilsCurrentSpan.textContent), totalProposed = parseFloat(anvilsProposedSpan.textContent);
+            if (shardsNeededForUpgrade <= 0 && !isUnlockCostIncluded) { conclusionParagraph.textContent = "No shards needed for this upgrade range. Cost is 0."; }
+            else if (isFinite(totalCurrent) && isFinite(totalProposed)) {
+                const diff = Math.ceil(Math.abs(totalCurrent - totalProposed));
+                if (totalCurrent < totalProposed) conclusionParagraph.textContent = `The Current System is ~${diff} Anvils more efficient on average for the selected goal.`;
+                else if (totalProposed < totalCurrent) conclusionParagraph.textContent = `The Proposed System is ~${diff} Anvils more efficient on average for the selected goal.`;
+                else conclusionParagraph.textContent = 'Both systems require approximately the same Anvils on average for the selected goal.';
+            } else { conclusionParagraph.textContent = 'Could not determine efficiency due to non-finite Anvil costs.'; }
+
+            const chartLabels = Object.keys(SHARD_REQUIREMENTS);
+            const chartCostsCurr = chartLabels.map(lvl => isFinite(calculateGachaAnvils(SHARD_REQUIREMENTS[lvl], avgEffShardsCurr, drawsPerMythicAverage)) ? Math.round(calculateGachaAnvils(SHARD_REQUIREMENTS[lvl], avgEffShardsCurr, drawsPerMythicAverage)) : 0);
+            const chartCostsProp = chartLabels.map(lvl => isFinite(calculateGachaAnvils(SHARD_REQUIREMENTS[lvl], avgEffShardsProp, drawsPerMythicAverage)) ? Math.round(calculateGachaAnvils(SHARD_REQUIREMENTS[lvl], avgEffShardsProp, drawsPerMythicAverage)) : 0);
+            updateMainAnvilCostChart(chartCostsCurr, chartCostsProp, chartLabels, isUnlockCostIncluded, anvilsUnlockAvg);
+        }
+
+
+        // --- Theme Functions ---
+        function applyTheme(themeName) {
+            document.documentElement.dataset.theme = themeName;
+            if (anvilCostChart || probChartCurrentInstance || probChartProposedInstance) { 
+                handleExpectedValueCalculation(); 
+            }
+        }
+
+        function saveThemePreference(themeName) {
+            try { localStorage.setItem('gachaCalcTheme_v2', themeName); } 
+            catch(e) { console.warn("Could not save theme preference to localStorage.");}
+        }
+
+        function loadThemePreference() {
+            let savedTheme = 'light';
+            try { savedTheme = localStorage.getItem('gachaCalcTheme_v2') || 'light'; } 
+            catch(e) { console.warn("Could not load theme preference from localStorage.");}
+            applyTheme(savedTheme);
+            if (themeSelector) themeSelector.value = savedTheme; // Check if themeSelector exists
+        }
+
+        // Custom Confirmation Modal
+        function showConfirmationModal(message) {
+            return new Promise((resolve) => {
+                const modalBackdrop = document.createElement('div');
+                modalBackdrop.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                
+                const modalContent = document.createElement('div');
+                modalContent.className = 'bg-white p-6 rounded-lg shadow-xl text-gray-800 max-w-sm';
+                if (document.documentElement.dataset.theme === 'dark') {
+                    modalContent.style.backgroundColor = 'var(--bg-section)';
+                    modalContent.style.color = 'var(--text-primary)';
+                }
+                
+                const messageP = document.createElement('p');
+                messageP.textContent = message;
+                messageP.className = 'mb-4';
+                modalContent.appendChild(messageP);
+                
+                const buttonDiv = document.createElement('div');
+                buttonDiv.className = 'flex justify-end gap-3';
+                
+                const confirmButton = document.createElement('button');
+                confirmButton.textContent = 'Confirm';
+                confirmButton.className = 'btn btn-danger px-4 py-2';
+                confirmButton.onclick = () => {
+                    document.body.removeChild(modalBackdrop);
+                    resolve(true);
+                };
+                
+                const cancelButton = document.createElement('button');
+                cancelButton.textContent = 'Cancel';
+                cancelButton.className = 'btn btn-secondary px-4 py-2';
+                cancelButton.onclick = () => {
+                    document.body.removeChild(modalBackdrop);
+                    resolve(false);
+                };
+                
+                buttonDiv.appendChild(cancelButton);
+                buttonDiv.appendChild(confirmButton);
+                modalContent.appendChild(buttonDiv);
+                modalBackdrop.appendChild(modalContent);
+                document.body.appendChild(modalBackdrop);
+            });
+        }
+
 
         document.addEventListener('DOMContentLoaded', async () => {
             populateStarLevels();
             updateToggleUnlockButtonAppearance();
             initializeSectionCustomization(); 
+            loadThemePreference(); 
             
             await initializeFirebaseAndAuth(); 
 
@@ -1805,16 +1946,34 @@
             deleteChampionBtn.addEventListener('click', deleteChampionFromFirestore);
             
             calculateProbabilityBtn.addEventListener('click', runProbabilitySimulation); 
-            calculateBtn.addEventListener('click', updateCalculator);
-            [mythicProbabilityInput, mythicHardPityInput, lmRateUpChanceInput, currentMythicPityInput, currentLMPityInput].forEach(el => el.addEventListener('input', updateCalculator));
-            [startStarLevelSelect, targetStarLevelSelect].forEach(el => el.addEventListener('change', updateCalculator));
-            toggleUnlockCostBtn.addEventListener('click', () => {
-                isUnlockCostIncluded = !isUnlockCostIncluded;
-                updateToggleUnlockButtonAppearance();
-                updateCalculator();
+            calculateBtn.addEventListener('click', handleExpectedValueCalculation);
+            
+            [mythicProbabilityInput, mythicHardPityInput, lmRateUpChanceInput, 
+             currentMythicPityInput, currentLMPityInput, anvilBudgetInput,
+             currentLMSInput, currentNMSInput, proposedLMSInput, proposedNMSInput // Added listeners for new inputs
+            ].forEach(el => {
+                if(el) el.addEventListener('input', handleExpectedValueCalculation);
             });
-
-            updateCalculator();
+            
+            [startStarLevelSelect, targetStarLevelSelect].forEach(el => {
+                if(el) el.addEventListener('change', handleExpectedValueCalculation);
+            });
+            
+            if(toggleUnlockCostBtn) {
+                toggleUnlockCostBtn.addEventListener('click', () => {
+                    isUnlockCostIncluded = !isUnlockCostIncluded;
+                    updateToggleUnlockButtonAppearance();
+                    handleExpectedValueCalculation();
+                });
+            }
+            if(themeSelector) { // Check if themeSelector exists before adding listener
+                themeSelector.addEventListener('change', (event) => {
+                    applyTheme(event.target.value);
+                    saveThemePreference(event.target.value);
+                });
+            }
+            
+            handleExpectedValueCalculation(); // Initial calculation
         });
     </script>
 </body>
