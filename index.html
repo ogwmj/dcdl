@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
+<html lang="en"> <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DC: Dark Legion - Anvil Calculator</title>
@@ -11,52 +9,90 @@
         /* Custom font for Inter */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
+        /* CSS Variables for Theming (Single Theme - Light) */
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f0f4f8;
+            --bg-section: #ffffff;
+            --bg-section-alt: #f8fafc; 
+            --bg-input: #ffffff;
+            --text-primary: #1e293b;   /* Slate 800 */
+            --text-secondary: #334155; /* Slate 700 */
+            --text-muted: #64748b;     /* Slate 500 */
+            --text-button: #ffffff;
+            --border-primary: #e2e8f0; /* Slate 200 */
+            --border-input: #cbd5e1;   /* Slate 300 */
+            --border-focus: #3b82f6;   /* Blue 500 */
+            --border-focus-shadow: rgba(59, 130, 246, 0.2);
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --shadow-section-color: rgba(0, 0, 0, 0.08);
+            --btn-primary-bg: #3b82f6;
+            --btn-primary-hover-bg: #2563eb;
+            --btn-primary-disabled-bg: #93c5fd;
+            --btn-secondary-bg: #64748b;
+            --btn-secondary-hover-bg: #475569;
+            --btn-success-bg: #10b981;
+            --btn-success-hover-bg: #059669;
+            --btn-danger-bg: #ef4444;
+            --btn-danger-hover-bg: #dc2626;
+            --result-box-bg: #e0f2fe;
+            --result-box-border: #3b82f6;
+            --result-box-text-strong: #1e40af;
+            --probability-box-bg: #f0fdfa;
+            --probability-box-border: #06b6d4;
+            --probability-box-text-strong: #0e7490;
+            --advisory-box-bg: #fffbeb;
+            --advisory-box-border: #f59e0b;
+            --advisory-box-text: #78350f;
+            --toggle-on-bg: #10b981;
+            --toggle-on-border: #059669;
+            --toggle-off-bg: #d1d5db;
+            --toggle-off-border: #9ca3af;
+            --toggle-off-text: #4b5563;
+            --chart-bg: #ffffff;
+            --chart-grid-color: rgba(0, 0, 0, 0.1);
+            --chart-font-color: #6b7280; /* slate-500 */
+            --chart-title-color: #1e293b; /* slate-800 */
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f4f8; 
-            color: #1e293b; /* slate-800 */
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
         }
-
         .container {
-            background-color: #ffffff;
-            max-width: 90%;
+            max-width: 90%; 
             margin: 2rem auto;
             padding: 1.5rem;
-            border-radius: 1rem;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            background-color: var(--bg-primary);
+            border-radius: 1rem; 
+            box-shadow: 0 10px 20px var(--shadow-color);
         }
-
         .input-group label {
-            color: #334155; /* slate-700 */
             font-weight: 600;
+            color: var(--text-secondary);
         }
-
-        .input-group input,
-        .input-group select,
-        .input-group textarea { /* Added textarea styling */
-            border: 1px solid #cbd5e1; /* slate-300 */
-            background-color: #ffffff;
-            color: #0f172a; /* slate-900 */
-            border-radius: 0.5rem;
+        .input-group input, .input-group select, .input-group textarea {
+            border: 1px solid var(--border-input);
+            background-color: var(--bg-input);
+            color: var(--text-primary);
+            border-radius: 0.5rem; 
             padding: 0.6rem 0.8rem;
             margin-top: 0.3rem;
             width: 100%;
             transition: border-color 0.2s;
         }
-         .input-group input::placeholder,
-         .input-group textarea::placeholder { /* Added textarea placeholder */
-            color: #94a3b8; /* slate-400 */
+         .input-group input::placeholder, .input-group textarea::placeholder {
+            color: var(--text-muted); 
         }
-        .input-group input:focus,
-        .input-group select:focus,
-        .input-group textarea:focus { /* Added textarea focus */
-             border-color: #3b82f6; /* blue-500 */
-             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); /* ring-blue-500/30 */
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+             border-color: var(--border-focus);
+             box-shadow: 0 0 0 2px var(--border-focus-shadow); 
         }
         
-        .btn {
+        .btn { 
             padding: 0.8rem 1.5rem;
-            border-radius: 0.75rem;
+            border-radius: 0.75rem; 
             font-weight: 700;
             cursor: pointer;
             transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
@@ -64,74 +100,57 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+            color: var(--text-button);
         }
-
-        .btn:disabled {
-            background-color: #9ca3af; /* Gray 400 */
-            color: #e5e7eb; /* Gray 200 */
+        .btn-primary {
+            background-color: var(--btn-primary-bg);
+            box-shadow: 0 4px 6px var(--shadow-color);
+        }
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--btn-primary-hover-bg);
+            transform: translateY(-1px);
+        }
+        .btn-primary:disabled {
+            background-color: var(--btn-primary-disabled-bg);
             cursor: not-allowed;
             box-shadow: none;
             transform: none;
         }
-        
-        .btn-primary {
-            background-color: #3b82f6; /* Blue 500 */
-            color: white;
-            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
-        }
-        .btn-primary:hover:not(:disabled) {
-            background-color: #2563eb; /* Blue 600 */
-            transform: translateY(-1px);
-            box-shadow: 0 6px 8px rgba(59, 130, 246, 0.3);
-        }
-        .btn-primary:disabled {
-            background-color: #93c5fd; /* Blue 300 */
-        }
-
         .btn-secondary {
-            background-color: #64748b; /* Slate 500 */
-            color: white;
-            padding: 0.6rem 1.2rem;
-            box-shadow: 0 4px 6px rgba(100, 116, 139, 0.2);
+            background-color: var(--btn-secondary-bg);
+            padding: 0.6rem 1.2rem; 
+            box-shadow: 0 4px 6px var(--shadow-color);
         }
         .btn-secondary:hover:not(:disabled) {
-            background-color: #475569; /* Slate 600 */
+            background-color: var(--btn-secondary-hover-bg);
             transform: translateY(-1px);
-            box-shadow: 0 6px 8px rgba(100, 116, 139, 0.3);
         }
-        
-        .btn-success {
-            background-color: #10b981; /* Emerald 500 */
-            color: white;
-            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+         .btn-success { 
+            background-color: var(--btn-success-bg);
+            box-shadow: 0 4px 6px var(--shadow-color);
         }
         .btn-success:hover:not(:disabled) {
-            background-color: #059669; /* Emerald 600 */
+            background-color: var(--btn-success-hover-bg);
             transform: translateY(-1px);
-            box-shadow: 0 6px 8px rgba(16, 185, 129, 0.3);
         }
-
         .btn-danger {
-            background-color: #ef4444; /* Red 500 */
-            color: white;
-            padding: 0.6rem 1.2rem;
-            box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
+            background-color: var(--btn-danger-bg);
+            padding: 0.6rem 1.2rem; 
+            box-shadow: 0 4px 6px var(--shadow-color);
         }
         .btn-danger:hover:not(:disabled) {
-            background-color: #dc2626; /* Red 600 */
+            background-color: var(--btn-danger-hover-bg);
             transform: translateY(-1px);
-            box-shadow: 0 6px 8px rgba(239, 68, 68, 0.3);
         }
-        
         .result-box {
-             background-color: #eff6ff; /* blue-50 */
-             border-left: 4px solid #3b82f6; /* blue-500 */
-             padding: 1rem;
-             border-radius: 0.75rem;
-             margin-top: 1rem;
+            background-color: var(--result-box-bg);
+            border-left: 4px solid var(--result-box-border);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-top: 1rem;
         }
         .result-box strong {
-             color: #1e40af; /* blue-800 */
+            color: var(--result-box-text-strong);
         }
         #unlockCostSection .result-box { 
             background-color: #eef2ff; /* indigo-50 */
@@ -142,16 +161,16 @@
         }
 
         .status-success {
-            color: #047857; /* emerald-700 */
-            background-color: #d1fae5; /* emerald-100 */
+            color: #047857; 
+            background-color: #d1fae5; 
         }
         .status-error {
-            color: #b91c1c; /* red-700 */
-            background-color: #fee2e2; /* red-100 */
+            color: #b91c1c; 
+            background-color: #fee2e2; 
         }
         .status-info { 
-            color: #0369a1; /* sky-700 */
-            background-color: #e0f2fe; /* sky-100 */
+            color: #0369a1; 
+            background-color: #e0f2fe; 
         }
         .status-message {
             font-size: 0.875rem;
@@ -161,25 +180,25 @@
             min-height: 2rem; 
         }
       
-        h1 { color: #1e293b; /* slate-800 */ }
-        h2 { color: #334155; /* slate-700 */ border-bottom: 1px solid #e2e8f0; /* slate-200 */ padding-bottom: 0.5rem; margin-bottom: 1rem; }
-        h3, h4 { color: #334155; /* slate-700 */ }
-        #currentSystemTitle, #proposedSystemTitle { color: #1d4ed8; /* blue-700 */ }
-        #unlockCostSection h3 { color: #4338ca; /* indigo-700 */ }
-        .calculation-detail h3, .calculation-detail h4 { color: #1e293b; /* gray-800 equiv */ }
-        .calculation-detail p { color: #374151; /* gray-700 equiv */ }
-        .calculation-detail strong { color: #1f2937; /* gray-800 equiv */ }
+        h1 { color: var(--text-primary); }
+        h2 { color: var(--text-secondary); border-bottom: 1px solid var(--border-primary); padding-bottom: 0.5rem; margin-bottom: 1rem; }
+        h3, h4 { color: var(--text-secondary); }
+        #currentSystemTitle, #proposedSystemTitle { color: var(--result-box-border); }
+        #unlockCostSection h3 { color: var(--result-box-border); } 
+        .calculation-detail h3, .calculation-detail h4 { color: var(--text-primary); }
+        .calculation-detail p { color: var(--text-muted); }
+        .calculation-detail strong { color: var(--text-primary); }
 
         details {
-            background-color: #f8fafc; /* slate-50 */
-            border: 1px solid #e2e8f0; /* slate-200 */
+            background-color: var(--bg-section-alt);
+            border: 1px solid var(--border-primary);
             border-radius: 0.75rem;
             padding: 1rem;
             margin-top: 1.5rem;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+            box-shadow: inset 0 1px 3px var(--shadow-section-color);
         }
         details summary {
-            color: #475569; /* slate-600 */
+            color: var(--text-secondary);
             font-weight: 600;
             cursor: pointer;
             display: flex;
@@ -191,17 +210,17 @@
         details[open] summary::after { content: '-'; }
         
         #customizeViewDetails {
-            background-color: #eef2ff; /* indigo-50 */
-            border-color: #c7d2fe; /* indigo-200 */
+            background-color: var(--bg-section-alt); 
+            border-color: var(--border-primary);
         }
         #customizeViewDetails summary {
-            color: #4f46e5; /* blue-600 equiv */
+            color: var(--btn-primary-bg); 
         }
         #sectionToggleContainer {
-            background-color: #ffffff; /* white */
+            background-color: var(--bg-primary); 
         }
         .toggle-item {
-            border-bottom: 1px solid #e2e8f0; /* slate-200 */
+            border-bottom: 1px solid var(--border-primary);
             display: flex;
             align-items: center;
             justify-content: space-between; 
@@ -209,7 +228,7 @@
         }
         .toggle-item:last-child { border-bottom: none; }
         .toggle-label {
-            color: #334155; /* slate-700 */
+            color: var(--text-secondary);
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -217,66 +236,67 @@
             flex-grow: 1;
         }
         .toggle-label input[type="checkbox"] {
-            accent-color: #3b82f6; /* blue-500 */
+            accent-color: var(--btn-primary-bg);
             margin-right: 0.5rem;
         }
         .order-buttons button {
-            background-color: #e5e7eb; /* slate-200 / gray-200 */
-            color: #4b5563; /* slate-600 / gray-600 */
-            border: 1px solid #9ca3af; /* slate-400 / gray-400 */
+            background-color: var(--bg-input); 
+            color: var(--text-muted); 
+            border: 1px solid var(--border-input); 
             padding: 0.25rem 0.5rem; 
             font-size: 0.8rem;
             line-height: 1;
             margin-left: 0.25rem;
         }
         .order-buttons button:hover:not(:disabled) {
-            background-color: #d1d5db; /* slate-300 / gray-300 */
+            background-color: var(--bg-secondary); 
         }
         .order-buttons button:disabled {
-            background-color: #f3f4f6; /* slate-100 / gray-100 */
-            color: #9ca3af; /* slate-400 / gray-400 */
+            background-color: var(--bg-section-alt); 
+            color: var(--text-muted); 
+            opacity: 0.6;
             cursor: not-allowed;
         }
 
         .advisory-box { 
-            background-color: #fffbeb; /* amber-50 */
-            border-left: 4px solid #f59e0b; /* amber-500 */
-            color: #78350f; /* amber-800 */
+            background-color: var(--advisory-box-bg);
+            border-left: 4px solid var(--advisory-box-border);
+            color: var(--advisory-box-text);
             padding: 1rem;
             border-radius: 0.75rem;
             margin-top: 1.5rem;
             font-size: 0.95rem;
         }
         .advisory-box.advisory-indigo-theme { 
-            background-color: #eef2ff; /* indigo-50 */
-            border-left-color: #6366f1; /* indigo-500 */
-            color: #3730a3; /* indigo-800 */
+            background-color: #eef2ff; 
+            border-left-color: #6366f1; 
+            color: #3730a3; 
         }
-
+       
         .chart-container { 
-            background-color: #ffffff; /* white */
+            background-color: var(--chart-bg);
             position: relative;
             width: 100%;
             margin-top: 1rem; 
             padding: 1rem;
             border-radius: 1rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 5px 15px var(--shadow-section-color);
         }
         .main-chart-container { height: 400px; margin-top: 2rem; }
         .prob-chart-container { height: 300px; }
-        .main-chart-container h3, .prob-chart-container h4 { color: #1e293b; /* slate-800 */ }
-        .prob-chart-container h4 { color: #1d4ed8; /* blue-700 */ }
-        #probSummaryCurrent, #probSummaryProposed, #probabilitySimulationDetails { color: #4b5563; /* gray-600 */ }
+        .main-chart-container h3, .prob-chart-container h4 { color: var(--text-primary); }
+        .prob-chart-container h4 { color: var(--btn-primary-bg); }
+        #probSummaryCurrent, #probSummaryProposed, #probabilitySimulationDetails { color: var(--text-muted); }
         
         .calc-section { 
             padding: 1.5rem; border-radius: 0.75rem; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
-            margin-bottom: 2rem; border: 1px solid #e2e8f0; /* slate-200 */
-            background-color: #ffffff; /* Default for calc-section */
+            box-shadow: 0 4px 12px var(--shadow-section-color); 
+            margin-bottom: 2rem; border: 1px solid var(--border-primary); 
+            background-color: var(--bg-section); 
         }
-        .calc-section.bg-gray-50 { background-color: #f9fafb; /* slate-50 / gray-50 */ } 
+        .calc-section.alt-bg { background-color: var(--bg-section-alt); } 
         .btn-loading .btn-text { display: none; }
-        .btn-loading .spinner { display: inline-block; width: 1.25rem; height: 1.25rem; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; }
+        .btn-loading .spinner { display: inline-block; width: 1.25rem; height: 1.25rem; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: var(--text-button); animation: spin 1s ease-in-out infinite; }
         .spinner { display: none; }
         @keyframes spin { to { transform: rotate(360deg); } }
         
@@ -286,56 +306,75 @@
             border-radius: 0.5rem;
             font-weight: 600;
             transition: background-color 0.3s ease, color 0.3s ease;
-            width: 100%;
+            width: 100%; 
             text-align: center;
         }
         .toggle-btn-on { 
-            background-color: #10b981; /* emerald-500 */
-            color: white; 
-            border: 1px solid #059669; /* emerald-600 */
+            background-color: var(--toggle-on-bg);
+            color: var(--text-button); 
+            border: 1px solid var(--toggle-on-border);
         }
         .toggle-btn-off { 
-            background-color: #d1d5db; /* gray-300 */
-            color: #4b5563; /* gray-600 */
-            border: 1px solid #9ca3af; /* gray-400 */
+            background-color: var(--toggle-off-bg);
+            color: var(--toggle-off-text);
+            border: 1px solid var(--toggle-off-border);
         }
 
         /* Explanation Section Styles */
-        #explanationSection h3 {
+        .help-section { 
+            background-color: var(--bg-section-alt);
+            border: 1px solid var(--border-primary);
+        }
+        .help-section summary {
+            color: var(--text-secondary);
+            font-size: 1.125rem; /* text-lg */
+        }
+        .help-section div p {
+            margin-bottom: 0.75rem; /* mb-3 */
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+        .help-section div h3 { /* Main topics in help */
             font-size: 1.25rem; /* text-xl */
-            font-weight: 600; /* font-semibold */
+            font-weight: 700; /* font-bold */
+            color: var(--text-primary);
             margin-top: 1.5rem; /* mt-6 */
             margin-bottom: 0.75rem; /* mb-3 */
             padding-bottom: 0.5rem; /* pb-2 */
-            border-bottom: 1px solid #e2e8f0; /* border-slate-200 */
+            border-bottom: 1px solid var(--border-primary);
         }
-         #explanationSection h3:first-child {
-            margin-top: 0;
+         .help-section div h3:first-child {
+            margin-top: 0.5rem; /* Reduced top margin for the very first h3 */
         }
-        #explanationSection h4 {
+        .help-section div h4 { /* Sub-topics in help */
             font-size: 1.125rem; /* text-lg */
-            font-weight: 600;
-            margin-top: 1rem; /* mt-4 */
+            font-weight: 600; /* font-semibold */
+            color: var(--text-secondary);
+            margin-top: 1.25rem; /* mt-5 */
             margin-bottom: 0.5rem; /* mb-2 */
         }
-        #explanationSection p, #explanationSection li {
-            margin-bottom: 0.75rem; /* mb-3 */
-            line-height: 1.6;
-            color: #374151; /* gray-700 */
-        }
-        #explanationSection ul {
+        .help-section ul {
             list-style-type: disc;
             margin-left: 1.5rem; /* ml-6 */
+            color: var(--text-muted);
+            padding-left: 0.5rem; /* pl-2 for better spacing of bullets */
         }
-        #explanationSection strong {
+        .help-section ul ul { /* Nested lists */
+            margin-top: 0.5rem; /* mt-2 */
+            margin-bottom: 0.5rem; /* mb-2 */
+        }
+        .help-section li {
+            margin-bottom: 0.5rem; /* mb-2 for list items */
+        }
+        .help-section strong { /* For terms within paragraphs/lists */
             font-weight: 600;
-            color: #1f2937; /* gray-800 */
+            color: var(--text-primary);
         }
-        #explanationSection code {
-            background-color: #e5e7eb; /* gray-200 */
-            color: #be185d; /* pink-700 */
-            padding: 0.125rem 0.375rem; /* px-1.5 py-0.5 */
-            border-radius: 0.25rem; /* rounded */
+        .help-section code {
+            background-color: var(--border-primary); 
+            color: var(--btn-danger-bg); 
+            padding: 0.125rem 0.375rem; 
+            border-radius: 0.25rem; 
             font-size: 0.875em;
         }
 
@@ -857,11 +896,13 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, deleteDoc, onSnapshot, query, serverTimestamp, orderBy, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAnalytics, logEvent as fbLogEvent } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
         // --- Global Firebase Variables ---
         let fbApp;
         let fbAuth;
         let fbDb;
+        let fbAnalytics;
         let currentUserId = null;
         let championsColRef = null; 
         let unsubscribeChampionsListener = null;
@@ -870,7 +911,6 @@
         let probChartCurrentInstance = null;
         let probChartProposedInstance = null;
         let anvilCostChart = null; 
-
 
         // --- App and Firebase Config ---
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'anvil-calculator-v2.0'; 
@@ -891,7 +931,8 @@
         const deleteChampionBtn = document.getElementById('deleteChampionBtn');
         const championStatusDiv = document.getElementById('championStatus');
         const userIdDisplay = document.getElementById('userIdDisplay');
-        // ADDED: Local Import/Export DOM Elements
+
+        // --- DOM Elements (Local Import/Export DOM Elements) ---
         const exportConfigBtn = document.getElementById('exportConfigBtn');
         const importConfigText = document.getElementById('importConfigText');
         const importConfigBtn = document.getElementById('importConfigBtn');
@@ -928,7 +969,6 @@
         const reorderableSectionsContainer = document.getElementById('reorderableSectionsContainer'); 
         const SECTION_VISIBILITY_STORAGE_KEY = 'anvilCalcSectionVisibility_v2'; 
         const SECTION_ORDER_STORAGE_KEY = 'anvilCalcSectionOrder_v2';
-        const themeSelector = document.getElementById('themeSelector');
 
         // --- DOM Elements (Configurable Bleed System) ---
         const currentLMSInput = document.getElementById('currentLMSInput');
@@ -1060,7 +1100,7 @@
                 fbApp = initializeApp(firebaseConfig);
                 fbAuth = getAuth(fbApp);
                 fbDb = getFirestore(fbApp);
-                // setLogLevel('debug'); // Uncomment for Firebase debug logs
+                fbAnalytics = getAnalytics(fbApp); // Initialize Analytics
 
                 onAuthStateChanged(fbAuth, async (user) => {
                     if (user) {
@@ -1151,7 +1191,6 @@
                 includeUnlockCost: isUnlockCostIncluded,
                 startStarLevel: startStarLevelSelect.value,
                 targetStarLevel: targetStarLevelSelect.value,
-                // Save configurable bleed system values
                 currentLMS: currentLMSInput.value,
                 currentNMS: currentNMSInput.value,
                 proposedLMS: proposedLMSInput.value,
@@ -1163,6 +1202,7 @@
                 const championDocRef = doc(championsColRef, championConfigName);
                 await setDoc(championDocRef, championData, { merge: true });
                 displayChampionStatus(`Configuration "${championConfigName}" saved successfully!`, false, 'success');
+                if(fbAnalytics) fbLogEvent(fbAnalytics, 'save_champion_config_firebase', { name_length: championConfigName.length });
                 championNameInput.value = ''; 
             } catch (e) {
                 displayChampionStatus(`Error saving: ${e.message}`, true, 'error');
@@ -1198,7 +1238,6 @@
                     targetStarLevelSelect.value = championData.targetStarLevel || Object.keys(SHARD_REQUIREMENTS)[0];
                     championNameInput.value = championData.name || championConfigName;
 
-                    // Load configurable bleed system values
                     currentLMSInput.value = championData.currentLMS !== undefined ? championData.currentLMS : "40";
                     currentNMSInput.value = championData.currentNMS !== undefined ? championData.currentNMS : "0";
                     proposedLMSInput.value = championData.proposedLMS !== undefined ? championData.proposedLMS : "25";
@@ -1209,8 +1248,8 @@
                     probabilityResultsArea.innerHTML = '';
                     probabilityStatusDiv.textContent = '';
 
-
                     displayChampionStatus(`Configuration "${championConfigName}" loaded.`, false, 'success');
+                    if(fbAnalytics) fbLogEvent(fbAnalytics, 'load_champion_config_firebase');
                 } else {
                     displayChampionStatus(`Configuration "${championConfigName}" not found.`, true, 'error');
                 }
@@ -1240,6 +1279,7 @@
                 const championDocRef = doc(championsColRef, championConfigName);
                 await deleteDoc(championDocRef);
                 displayChampionStatus(`Configuration "${championConfigName}" deleted.`, false, 'success');
+                 if(fbAnalytics) fbLogEvent(fbAnalytics, 'delete_champion_config_firebase');
                 championNameInput.value = '';
             } catch (e) {
                 displayChampionStatus(`Error deleting: ${e.message}`, true, 'error');
@@ -1333,6 +1373,7 @@
             const targetId = event.target.dataset.targetSectionId;
             const sectionToToggle = document.getElementById(targetId);
             if (sectionToToggle) { sectionToToggle.classList.toggle('hidden', !event.target.checked); saveSectionVisibilityPreferences(); }
+            if(fbAnalytics) fbLogEvent(fbAnalytics, 'section_visibility_change', { section_id: targetId, is_visible: event.target.checked });
         }
         
         function moveSection(currentIndex, direction) {
@@ -1341,6 +1382,7 @@
             const itemToMove = currentSectionOrder.splice(currentIndex, 1)[0];
             currentSectionOrder.splice(newIndex, 0, itemToMove);
             saveSectionOrderPreferences(); renderSectionToggles(); renderSectionsInOrder(); 
+            if(fbAnalytics) fbLogEvent(fbAnalytics, 'section_order_change', { moved_section_id: itemToMove, direction: direction > 0 ? 'down' : 'up' });
         }
 
         function saveSectionVisibilityPreferences() {
@@ -1396,9 +1438,8 @@
             const finalProposedCosts = proposedCosts.map(cost => includeUnlock ? cost + unlockCostAvgForChart : cost);
             const yAxisLabel = includeUnlock ? 'Total Average Anvils (Unlock + Shards to Level)' : 'Average Anvils for Shards (Post-Unlock to Level)';
             
-            const currentTheme = document.documentElement.dataset.theme || 'light'; // Use this if you re-add theming
-            const chartGridColor = currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-            const chartFontColor = currentTheme === 'dark' ? '#e5e7eb' : '#6b7280';
+            const chartGridColor = 'rgba(0, 0, 0, 0.1)'; 
+            const chartFontColor = '#6b7280'; 
 
 
             anvilCostChart = new Chart(ctx, {
@@ -1420,7 +1461,7 @@
                         legend: { labels: { color: chartFontColor } },
                         tooltip: { 
                             titleColor: chartFontColor, bodyColor: chartFontColor, 
-                            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--bg-section-alt').trim() || 'rgba(249, 250, 251, 0.95)', 
+                            backgroundColor: '#f8fafc',
                             borderColor: chartGridColor, 
                             borderWidth:1,
                             callbacks: { label: context => `${context.dataset.label}: ${Math.round(context.raw)} Anvils` } 
@@ -1592,7 +1633,7 @@
         }
 
         function displayProbabilityDistributionChart(canvasId, histogram, systemLabel, budget) {
-            const canvasElement = document.getElementById(canvasId); // Get element first
+            const canvasElement = document.getElementById(canvasId); 
             if (!canvasElement) {
                 console.error(`Canvas element with ID '${canvasId}' not found for chart.`);
                 return;
@@ -1602,10 +1643,9 @@
                 window[canvasId + 'Instance'].destroy();
             }
 
-            const currentTheme = document.documentElement.dataset.theme || 'light';
-            const chartGridColor = currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-            const chartFontColor = currentTheme === 'dark' ? '#e5e7eb' : '#6b7280';
-            const titleColor = currentTheme === 'dark' ? '#f3f4f6' : '#1e293b';
+            const chartGridColor = 'rgba(0, 0, 0, 0.1)'; 
+            const chartFontColor = '#6b7280'; 
+            const titleColor = '#1e293b'; 
 
 
             window[canvasId + 'Instance'] = new Chart(ctx, {
@@ -1629,7 +1669,7 @@
                     plugins: {
                         tooltip: { 
                             titleColor: titleColor, bodyColor: chartFontColor, 
-                            backgroundColor: currentTheme === 'dark' ? 'rgba(31, 41, 55, 0.9)' : 'rgba(255,255,255,0.9)', 
+                            backgroundColor: '#ffffff', // Fallback for light theme
                             borderColor: chartGridColor, borderWidth:1,
                             callbacks: { label: context => `${context.dataset.label}: ${context.parsed.y} runs` } 
                         },
@@ -1645,10 +1685,6 @@
             setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, true);
             displayProbabilityStatus("Calculating probability distribution... this may take a moment.", false, 'info');
             
-            // Ensure the results area is visible BEFORE trying to create charts in it.
-            probabilityResultsArea.classList.remove('hidden'); 
-            // Clear previous results, but keep the canvas structure if needed, or rebuild it.
-            // For simplicity, let's rebuild it each time.
             probabilityResultsArea.innerHTML = ` 
                 <p id="probabilitySummaryText" class="mb-2 text-center font-medium"></p>
                 <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -1669,11 +1705,13 @@
                 </div>
                 <p id="probabilitySimulationDetails" class="text-xs mt-4 text-center"></p>
             `;
+            probabilityResultsArea.classList.remove('hidden'); 
+            
             // Re-fetch these elements as they are now part of the dynamically set innerHTML
-            const probabilitySummaryTextEl = document.getElementById('probabilitySummaryText');
-            const probSummaryCurrentEl = document.getElementById('probSummaryCurrent');
-            const probSummaryProposedEl = document.getElementById('probSummaryProposed');
-            const probabilitySimulationDetailsEl = document.getElementById('probabilitySimulationDetails');
+            const probabilitySummaryTextEl_local = document.getElementById('probabilitySummaryText');
+            const probSummaryCurrentEl_local = document.getElementById('probSummaryCurrent');
+            const probSummaryProposedEl_local = document.getElementById('probSummaryProposed');
+            const probabilitySimulationDetailsEl_local = document.getElementById('probabilitySimulationDetails');
 
 
             setTimeout(() => { 
@@ -1716,20 +1754,20 @@
                 const histDataCurrent = createHistogramData(anvilCostsCurrent, budget, numBins);
                 const histDataProposed = createHistogramData(anvilCostsProposed, budget, numBins);
 
-                if(probabilitySummaryTextEl) probabilitySummaryTextEl.textContent = `Goal: Reach ${targetStarLevelSelect.value} from ${startStarLevelSelect.value}${includeUnlock ? " (including initial unlock)" : ""} with a budget of ${budget} Anvils.`;
+                if(probabilitySummaryTextEl_local) probabilitySummaryTextEl_local.textContent = `Goal: Reach ${targetStarLevelSelect.value} from ${startStarLevelSelect.value}${includeUnlock ? " (including initial unlock)" : ""} with a budget of ${budget} Anvils.`;
                 
                 displayProbabilityDistributionChart('probChartCurrent', histDataCurrent, 'Current System', budget);
-                if(probSummaryCurrentEl) probSummaryCurrentEl.innerHTML = `Success Rate: <strong>${histDataCurrent.successRate.toFixed(1)}%</strong>. ` +
+                if(probSummaryCurrentEl_local) probSummaryCurrentEl_local.innerHTML = `Success Rate: <strong>${histDataCurrent.successRate.toFixed(1)}%</strong>. ` +
                                               (isNaN(histDataCurrent.medianCost) ? '' : `Median Cost (Success): <strong>${Math.round(histDataCurrent.medianCost)}</strong>. `) +
                                               (isNaN(histDataCurrent.p90Cost) ? '' : `P90 Cost (Success): <strong>${Math.round(histDataCurrent.p90Cost)}</strong>.`);
 
                 displayProbabilityDistributionChart('probChartProposed', histDataProposed, 'Proposed System', budget);
-                if(probSummaryProposedEl) probSummaryProposedEl.innerHTML = `Success Rate: <strong>${histDataProposed.successRate.toFixed(1)}%</strong>. ` +
+                if(probSummaryProposedEl_local) probSummaryProposedEl_local.innerHTML = `Success Rate: <strong>${histDataProposed.successRate.toFixed(1)}%</strong>. ` +
                                               (isNaN(histDataProposed.medianCost) ? '' : `Median Cost (Success): <strong>${Math.round(histDataProposed.medianCost)}</strong>. `) +
                                               (isNaN(histDataProposed.p90Cost) ? '' : `P90 Cost (Success): <strong>${Math.round(histDataProposed.p90Cost)}</strong>.`);
 
 
-                if(probabilitySimulationDetailsEl) probabilitySimulationDetailsEl.textContent = `Based on ${NUM_SIM_RUNS} simulated attempts for each system, starting with ${initialMythicPity} mythic pity and ${initialLMPityStreak} non-LM pulls.`;
+                if(probabilitySimulationDetailsEl_local) probabilitySimulationDetailsEl_local.textContent = `Based on ${NUM_SIM_RUNS} simulated attempts for each system, starting with ${initialMythicPity} mythic pity and ${initialLMPityStreak} non-LM pulls.`;
                 
                 displayProbabilityStatus("Probability distribution calculation complete.", false, 'success');
                 setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, false);
@@ -1766,7 +1804,6 @@
                     span.textContent = '--';
                 }
             });
-            // Spans for displaying configured bleed values in detailed section will be set in updateExpectedValueUI
             unlockCostSection.classList.add('hidden');
             detailUnlockCostSection.classList.add('hidden');
         }
@@ -1973,28 +2010,6 @@
             updateMainAnvilCostChart(chartCostsCurr, chartCostsProp, chartLabels, isUnlockCostIncluded, anvilsUnlockAvg);
         }
 
-
-        // --- Theme Functions ---
-        function applyTheme(themeName) {
-            document.documentElement.dataset.theme = themeName;
-            if (anvilCostChart || probChartCurrentInstance || probChartProposedInstance) { 
-                handleExpectedValueCalculation(); 
-            }
-        }
-
-        function saveThemePreference(themeName) {
-            try { localStorage.setItem('gachaCalcTheme_v2', themeName); } 
-            catch(e) { console.warn("Could not save theme preference to localStorage.");}
-        }
-
-        function loadThemePreference() {
-            let savedTheme = 'light';
-            try { savedTheme = localStorage.getItem('gachaCalcTheme_v2') || 'light'; } 
-            catch(e) { console.warn("Could not load theme preference from localStorage.");}
-            applyTheme(savedTheme);
-            if (themeSelector) themeSelector.value = savedTheme; // Check if themeSelector exists
-        }
-
         // --- Local Import/Export Functions ---
         function displayLocalConfigStatus(message, isError = false) {
             localConfigStatus.textContent = message;
@@ -2024,12 +2039,11 @@
                 currentLMS: currentLMSInput.value,
                 currentNMS: currentNMSInput.value,
                 proposedLMS: proposedLMSInput.value,
-                proposedNMS: proposedNMSInput.value,
-                // theme: document.documentElement.dataset.theme || 'light' // Theme not included in this version
+                proposedNMS: proposedNMSInput.value
             };
 
             try {
-                const jsonString = JSON.stringify(configData, null, 2); // Use JSON string directly, pretty-printed
+                const jsonString = JSON.stringify(configData, null, 2); 
 
                 const exportModalBackdrop = document.createElement('div');
                 exportModalBackdrop.className = 'modal-backdrop active';
@@ -2047,9 +2061,9 @@
                 exportModalContent.appendChild(explanation);
                 
                 const codeTextarea = document.createElement('textarea');
-                codeTextarea.value = jsonString; // Display raw JSON
+                codeTextarea.value = jsonString; 
                 codeTextarea.readOnly = true;
-                codeTextarea.rows = 10; // Increased rows for better readability
+                codeTextarea.rows = 10; 
                 exportModalContent.appendChild(codeTextarea);
 
                 const buttonsDiv = document.createElement('div');
@@ -2078,6 +2092,8 @@
                 document.body.appendChild(exportModalBackdrop);
 
                 displayLocalConfigStatus('Configuration exported!', false);
+                if(fbAnalytics) fbLogEvent(fbAnalytics, 'export_config_local');
+
 
             } catch (e) {
                 displayLocalConfigStatus('Error exporting configuration.', true);
@@ -2086,14 +2102,14 @@
         }
 
         function importConfiguration() {
-            const jsonString = importConfigText.value.trim(); // Expect raw JSON string
+            const jsonString = importConfigText.value.trim(); 
             if (!jsonString) {
                 displayLocalConfigStatus('Paste configuration text first.', true);
                 return;
             }
 
             try {
-                const configData = JSON.parse(jsonString); // Parse JSON directly
+                const configData = JSON.parse(jsonString); 
 
                 if (typeof configData !== 'object' || configData === null) {
                     throw new Error("Invalid configuration format.");
@@ -2116,17 +2132,13 @@
                 proposedNMSInput.value = configData.proposedNMS !== undefined ? configData.proposedNMS : "5"; 
 
 
-                // if (configData.theme && themeSelector) { // Theme selector not in this version
-                //     applyTheme(configData.theme);
-                //     themeSelector.value = configData.theme;
-                // }
-
                 handleExpectedValueCalculation();
                 probabilityResultsArea.classList.add('hidden');
                 probabilityResultsArea.innerHTML = '';
                 probabilityStatusDiv.textContent = '';
 
                 displayLocalConfigStatus('Configuration imported successfully!', false);
+                if(fbAnalytics) fbLogEvent(fbAnalytics, 'import_config_local');
                 importConfigText.value = ''; 
 
             } catch (e) {
@@ -2144,10 +2156,6 @@
                 
                 const modalContent = document.createElement('div');
                 modalContent.className = 'bg-white p-6 rounded-lg shadow-xl text-gray-800 max-w-sm';
-                if (document.documentElement.dataset.theme === 'dark') {
-                    modalContent.style.backgroundColor = 'var(--bg-section)';
-                    modalContent.style.color = 'var(--text-primary)';
-                }
                 
                 const messageP = document.createElement('p');
                 messageP.textContent = message;
@@ -2186,7 +2194,6 @@
             populateStarLevels();
             updateToggleUnlockButtonAppearance();
             initializeSectionCustomization(); 
-            loadThemePreference(); 
             
             await initializeFirebaseAndAuth(); 
 
@@ -2194,7 +2201,6 @@
             loadChampionBtn.addEventListener('click', () => loadChampionFromFirestore());
             deleteChampionBtn.addEventListener('click', deleteChampionFromFirestore);
             
-            // ADDED: Event listeners for local import/export
             if(exportConfigBtn) exportConfigBtn.addEventListener('click', exportConfiguration);
             if(importConfigBtn) importConfigBtn.addEventListener('click', importConfiguration);
 
@@ -2216,13 +2222,8 @@
                 toggleUnlockCostBtn.addEventListener('click', () => {
                     isUnlockCostIncluded = !isUnlockCostIncluded;
                     updateToggleUnlockButtonAppearance();
+                    if(fbAnalytics) fbLogEvent(fbAnalytics, 'toggle_unlock_cost', { included: isUnlockCostIncluded });
                     handleExpectedValueCalculation();
-                });
-            }
-            if(themeSelector) { 
-                themeSelector.addEventListener('change', (event) => {
-                    applyTheme(event.target.value);
-                    saveThemePreference(event.target.value);
                 });
             }
             
