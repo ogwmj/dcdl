@@ -42,7 +42,7 @@
             --btn-warning-bg: #ffc107;
             --btn-warning-hover-bg: #ffc107; 
             --btn-info-bg: #0dcaf0;
-            --btn-info-hover-bg: #0dcaf0;
+            --btn-info-hover-bg: #0BAECB; /* Slightly darker for hover */
             --result-box-bg: #e0f2fe;
             --result-box-border: #3b82f6;
             --result-box-text-strong: #1e40af;
@@ -90,6 +90,11 @@
             width: 100%;
             transition: border-color 0.2s;
         }
+        /* Style for multi-select to make it more usable */
+        .input-group select[multiple] {
+            padding: 0.6rem; /* Adjust padding if necessary */
+            min-height: 100px; /* Give it some default height */
+        }
         .input-group input::placeholder, .input-group textarea::placeholder {
             color: var(--text-muted); 
         }
@@ -114,6 +119,11 @@
             padding: 0.4rem 0.8rem;
             font-size: 0.875rem; /* text-sm */
         }
+         .btn-lg { /* Larger padding for larger buttons */
+            padding: 1rem 2rem;
+            font-size: 1.125rem; /* text-lg */
+        }
+
 
         .btn-primary {
             background-color: var(--btn-primary-bg);
@@ -545,13 +555,14 @@
             font-size: 1.2em; 
             margin-right: 1px; 
         }
-        .synergy-item {
-            text-align: center;
-            @apply flex items-center justify-between p-2 mb-2 border rounded-lg shadow-sm bg-slate-50 hover:bg-slate-100 cursor-pointer transition-colors; 
+        .synergy-item-container { /* New container for synergy and its champs */
+            @apply border rounded-lg p-3 bg-slate-50 mb-3 shadow-sm;
         }
-        .synergy-item img {
-            margin: auto;
-            @apply w-6 h-6 object-contain; 
+        .synergy-item-header { /* Clickable header part of synergy item */
+            @apply flex items-center justify-between cursor-pointer hover:bg-slate-100 p-2 rounded-md -m-2 mb-1; /* Negative margin to make it fill padding */
+        }
+        .synergy-item-header img { /* Icon for the main synergy */
+            @apply w-8 h-8 mr-3 object-contain;
         }
         .synergy-name {
             @apply font-semibold text-slate-700 flex-grow text-sm; 
@@ -559,6 +570,30 @@
         .synergy-progress {
             @apply text-xs text-slate-500 ml-2 px-2 py-0.5 bg-slate-200 rounded-full; 
         }
+        .synergy-champions-list { /* List of champions under a synergy */
+            @apply mt-2 pl-4 border-l-2 border-slate-200 space-y-1;
+        }
+        .synergy-champion-entry { /* Individual champion entry in the sub-list */
+            @apply flex items-center text-xs text-slate-600 py-1;
+        }
+        .synergy-champion-entry .icon-wrapper img { /* Class icon for champ in synergy list */
+            @apply w-4 h-4 mr-1;
+        }
+        .synergy-champion-entry .star-rating {
+            @apply ml-2;
+        }
+        .synergy-champion-entry .star-rating span {
+            font-size: 0.9em; /* Smaller stars for this list */
+            margin-right: 0px;
+        }
+        .synergy-champion-entry .champion-synergies {
+            @apply flex gap-0.5 ml-auto; /* Tighter gap for many icons */
+        }
+        .synergy-champion-entry .champion-synergies img {
+            @apply w-3 h-3; /* Very small synergy icons for champs in this list */
+        }
+
+
         /* Toast Notification Styles */
         #toast-container {
             position: fixed;
@@ -616,16 +651,33 @@
             @apply flex justify-between items-center;
         }
         #swap-modal-body .champion-details {
-            @apply flex-grow; /* Allow name and class to take space */
+            @apply flex-grow flex items-center; /* Ensure class icon and name are aligned */
         }
         #swap-modal-body .champion-synergies {
             @apply flex gap-1 ml-2; /* Synergies to the right */
         }
-        #swap-modal-body .champion-synergies img {
-            @apply w-4 h-4; /* Smaller synergy icons in modal list */
+        #swap-modal-body .champion-synergies img, #swap-modal-body .class-icon-swap { /* Size for both synergy and class icons in swap modal */
+            @apply w-4 h-4 object-contain; 
         }
         #swap-modal-body .star-rating {
             @apply ml-2; /* Space before star rating */
+        }
+        /* Style for "Unlocked" tier text */
+        .unlocked-tier-text {
+            @apply text-slate-500 font-normal text-sm; /* Adjust styling as needed */
+        }
+        /* Shared Team View Styles */
+        #shared-team-view-section {
+            @apply border-2 border-dashed border-indigo-300 bg-indigo-50;
+        }
+        #shared-team-view-section .champion-card {
+            @apply bg-white; /* Ensure cards within shared view have a distinct background */
+        }
+        #shared-team-view-section .champion-card .text-xs { /* Ensure text is readable */
+            color: var(--text-muted);
+        }
+         #shared-team-view-section .champion-card strong {
+            color: var(--text-secondary);
         }
 
 
@@ -647,161 +699,192 @@
             <p id="error-message-details" class="text-xs mt-1"></p>
         </div>
 
-        <section id="champions-section" class="card">
-            <div class="calc-section bg-gray-50">
-                <h2 id="form-mode-title" class="text-xl font-semibold mb-4">Add Your Champions to Roster</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                        <div class="input-group">
-                            <label for="champ-select-db" class="input-label block text-sm">Select Base Champion:</label>
-                            <select id="champ-select-db" class="input-field">
-                                <option value="">-- Select Champion --</option>
-                                </select>
+        <!-- Section for displaying a shared team (initially hidden) -->
+        <section id="shared-team-view-section" class="card hidden">
+            <div class="calc-section">
+                <h2 id="shared-team-name" class="text-2xl font-bold text-indigo-700 mb-4">Shared Team</h2>
+                <div id="shared-team-output" class="mt-6 p-4 border-t border-gray-200">
+                    <p class="text-gray-500">Loading shared team details...</p>
+                </div>
+            </div>
+            <a class="btn btn-success" href="teams.html" title="Your Teams"><span class="btn-icon">↩️</span> Manage Your Teams</a>
+        </section>
+
+
+        <!-- Main application sections (will be hidden if a shared team is displayed) -->
+        <div id="main-app-content">
+            <section id="champions-section" class="card">
+                <div class="calc-section bg-gray-50">
+                    <h2 id="form-mode-title" class="text-xl font-semibold mb-4">Add Your Champions to Roster</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <div class="input-group">
+                                <label for="champ-select-db" class="input-label block text-sm">Select Base Champion:</label>
+                                <select id="champ-select-db" class="input-field">
+                                    <option value="">-- Select Champion --</option>
+                                    </select>
+                            </div>
+                            <div class="input-group mt-4">
+                                <label for="champ-base-rarity-display" class="input-label block text-sm">Base Rarity (auto):</label>
+                                <input type="text" id="champ-base-rarity-display" class="display-field" readonly>
+                            </div>
+                            <div class="input-group mt-4">
+                                <label for="champ-class-display" class="input-label block text-sm">Class (auto):</label>
+                                <input type="text" id="champ-class-display" class="display-field" readonly>
+                            </div>
+                            <div class="input-group mt-4">
+                                <label for="champ-healer-status-display" class="input-label block text-sm">Healer Status (auto):</label>
+                                <input type="text" id="champ-healer-status-display" class="display-field" readonly>
+                            </div>
+                            <div class="input-group mt-4">
+                                <label for="champ-star-color" class="input-label block text-sm">Your Star & Color Tier:</label>
+                                <select id="champ-star-color" class="input-field">
+                                    </select>
+                            </div>
+                            <div class="input-group mt-4">
+                                <label class="input-label">Inherent Synergies (auto):</label>
+                                <div id="champ-inherent-synergies-display" class="p-2 border border-gray-300 rounded-md bg-gray-100 min-h-[40px] text-sm text-gray-600">
+                                    Select a base champion to see synergies.
+                                </div>
+                            </div>
                         </div>
-                        <div class="input-group mt-4">
-                            <label for="champ-base-rarity-display" class="input-label block text-sm">Base Rarity (auto):</label>
-                            <input type="text" id="champ-base-rarity-display" class="display-field" readonly>
+
+                        <div>
+                            <div class="input-group">
+                                <label for="gear-head" class="input-label block text-sm"">Head Gear Rarity Equipped:</label>
+                                <select id="gear-head" class="input-field gear-rarity-select"> </select>
+                            </div>
+                            <div class="input-group mt-4">
+                                <label for="gear-arms" class="input-label block text-sm"">Arms Gear Rarity Equipped:</label>
+                                <select id="gear-arms" class="input-field gear-rarity-select"> </select>
+                            </div>
+                            <div class="input-group mt-4">
+                                <label for="gear-legs" class="input-label block text-sm"">Legs Gear Rarity Equipped:</label>
+                                <select id="gear-legs" class="input-field gear-rarity-select"> </select>
+                            </div>
+                            <div class="input-group mt-4">
+                                <label for="gear-chest" class="input-label block text-sm"">Chest Gear Rarity Equipped:</label>
+                                <select id="gear-chest" class="input-field gear-rarity-select"> </select>
+                            </div>
+                            <div class="input-group mt-4">
+                                <label for="gear-waist" class="input-label block text-sm"">Waist Gear Rarity Equipped:</label>
+                                <select id="gear-waist" class="input-field gear-rarity-select"> </select>
+                            </div>
                         </div>
-                        <div class="input-group mt-4">
-                            <label for="champ-class-display" class="input-label block text-sm">Class (auto):</label>
-                            <input type="text" id="champ-class-display" class="display-field" readonly>
-                        </div>
-                        <div class="input-group mt-4">
-                            <label for="champ-healer-status-display" class="input-label block text-sm">Healer Status (auto):</label>
-                            <input type="text" id="champ-healer-status-display" class="display-field" readonly>
-                        </div>
-                        <div class="input-group mt-4">
-                            <label for="champ-star-color" class="input-label block text-sm">Your Star & Color Tier:</label>
-                            <select id="champ-star-color" class="input-field">
-                                </select>
-                        </div>
-                        <div class="input-group mt-4">
-                            <label class="input-label">Inherent Synergies (auto):</label>
-                            <div id="champ-inherent-synergies-display" class="p-2 border border-gray-300 rounded-md bg-gray-100 min-h-[40px] text-sm text-gray-600">
-                                Select a base champion to see synergies.
+                        
+                        <div>
+                            <div class="input-group">
+                                <label for="legacy-piece-select" class="input-label block text-sm"">Select Legacy Piece:</label>
+                                <select id="legacy-piece-select" class="input-field"> 
+                                    <option value="">-- None --</option>
+                                    </select>
+                            </div>
+                            <div class="input-group mt-4"> <label for="legacy-piece-star-color" class="input-label block text-sm">Legacy Piece Star & Color Tier:</label>
+                                <select id="legacy-piece-star-color" class="input-field">
+                                    </select>
+                            </div>
+                            <div class="mt-8 space-y-2">
+                                <button id="add-update-champion-btn" class="btn btn-primary w-full">
+                                    <span class="btn-text">Add Champion to Roster</span> 
+                                    <span id="save-roster-indicator" class="saving-indicator hidden"></span>
+                                </button>
+                                <button id="cancel-edit-btn" class="btn btn-warning w-full hidden">
+                                    <span class="btn-text">Cancel Edit</span>
+                                </button>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div>
-                        <div class="input-group">
-                            <label for="gear-head" class="input-label block text-sm"">Head Gear Rarity Equipped:</label>
-                            <select id="gear-head" class="input-field gear-rarity-select"> </select>
-                        </div>
-                        <div class="input-group mt-4">
-                            <label for="gear-arms" class="input-label block text-sm"">Arms Gear Rarity Equipped:</label>
-                            <select id="gear-arms" class="input-field gear-rarity-select"> </select>
-                        </div>
-                        <div class="input-group mt-4">
-                            <label for="gear-legs" class="input-label block text-sm"">Legs Gear Rarity Equipped:</label>
-                            <select id="gear-legs" class="input-field gear-rarity-select"> </select>
-                        </div>
-                        <div class="input-group mt-4">
-                            <label for="gear-chest" class="input-label block text-sm"">Chest Gear Rarity Equipped:</label>
-                            <select id="gear-chest" class="input-field gear-rarity-select"> </select>
-                        </div>
-                        <div class="input-group mt-4">
-                            <label for="gear-waist" class="input-label block text-sm"">Waist Gear Rarity Equipped:</label>
-                            <select id="gear-waist" class="input-field gear-rarity-select"> </select>
+                <div class="calc-section bg-gray-50">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold">Your Champion Roster</h2>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="toggle-score-column" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" checked>
+                            <label for="toggle-score-column" class="ml-2 text-sm text-gray-700">Show Ind. Score</label>
                         </div>
                     </div>
-                    
-                    <div>
-                        <div class="input-group">
-                            <label for="legacy-piece-select" class="input-label block text-sm"">Select Legacy Piece (from DB):</label>
-                            <select id="legacy-piece-select" class="input-field"> 
-                                <option value="">-- None --</option>
-                                </select>
+                    <div id="champions-roster-container" class="overflow-x-auto">
+                        <div id="champions-roster-table-wrapper" class="mt-4">
+                            <!-- Roster table will be generated here by JavaScript -->
+                             <p class="text-sm text-gray-500">No champions added to your roster yet.</p> <!-- Default message -->
                         </div>
-                        <div class="mt-8 space-y-2">
-                            <button id="add-update-champion-btn" class="btn btn-primary w-full">
-                                <span class="btn-text">Add Champion to Roster</span> 
-                                <span id="save-roster-indicator" class="saving-indicator hidden"></span>
+                        <div id="roster-management-buttons" class="mt-4 flex flex-wrap gap-2">
+                            <button id="prefill-roster-btn" class="btn btn-info btn-sm hidden">
+                                <span class="btn-icon">✨</span>
+                                <span class="btn-text">Pre-fill Roster</span>
                             </button>
-                            <button id="cancel-edit-btn" class="btn btn-warning w-full hidden">
-                                <span class="btn-text">Cancel Edit</span>
+                            <button id="export-roster-btn" class="btn btn-secondary btn-sm">
+                                <span class="btn-icon">📤</span>
+                                <span class="btn-text">Export Roster</span>
                             </button>
+                            <button id="import-roster-btn" class="btn btn-secondary btn-sm">
+                                <span class="btn-icon">📥</span>
+                                <span class="btn-text">Import Roster</span>
+                            </button>
+                            <input type="file" id="import-roster-file" class="hidden" accept=".json">
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div class="calc-section bg-gray-50">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold">Your Champion Roster</h2>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="toggle-score-column" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" checked>
-                        <label for="toggle-score-column" class="ml-2 text-sm text-gray-700">Show Ind. Score</label>
-                    </div>
-                </div>
-                <div id="champions-roster-container" class="overflow-x-auto">
-                    <div id="champions-roster-table-wrapper" class="mt-4">
-                        <table id="rosterTable" class="display" style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Rarity</th>
-                                    <th>Class</th>
-                                    <th class="dt-column-score">Ind. Score</th> 
-                                    <th>Star/Color</th>
-                                    <th>Legacy Piece</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="results-section" class="card">
-            <div class="calc-section bg-gray-50">
-                <h2 class="text-xl font-semibold mb-4">Find Optimal Team</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div class="flex items-center">
-                        <input id="require-healer-checkbox" type="checkbox" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                        <label for="require-healer-checkbox" class="ml-2 block text-sm text-gray-700">Require Healer in Team?</label>
-                    </div>
-                    <div>
-                        <div class="flex items-center mb-1">
-                            <input id="exclude-saved-team-checkbox" type="checkbox" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                            <label for="exclude-saved-team-checkbox" class="ml-2 block text-sm text-gray-700">Exclude Champions from a Saved Team?</label>
+            <section id="results-section" class="card">
+                <div class="calc-section bg-gray-50">
+                    <h2 class="text-xl font-semibold mb-4">Find Optimal Team</h2>
+                    <div class="flex flex-wrap md:flex-nowrap justify-between items-start gap-6 mb-6">
+                        <!-- Left Column for Options -->
+                        <div class="w-full md:w-2/3 space-y-4">
+                            <div class="flex items-center">
+                                <input id="require-healer-checkbox" type="checkbox" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                <label for="require-healer-checkbox" class="ml-2 block text-sm text-gray-700">Require Healer in Team?</label>
+                            </div>
+                            <div>
+                                <div class="flex items-center mb-1">
+                                    <input id="exclude-saved-team-checkbox" type="checkbox" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                    <label for="exclude-saved-team-checkbox" class="ml-2 block text-sm text-gray-700">Exclude Champions from Saved Team(s)?</label>
+                                </div>
+                                <div class="input-group">
+                                    <label for="select-exclusion-team-dropdown" class="input-label block text-sm sr-only">Select Teams to Exclude Champions From:</label>
+                                    <select id="select-exclusion-team-dropdown" class="input-field" multiple disabled>
+                                        <!-- Options will be populated by JavaScript -->
+                                    </select>
+                                    <p class="text-xs text-gray-500 mt-1">Hold Ctrl (or Cmd on Mac) to select multiple teams.</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="input-group">
-                            <select id="select-exclusion-team-dropdown" class="input-field" disabled>
-                                <option value="">-- Select Saved Team to Exclude --</option>
-                                <option value="ALL_SAVED_TEAMS">-- All Saved Teams --</option> 
-                                </select>
+                        <!-- Right Column for Calculate Button -->
+                        <div class="w-full md:w-1/3 flex flex-col md:items-end items-start mt-4 md:mt-0">
+                            <button id="calculate-btn" class="btn btn-secondary btn-lg w-full md:w-auto"> <!-- Added btn-lg class -->
+                                <span class="btn-icon">⚙️</span>
+                                <span class="btn-text">Calculate Best Team</span>
+                            </button>
+                            <p class="text-xs text-gray-500 mt-2 text-left md:text-right w-full">Note: More champions & synergies may increase calculation time.</p>
                         </div>
                     </div>
+                    <div id="results-output" class="mt-6 p-4 border border-dashed border-gray-300 rounded-md min-h-[100px] bg-gray-50">
+                        <p class="text-gray-500">Results will be displayed here...</p>
+                    </div>
                 </div>
-                <button id="calculate-btn" class="btn btn-secondary text-lg"> <span class="btn-text">Calculate Best Team</span>
-                </button>
-                <div id="results-output" class="mt-6 p-4 border border-dashed border-gray-300 rounded-md min-h-[100px] bg-gray-50">
-                    <p class="text-gray-500">Results will be displayed here...</p>
-                </div>
-            </div>
-        </section>
+            </section>
 
-        <section id="saved-teams-section" class="card">
-            <div class="calc-section bg-gray-50">
-                <h2 class="text-xl font-semibold mb-4">Saved Teams</h2>
-                <div id="saved-teams-list" class="space-y-4"> 
-                    <p class="text-sm text-gray-500">No teams saved yet.</p>
+            <section id="saved-teams-section" class="card">
+                <div class="calc-section bg-gray-50">
+                    <h2 class="text-xl font-semibold mb-4">Saved Teams</h2>
+                    <div id="saved-teams-list" class="space-y-4"> 
+                        <p class="text-sm text-gray-500">No teams saved yet.</p>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <section id="synergies-section" class="card hidden">
-            <div class="calc-section bg-gray-50">
-                <h2 class="text-xl font-semibold mb-4">Available Synergies</h2>
-                <div id="synergies-list" class="mt-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-3 gap-y-2">
-                    <p class="text-sm text-gray-500 col-span-full">Loading synergies...</p> 
+            <section id="synergies-section" class="card hidden">
+                <div class="calc-section bg-gray-50">
+                    <h2 class="text-xl font-semibold mb-4">Available Synergies</h2>
+                    <div id="synergies-list" class="mt-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-3 gap-y-2">
+                        <p class="text-sm text-gray-500 col-span-full">Loading synergies...</p> 
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div> <!-- End of main-app-content -->
         
     </div>
 
@@ -844,6 +927,41 @@
         </div>
     </div>
 
+    <div id="confirm-modal" class="modal-backdrop hidden">
+        <div class="modal-content">
+            <h3 id="confirm-modal-title" class="text-xl font-semibold mb-4">Confirm Action</h3>
+            <p id="confirm-modal-message" class="mb-6 text-gray-700">Are you sure?</p>
+            <div class="modal-buttons">
+                <button id="confirm-modal-cancel-btn" class="btn btn-secondary">
+                    <span class="btn-text">Cancel</span>
+                </button>
+                <button id="confirm-modal-confirm-btn" class="btn btn-danger">
+                    <span class="btn-text">Confirm</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="share-team-modal" class="modal-backdrop hidden">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="share-team-modal-title" class="text-xl font-semibold">Share Team Link</h3>
+                <button id="close-share-team-modal-btn" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Anyone with this link can view this team composition (read-only).</p>
+            <div class="input-group mb-4">
+                <label for="share-team-link-input" class="input-label block text-sm mb-1">Shareable Link:</label>
+                <input type="text" id="share-team-link-input" class="input-field" readonly>
+            </div>
+            <div class="modal-buttons">
+                <button id="copy-share-link-btn" class="btn btn-primary">
+                    <span class="btn-icon">📋</span>
+                    <span class="btn-text">Copy Link</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div id="toast-container"></div>
 
 
@@ -851,11 +969,12 @@
     // Firebase SDK imports
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, getDocs, doc, setDoc, getDoc, deleteDoc, query, where, onSnapshot, orderBy, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js"; 
+    import { getFirestore, collection, getDocs, doc, setDoc, getDoc, deleteDoc, query, where, onSnapshot, setLogLevel, orderBy, addDoc, updateDoc, serverTimestamp, deleteField } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
     // --- Unicode Icon Definitions ---
     const ICON_ADD = '➕';
-    const ICON_UPDATE = '�';
+    const ICON_UPDATE = '🔄';
     const ICON_EDIT = '✏️';
     const ICON_DELETE = '🗑️';
     const ICON_CALCULATE = '⚙️'; 
@@ -863,6 +982,14 @@
     const ICON_CANCEL = '❌';
     const ICON_SWAP = '🔁';
     const ICON_RESET = '↩️';
+    const ICON_PREFILL = '✨'; 
+    const ICON_EXPORT = '📤'; 
+    const ICON_IMPORT = '📥';
+    const ICON_CONFIRM = '✔️'; 
+    const ICON_SHARE = '🔗'; 
+    const ICON_UNSHARE = '🚫';
+    const ICON_COPY = '📋'; 
+
 
     // --- Firebase Configuration and Initialization ---
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'dc-dark-legion-builder'; 
@@ -881,13 +1008,16 @@
     let app;
     let auth;
     let db;
+    let analytics;
     let userId; 
     let rosterDataTable = null; 
     let scoreColumnVisible = true; 
     let teamNameModalCallback = null; 
-    let originalBestTeam = null; // To store the initially calculated best team
-    let currentDisplayedTeam = null; // To store the team currently displayed (can be modified)
-    let championToReplaceIndex = -1; // To store the index of the champion being swapped
+    let confirmModalConfirmCallback = null;
+    let confirmModalCancelCallback = null;
+    let originalBestTeam = null; 
+    let currentDisplayedTeam = null; 
+    let championToReplaceIndex = -1; 
 
     const loadingIndicatorEl = document.getElementById('loading-indicator');
     const errorIndicatorEl = document.getElementById('error-indicator');
@@ -911,12 +1041,38 @@
     const processingModalEl = document.getElementById('processing-modal');
     const processingStatusTextEl = document.getElementById('processing-status-text');
     const progressBarInnerEl = document.getElementById('progress-bar-inner');
+    const prefillRosterBtn = document.getElementById('prefill-roster-btn'); 
+    const exportRosterBtn = document.getElementById('export-roster-btn');
+    const importRosterBtn = document.getElementById('import-roster-btn');
+    const importRosterFileEl = document.getElementById('import-roster-file');
 
-    // Swap Champion Modal Elements
-    const swapChampionModalEl = document.createElement('div'); // Will be created dynamically
+    // Confirmation Modal Elements
+    const confirmModalEl = document.getElementById('confirm-modal');
+    const confirmModalTitleEl = document.getElementById('confirm-modal-title');
+    const confirmModalMessageEl = document.getElementById('confirm-modal-message');
+    const confirmModalConfirmBtn = document.getElementById('confirm-modal-confirm-btn');
+    const confirmModalCancelBtn = document.getElementById('confirm-modal-cancel-btn');
+
+    // Share Team Modal Elements
+    const shareTeamModalEl = document.getElementById('share-team-modal');
+    const shareTeamModalTitleEl = document.getElementById('share-team-modal-title');
+    const shareTeamLinkInputEl = document.getElementById('share-team-link-input');
+    const copyShareLinkBtn = document.getElementById('copy-share-link-btn');
+    const closeShareTeamModalBtn = document.getElementById('close-share-team-modal-btn');
+
+    // Main App Content and Shared Team View Sections
+    const mainAppContentEl = document.getElementById('main-app-content');
+    const sharedTeamViewSectionEl = document.getElementById('shared-team-view-section');
+    const sharedTeamNameEl = document.getElementById('shared-team-name');
+    const sharedTeamOutputEl = document.getElementById('shared-team-output');
+
+
+    // Swap Champion Modal Elements - Dynamically created, reference its body for content population
+    const swapChampionModalEl = document.createElement('div'); 
     swapChampionModalEl.id = 'swap-champion-modal';
     swapChampionModalEl.className = 'modal-backdrop hidden';
-    document.body.appendChild(swapChampionModalEl); // Add to body once
+    document.body.appendChild(swapChampionModalEl); 
+
 
     // --- Toast Notification Function ---
     function showToast(message, type = 'info', duration = 3000) {
@@ -951,6 +1107,7 @@
 
         toastContainer.appendChild(toast);
 
+        // Trigger reflow to enable transition
         toast.offsetHeight; 
 
         toast.classList.add('show');
@@ -967,6 +1124,8 @@
             app = initializeApp(firebaseConfig);
             auth = getAuth(app);
             db = getFirestore(app);
+            analytics = getAnalytics(app);
+            setLogLevel('error');
 
             loadingIndicatorEl.classList.remove('hidden');
             errorIndicatorEl.classList.add('hidden');
@@ -974,15 +1133,19 @@
             return new Promise((resolve, reject) => {
                 const unsubscribe = onAuthStateChanged(auth, async (user) => {
                     if (user) {
+                        console.log("User is signed in:", user.uid);
                         userId = user.uid;
                         userIdDisplay.textContent = `User ID: ${userId.substring(0,8)}...`; 
                         resolve();
                     } else {
+                        console.log("User is not signed in. Attempting to sign in...");
                         try {
                             if (initialAuthToken) {
                                 await signInWithCustomToken(auth, initialAuthToken);
+                                console.log("Signed in with custom token.");
                             } else {
                                 await signInAnonymously(auth);
+                                console.log("Signed in anonymously.");
                             }
                         } catch (error) {
                             console.error("Error during sign-in:", error);
@@ -1016,12 +1179,31 @@
 
     // --- Data Definitions (Client-side constants) ---
     const STAR_COLOR_TIERS = { 
+        "Unlocked": 0.0, 
         "White 1-Star": 1.0, "White 2-Star": 1.05, "White 3-Star": 1.10, "White 4-Star": 1.15, "White 5-Star": 1.20,
         "Blue 1-Star": 1.25, "Blue 2-Star": 1.30, "Blue 3-Star": 1.35, "Blue 4-Star": 1.40, "Blue 5-Star": 1.45,
         "Purple 1-Star": 1.50, "Purple 2-Star": 1.55, "Purple 3-Star": 1.60, "Purple 4-Star": 1.65, "Purple 5-Star": 1.70,
         "Gold 1-Star": 1.75, "Gold 2-Star": 1.80, "Gold 3-Star": 1.85, "Gold 4-Star": 1.90, "Gold 5-Star": 1.95,
         "Red 1-Star": 2.00, "Red 2-Star": 2.05, "Red 3-Star": 2.10, "Red 4-Star": 2.15, "Red 5-Star": 2.20
     };
+
+    const LEGACY_PIECE_POINTS_PER_STAR_INCREMENT = 5; 
+    const LEGACY_PIECE_STAR_TIER_SCORE = {};
+
+    function generateLegacyPieceStarTierScores() {
+        LEGACY_PIECE_STAR_TIER_SCORE["Unlocked"] = 0;
+        const colors = ["White", "Blue", "Purple", "Gold", "Red"];
+        let starStep = 0; 
+        colors.forEach(color => {
+            for (let i = 1; i <= 5; i++) {
+                starStep++;
+                const tierName = `${color} ${i}-Star`;
+                LEGACY_PIECE_STAR_TIER_SCORE[tierName] = starStep * LEGACY_PIECE_POINTS_PER_STAR_INCREMENT;
+            }
+        });
+    }
+    generateLegacyPieceStarTierScores(); 
+
 
     const CHAMPION_BASE_RARITY_SCORE = { 
         "Epic": 100, "Legendary": 150, "Mythic": 200, "Limited Mythic": 250
@@ -1032,12 +1214,14 @@
         "None": 0, "Uncommon": 10, "Rare": 20, "Epic": 40, "Legendary": 70, "Mythic": 100, "Mythic Enhanced": 150
     };
 
-    const LEGACY_PIECE_RARITY_SCORE = { 
+    const LEGACY_PIECE_BASE_RARITY_SCORE = { 
         "None": 0, "Epic": 50, "Legendary": 80, "Mythic": 120, "Mythic+": 180
     };
     
     const CLASS_DIVERSITY_MULTIPLIER = 1.15; 
     const SYNERGY_ACTIVATION_COUNT = 3; 
+    const SYNERGY_COHESION_MULTIPLER = 5;
+    const SYNERGY_COHESION_BASE = 2000;
 
     let dbSynergies = []; 
     let dbChampions = []; 
@@ -1064,6 +1248,7 @@
         waist: document.getElementById('gear-waist'),
     };
     const legacyPieceSelectEl = document.getElementById('legacy-piece-select'); 
+    const legacyPieceStarColorEl = document.getElementById('legacy-piece-star-color'); 
     const addUpdateChampionBtn = document.getElementById('add-update-champion-btn'); 
     const cancelEditBtn = document.getElementById('cancel-edit-btn'); 
     const championsRosterTableWrapperEl = document.getElementById('champions-roster-table-wrapper'); 
@@ -1076,14 +1261,25 @@
     const savedTeamsListEl = document.getElementById('saved-teams-list'); 
 
     // --- Initialization Functions (Client-side options) ---
-    function populateStarColorOptions() {
-        Object.keys(STAR_COLOR_TIERS).forEach(tier => {
+    function populateStarColorOptions(selectElement, tiersObject, defaultTier = "Unlocked") {
+        if (!selectElement) {
+            console.error("populateStarColorOptions: Select element not provided or not found for tiers:", tiersObject);
+            return;
+        }
+        selectElement.innerHTML = ''; 
+        Object.keys(tiersObject).forEach(tier => {
             const option = document.createElement('option');
             option.value = tier;
             option.textContent = tier;
-            champStarColorEl.appendChild(option);
+            selectElement.appendChild(option);
         });
+        if (tiersObject.hasOwnProperty(defaultTier)) {
+            selectElement.value = defaultTier;
+        } else if (Object.keys(tiersObject).length > 0) {
+            selectElement.value = Object.keys(tiersObject)[0]; 
+        }
     }
+
 
     function populateGearRarityOptions() {
         document.querySelectorAll('.gear-rarity-select').forEach(selectEl => {
@@ -1121,21 +1317,73 @@
         }
 
         dbSynergies.forEach(synergyDef => {
+            const synergyItemContainer = document.createElement('div'); 
+            synergyItemContainer.className = 'synergy-item-container border rounded-lg p-3 bg-slate-50 mb-3 shadow-sm';
+
             const count = playerChampionRoster.filter(champ => (champ.inherentSynergies || []).includes(synergyDef.name)).length;
-            const synergyItem = document.createElement('div');
-            synergyItem.className = 'synergy-item'; 
-            synergyItem.dataset.synergyName = synergyDef.name;
+            const synergyItemHeader = document.createElement('div');
+            synergyItemHeader.className = 'synergy-item-header flex items-center justify-between hover:bg-slate-100 p-2 rounded-md -m-2 mb-1'; 
+            synergyItemHeader.dataset.synergyName = synergyDef.name;
 
             const factionNameForIcon = synergyDef.name.trim().replace(/\s+/g, '_');
-            
             const fallbackSpan = `<span class="icon-placeholder" style="display:none;">[${synergyDef.name}]</span>`;
-            synergyItem.innerHTML = `
-                <img src="img/factions/${factionNameForIcon}.png" alt="${synergyDef.name}" title="${synergyDef.name}" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';">
-                ${fallbackSpan}
-                <span class="synergy-name">${synergyDef.name}</span>
+            
+            synergyItemHeader.innerHTML = `
+                <div class="flex items-center flex-grow">
+                    <span class="icon-wrapper mr-2">
+                        <img src="img/factions/${factionNameForIcon}.png" alt="${synergyDef.name}" title="${synergyDef.name}" class="w-6 h-6 object-contain" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';">
+                        ${fallbackSpan}
+                    </span>
+                    <span class="synergy-name">${synergyDef.name}</span>
+                </div>
                 <span class="synergy-progress">${count}/${SYNERGY_ACTIVATION_COUNT}</span>
             `;
-            synergiesListEl.appendChild(synergyItem);
+            synergyItemContainer.appendChild(synergyItemHeader);
+
+            const contributingChampions = playerChampionRoster.filter(champ => 
+                (champ.inherentSynergies || []).includes(synergyDef.name)
+            );
+
+            if (contributingChampions.length > 0) {
+                const championsListDiv = document.createElement('div');
+                championsListDiv.className = 'mt-2 pl-4 border-l-2 border-slate-200 space-y-1 synergy-champions-list'; 
+
+                contributingChampions.forEach(champ => {
+                    const champDiv = document.createElement('div');
+                    champDiv.className = 'synergy-champion-entry flex items-center text-xs text-slate-600 py-1';
+
+                    const classIconHtml = getClassPlaceholder(champ.class).replace('icon-class-table', 'result-icon w-4 h-4 mr-1');
+                    const starRatingHTML = getStarRatingHTML(champ.starColorTier);
+                    
+                    let champSynergiesHtml = '';
+                    if (champ.inherentSynergies && champ.inherentSynergies.length > 0) {
+                        champSynergiesHtml += `<div class="champion-synergies flex gap-0.5 ml-auto">`;
+                        champ.inherentSynergies.forEach(syn => {
+                            if (syn !== synergyDef.name) { 
+                                const synNameForIcon = syn.trim().replace(/\s+/g, '_');
+                                champSynergiesHtml += `<span class="icon-wrapper"><img src="img/factions/${synNameForIcon}.png" alt="${syn}" title="${syn}" class="result-icon w-3 h-3" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';"><span class="icon-placeholder text-xs" style="display:none;">[${syn}]</span></span>`;
+                            }
+                        });
+                        champSynergiesHtml += `</div>`;
+                    }
+
+                    champDiv.innerHTML = `
+                        ${classIconHtml}
+                        <span class="font-medium text-slate-700">${champ.name}</span>
+                        <span class="star-rating star-rating-sm ml-2">${starRatingHTML.replace(/font-size: 1.2em;/g, 'font-size: 0.9em;')}</span>
+                        ${champSynergiesHtml}
+                    `;
+                    championsListDiv.appendChild(champDiv);
+                });
+                synergyItemContainer.appendChild(championsListDiv);
+            } else {
+                const noChampsP = document.createElement('p');
+                noChampsP.className = 'text-xs text-slate-500 mt-1 pl-4';
+                noChampsP.textContent = 'No champions in your roster have this synergy yet.';
+                synergyItemContainer.appendChild(noChampsP);
+            }
+            
+            synergiesListEl.appendChild(synergyItemContainer);
         });
     }
 
@@ -1286,7 +1534,6 @@
         populateLegacyPieceSelect(currentSelectedChampionClass); 
     });
 
-    // --- Player Roster Save/Load ---
     async function savePlayerRosterToFirestore() {
         if (!userId) {
             console.error("Cannot save roster: User not authenticated.");
@@ -1296,10 +1543,26 @@
         saveRosterIndicatorEl.classList.remove('hidden');
         addUpdateChampionBtn.disabled = true;
 
+        const rosterToSave = playerChampionRoster.map(champ => {
+            const legacyPiece = champ.legacyPiece || {};
+            const baseLpScore = LEGACY_PIECE_BASE_RARITY_SCORE[legacyPiece.rarity] || 0;
+            const lpStarBonus = LEGACY_PIECE_STAR_TIER_SCORE[legacyPiece.starColorTier] || 0;
+            return {
+                ...champ,
+                legacyPiece: {
+                    ...legacyPiece,
+                    score: legacyPiece.id ? baseLpScore + lpStarBonus : 0, 
+                    starColorTier: legacyPiece.starColorTier || "Unlocked" 
+                }
+            };
+        });
+
         try {
             const rosterDocRef = doc(db, `artifacts/${appId}/users/${userId}/roster/myRoster`);
-            await setDoc(rosterDocRef, { champions: playerChampionRoster });
+            await setDoc(rosterDocRef, { champions: rosterToSave }); 
+            console.log("Player roster saved to Firestore.");
             showToast("Roster saved successfully!", "success");
+            if (analytics) logEvent(analytics, 'roster_saved', { roster_size: playerChampionRoster.length });
         } catch (error) {
             console.error("Error saving player roster:", error);
             showToast("Failed to save your roster. Error: " + error.message, "error");
@@ -1322,29 +1585,41 @@
                 if (rosterData && Array.isArray(rosterData.champions)) {
                     playerChampionRoster = rosterData.champions.map(savedChamp => {
                         const baseDetails = dbChampions.find(dbChamp => dbChamp.id === savedChamp.dbChampionId);
+                        const loadedLegacyPiece = savedChamp.legacyPiece || { id: null, name: "None", rarity: "None", score: 0, starColorTier: "Unlocked" };
+                        
+                        const baseLpScore = LEGACY_PIECE_BASE_RARITY_SCORE[loadedLegacyPiece.rarity] || 0;
+                        const lpStarBonus = LEGACY_PIECE_STAR_TIER_SCORE[loadedLegacyPiece.starColorTier] || 0;
+                        const finalLpScore = loadedLegacyPiece.id ? baseLpScore + lpStarBonus : 0;
+
                         return {
                             ...savedChamp, 
                             name: baseDetails ? baseDetails.name : savedChamp.name, 
                             baseRarity: baseDetails ? baseDetails.baseRarity : savedChamp.baseRarity,
                             class: baseDetails ? (baseDetails.class || "N/A") : (savedChamp.class || "N/A"),
                             isHealer: baseDetails ? (baseDetails.isHealer === true) : false, 
-                            inherentSynergies: baseDetails ? (baseDetails.inherentSynergies || []) : (savedChamp.inherentSynergies || [])
+                            inherentSynergies: baseDetails ? (baseDetails.inherentSynergies || []) : (savedChamp.inherentSynergies || []),
+                            legacyPiece: {
+                                ...loadedLegacyPiece,
+                                score: finalLpScore, 
+                                starColorTier: loadedLegacyPiece.starColorTier || "Unlocked" 
+                            }
                         };
                     });
+                    if (analytics) logEvent(analytics, 'roster_loaded', { roster_size: playerChampionRoster.length });
                 } else {
-                    playerChampionRoster = [];
+                    playerChampionRoster = []; 
                 }
             } else {
                 playerChampionRoster = []; 
             }
             renderPlayerChampionRoster(); 
-            renderAvailableSynergies(); // Update synergy display based on new roster
+            renderAvailableSynergies(); 
         } catch (error) {
             console.error("Error loading player roster:", error);
             showError("Error loading your saved roster.", error.message);
             playerChampionRoster = []; 
             renderPlayerChampionRoster(); 
-            renderAvailableSynergies(); // Still render to show empty state
+            renderAvailableSynergies(); 
         }
     }
 
@@ -1356,13 +1631,15 @@
         champClassDisplayEl.value = "";
         champHealerStatusDisplayEl.value = "";
         currentSelectedChampionClass = null;
-        champStarColorEl.value = Object.keys(STAR_COLOR_TIERS)[0]; 
+        
+        populateStarColorOptions(champStarColorEl, STAR_COLOR_TIERS, "Unlocked");
+        populateStarColorOptions(legacyPieceStarColorEl, LEGACY_PIECE_STAR_TIER_SCORE, "Unlocked");
+
         champInherentSynergiesDisplayEl.textContent = 'Select a base champion to see synergies.';
         Object.values(gearSelectEls).forEach(sel => sel.value = STANDARD_GEAR_RARITIES[0]); 
         legacyPieceSelectEl.value = ""; 
         populateLegacyPieceSelect(null); 
         addUpdateChampionBtn.innerHTML = `<span class="btn-icon">${ICON_ADD}</span> <span class="btn-text">Add Champion to Roster</span> <span id="save-roster-indicator" class="saving-indicator hidden"></span>`;
-
     }
 
     window.editChampion = (championId) => {
@@ -1382,6 +1659,9 @@
         champHealerStatusDisplayEl.value = championToEdit.isHealer ? 'Yes' : 'No';
         currentSelectedChampionClass = championToEdit.class || null; 
         champStarColorEl.value = championToEdit.starColorTier;
+        legacyPieceStarColorEl.value = (championToEdit.legacyPiece && championToEdit.legacyPiece.starColorTier) ? championToEdit.legacyPiece.starColorTier : "Unlocked";
+
+
         champInherentSynergiesDisplayEl.textContent = (championToEdit.inherentSynergies || []).join(', ') || 'None';
 
         gearSelectEls.head.value = championToEdit.gear.head.rarity;
@@ -1391,11 +1671,13 @@
         gearSelectEls.waist.value = championToEdit.gear.waist.rarity;
         
         populateLegacyPieceSelect(currentSelectedChampionClass); 
-        legacyPieceSelectEl.value = championToEdit.legacyPiece.id || "";
+        legacyPieceSelectEl.value = (championToEdit.legacyPiece && championToEdit.legacyPiece.id) ? championToEdit.legacyPiece.id : "";
+
 
         addUpdateChampionBtn.innerHTML = `<span class="btn-icon">${ICON_UPDATE}</span> <span class="btn-text">Update Champion in Roster</span> <span id="save-roster-indicator" class="saving-indicator hidden"></span>`;
         cancelEditBtn.classList.remove('hidden');
         window.scrollTo({ top: champSelectDbEl.offsetTop - 125, behavior: 'smooth' }); 
+        if (analytics) logEvent(analytics, 'edit_champion_start', { champion_id: championToEdit.dbChampionId, champion_name: championToEdit.name });
     };
 
     function cancelEditMode() {
@@ -1404,13 +1686,37 @@
         resetChampionForm(); 
         cancelEditBtn.classList.add('hidden');
         champSelectDbEl.disabled = false; 
-        populateChampionSelect(); 
+        populateChampionSelect();
+        if (analytics) logEvent(analytics, 'edit_champion_cancel');
     }
     cancelEditBtn.addEventListener('click', cancelEditMode);
 
 
     // --- Player Champion Roster Management ---
     addUpdateChampionBtn.addEventListener('click', async () => { 
+        const selectedDbChampionId = champSelectDbEl.value;
+        const selectedLegacyPieceId = legacyPieceSelectEl.value;
+        const selectedLegacyPieceStarTier = legacyPieceStarColorEl.value;
+        let legacyPieceData = { id: null, name: "None", rarity: "None", score: 0, starColorTier: "Unlocked", description: "" };
+
+        if (selectedLegacyPieceId) {
+            const dbLp = dbLegacyPieces.find(lp => lp.id === selectedLegacyPieceId);
+            if (dbLp) {
+                const baseLpScore = LEGACY_PIECE_BASE_RARITY_SCORE[dbLp.baseRarity] || 0;
+                const lpStarBonus = LEGACY_PIECE_STAR_TIER_SCORE[selectedLegacyPieceStarTier] || 0;
+                legacyPieceData = {
+                    id: dbLp.id, name: dbLp.name, rarity: dbLp.baseRarity,
+                    score: baseLpScore + lpStarBonus, 
+                    starColorTier: selectedLegacyPieceStarTier,
+                    description: dbLp.description || ""
+                };
+            }
+        } else {
+             legacyPieceData.starColorTier = "Unlocked"; 
+             legacyPieceData.score = LEGACY_PIECE_BASE_RARITY_SCORE["None"] || 0; 
+        }
+
+
         if (editingChampionId) { 
             const championIndex = playerChampionRoster.findIndex(c => c.id === editingChampionId);
             if (championIndex === -1) {
@@ -1418,19 +1724,6 @@
                 showToast("Error: Champion to update not found.", "error");
                 cancelEditMode(); 
                 return;
-            }
-
-            const selectedLegacyPieceId = legacyPieceSelectEl.value;
-            let legacyPieceData = { id: null, name: "None", rarity: "None", score: 0 }; 
-            if (selectedLegacyPieceId) {
-                const dbLp = dbLegacyPieces.find(lp => lp.id === selectedLegacyPieceId);
-                if (dbLp) {
-                    legacyPieceData = {
-                        id: dbLp.id, name: dbLp.name, rarity: dbLp.baseRarity,
-                        score: LEGACY_PIECE_RARITY_SCORE[dbLp.baseRarity] || 0, 
-                        description: dbLp.description || ""
-                    };
-                }
             }
             
             const baseChampionDataForUpdate = dbChampions.find(dbChamp => dbChamp.id === playerChampionRoster[championIndex].dbChampionId);
@@ -1452,10 +1745,10 @@
             renderPlayerChampionRoster(); 
             await savePlayerRosterToFirestore(); 
             showToast(`${playerChampionRoster[championIndex].name} updated in roster!`, "success");
+            if (analytics) logEvent(analytics, 'update_champion_roster', { champion_id: playerChampionRoster[championIndex].dbChampionId, champion_name: playerChampionRoster[championIndex].name, star_tier: champStarColorEl.value });
             cancelEditMode(); 
 
         } else { 
-            const selectedDbChampionId = champSelectDbEl.value;
             if (!selectedDbChampionId) {
                 showToast('Please select a base champion.', 'warning');
                 return;
@@ -1469,19 +1762,6 @@
             if (!baseChampionData) {
                 showToast('Selected base champion data not found. Please try again.', 'error'); 
                 return;
-            }
-
-            const selectedLegacyPieceId = legacyPieceSelectEl.value;
-            let legacyPieceData = { id: null, name: "None", rarity: "None", score: 0 }; 
-            if (selectedLegacyPieceId) {
-                const dbLp = dbLegacyPieces.find(lp => lp.id === selectedLegacyPieceId);
-                if (dbLp) {
-                    legacyPieceData = {
-                        id: dbLp.id, name: dbLp.name, rarity: dbLp.baseRarity, 
-                        score: LEGACY_PIECE_RARITY_SCORE[dbLp.baseRarity] || 0, 
-                        description: dbLp.description || ""
-                    };
-                }
             }
 
             const playerChampion = {
@@ -1508,9 +1788,10 @@
             });
 
             playerChampionRoster.push(playerChampion); 
-            renderPlayerChampionRoster(); // This will also call renderAvailableSynergies
+            renderPlayerChampionRoster(); 
             await savePlayerRosterToFirestore(); 
             showToast(`${playerChampion.name} added to roster!`, "success");
+            if (analytics) logEvent(analytics, 'add_champion_to_roster', { champion_id: playerChampion.dbChampionId, champion_name: playerChampion.name, star_tier: playerChampion.starColorTier });
             resetChampionForm(); 
             populateChampionSelect(); 
         }
@@ -1518,12 +1799,13 @@
 
     // Helper function to get HTML for star rating
     function getStarRatingHTML(starColorTier) {
-        if (!starColorTier || typeof starColorTier !== 'string') {
-            return 'N/A';
+        if (!starColorTier || starColorTier === "Unlocked") { 
+            return '<span class="unlocked-tier-text">Unlocked</span>'; 
         }
+        
         const parts = starColorTier.match(/(\w+)\s*(\d+)-Star/);
         if (!parts || parts.length < 3) {
-            return starColorTier; 
+            return `<span class="unlocked-tier-text">${starColorTier}</span>`; 
         }
 
         const colorName = parts[1].toLowerCase();
@@ -1539,7 +1821,7 @@
             default:       colorClass = 'text-gray-500'; 
         }
 
-        let starsHTML = `<div class="star-rating" title="${starColorTier}">`;
+        let starsHTML = `<div class="star-rating inline-block" title="${starColorTier}">`; 
         for (let i = 0; i < starCount; i++) {
             starsHTML += `<span class="${colorClass}">★</span>`;
         }
@@ -1555,13 +1837,13 @@
     }
 
     // Helper function to get image HTML based on champion class
-    function getClassPlaceholder(className) {
+    function getClassPlaceholder(className, customClasses = "icon-class-table") { 
         const cn = (className || "N/A").trim().replace(/\s+/g, '_'); 
         if (cn === "N/A" || cn === "") {
             return `<span class="icon-placeholder">[Class N/A]</span>`;
         }
         const fallbackSpan = `<span class="icon-placeholder" style="display:none;">[${cn.replace(/_/g, ' ')}]</span>`;
-        return `<span class="icon-wrapper"><img src="img/classes/${cn}.png" alt="${cn.replace(/_/g, ' ')}" title="${cn.replace(/_/g, ' ')}" class="icon-class-table" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';"/>${fallbackSpan}</span>`;
+        return `<span class="icon-wrapper"><img src="img/classes/${cn}.png" alt="${cn.replace(/_/g, ' ')}" title="${cn.replace(/_/g, ' ')}" class="${customClasses}" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';"/>${fallbackSpan}</span>`;
     }
 
 
@@ -1577,68 +1859,78 @@
 
         if (playerChampionRoster.length === 0) {
             rosterTableWrapper.innerHTML = '<p class="text-sm text-gray-500">No champions added to your roster yet.</p>';
-            renderAvailableSynergies(); 
-            return;
-        }
-
-        const table = document.createElement('table');
-        table.id = 'rosterTable'; 
-        table.className = 'display min-w-full'; 
-        const thead = document.createElement('thead');
-        thead.innerHTML = `
-            <tr>
-                <th>Name</th>
-                <th>Rarity</th>
-                <th>Class</th>
-                <th class="dt-column-score">Ind. Score</th>
-                <th>Star/Color</th>
-                <th>Legacy Piece</th>
-                <th>Actions</th>
-            </tr>
-        `;
-        table.appendChild(thead);
-
-        const tbody = document.createElement('tbody');
-        
-        playerChampionRoster.forEach(champ => { 
-            const tr = document.createElement('tr');
-            const legacyDisplay = champ.legacyPiece && champ.legacyPiece.id ? `${champ.legacyPiece.name} (${champ.legacyPiece.rarity})` : "None";
-            
-            const displayHealerIcon = champ.isHealer ? getHealerPlaceholder() : '';
-            const displayClassIcon = getClassPlaceholder(champ.class);
-            const individualScore = Math.round(calculateIndividualChampionScore(champ)); 
-            const starRatingHTML = getStarRatingHTML(champ.starColorTier);
-
-            tr.innerHTML = `
-                <td data-sort="${champ.name}"><div class="flex items-center">${displayHealerIcon}<span class="ml-1">${champ.name}</span></div></td>
-                <td data-sort="${CHAMPION_BASE_RARITY_SCORE[champ.baseRarity] || 0}">${champ.baseRarity}</td>
-                <td data-sort="${champ.class || 'N/A'}">${displayClassIcon}</td>
-                <td class="dt-column-score" data-sort="${individualScore}">${individualScore}</td>
-                <td data-sort="${STAR_COLOR_TIERS[champ.starColorTier] || 0}">${starRatingHTML}</td>
-                <td data-sort="${LEGACY_PIECE_RARITY_SCORE[champ.legacyPiece.rarity] || 0}">${legacyDisplay}</td>
-                <td>
-                    <button class="btn btn-sm btn-warning text-xs mr-1" onclick="editChampion(${champ.id})"><span class="btn-icon">${ICON_EDIT}</span> Edit</button>
-                    <button class="btn btn-sm btn-danger text-xs" onclick="removePlayerChampion(${champ.id})"><span class="btn-icon">${ICON_DELETE}</span> Remove</button>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
-        table.appendChild(tbody);
-        rosterTableWrapper.appendChild(table);
-
-        if (typeof $ !== 'undefined' && $.fn.DataTable) {
-            rosterDataTable = new $('#rosterTable').DataTable({
-                responsive: true,
-                "columnDefs": [
-                    { "targets": [0, 1, 2, 4, 5, 6], "type": "string" }, 
-                    { "targets": 3, "type": "num", "className": "dt-column-score text-right" } 
-                ],
-                 "order": [[3, "desc"]] 
-            });
-            rosterDataTable.column('.dt-column-score').visible(scoreColumnVisible);
-            toggleScoreColumnCheckbox.checked = scoreColumnVisible;
+            if(prefillRosterBtn) prefillRosterBtn.classList.remove('hidden');
         } else {
-            console.warn("jQuery or DataTables not loaded, roster table will not have advanced features.");
+            if(prefillRosterBtn) prefillRosterBtn.classList.add('hidden');
+            const table = document.createElement('table');
+            table.id = 'rosterTable'; 
+            table.className = 'display min-w-full'; 
+            const thead = document.createElement('thead');
+            thead.innerHTML = `
+                <tr>
+                    <th>Name</th>
+                    <th>Rarity</th>
+                    <th>Class</th>
+                    <th class="dt-column-score">Ind. Score</th>
+                    <th>Star/Color</th>
+                    <th>Legacy Piece</th>
+                    <th>Actions</th>
+                </tr>
+            `;
+            table.appendChild(thead);
+
+            const tbody = document.createElement('tbody');
+            
+            playerChampionRoster.forEach(champ => { 
+                const tr = document.createElement('tr');
+                
+                let legacyDisplay = "None";
+                let legacySortScore = 0;
+                if (champ.legacyPiece && champ.legacyPiece.id) {
+                    legacyDisplay = `${champ.legacyPiece.name} (${champ.legacyPiece.rarity})`;
+                    const lpStarTier = champ.legacyPiece.starColorTier || "Unlocked";
+                    if (lpStarTier !== "Unlocked") {
+                         legacyDisplay += ` <span class="text-xs whitespace-nowrap">${getStarRatingHTML(lpStarTier)}</span>`;
+                    }
+                    legacySortScore = champ.legacyPiece.score || 0;
+                }
+                
+                const displayHealerIcon = champ.isHealer ? getHealerPlaceholder() : '';
+                const displayClassIcon = getClassPlaceholder(champ.class); 
+                const individualScore = Math.round(calculateIndividualChampionScore(champ)); 
+                const starRatingHTML = getStarRatingHTML(champ.starColorTier);
+
+                tr.innerHTML = `
+                    <td data-sort="${champ.name}"><div class="flex items-center">${displayHealerIcon}<span class="ml-1">${champ.name}</span></div></td>
+                    <td data-sort="${CHAMPION_BASE_RARITY_SCORE[champ.baseRarity] || 0}">${champ.baseRarity}</td>
+                    <td data-sort="${champ.class || 'N/A'}">${displayClassIcon}</td>
+                    <td class="dt-column-score" data-sort="${individualScore}">${individualScore}</td>
+                    <td data-sort="${STAR_COLOR_TIERS[champ.starColorTier] || 0}">${starRatingHTML}</td>
+                    <td data-sort="${legacySortScore}">${legacyDisplay}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning text-xs mr-1" onclick="editChampion(${champ.id})"><span class="btn-icon">${ICON_EDIT}</span> Edit</button>
+                        <button class="btn btn-sm btn-danger text-xs" onclick="removePlayerChampion(${champ.id})"><span class="btn-icon">${ICON_DELETE}</span> Remove</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+            rosterTableWrapper.appendChild(table);
+
+            if (typeof $ !== 'undefined' && $.fn.DataTable) {
+                rosterDataTable = new $('#rosterTable').DataTable({
+                    responsive: true,
+                    "columnDefs": [
+                        { "targets": [0, 1, 2, 4, 5, 6], "type": "string" }, 
+                        { "targets": 3, "type": "num", "className": "dt-column-score text-right" } 
+                    ],
+                     "order": [[3, "desc"]] 
+                });
+                rosterDataTable.column('.dt-column-score').visible(scoreColumnVisible);
+                toggleScoreColumnCheckbox.checked = scoreColumnVisible;
+            } else {
+                console.warn("jQuery or DataTables not loaded, roster table will not have advanced features.");
+            }
         }
         renderAvailableSynergies(); 
     }
@@ -1649,6 +1941,7 @@
             if (rosterDataTable) {
                 rosterDataTable.column('.dt-column-score').visible(scoreColumnVisible);
             }
+            if(analytics) logEvent(analytics, 'toggle_score_column', { visible: scoreColumnVisible });
         });
     }
 
@@ -1657,12 +1950,18 @@
             cancelEditMode(); 
         }
         const champToRemove = playerChampionRoster.find(c => c.id === championId);
-        if (champToRemove && confirm(`Are you sure you want to remove ${champToRemove.name} from your roster?`)) {
-            playerChampionRoster = playerChampionRoster.filter(c => c.id !== championId);
-            renderPlayerChampionRoster(); 
-            await savePlayerRosterToFirestore(); 
-            showToast(`${champToRemove.name} removed from roster.`, "info");
-            populateChampionSelect();
+        if (champToRemove) {
+            openConfirmModal(
+                `Are you sure you want to remove ${champToRemove.name} from your roster?`,
+                async () => {
+                    playerChampionRoster = playerChampionRoster.filter(c => c.id !== championId);
+                    renderPlayerChampionRoster(); 
+                    await savePlayerRosterToFirestore(); 
+                    showToast(`${champToRemove.name} removed from roster.`, "info");
+                    if (analytics) logEvent(analytics, 'remove_champion_from_roster', { champion_id: champToRemove.dbChampionId, champion_name: champToRemove.name });
+                    populateChampionSelect();
+                }
+            );
         }
     }
 
@@ -1671,17 +1970,30 @@
     function calculateIndividualChampionScore(champion) { 
         let score = 0;
         const baseScore = CHAMPION_BASE_RARITY_SCORE[champion.baseRarity] || 0; 
-        const starMultiplier = STAR_COLOR_TIERS[champion.starColorTier] || 1;
         
-        score = baseScore * starMultiplier;
+        let starMultiplier;
+        if (champion.starColorTier in STAR_COLOR_TIERS) {
+            starMultiplier = STAR_COLOR_TIERS[champion.starColorTier]; 
+        } else {
+            starMultiplier = 1.0; 
+            console.warn(`Unknown starColorTier: ${champion.starColorTier} for champion ${champion.name}, defaulting to multiplier 1.0`);
+        }
+        
+        score = baseScore * starMultiplier; 
+
         if (champion.gear && typeof champion.gear === 'object') {
             Object.entries(champion.gear).forEach(([slot, g]) => { 
                 const gearScore = (g && typeof g === 'object' && g.score) ? g.score : 0; 
                 score += gearScore;
             });
         }
-        const legacyScore = (champion.legacyPiece && typeof champion.legacyPiece === 'object' && champion.legacyPiece.score) ? champion.legacyPiece.score : 0; 
-        score += legacyScore;
+        
+        const legacyPiece = champion.legacyPiece || {};
+        const baseLpScore = LEGACY_PIECE_BASE_RARITY_SCORE[legacyPiece.rarity] || 0;
+        const lpStarBonus = LEGACY_PIECE_STAR_TIER_SCORE[legacyPiece.starColorTier] || 0;
+        const finalLpScore = legacyPiece.id ? baseLpScore + lpStarBonus : 0;
+        score += finalLpScore;
+
         return score;
     }
 
@@ -1722,6 +2034,8 @@
         }
         if (progressBarInnerEl) {
             progressBarInnerEl.style.width = `${progressPercentage}%`;
+        } else {
+            console.error("Progress bar inner element (#progress-bar-inner) not found in the DOM.");
         }
     }
 
@@ -1740,7 +2054,7 @@
         }
 
         openProcessingModal();
-        updateProcessingStatus("Preparing roster for calculation...", 2);
+        updateProcessingStatus("Initializing calculation...", 0);
         
         let rosterForCombination = playerChampionRoster.map(rosterChamp => { 
             const baseChampData = dbChampions.find(dbChamp => dbChamp.id === rosterChamp.dbChampionId);
@@ -1750,27 +2064,24 @@
                 individualScore: calculateIndividualChampionScore(rosterChamp) 
             };
         });
+        updateProcessingStatus("Preparing roster and calculating individual scores...", 5);
         
         const excludeChampions = excludeSavedTeamCheckboxEl.checked;
-        const exclusionTeamId = selectExclusionTeamDropdownEl.value;
+        // Get all selected team IDs from the multi-select dropdown
+        const selectedExclusionOptions = Array.from(selectExclusionTeamDropdownEl.selectedOptions);
+        const exclusionTeamIds = selectedExclusionOptions.map(option => option.value);
+
         let championsToExcludeIds = new Set();
 
-        if (excludeChampions && exclusionTeamId) { 
-            if (exclusionTeamId === "ALL_SAVED_TEAMS") {
-                savedTeams.forEach(savedTeam => {
-                    if (savedTeam.members && Array.isArray(savedTeam.members)) {
-                        savedTeam.members.forEach(member => championsToExcludeIds.add(member.dbChampionId));
-                    }
-                });
-            } else { 
-                const teamToExclude = savedTeams.find(st => st.id === exclusionTeamId);
+        if (excludeChampions && exclusionTeamIds.length > 0) { 
+            exclusionTeamIds.forEach(teamId => {
+                const teamToExclude = savedTeams.find(st => st.id === teamId);
                 if (teamToExclude && teamToExclude.members) {
                     teamToExclude.members.forEach(member => championsToExcludeIds.add(member.dbChampionId));
                 }
-            }
+            });
         }
         
-
         if (championsToExcludeIds.size > 0) {
             rosterForCombination = rosterForCombination.filter(champ => !championsToExcludeIds.has(champ.dbChampionId));
             if (rosterForCombination.length < 5) {
@@ -1780,12 +2091,14 @@
                 return;
             }
         }
+        updateProcessingStatus("Applying champion exclusion rules...", 10);
 
-        updateProcessingStatus("Generating team combinations...", 5);
         let teamCombinations = [];
         const requireHealer = requireHealerCheckboxEl.checked;
+        updateProcessingStatus("Generating potential team combinations...", 12);
 
         if (requireHealer) {
+            updateProcessingStatus("Filtering for healers...", 13);
             const healers = rosterForCombination.filter(champ => champ.isHealer === true);
             if (healers.length === 0) {
                 updateProcessingStatus("Error: No healers found for 'Require Healer'.", 100);
@@ -1799,6 +2112,7 @@
                 setTimeout(closeProcessingModal, 1500);
                 return;
             }
+            updateProcessingStatus("Generating combinations with healers...", 15);
             healers.forEach(healer => {
                 const otherChamps = rosterForCombination.filter(champ => champ.id !== healer.id); 
                 if (otherChamps.length >= 4) { 
@@ -1815,6 +2129,7 @@
                 return;
             }
         } else { 
+            updateProcessingStatus("Generating general combinations...", 15);
             teamCombinations = generateCombinations(rosterForCombination, 5);
         }
         
@@ -1825,16 +2140,22 @@
             return;
         }
         
-        updateProcessingStatus(`Generated ${teamCombinations.length} combinations. Evaluating...`, 10);
+        updateProcessingStatus(`Generated ${teamCombinations.length} combinations. Preparing for evaluation...`, 20);
 
         let bestTeam = null;
         let maxScore = -1; 
+        const totalCombinations = teamCombinations.length;
+        const textUpdateInterval = Math.max(1, Math.floor(totalCombinations / 20)); 
 
         setTimeout(() => { 
             teamCombinations.forEach((team, index) => {
-                const progress = 10 + Math.round(((index + 1) / teamCombinations.length) * 85); 
-                if (index % Math.max(1, Math.floor(teamCombinations.length / 20)) === 0) { 
-                     updateProcessingStatus(`Evaluating team ${index + 1} of ${teamCombinations.length}...`, progress);
+                const evaluationProgress = Math.round(((index + 1) / totalCombinations) * 75); 
+                const currentOverallProgress = 20 + evaluationProgress;
+
+                if (index % textUpdateInterval === 0 || index === totalCombinations - 1) {
+                     updateProcessingStatus(`Evaluating team ${index + 1} of ${totalCombinations}...`, currentOverallProgress);
+                } else { 
+                    if (progressBarInnerEl) progressBarInnerEl.style.width = `${currentOverallProgress}%`;
                 }
 
                 const currentTeamBaseScoreSum = team.reduce((sum, member) => sum + member.individualScore, 0);
@@ -1843,6 +2164,14 @@
                 let accumulatedBaseFlatBonus = 0;
                 let accumulatedTieredFlatBonus = 0;
                 const activeSynergiesForTeamCalculation = [];
+                
+                // Optimized Synergy Calculation
+                const teamSynergyCounts = new Map();
+                team.forEach(member => {
+                    (member.inherentSynergies || []).forEach(synergyName => {
+                        teamSynergyCounts.set(synergyName, (teamSynergyCounts.get(synergyName) || 0) + 1);
+                    });
+                });
 
                 const sortedSynergyDefs = [...dbSynergies].sort((a, b) => {
                     if (a.bonusType === 'percentage' && b.bonusType !== 'percentage') return -1;
@@ -1851,8 +2180,7 @@
                 });
 
                 sortedSynergyDefs.forEach(synergyDef => {
-                    const membersWithSynergy = team.filter(member => (member.inherentSynergies || []).includes(synergyDef.name));
-                    const memberCount = membersWithSynergy.length;
+                    const memberCount = teamSynergyCounts.get(synergyDef.name) || 0;
 
                     if (memberCount >= SYNERGY_ACTIVATION_COUNT) {
                         let primaryBonusAppliedThisSynergy = 0;
@@ -1870,9 +2198,9 @@
                             }
                         }
 
-                        if (memberCount === 3) tieredFlatBonusAppliedThisSynergy = 25000;
-                        else if (memberCount === 4) tieredFlatBonusAppliedThisSynergy = 100000;
-                        else if (memberCount >= 5) tieredFlatBonusAppliedThisSynergy = 250000;
+                        if (memberCount === 3) tieredFlatBonusAppliedThisSynergy = SYNERGY_COHESION_BASE * SYNERGY_COHESION_MULTIPLER;
+                        else if (memberCount === 4) tieredFlatBonusAppliedThisSynergy = SYNERGY_COHESION_BASE * SYNERGY_COHESION_MULTIPLER * 2.5;
+                        else if (memberCount >= 5) tieredFlatBonusAppliedThisSynergy = SYNERGY_COHESION_BASE * SYNERGY_COHESION_MULTIPLER * 5;
                         accumulatedTieredFlatBonus += tieredFlatBonusAppliedThisSynergy;
                         
                         activeSynergiesForTeamCalculation.push({
@@ -1919,11 +2247,20 @@
                     };
                 }
             });
-            updateProcessingStatus("Finalizing best team...", 99);
-            displayResults(bestTeam); // This now calls renderTeamDisplay internally
-            updateProcessingStatus("Calculation complete!", 100);
+            updateProcessingStatus("Finalizing best team...", 98);
+            if (analytics && bestTeam) {
+                logEvent(analytics, 'calculate_optimal_team', {
+                    roster_size: playerChampionRoster.length,
+                    combinations_checked: teamCombinations.length,
+                    best_team_score: Math.round(bestTeam.totalScore),
+                    require_healer: requireHealer,
+                    excluded_teams_count: exclusionTeamIds.length
+                });
+            }
+            displayResults(bestTeam); 
+            updateProcessingStatus("Calculation complete! Displaying results...", 100);
             setTimeout(closeProcessingModal, 1000); 
-        }, 100); 
+        }, 50); 
     });
 
     function displayResults(teamToDisplay) {
@@ -1935,11 +2272,11 @@
             return;
         }
         
-        originalBestTeam = JSON.parse(JSON.stringify(teamToDisplay)); // Store the initial best team
-        currentDisplayedTeam = JSON.parse(JSON.stringify(teamToDisplay)); // Set current display
-        currentBestTeamForSaving = JSON.parse(JSON.stringify(teamToDisplay)); // For the save button
+        originalBestTeam = JSON.parse(JSON.stringify(teamToDisplay)); 
+        currentDisplayedTeam = JSON.parse(JSON.stringify(teamToDisplay)); 
+        currentBestTeamForSaving = JSON.parse(JSON.stringify(teamToDisplay)); 
 
-        renderTeamDisplay(currentDisplayedTeam, true); // Render with swap buttons
+        renderTeamDisplay(currentDisplayedTeam, true); 
     }
 
     function renderTeamDisplay(teamObject, isModifiable = true) {
@@ -1998,11 +2335,11 @@
             const classNameForIcon = (member.class && member.class !== "N/A") ? member.class.trim().replace(/\s+/g, '_') : "UnknownClass"; 
             const healerIconHtml = member.isHealer ? `<span class="icon-wrapper"><img src="img/classes/Healer.png" alt="Healer" title="Healer" class="result-icon class-icon ml-1" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';"><span class="icon-placeholder text-xs" style="display:none;">[H]</span></span>` : '';
             const starRatingHTML = getStarRatingHTML(member.starColorTier);
-            const swapButtonHtml = isModifiable ? `<button class="btn btn-sm btn-outline btn-info mt-2 w-full" onclick="handleOpenSwapModal(${index})"><span class="btn-icon">${ICON_SWAP}</span> Swap</button>` : '';
+            const swapButtonHtml = isModifiable ? `<button class="btn btn-sm btn-info btn-outline mt-2 w-full" onclick="handleOpenSwapModal(${index})"><span class="btn-icon">${ICON_SWAP}</span> Swap</button>` : '';
 
 
             html += `<div class="p-3 border rounded-lg shadow-md bg-slate-50 flex flex-col justify-between champion-card">`; 
-            html += `   <div>`; // Wrapper for content above button
+            html += `   <div>`; 
             html += `       <div class="flex items-center mb-2">`;
             html += `           <span class="icon-wrapper"><img src="img/classes/${classNameForIcon}.png" alt="${member.class || 'N/A'}" title="${member.class || 'N/A'}" class="result-icon class-icon mr-2" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';">`;
             html += `           <span class="icon-placeholder text-xs" style="display:none;">[${member.class || 'N/A'}]</span></span>`; 
@@ -2012,6 +2349,14 @@
             html += `       <div class="text-xs text-slate-600 mb-2">`;
             html += `           <p>Tier: ${starRatingHTML}</p>`; 
             html += `           <p>Ind. Score: ${Math.round(member.individualScore)}</p>`;
+            if (member.legacyPiece && member.legacyPiece.id) {
+                html += `<p>Legacy: ${member.legacyPiece.name} (${member.legacyPiece.rarity})`;
+                if (member.legacyPiece.starColorTier && member.legacyPiece.starColorTier !== "Unlocked") {
+                    html += ` <span class="whitespace-nowrap">${getStarRatingHTML(member.legacyPiece.starColorTier)}</span>`;
+                }
+                html += `</p>`;
+            }
+
             html += `       </div>`;
             if (member.inherentSynergies && member.inherentSynergies.length > 0) {
                 html += `   <div class="mt-1">`; 
@@ -2024,8 +2369,8 @@
                 });
                 html += `       </div></div>`;
             }
-            html += `   </div>`; // End content wrapper
-            html += `   ${swapButtonHtml}`; // Add swap button if modifiable
+            html += `   </div>`; 
+            html += `   ${swapButtonHtml}`; 
             html += `</div>`; 
         });
         html += `</div>`; 
@@ -2073,25 +2418,22 @@
 
     // --- Saved Teams Management ---
     
-    // Function to open the team name modal
     function openTeamNameModal(currentName = '', title = 'Enter Team Name', callback) {
         teamNameModalTitleEl.textContent = title;
         teamNameInputEl.value = currentName;
-        teamNameModalCallback = callback; // Store the callback
+        teamNameModalCallback = callback; 
         teamNameModalEl.classList.remove('hidden');
         teamNameModalEl.classList.add('active');
         teamNameInputEl.focus();
     }
 
-    // Function to close the team name modal
     function closeTeamNameModal() {
         teamNameModalEl.classList.add('hidden');
         teamNameModalEl.classList.remove('active');
-        teamNameInputEl.value = ''; // Clear input
-        teamNameModalCallback = null; // Clear callback
+        teamNameInputEl.value = ''; 
+        teamNameModalCallback = null; 
     }
 
-    // Event listener for the "Save Name" button in the team name modal
     if (saveTeamNameBtn) {
         saveTeamNameBtn.addEventListener('click', () => {
             const teamName = teamNameInputEl.value.trim();
@@ -2100,18 +2442,16 @@
                 return;
             }
             if (teamNameModalCallback) {
-                teamNameModalCallback(teamName); // Execute the stored callback
+                teamNameModalCallback(teamName); 
             }
             closeTeamNameModal();
         });
     }
     
-    // Event listener for the "Cancel" button in the team name modal
     if (cancelTeamNameBtn) {
         cancelTeamNameBtn.addEventListener('click', closeTeamNameModal);
     }
 
-    // Event listener for backdrop click on team name modal
     if (teamNameModalEl) {
         teamNameModalEl.addEventListener('click', (event) => {
             if (event.target === teamNameModalEl) {
@@ -2126,7 +2466,7 @@
             showToast("You must be signed in to save teams.", "error");
             return;
         }
-        if (!currentDisplayedTeam) { // Use currentDisplayedTeam as it might have been swapped
+        if (!currentDisplayedTeam) { 
             showToast("No current team to save. Please calculate a team first.", "warning");
             return;
         }
@@ -2144,7 +2484,14 @@
                     isHealer: m.isHealer === true, 
                     starColorTier: m.starColorTier,
                     gear: m.gear, 
-                    legacyPiece: m.legacyPiece,
+                    legacyPiece: { 
+                        id: m.legacyPiece.id,
+                        name: m.legacyPiece.name,
+                        rarity: m.legacyPiece.rarity,
+                        score: m.legacyPiece.score,
+                        starColorTier: m.legacyPiece.starColorTier || "Unlocked",
+                        description: m.legacyPiece.description
+                    },
                     inherentSynergies: m.inherentSynergies || [],
                     individualScore: m.individualScore 
                 })),
@@ -2154,7 +2501,7 @@
                 baseScoreSum: currentDisplayedTeam.baseScoreSum, 
                 uniqueClassesCount: currentDisplayedTeam.uniqueClassesCount,
                 classDiversityBonusApplied: currentDisplayedTeam.classDiversityBonusApplied,
-                createdAt: new Date().toISOString() 
+                createdAt: serverTimestamp()
             };
             
             const saveTeamBtn = document.getElementById('save-team-btn'); 
@@ -2164,6 +2511,7 @@
                 const savedTeamsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/savedTeams`);
                 await addDoc(savedTeamsCollectionRef, teamDataToSave); 
                 showToast("Team saved successfully!", "success");
+                if (analytics) logEvent(analytics, 'save_team', { team_name: teamNameToSave, team_score: Math.round(teamDataToSave.totalScore), member_count: teamDataToSave.members.length });
                 loadSavedTeams(); 
             } catch (error) {
                 console.error("Error saving team:", error);
@@ -2180,7 +2528,17 @@
             const savedTeamsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/savedTeams`);
             const q = query(savedTeamsCollectionRef, orderBy("createdAt", "desc")); 
             const querySnapshot = await getDocs(q);
-            savedTeams = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            savedTeams = querySnapshot.docs.map(doc => {
+                const teamData = doc.data();
+                const members = (teamData.members || []).map(member => ({
+                    ...member,
+                    legacyPiece: {
+                        ...(member.legacyPiece || {}),
+                        starColorTier: (member.legacyPiece && member.legacyPiece.starColorTier) ? member.legacyPiece.starColorTier : "Unlocked"
+                    }
+                }));
+                return { id: doc.id, ...teamData, members };
+            });
             renderSavedTeams(); 
         } catch (error) {
             console.error("Error loading saved teams:", error);
@@ -2190,13 +2548,7 @@
 
     function renderSavedTeams() {
         savedTeamsListEl.innerHTML = ''; 
-        selectExclusionTeamDropdownEl.innerHTML = '<option value="">-- Select Saved Team to Exclude --</option>'; 
-        
-        const allTeamsOption = document.createElement('option');
-        allTeamsOption.value = "ALL_SAVED_TEAMS";
-        allTeamsOption.textContent = "-- All Saved Teams --";
-        selectExclusionTeamDropdownEl.appendChild(allTeamsOption);
-
+        selectExclusionTeamDropdownEl.innerHTML = ''; 
 
         if (savedTeams.length === 0) {
             savedTeamsListEl.innerHTML = '<p class="text-sm text-gray-500">No teams saved yet.</p>';
@@ -2207,13 +2559,23 @@
             const teamContainerDiv = document.createElement('div');
             teamContainerDiv.className = 'p-4 border rounded-lg bg-white shadow-lg mb-6'; 
 
+            let shareButtonHtml;
+            if (team.publicShareId) {
+                shareButtonHtml = `<button class="btn btn-sm btn-info text-xs" onclick="unshareTeam('${team.id}', '${team.publicShareId}')"><span class="btn-icon">${ICON_UNSHARE}</span> Unshare</button>`;
+            } else {
+                shareButtonHtml = `<button class="btn btn-sm btn-success text-xs" onclick="shareTeam('${team.id}')"><span class="btn-icon">${ICON_SHARE}</span> Share</button>`;
+            }
+
+
             let teamHeaderHtml = `
                 <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-200">
                     <div>
                         <h4 class="font-semibold text-lg text-indigo-700">${team.name}</h4>
                         <p class="text-sm text-gray-600">Total Score: <strong class="text-pink-600">${Math.round(team.totalScore)}</strong></p>
+                        ${team.publicShareId ? `<p class="text-xs text-blue-500 mt-1">Publicly Shared (ID: ${team.publicShareId.substring(0,6)}...)</p>` : ''}
                     </div>
                     <div class="flex-shrink-0 space-x-1">
+                         ${shareButtonHtml}
                          <button class="btn btn-sm btn-warning text-xs" onclick="renameSavedTeam('${team.id}', '${team.name.replace(/'/g, "\\'")}')"><span class="btn-icon">${ICON_EDIT}</span> Rename</button>
                          <button class="btn btn-sm btn-danger text-xs" onclick="deleteSavedTeam('${team.id}')"><span class="btn-icon">${ICON_DELETE}</span> Delete</button>
                     </div>
@@ -2231,41 +2593,54 @@
                     const starRatingHTML = getStarRatingHTML(member.starColorTier);
                     
                     let individualScore = member.individualScore;
-                    if (individualScore === undefined) {
+                    if (individualScore === undefined) { 
                         const baseChampDetails = dbChampions.find(c => c.id === member.dbChampionId) || {};
                         const memberForScoreCalc = { 
                             ...member,
                             baseRarity: member.baseRarity || baseChampDetails.baseRarity,
+                            legacyPiece: {
+                                ...(member.legacyPiece || {}),
+                                rarity: (member.legacyPiece && member.legacyPiece.rarity) ? member.legacyPiece.rarity : "None",
+                                starColorTier: (member.legacyPiece && member.legacyPiece.starColorTier) ? member.legacyPiece.starColorTier : "Unlocked"
+                            }
                         };
                         individualScore = calculateIndividualChampionScore(memberForScoreCalc);
                     }
 
 
                     let memberCardHtml = `<div class="p-3 border rounded-lg shadow-md bg-slate-50 flex flex-col justify-between champion-card">`;
-                    
-                    memberCardHtml += `<div class="flex items-center mb-2">`;
-                    memberCardHtml += `<span class="icon-wrapper"><img src="img/classes/${classNameForIcon}.png" alt="${member.class || 'N/A'}" title="${member.class || 'N/A'}" class="result-icon class-icon mr-2" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';">`;
-                    memberCardHtml += `<span class="icon-placeholder text-xs" style="display:none;">[${member.class || 'N/A'}]</span></span>`;
-                    memberCardHtml += `<strong class="text-sm text-slate-800 leading-tight">${member.name}</strong>`;
+                    memberCardHtml += `   <div>`;
+                    memberCardHtml += `       <div class="flex items-center mb-2">`;
+                    memberCardHtml += `           <span class="icon-wrapper"><img src="img/classes/${classNameForIcon}.png" alt="${member.class || 'N/A'}" title="${member.class || 'N/A'}" class="result-icon class-icon mr-2" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';">`;
+                    memberCardHtml += `           <span class="icon-placeholder text-xs" style="display:none;">[${member.class || 'N/A'}]</span></span>`;
+                    memberCardHtml += `           <strong class="text-sm text-slate-800 leading-tight">${member.name}</strong>`;
                     memberCardHtml += healerIconHtml;
-                    memberCardHtml += `</div>`;
+                    memberCardHtml += `       </div>`;
 
-                    memberCardHtml += `<div class="text-xs text-slate-600 mb-2">`;
-                    memberCardHtml += `<p>Tier: ${starRatingHTML}</p>`;
-                    memberCardHtml += `<p>Score: ${Math.round(individualScore)}</p>`;
-                    memberCardHtml += `</div>`;
+                    memberCardHtml += `       <div class="text-xs text-slate-600 mb-2">`;
+                    memberCardHtml += `           <p>Tier: ${starRatingHTML}</p>`;
+                    memberCardHtml += `           <p>Score: ${Math.round(individualScore)}</p>`;
+                    if (member.legacyPiece && member.legacyPiece.id) {
+                        memberCardHtml += `<p>Legacy: ${member.legacyPiece.name} (${member.legacyPiece.rarity})`;
+                        if (member.legacyPiece.starColorTier && member.legacyPiece.starColorTier !== "Unlocked") {
+                             memberCardHtml += ` <span class="whitespace-nowrap">${getStarRatingHTML(member.legacyPiece.starColorTier)}</span>`;
+                        }
+                        memberCardHtml += `</p>`;
+                    }
+                    memberCardHtml += `       </div>`;
 
                     if (member.inherentSynergies && member.inherentSynergies.length > 0) {
-                        memberCardHtml += `<div class="mt-auto">`;
-                        memberCardHtml += `<p class="text-xs font-semibold text-slate-500 mb-1">Synergies:</p>`;
-                        memberCardHtml += `<div class="flex flex-wrap gap-1">`;
+                        memberCardHtml += `   <div class="mt-1">`; 
+                        memberCardHtml += `       <p class="text-xs font-semibold text-slate-500 mb-1">Synergies:</p>`;
+                        memberCardHtml += `       <div class="flex flex-wrap gap-1">`;
                         member.inherentSynergies.forEach(synergy => {
                             const synergyNameForIcon = synergy.trim().replace(/\s+/g, '_');
                             memberCardHtml += `<span class="icon-wrapper"><img src="img/factions/${synergyNameForIcon}.png" alt="${synergy}" title="${synergy}" class="result-icon w-5 h-5" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';">`;
                             memberCardHtml += `<span class="icon-placeholder text-xs" style="display:none;">[${synergy}]</span></span>`;
                         });
-                        memberCardHtml += `</div></div>`;
+                        memberCardHtml += `       </div></div>`;
                     }
+                    memberCardHtml += `   </div>`;
                     memberCardHtml += `</div>`;
                     membersGridDiv.innerHTML += memberCardHtml;
                 });
@@ -2273,7 +2648,6 @@
             teamContainerDiv.appendChild(membersGridDiv);
             savedTeamsListEl.appendChild(teamContainerDiv);
 
-            // Add to exclusion dropdown
             const option = document.createElement('option');
             option.value = team.id;
             option.textContent = team.name;
@@ -2284,7 +2658,10 @@
     excludeSavedTeamCheckboxEl.addEventListener('change', () => {
         selectExclusionTeamDropdownEl.disabled = !excludeSavedTeamCheckboxEl.checked;
         if (!excludeSavedTeamCheckboxEl.checked) {
-            selectExclusionTeamDropdownEl.value = ""; 
+            // Clear selections in multi-select
+            Array.from(selectExclusionTeamDropdownEl.options).forEach(option => {
+                option.selected = false;
+            });
         }
     });
     
@@ -2299,6 +2676,7 @@
                     const teamDocRef = doc(db, `artifacts/${appId}/users/${userId}/savedTeams`, teamId);
                     await updateDoc(teamDocRef, { name: newName.trim() });
                     showToast("Team renamed successfully.", "success");
+                    if (analytics) logEvent(analytics, 'rename_saved_team');
                     loadSavedTeams(); 
                 } catch (error) {
                     console.error("Error renaming saved team:", error);
@@ -2318,66 +2696,40 @@
             showToast("You must be signed in to delete teams.", "error");
             return;
         }
-        if (!confirm("Are you sure you want to delete this saved team?")) return;
-
-        try {
-            const teamDocRef = doc(db, `artifacts/${appId}/users/${userId}/savedTeams`, teamId);
-            await deleteDoc(teamDocRef);
-            showToast("Team deleted successfully.", "info");
-            loadSavedTeams(); 
-        } catch (error) {
-            console.error("Error deleting saved team:", error);
-            showToast("Failed to delete team. Error: " + error.message, "error");
+        const teamToDelete = savedTeams.find(t => t.id === teamId);
+        if (!teamToDelete) {
+            showToast("Team not found.", "error");
+            return;
         }
+
+        openConfirmModal(
+            `Are you sure you want to delete the team "${teamToDelete.name}"? If it's shared, the public link will also be removed.`,
+            async () => {
+                try {
+                    let wasShared = false;
+                    if (teamToDelete.publicShareId) {
+                        const publicTeamDocRef = doc(db, `artifacts/${appId}/public/data/sharedTeams`, teamToDelete.publicShareId);
+                        await deleteDoc(publicTeamDocRef);
+                        showToast(`Public share for "${teamToDelete.name}" removed.`, "info");
+                        wasShared = true;
+                    }
+
+                    const privateTeamDocRef = doc(db, `artifacts/${appId}/users/${userId}/savedTeams`, teamId);
+                    await deleteDoc(privateTeamDocRef);
+                    showToast(`Team "${teamToDelete.name}" deleted successfully.`, "success");
+                    if (analytics) logEvent(analytics, 'delete_saved_team', { was_shared: wasShared });
+                    loadSavedTeams(); 
+                } catch (error) {
+                    console.error("Error deleting team:", error);
+                    showToast("Failed to delete team. Error: " + error.message, "error");
+                }
+            }
+        );
     };
 
-    // --- Synergy Modal Logic ---
-    if (synergiesListEl) {
-        synergiesListEl.addEventListener('click', (event) => {
-            const synergyItem = event.target.closest('.synergy-item');
-            if (synergyItem && synergyItem.dataset.synergyName) {
-                const synergyName = synergyItem.dataset.synergyName;
-                const matchingChampions = playerChampionRoster.filter(champ => 
-                    (champ.inherentSynergies || []).includes(synergyName)
-                );
-
-                synergyModalTitleEl.textContent = `Champions with ${synergyName}`;
-                if (matchingChampions.length > 0) {
-                    synergyModalBodyEl.innerHTML = '<ul class="list-disc list-inside"></ul>';
-                    const ul = synergyModalBodyEl.querySelector('ul');
-                    matchingChampions.forEach(champ => {
-                        const li = document.createElement('li');
-                        li.textContent = champ.name;
-                        ul.appendChild(li);
-                    });
-                } else {
-                    synergyModalBodyEl.innerHTML = '<p>No champions in your roster have this synergy.</p>';
-                }
-                synergyChampionsModalEl.classList.remove('hidden');
-                synergyChampionsModalEl.classList.add('active');
-            }
-        });
-    }
-
-    if (closeSynergyModalBtn) {
-        closeSynergyModalBtn.addEventListener('click', () => {
-            synergyChampionsModalEl.classList.add('hidden');
-            synergyChampionsModalEl.classList.remove('active');
-        });
-    }
-    if (synergyChampionsModalEl) {
-        synergyChampionsModalEl.addEventListener('click', (event) => {
-            if (event.target === synergyChampionsModalEl) {
-                synergyChampionsModalEl.classList.add('hidden');
-                synergyChampionsModalEl.classList.remove('active');
-            }
-        });
-    }
-
-    // --- "What If" Team Swap Logic ---
     window.handleOpenSwapModal = (indexToReplace) => {
         championToReplaceIndex = indexToReplace;
-        if (!swapChampionModalEl.querySelector('.modal-content')) { // Build modal content if not already built
+        if (!swapChampionModalEl.querySelector('.modal-content')) { 
             swapChampionModalEl.innerHTML = `
                 <div class="modal-content">
                     <div class="flex justify-between items-center mb-4">
@@ -2392,7 +2744,7 @@
                 swapChampionModalEl.classList.add('hidden');
                 swapChampionModalEl.classList.remove('active');
             });
-            swapChampionModalEl.addEventListener('click', (event) => { // Backdrop click
+            swapChampionModalEl.addEventListener('click', (event) => { 
                 if (event.target === swapChampionModalEl) {
                     swapChampionModalEl.classList.add('hidden');
                     swapChampionModalEl.classList.remove('active');
@@ -2401,7 +2753,7 @@
         }
 
         const swapModalBody = swapChampionModalEl.querySelector('#swap-modal-body');
-        swapModalBody.innerHTML = ''; // Clear previous list
+        swapModalBody.innerHTML = ''; 
 
         const currentTeamMemberIds = currentDisplayedTeam.members.map(m => m.dbChampionId);
         const availableToSwap = playerChampionRoster.filter(pChamp => !currentTeamMemberIds.includes(pChamp.dbChampionId));
@@ -2416,22 +2768,26 @@
                 li.className = 'p-3 border rounded-md hover:bg-gray-100 cursor-pointer flex justify-between items-center';
                 li.dataset.champId = champ.id; 
 
-                let champInfoHtml = `<div class="champion-details">
-                                        <strong class="text-slate-700">${champ.name}</strong> 
-                                        <span class="text-xs text-slate-500">(${champ.class || 'N/A'})</span>
-                                        ${getStarRatingHTML(champ.starColorTier)}
+                const classIconHtml = getClassPlaceholder(champ.class, 'result-icon class-icon-swap mr-2'); 
+                const starRatingHTML = getStarRatingHTML(champ.starColorTier);
+                
+                let champDetailsHtml = `<div class="champion-details flex items-center">
+                                        ${classIconHtml}
+                                        <strong class="text-slate-700">${champ.name}</strong>
+                                        <div class="star-rating ml-2">${starRatingHTML}</div>
                                      </div>`;
                 
+                let champSynergiesHtml = '';
                 if (champ.inherentSynergies && champ.inherentSynergies.length > 0) {
-                    champInfoHtml += `<div class="champion-synergies flex gap-1 ml-auto">`; // Use ml-auto to push to right
+                    champSynergiesHtml += `<div class="champion-synergies flex gap-1 ml-auto">`; 
                     champ.inherentSynergies.forEach(synergy => {
                         const synergyNameForIcon = synergy.trim().replace(/\s+/g, '_');
-                        champInfoHtml += `<span class="icon-wrapper"><img src="img/factions/${synergyNameForIcon}.png" alt="${synergy}" title="${synergy}" class="result-icon w-4 h-4" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';"><span class="icon-placeholder text-xs" style="display:none;">[${synergy}]</span></span>`;
+                        champSynergiesHtml += `<span class="icon-wrapper"><img src="img/factions/${synergyNameForIcon}.png" alt="${synergy}" title="${synergy}" class="result-icon w-4 h-4" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';"><span class="icon-placeholder text-xs" style="display:none;">[${synergy}]</span></span>`;
                     });
-                    champInfoHtml += `</div>`;
+                    champSynergiesHtml += `</div>`;
                 }
                 
-                li.innerHTML = champInfoHtml;
+                li.innerHTML = champDetailsHtml + champSynergiesHtml;
 
                 li.addEventListener('click', () => {
                     handleChampionSwap(champ.id, championToReplaceIndex);
@@ -2444,6 +2800,10 @@
         }
         swapChampionModalEl.classList.remove('hidden');
         swapChampionModalEl.classList.add('active');
+
+        if (analytics && currentDisplayedTeam && currentDisplayedTeam.members[indexToReplace]) {
+            logEvent(analytics, 'open_swap_modal', { champion_to_replace_name: currentDisplayedTeam.members[indexToReplace].name });
+        }
     }
 
     window.handleChampionSwap = async (selectedRosterChampId, indexToReplace) => {
@@ -2472,7 +2832,14 @@
             
             updateProcessingStatus("Recalculation complete!", 100);
             setTimeout(closeProcessingModal, 500);
-        }, 50); 
+        }, 50);
+
+        if (analytics && newChampion) {
+            logEvent(analytics, 'execute_champion_swap', { 
+                swapped_in_champion_name: newChampion.name,
+                swapped_out_champion_name: currentDisplayedTeam.members[indexToReplace].name 
+            });
+        }
     }
     
     window.handleResetTeam = () => {
@@ -2492,6 +2859,13 @@
         let accumulatedTieredFlatBonus = 0;
         const activeSynergiesForTeamCalculation = [];
 
+        const teamSynergyCounts = new Map();
+        teamMembersArray.forEach(member => {
+            (member.inherentSynergies || []).forEach(synergyName => {
+                teamSynergyCounts.set(synergyName, (teamSynergyCounts.get(synergyName) || 0) + 1);
+            });
+        });
+
         const sortedSynergyDefs = [...dbSynergies].sort((a, b) => {
             if (a.bonusType === 'percentage' && b.bonusType !== 'percentage') return -1;
             if (a.bonusType !== 'percentage' && b.bonusType === 'percentage') return 1;
@@ -2499,8 +2873,7 @@
         });
 
         sortedSynergyDefs.forEach(synergyDef => {
-            const membersWithSynergy = teamMembersArray.filter(member => (member.inherentSynergies || []).includes(synergyDef.name));
-            const memberCount = membersWithSynergy.length;
+            const memberCount = teamSynergyCounts.get(synergyDef.name) || 0;
 
             if (memberCount >= SYNERGY_ACTIVATION_COUNT) {
                 let primaryBonusAppliedThisSynergy = 0;
@@ -2546,6 +2919,8 @@
             classDiversityBonusApplied = true;
         }
 
+        if (analytics) logEvent(analytics, 'reset_calculated_team');
+
         return {
             members: teamMembersArray,
             totalScore: finalTeamScore,
@@ -2563,41 +2938,649 @@
         };
     }
 
+    if (prefillRosterBtn) {
+        prefillRosterBtn.addEventListener('click', async () => {
+            const prefillAction = async () => {
+                if (dbChampions.length === 0) {
+                    showToast("No base champions loaded from the database to pre-fill.", "error");
+                    return;
+                }
 
-    // --- Initial Page Load ---
+                playerChampionRoster = [];
+
+                dbChampions.forEach(baseChamp => {
+                    const defaultGear = {};
+                    STANDARD_GEAR_RARITIES.slice(1).forEach((rarity, index) => { 
+                        const slotName = Object.keys(gearSelectEls)[index] || `gear_slot_${index+1}`; 
+                         if(Object.keys(gearSelectEls).includes(slotName)){ 
+                            defaultGear[slotName] = { rarity: "None", score: 0 };
+                         }
+                    });
+                    Object.keys(gearSelectEls).forEach(slot => {
+                        if (!defaultGear[slot]) {
+                            defaultGear[slot] = { rarity: "None", score: 0 };
+                        }
+                    });
+
+                    const newChamp = {
+                        id: Date.now() + Math.random(), 
+                        dbChampionId: baseChamp.id,
+                        name: baseChamp.name,
+                        baseRarity: baseChamp.baseRarity,
+                        class: baseChamp.class || "N/A",
+                        isHealer: baseChamp.isHealer === true,
+                        inherentSynergies: baseChamp.inherentSynergies || [],
+                        starColorTier: "Unlocked",
+                        gear: defaultGear,
+                        legacyPiece: { 
+                            id: null, 
+                            name: "None", 
+                            rarity: "None", 
+                            score: 0, 
+                            starColorTier: "Unlocked", 
+                            description: "" 
+                        },
+                    };
+                    playerChampionRoster.push(newChamp);
+                });
+
+                showToast("Roster pre-filled with all champions at Unlocked tier!", "success");
+                renderPlayerChampionRoster(); 
+                await savePlayerRosterToFirestore();
+                populateChampionSelect(); 
+                if (analytics) logEvent(analytics, 'prefill_roster', { champion_count: dbChampions.length });
+            };
+
+            if (playerChampionRoster.length > 0) {
+                openConfirmModal(
+                    "This will replace your current roster. Are you sure you want to pre-fill with all champions?",
+                    prefillAction
+                );
+            } else {
+                 openConfirmModal(
+                    "Are you sure you want to pre-fill your roster with all champions at Unlocked tier?",
+                     prefillAction
+                );
+            }
+        });
+    }
+
+    if (exportRosterBtn) {
+        exportRosterBtn.addEventListener('click', () => {
+            if (playerChampionRoster.length === 0) {
+                showToast("Roster is empty. Nothing to export.", "warning");
+                return;
+            }
+            const exportableRoster = playerChampionRoster.map(champ => {
+                return {
+                    dbChampionId: champ.dbChampionId, 
+                    starColorTier: champ.starColorTier,
+                    gear: { 
+                        head: { rarity: champ.gear.head.rarity },
+                        arms: { rarity: champ.gear.arms.rarity },
+                        legs: { rarity: champ.gear.legs.rarity },
+                        chest: { rarity: champ.gear.chest.rarity },
+                        waist: { rarity: champ.gear.waist.rarity },
+                    },
+                    legacyPiece: { 
+                        id: champ.legacyPiece.id,
+                        starColorTier: champ.legacyPiece.starColorTier || "Unlocked"
+                    }
+                };
+            });
+
+            const jsonData = JSON.stringify(exportableRoster, null, 2);
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'dc_dark_legion_roster.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast("Roster exported successfully!", "success");
+        });
+    }
+
+    if (importRosterBtn) {
+        importRosterBtn.addEventListener('click', () => {
+            importRosterFileEl.click(); 
+            if (analytics && playerChampionRoster.length > 0) logEvent(analytics, 'export_roster', { roster_size: playerChampionRoster.length });
+        });
+    }
+
+    if (importRosterFileEl) {
+        importRosterFileEl.addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+            if (file.type !== "application/json") {
+                showToast("Invalid file type. Please select a JSON file.", "error");
+                importRosterFileEl.value = ''; 
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const processImport = async () => {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+                        if (!Array.isArray(importedData)) {
+                            showToast("Invalid roster format in JSON file.", "error");
+                            return;
+                        }
+
+                        const newRoster = [];
+                        let importErrors = 0;
+
+                        for (const importedChamp of importedData) {
+                            const baseChampionData = dbChampions.find(c => c.id === importedChamp.dbChampionId);
+                            if (!baseChampionData) {
+                                console.warn(`Champion with dbChampionId ${importedChamp.dbChampionId} not found in current game data. Skipping.`);
+                                importErrors++;
+                                continue;
+                            }
+
+                            let legacyPieceData = { id: null, name: "None", rarity: "None", score: 0, starColorTier: "Unlocked", description: "" };
+                            if (importedChamp.legacyPiece && importedChamp.legacyPiece.id) {
+                                const dbLp = dbLegacyPieces.find(lp => lp.id === importedChamp.legacyPiece.id);
+                                if (dbLp) {
+                                    const lpStarTier = importedChamp.legacyPiece.starColorTier || "Unlocked";
+                                    const baseLpScore = LEGACY_PIECE_BASE_RARITY_SCORE[dbLp.baseRarity] || 0;
+                                    const lpStarBonus = LEGACY_PIECE_STAR_TIER_SCORE[lpStarTier] || 0;
+                                    legacyPieceData = {
+                                        id: dbLp.id, name: dbLp.name, rarity: dbLp.baseRarity,
+                                        score: baseLpScore + lpStarBonus,
+                                        starColorTier: lpStarTier,
+                                        description: dbLp.description || ""
+                                    };
+                                } else {
+                                    console.warn(`Legacy Piece with id ${importedChamp.legacyPiece.id} not found. Assigning 'None'.`);
+                                }
+                            }
+
+                            const playerChampion = {
+                                id: Date.now() + Math.random(), 
+                                dbChampionId: baseChampionData.id,
+                                name: baseChampionData.name,
+                                baseRarity: baseChampionData.baseRarity,
+                                class: baseChampionData.class || "N/A",
+                                isHealer: baseChampionData.isHealer === true,
+                                inherentSynergies: baseChampionData.inherentSynergies || [],
+                                starColorTier: importedChamp.starColorTier || "Unlocked",
+                                gear: {
+                                    head: { rarity: importedChamp.gear?.head?.rarity || "None" },
+                                    arms: { rarity: importedChamp.gear?.arms?.rarity || "None" },
+                                    legs: { rarity: importedChamp.gear?.legs?.rarity || "None" },
+                                    chest: { rarity: importedChamp.gear?.chest?.rarity || "None" },
+                                    waist: { rarity: importedChamp.gear?.waist?.rarity || "None" },
+                                },
+                                legacyPiece: legacyPieceData,
+                            };
+                            
+                            Object.keys(playerChampion.gear).forEach(slot => {
+                                playerChampion.gear[slot].score = STANDARD_GEAR_RARITY_SCORE[playerChampion.gear[slot].rarity] || 0;
+                            });
+                            newRoster.push(playerChampion);
+                        }
+
+                        playerChampionRoster = newRoster;
+                        renderPlayerChampionRoster();
+                        await savePlayerRosterToFirestore(); 
+                        populateChampionSelect(); 
+                        
+                        if (importErrors > 0) {
+                            showToast(`Roster imported with ${importErrors} champion(s) skipped due to missing base data.`, "warning");
+                        } else {
+                            showToast("Roster imported successfully!", "success");
+                        }
+                        if (analytics) logEvent(analytics, 'import_roster_success', { imported_count: newRoster.length, error_count: importErrors });
+
+                    } catch (err) {
+                        console.error("Error importing roster:", err);
+                        showToast("Error importing roster: " + err.message, "error");
+                    } finally {
+                        importRosterFileEl.value = ''; 
+                    }
+                };
+                
+                openConfirmModal(
+                    "Importing this roster will overwrite your current roster. Are you sure?",
+                    processImport, // onConfirm
+                    () => { // onCancel
+                        importRosterFileEl.value = ''; // Reset file input if cancelled
+                        showToast("Roster import cancelled.", "info");
+                    }
+                );
+            };
+            reader.readAsText(file);
+        });
+    }
+
+    // --- Confirmation Modal Logic ---
+    function openConfirmModal(message, onConfirm, onCancel = null, title = "Confirm Action") {
+        if (!confirmModalEl || !confirmModalMessageEl || !confirmModalTitleEl) {
+            console.error("Confirmation modal elements not found!");
+            if (typeof confirm !== 'undefined' && confirm(message)) {
+                if (onConfirm) onConfirm();
+            } else {
+                if (onCancel) onCancel();
+            }
+            return;
+        }
+        confirmModalTitleEl.textContent = title;
+        confirmModalMessageEl.textContent = message;
+        confirmModalConfirmCallback = onConfirm;
+        confirmModalCancelCallback = onCancel;
+
+        confirmModalEl.classList.remove('hidden');
+        confirmModalEl.classList.add('active');
+    }
+
+    function closeConfirmModal() {
+        if (!confirmModalEl) return;
+        confirmModalEl.classList.add('hidden');
+        confirmModalEl.classList.remove('active');
+        confirmModalConfirmCallback = null;
+        confirmModalCancelCallback = null;
+    }
+
+    if (confirmModalConfirmBtn) {
+        confirmModalConfirmBtn.addEventListener('click', () => {
+            if (confirmModalConfirmCallback) {
+                confirmModalConfirmCallback();
+            }
+            closeConfirmModal();
+        });
+    }
+
+    if (confirmModalCancelBtn) {
+        confirmModalCancelBtn.addEventListener('click', () => {
+            if (confirmModalCancelCallback) {
+                confirmModalCancelCallback();
+            }
+            closeConfirmModal();
+        });
+    }
+    
+    if (confirmModalEl) {
+        confirmModalEl.addEventListener('click', (event) => {
+            if (event.target === confirmModalEl) {
+                if (confirmModalCancelCallback) {
+                    confirmModalCancelCallback(); 
+                }
+                closeConfirmModal();
+            }
+        });
+    }
+
+    function openShareTeamModal(shareLink) {
+        if (!shareTeamModalEl || !shareTeamLinkInputEl) {
+            console.error("Share team modal elements not found!");
+            showToast("Could not display share link.", "error");
+            return;
+        }
+        shareTeamLinkInputEl.value = shareLink;
+        shareTeamModalEl.classList.remove('hidden');
+        shareTeamModalEl.classList.add('active');
+        shareTeamLinkInputEl.focus();
+        shareTeamLinkInputEl.select();
+    }
+
+    function closeShareTeamModal() {
+        if (!shareTeamModalEl) return;
+        shareTeamModalEl.classList.add('hidden');
+        shareTeamModalEl.classList.remove('active');
+    }
+
+    if (closeShareTeamModalBtn) {
+        closeShareTeamModalBtn.addEventListener('click', closeShareTeamModal);
+    }
+    if (shareTeamModalEl) {
+        shareTeamModalEl.addEventListener('click', (event) => {
+            if (event.target === shareTeamModalEl) {
+                closeShareTeamModal();
+            }
+        });
+    }
+    if (copyShareLinkBtn) {
+        copyShareLinkBtn.addEventListener('click', () => {
+            if (!shareTeamLinkInputEl) return;
+            try {
+                shareTeamLinkInputEl.select();
+                document.execCommand('copy'); 
+                showToast("Link copied to clipboard!", "success");
+                if (analytics) logEvent(analytics, 'share_link_sopied', { link: shareTeamLinkInputEl.value });
+            } catch (err) {
+                showToast("Failed to copy link. Please copy it manually.", "warning");
+                console.error('Failed to copy text: ', err);
+            }
+        });
+    }
+
+    // --- Share Team Functionality ---
+    window.shareTeam = async (teamId) => {
+        if (!userId) {
+            showToast("You must be signed in to share teams.", "error");
+            return;
+        }
+        const teamToShare = savedTeams.find(t => t.id === teamId);
+        if (!teamToShare) {
+            showToast("Could not find the team to share.", "error");
+            return;
+        }
+
+        openConfirmModal(
+            `Are you sure you want to generate a public share link for the team "${teamToShare.name}"? Anyone with the link will be able to view it. This action cannot be undone directly, but you can delete the original team to remove the share.`,
+            async () => {
+                try {
+                    const publicTeamData = {
+                        name: teamToShare.name,
+                        members: teamToShare.members.map(m => ({ 
+                            dbChampionId: m.dbChampionId, 
+                            name: m.name, 
+                            baseRarity: m.baseRarity,
+                            class: m.class,
+                            isHealer: m.isHealer === true, 
+                            starColorTier: m.starColorTier,
+                            gear: m.gear, 
+                            legacyPiece: m.legacyPiece, 
+                            inherentSynergies: m.inherentSynergies || [],
+                            individualScore: m.individualScore 
+                        })),
+                        totalScore: teamToShare.totalScore,
+                        activeSynergies: teamToShare.activeSynergies, 
+                        scoreBreakdown: teamToShare.scoreBreakdown,
+                        uniqueClassesCount: teamToShare.uniqueClassesCount, 
+                        classDiversityBonusApplied: teamToShare.classDiversityBonusApplied, 
+                        createdAt: serverTimestamp(), 
+                        originalOwnerId: userId 
+                    };
+
+                    const sharedTeamsCollectionRef = collection(db, `artifacts/${appId}/public/data/sharedTeams`);
+                    const docRef = await addDoc(sharedTeamsCollectionRef, publicTeamData);
+                    
+                    const privateTeamDocRef = doc(db, `artifacts/${appId}/users/${userId}/savedTeams`, teamId);
+                    await updateDoc(privateTeamDocRef, { publicShareId: docRef.id });
+                    
+                    const shareLink = `${window.location.origin}${window.location.pathname}?sharedTeamId=${docRef.id}`;
+                    openShareTeamModal(shareLink);
+                    showToast("Public share link generated!", "success");
+                    loadSavedTeams(); 
+                    if (analytics) logEvent(analytics, 'share_team', { shared_team_id: docRef.id, original_team_id: teamId, team_name: teamToShare.name });
+
+                } catch (error) {
+                    console.error("Error sharing team:", error);
+                    showToast("Failed to share team. Error: " + error.message, "error");
+                }
+            },
+            () => {
+                showToast("Team sharing cancelled.", "info");
+            },
+            "Confirm Public Share" 
+        );
+    };
+
+    window.unshareTeam = async (savedTeamId, publicShareId) => {
+        if (!userId || !publicShareId || !savedTeamId) {
+            showToast("Missing information to unshare team.", "error");
+            return;
+        }
+        
+        const teamToUnshare = savedTeams.find(t => t.id === savedTeamId);
+        if (!teamToUnshare) {
+            showToast("Could not find the original team to unshare.", "error");
+            return;
+        }
+
+        openConfirmModal(
+            `Are you sure you want to remove the public share link for the team "${teamToUnshare.name}"? The team will remain in your private saved teams.`,
+            async () => {
+                try {
+                    const publicTeamDocRef = doc(db, `artifacts/${appId}/public/data/sharedTeams`, publicShareId);
+                    await deleteDoc(publicTeamDocRef);
+
+                    const privateTeamDocRef = doc(db, `artifacts/${appId}/users/${userId}/savedTeams`, savedTeamId);
+                    await updateDoc(privateTeamDocRef, { publicShareId: deleteField() }); 
+
+                    showToast(`Team "${teamToUnshare.name}" is no longer publicly shared.`, "success");
+                    loadSavedTeams(); 
+                    if (analytics) logEvent(analytics, 'unshare_team', { unshared_team_id: publicShareId, original_team_id: savedTeamId });
+                } catch (error) {
+                    console.error("Error unsharing team:", error);
+                    showToast("Failed to unshare team. Error: " + error.message, "error");
+                }
+            },
+            null, 
+            "Confirm Unshare"
+        );
+    };
+
+    async function handleSharedTeamLink() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const sharedTeamId = urlParams.get('sharedTeamId');
+
+        if (sharedTeamId) {
+            loadingIndicatorEl.classList.remove('hidden');
+            mainAppContentEl.classList.add('hidden'); 
+            sharedTeamViewSectionEl.classList.remove('hidden'); 
+            sharedTeamOutputEl.innerHTML = '<div class="loading-spinner"></div><p class="text-center text-indigo-600">Loading shared team...</p>';
+
+            try {
+                if (!db) { 
+                    await initializeFirebase(); 
+                    await Promise.all([
+                        fetchChampions(), 
+                        fetchSynergiesAndRender(),
+                        fetchLegacyPieces() 
+                    ]);
+                }
+                const sharedTeamDocRef = doc(db, `artifacts/${appId}/public/data/sharedTeams`, sharedTeamId);
+                const docSnap = await getDoc(sharedTeamDocRef);
+
+                if (docSnap.exists()) {
+                    const sharedTeamData = docSnap.data();
+                    sharedTeamNameEl.textContent = sharedTeamData.name || "Shared Team";
+                    renderSharedTeam(sharedTeamData); 
+                    if (analytics) logEvent(analytics, 'view_shared_team', { shared_team_id: sharedTeamId });
+                } else {
+                    sharedTeamOutputEl.innerHTML = '<p class="text-red-500 text-center">Shared team not found or link is invalid.</p>';
+                }
+            } catch (error) {
+                console.error("Error fetching shared team:", error);
+                sharedTeamOutputEl.innerHTML = '<p class="text-red-500 text-center">Error loading shared team.</p>';
+                showToast("Error loading shared team: " + error.message, "error");
+            } finally {
+                loadingIndicatorEl.classList.add('hidden');
+            }
+        } else {
+            mainAppContentEl.classList.remove('hidden');
+            sharedTeamViewSectionEl.classList.add('hidden');
+            return false; 
+        }
+        return true; 
+    }
+
+    function renderSharedTeam(teamObject) {
+        if (!teamObject) { 
+            sharedTeamOutputEl.innerHTML = '<p class="text-red-500">Error: Invalid shared team data provided.</p>';
+             return;
+        }
+        
+        const breakdown = teamObject.scoreBreakdown || { base: 0, percentageSynergyBonus: 0, flatSynergyBonus: 0, subtotalAfterSynergies: 0, classDiversityBonus: 0};
+        
+        let html = `<div class="mb-4 p-3 bg-indigo-100 border border-indigo-300 rounded-lg text-sm">`; 
+        html += `<h4 class="text-md font-semibold text-indigo-700 mb-2">Score Calculation:</h4>`;
+        html += `<p>Base Individual Scores Sum: <strong class="float-right">${Math.round(breakdown.base)}</strong></p>`;
+        if (breakdown.percentageSynergyBonus > 0) {
+             html += `<p>Total Percentage Synergy Bonus: <strong class="text-green-600 float-right">+${Math.round(breakdown.percentageSynergyBonus)}</strong></p>`;
+        }
+        if (breakdown.flatSynergyBonus > 0) {
+            html += `<p>Total Flat Synergy Bonuses: <strong class="text-green-600 float-right">+${Math.round(breakdown.flatSynergyBonus)}</strong></p>`;
+        }
+        html += `<p class="border-t border-indigo-200 pt-1 mt-1">Subtotal After Synergies: <strong class="float-right">${Math.round(breakdown.subtotalAfterSynergies)}</strong></p>`;
+        if (teamObject.classDiversityBonusApplied) { 
+            html += `<p>Class Diversity Bonus (x${CLASS_DIVERSITY_MULTIPLIER}): <strong class="text-green-600 float-right">+${Math.round(breakdown.classDiversityBonus)}</strong></p>`;
+        }
+        html += `<p class="border-t border-indigo-200 pt-1 mt-1 font-bold text-indigo-700">Final Team Score: <strong class="float-right">${Math.round(teamObject.totalScore)}</strong></p>`;
+        html += `</div>`;
+
+        html += `<h4 class="text-md font-semibold text-gray-700 mt-3 mb-1">Score Contribution:</h4>`;
+        html += `<div class="score-chart-container mb-2">`;
+        const totalScoreForChart = teamObject.totalScore > 0 ? teamObject.totalScore : 1; 
+        
+        const basePct = (breakdown.base / totalScoreForChart) * 100;
+        const percSynPct = (breakdown.percentageSynergyBonus / totalScoreForChart) * 100;
+        const flatSynPct = (breakdown.flatSynergyBonus / totalScoreForChart) * 100;
+        const classDivPct = (breakdown.classDiversityBonus / totalScoreForChart) * 100;
+
+        if (basePct > 0) html += `<div class="score-chart-segment bg-blue-500" style="width:${basePct.toFixed(1)}%;" title="Base: ${Math.round(breakdown.base)}"></div>`;
+        if (percSynPct > 0) html += `<div class="score-chart-segment bg-green-500" style="width:${percSynPct.toFixed(1)}%;" title="Perc. Synergy: +${Math.round(breakdown.percentageSynergyBonus)}"></div>`;
+        if (flatSynPct > 0) html += `<div class="score-chart-segment bg-teal-500" style="width:${flatSynPct.toFixed(1)}%;" title="Flat Synergy: +${Math.round(breakdown.flatSynergyBonus)}"></div>`;
+        if (classDivPct > 0 && teamObject.classDiversityBonusApplied) html += `<div class="score-chart-segment bg-purple-500" style="width:${classDivPct.toFixed(1)}%;" title="Class Div.: +${Math.round(breakdown.classDiversityBonus)}"></div>`;
+        html += `</div>`;
+        html += `<div class="flex justify-around mb-4">
+                    ${basePct > 0 ? '<span class="score-chart-segment-label"><span class="inline-block w-3 h-3 bg-blue-500 rounded-sm mr-1"></span>Base</span>' : ''}
+                    ${percSynPct > 0 ? '<span class="score-chart-segment-label"><span class="inline-block w-3 h-3 bg-green-500 rounded-sm mr-1"></span>% Syn.</span>' : ''}
+                    ${flatSynPct > 0 ? '<span class="score-chart-segment-label"><span class="inline-block w-3 h-3 bg-teal-500 rounded-sm mr-1"></span>Flat Syn.</span>' : ''}
+                    ${classDivPct > 0 && teamObject.classDiversityBonusApplied ? '<span class="score-chart-segment-label"><span class="inline-block w-3 h-3 bg-purple-500 rounded-sm mr-1"></span>Class Div.</span>' : ''}
+                 </div>`;
+        
+        const uniqueClassesDisplay = teamObject.uniqueClassesCount !== undefined ? teamObject.uniqueClassesCount : 'N/A';
+        const uniqueClassNames = teamObject.members ? teamObject.members.map(m=>m.class || 'N/A').filter((v,i,a)=>a.indexOf(v)===i && v !== "N/A").join(', ') : 'None';
+
+        html += `<p class="mb-2"><strong class="text-gray-700">Unique Classes in Team:</strong> ${uniqueClassesDisplay} (${uniqueClassNames || 'None'})</p>`;
+        let hasHealer = teamObject.members ? teamObject.members.some(member => member.isHealer === true) : false;
+        html += `<p class="mb-4"><strong class="text-gray-700">Team Contains Healer:</strong> <span class="${hasHealer ? 'text-green-600 font-semibold' : 'text-red-600'}">${hasHealer ? 'Yes' : 'No'}</span></p>`;
+        
+        html += `<h4 class="text-lg font-medium text-gray-700 mt-4 mb-2">Team Members:</h4>`;
+        html += `<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-4">`; 
+
+        if (teamObject.members && Array.isArray(teamObject.members)) {
+            teamObject.members.forEach((member, index) => {
+                const classNameForIcon = (member.class && member.class !== "N/A") ? member.class.trim().replace(/\s+/g, '_') : "UnknownClass"; 
+                const healerIconHtml = member.isHealer ? `<span class="icon-wrapper"><img src="img/classes/Healer.png" alt="Healer" title="Healer" class="result-icon class-icon ml-1" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';"><span class="icon-placeholder text-xs" style="display:none;">[H]</span></span>` : '';
+                const starRatingHTML = getStarRatingHTML(member.starColorTier);
+                
+                html += `<div class="p-3 border rounded-lg shadow-md bg-white flex flex-col justify-between champion-card">`; 
+                html += `   <div>`; 
+                html += `       <div class="flex items-center mb-2">`;
+                html += `           <span class="icon-wrapper"><img src="img/classes/${classNameForIcon}.png" alt="${member.class || 'N/A'}" title="${member.class || 'N/A'}" class="result-icon class-icon mr-2" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';">`;
+                html += `           <span class="icon-placeholder text-xs" style="display:none;">[${member.class || 'N/A'}]</span></span>`; 
+                html += `           <strong class="text-sm text-slate-800 leading-tight">${member.name}</strong>`;
+                html += healerIconHtml; 
+                html += `       </div>`;
+                html += `       <div class="text-xs text-slate-600 mb-2">`;
+                html += `           <p>Tier: ${starRatingHTML}</p>`; 
+                html += `           <p>Ind. Score: ${Math.round(member.individualScore || 0)}</p>`; 
+                
+                if (member.gear) {
+                    html += `<p class="mt-1 font-semibold">Gear:</p><ul class="list-disc list-inside ml-2">`;
+                    Object.entries(member.gear).forEach(([slot, gearItem]) => {
+                        if (gearItem && gearItem.rarity && gearItem.rarity !== "None") {
+                             html += `<li>${slot.charAt(0).toUpperCase() + slot.slice(1)}: ${gearItem.rarity}</li>`;
+                        }
+                    });
+                    html += `</ul>`;
+                }
+
+                if (member.legacyPiece && member.legacyPiece.id) {
+                    html += `<p class="mt-1 font-semibold">Legacy: ${member.legacyPiece.name} (${member.legacyPiece.rarity})`;
+                    if (member.legacyPiece.starColorTier && member.legacyPiece.starColorTier !== "Unlocked") {
+                        html += ` <span class="whitespace-nowrap">${getStarRatingHTML(member.legacyPiece.starColorTier)}</span>`;
+                    }
+                    html += `</p>`;
+                }
+
+                html += `       </div>`;
+                if (member.inherentSynergies && member.inherentSynergies.length > 0) {
+                    html += `   <div class="mt-1">`; 
+                    html += `       <p class="text-xs font-semibold text-slate-500 mb-1">Synergies:</p>`;
+                    html += `       <div class="flex flex-wrap gap-1">`;
+                    member.inherentSynergies.forEach(synergy => {
+                        const synergyNameForIcon = synergy.trim().replace(/\s+/g, '_'); 
+                        html += `       <span class="icon-wrapper"><img src="img/factions/${synergyNameForIcon}.png" alt="${synergy}" title="${synergy}" class="result-icon w-5 h-5" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';">`;
+                        html += `       <span class="icon-placeholder text-xs" style="display:none;">[${synergy}]</span></span>`; 
+                    });
+                    html += `       </div></div>`;
+                }
+                html += `   </div>`; 
+                html += `</div>`; 
+            });
+        }
+        html += `</div>`; 
+
+        if (teamObject.activeSynergies && teamObject.activeSynergies.length > 0) {
+            html += `<h4 class="text-lg font-medium text-gray-700 mt-6 mb-2">Active Team Synergies:</h4><ul class="list-disc list-inside space-y-1 text-sm">`;
+            teamObject.activeSynergies.forEach(synergy => {
+                let bonusDisplay = "";
+                if (synergy.bonusType === 'percentage' && synergy.primaryBonusApplied !== 0) {
+                    bonusDisplay += `${synergy.primaryBonusApplied}% (base)`;
+                } else if (synergy.bonusType === 'flat' && synergy.primaryBonusApplied !== 0) {
+                    bonusDisplay += `+${synergy.primaryBonusApplied} flat (base)`;
+                }
+
+                if (synergy.tieredFlatBonusApplied > 0) {
+                    if (bonusDisplay.length > 0) bonusDisplay += " & ";
+                    bonusDisplay += `+${synergy.tieredFlatBonusApplied} flat (tier)`;
+                }
+                
+                html += `<li><strong>${synergy.name}</strong> (${synergy.appliedAtMemberCount} members): ${bonusDisplay || 'No direct bonus value'}. ${synergy.description ? `(${synergy.description})` : ''}</li>`;
+            });
+            html += `</ul>`;
+        } else {
+            html += `<p class="text-gray-600 mt-6">No team synergies were active for this team.</p>`;
+        }
+        
+        sharedTeamOutputEl.innerHTML = html;
+    }
+
     async function main() {
         try {
-            await initializeFirebase(); 
+            await initializeFirebase();
+            if (analytics) logEvent(analytics, 'page_view', { page_title: document.title, page_location: window.location.href });
             
-            // Set up button icons
-            document.getElementById('add-update-champion-btn').innerHTML = `<span class="btn-icon">${ICON_ADD}</span> <span class="btn-text">Add Champion to Roster</span> <span id="save-roster-indicator" class="saving-indicator hidden"></span>`;
-            document.getElementById('cancel-edit-btn').innerHTML = `<span class="btn-icon">${ICON_CANCEL}</span> <span class="btn-text">Cancel Edit</span>`;
-            document.getElementById('calculate-btn').innerHTML = `<span class="btn-icon">${ICON_CALCULATE}</span> <span class="btn-text">Calculate Best Team</span>`;
-            document.getElementById('save-team-name-btn').innerHTML = `<span class="btn-icon">${ICON_SAVE}</span> <span class="btn-text">Save Name</span>`;
-            document.getElementById('cancel-team-name-btn').innerHTML = `<span class="btn-icon">${ICON_CANCEL}</span> <span class="btn-text">Cancel</span>`;
+            const isSharedView = await handleSharedTeamLink();
 
+            if (!isSharedView) {
+                document.getElementById('add-update-champion-btn').innerHTML = `<span class="btn-icon">${ICON_ADD}</span> <span class="btn-text">Add Champion to Roster</span> <span id="save-roster-indicator" class="saving-indicator hidden"></span>`;
+                document.getElementById('cancel-edit-btn').innerHTML = `<span class="btn-icon">${ICON_CANCEL}</span> <span class="btn-text">Cancel Edit</span>`;
+                document.getElementById('calculate-btn').innerHTML = `<span class="btn-icon">${ICON_CALCULATE}</span> <span class="btn-text">Calculate Best Team</span>`;
+                document.getElementById('save-team-name-btn').innerHTML = `<span class="btn-icon">${ICON_SAVE}</span> <span class="btn-text">Save Name</span>`;
+                document.getElementById('cancel-team-name-btn').innerHTML = `<span class="btn-icon">${ICON_CANCEL}</span> <span class="btn-text">Cancel</span>`;
+                if(prefillRosterBtn) prefillRosterBtn.innerHTML = `<span class="btn-icon">${ICON_PREFILL}</span> <span class="btn-text">Pre-fill Roster</span>`;
+                if(exportRosterBtn) exportRosterBtn.innerHTML = `<span class="btn-icon">${ICON_EXPORT}</span> <span class="btn-text">Export Roster</span>`;
+                if(importRosterBtn) importRosterBtn.innerHTML = `<span class="btn-icon">${ICON_IMPORT}</span> <span class="btn-text">Import Roster</span>`;
+                if(confirmModalConfirmBtn) confirmModalConfirmBtn.innerHTML = `<span class="btn-icon">${ICON_CONFIRM}</span> <span class="btn-text">Confirm</span>`;
+                if(confirmModalCancelBtn) confirmModalCancelBtn.innerHTML = `<span class="btn-icon">${ICON_CANCEL}</span> <span class="btn-text">Cancel</span>`;
+                if(copyShareLinkBtn) copyShareLinkBtn.innerHTML = `<span class="btn-icon">${ICON_COPY}</span> <span class="btn-text">Copy Link</span>`;
 
-            populateStarColorOptions();
-            populateGearRarityOptions(); 
-            
-            await Promise.all([
-                fetchSynergiesAndRender(), 
-                fetchChampions(),
-                fetchLegacyPieces() 
-            ]);
-            
-            await loadPlayerRosterFromFirestore(); 
-            await loadSavedTeams(); 
+                populateStarColorOptions(champStarColorEl, STAR_COLOR_TIERS, "Unlocked");
+                populateStarColorOptions(legacyPieceStarColorEl, LEGACY_PIECE_STAR_TIER_SCORE, "Unlocked"); 
+                populateGearRarityOptions(); 
+                
+                if (dbChampions.length === 0) await fetchChampions();
+                if (dbSynergies.length === 0) await fetchSynergiesAndRender(); 
+                if (dbLegacyPieces.length === 0) await fetchLegacyPieces();
+                
+                await loadPlayerRosterFromFirestore(); 
+                await loadSavedTeams(); 
 
-            populateChampionSelect(); 
-            
-            synergiesSectionEl.classList.remove('hidden'); 
-            loadingIndicatorEl.classList.add('hidden'); 
+                populateChampionSelect(); 
+                resetChampionForm(); 
+                
+                synergiesSectionEl.classList.remove('hidden'); 
+                loadingIndicatorEl.classList.add('hidden'); 
+            }
 
         } catch (error) {
+            if (analytics) logEvent(analytics, 'exception', { description: error.message, fatal: true });
             console.error("Main execution error:", error);
             loadingIndicatorEl.classList.add('hidden'); 
             if (!errorIndicatorEl.classList.contains('hidden')) { 
+                // Error already shown by showError
             } else { 
                  showError("An unexpected error occurred during page load.", error.message);
             }
@@ -2609,4 +3592,3 @@
 </script>
 </body>
 </html>
-�
