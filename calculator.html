@@ -571,13 +571,12 @@
                         <h3 class="font-medium text-lg mb-2 text-green-700">Proposed Bleed System</h3>
                         <div class="input-group mt-1">
                             <label for="proposedLMSInput" class="block text-xs">Limited Mythic (LM) Shards:</label>
-                            <input type="number" id="proposedLMSInput" value="25" min="0" step="1">
+                            <input type="number" id="proposedLMSInput" value="40" min="0" step="1">
                             <p id="proposedLMSError" class="error-message hidden"></p>
                         </div>
                         <div class="input-group mt-2">
-                            <label for="proposedNMSInput" class="block text-xs">Non-Limited Mythic (NM) Shards (as LM shards):</label>
-                            <input type="number" id="proposedNMSInput" value="5" min="0" step="1">
-                            <p id="proposedNMSError" class="error-message hidden"></p>
+                            <label class="block text-xs">Non-Limited Mythic (NM) Shards:</label>
+                            <p class="text-sm text-gray-600 pt-1">The first 6 NM pulls grant a random 2, 3, or 5 LM shards. Afterwards, they grant 0.</p>
                         </div>
                     </div>
                 </div>
@@ -791,7 +790,7 @@
                     <li><strong>Shard Bleed Systems:</strong> When you pull a duplicate of a Mythic character you already own (or sometimes any Mythic during an LM banner), you often receive shards for the *featured LM* instead of (or in addition to) shards for the character you actually pulled. This calculator compares two such "bleed" systems:
                         <ul>
                             <li><strong>Current System:</strong> Defines how many LM shards and Non-LM character shards you get.</li>
-                            <li><strong>Proposed System:</strong> A hypothetical alternative system for comparison.</li>
+                            <li><strong>Proposed System:</strong> A hypothetical alternative system for comparison. For LM pulls, it uses the configured LM shard value. For NM pulls, the first 6 give random (2, 3, or 5) LM shards, and 0 thereafter.</li>
                         </ul>
                     </li>
                     <li><strong>Expected Value (EV):</strong> In this context, the average number of Anvils you would expect to spend to achieve a goal (like unlocking an LM or getting enough shards for an upgrade) if you repeated the process many, many times. It's a long-term average and doesn't guarantee your individual experience will match it.</li>
@@ -832,7 +831,17 @@
                 </ul>
                 
                 <h4>4. Shard Bleed Systems</h4>
-                <p>This section displays the hardcoded values for how many LM-specific shards and Non-LM-specific shards are awarded when pulling a duplicate Mythic under the "Current" and "Proposed" systems. These are used in the EV calculations to determine the effective shard gain rate.</p>
+                <p>This section allows you to configure shard yields for LM and NM pulls under two systems.</p>
+                <ul>
+                    <li><strong>Current System:</strong> Input fields for shards from LM pulls and NM pulls (as LM shards).</li>
+                    <li><strong>Proposed System:</strong>
+                        <ul>
+                            <li>Input field for shards from an LM pull.</li>
+                            <li>NM pulls: The first 6 NM pulls grant a random 2, 3, or 5 LM shards. Subsequent NM pulls grant 0 LM shards. This rule is fixed and described in the UI.</li>
+                        </ul>
+                    </li>
+                </ul>
+
 
                 <h4>5. Calculate Anvils (Expected Value) Button</h4>
                 <p>This is the main calculation button. It uses the inputs from "Base Pull Rates," "Upgrade Range," and "Shard Bleed Systems" to compute the average (Expected Value) Anvils needed. Results are shown in the "Expected Value Calculation Results" section.</p>
@@ -875,8 +884,8 @@
 
                 <h3>Understanding the Math (Conceptual)</h3>
                 <ul>
-                    <li><strong>Expected Value (EV):</strong> The EV calculations are based on statistical averages. For example, "Average Draws per Mythic" considers the base probability and the hard pity to determine, on average, how many pulls it takes to get one Mythic. Similarly, "Avg Effective Shards per Mythic" considers the LM rate-up, LM guarantee, and shard yields to find the average number of LM-specific shards gained per Mythic pulled. These averages are then used to estimate the total Anvils.</li>
-                    <li><strong>Probability Simulation:</strong> This feature runs many (e.g., 10,000) simulated "pulling sessions" using random number generation according to the probabilities you've set. It starts each simulated session from your specified "Current Pity" values. By observing how many Anvils each simulated session takes to reach your goal (or if it fails within the budget), it can build a distribution of outcomes and calculate success rates.</li>
+                    <li><strong>Expected Value (EV):</strong> The EV calculations are based on statistical averages. For example, "Average Draws per Mythic" considers the base probability and the hard pity to determine, on average, how many pulls it takes to get one Mythic. Similarly, "Avg Effective Shards per Mythic" considers the LM rate-up, LM guarantee, and shard yields to find the average number of LM-specific shards gained per Mythic pulled. These averages are then used to estimate the total Anvils. For the Proposed System's NM shards, the EV calculation assumes 0 shards from NM pulls for long-term progression, as the 2/3/5 shard bonus is limited to the first 6 NM pulls.</li>
+                    <li><strong>Probability Simulation:</strong> This feature runs many (e.g., 10,000) simulated "pulling sessions" using random number generation according to the probabilities you've set. It starts each simulated session from your specified "Current Pity" values. For the Proposed System, it correctly models the random shard gain for the first 6 NM pulls and 0 thereafter. By observing how many Anvils each simulated session takes to reach your goal (or if it fails within the budget), it can build a distribution of outcomes and calculate success rates.</li>
                 </ul>
 
                 <h3>Tips for Using the Calculator</h3>
@@ -892,13 +901,11 @@
     </div>
 
     <script type="module">
-        // Firebase SDK imports
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, deleteDoc, onSnapshot, query, serverTimestamp, orderBy, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAnalytics, logEvent as fbLogEvent } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+        import { getAnalytics, logEvent as fbLogEventInternal } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
-        // --- Global Firebase Variables ---
         let fbApp;
         let fbAuth;
         let fbDb;
@@ -907,7 +914,6 @@
         let championsColRef = null; 
         let unsubscribeChampionsListener = null;
 
-        // Chart instances
         let probChartCurrentInstance = null;
         let probChartProposedInstance = null;
         let anvilCostChart = null; 
@@ -915,15 +921,27 @@
         // --- App and Firebase Config ---
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'anvil-calculator-v2.0'; 
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            apiKey: "AIzaSyAzSQbS4LtAz20syWI2HREPR7UnYh6ldbI", 
-            authDomain: "dc-dark-legion-tools.firebaseapp.com", 
-            projectId: "dc-dark-legion-tools", 
-            storageBucket: "dc-dark-legion-tools.appspot.com", 
-            messagingSenderId: "786517074225", 
-            appId: "1:786517074225:web:9f14dc4dcae0705fcfd010" 
+            apiKey: "AIzaSyAzSQbS4LtAz20syWI2HREPR7UnYh6ldbI",
+            authDomain: "dc-dark-legion-tools.firebaseapp.com",
+            projectId: "dc-dark-legion-tools",
+            storageBucket: "dc-dark-legion-tools.appspot.com",
+            messagingSenderId: "786517074225",
+            appId: "1:786517074225:web:9f14dc4dcae0705fcfd010"
         };
+        
+        // --- Safe Analytics Logging Function ---
+        function logAnalyticEvent(eventName, params = {}) {
+            if (fbAnalytics) {
+                try {
+                    fbLogEventInternal(fbAnalytics, eventName, params);
+                } catch (e) {
+                    console.warn(`Analytics event "${eventName}" failed:`, e);
+                }
+            } else {
+                // console.log(`Analytics (fbAnalytics not ready): ${eventName}`, params); // Optional: log to console if analytics isn't ready
+            }
+        }
 
-        // --- DOM Elements (Champion Management) ---
         const championNameInput = document.getElementById('championName');
         const saveChampionBtn = document.getElementById('saveChampionBtn');
         const savedChampionsSelect = document.getElementById('savedChampions');
@@ -932,14 +950,11 @@
         const championStatusDiv = document.getElementById('championStatus');
         const userIdDisplay = document.getElementById('userIdDisplay');
 
-        // --- DOM Elements (Local Import/Export DOM Elements) ---
         const exportConfigBtn = document.getElementById('exportConfigBtn');
         const importConfigText = document.getElementById('importConfigText');
         const importConfigBtn = document.getElementById('importConfigBtn');
         const localConfigStatus = document.getElementById('localConfigStatus');
 
-
-        // --- DOM Elements (Base Pull Rates & Pity) ---
         const mythicProbabilityInput = document.getElementById('mythicProbability');
         const mythicHardPityInput = document.getElementById('mythicHardPity');
         const currentMythicPityInput = document.getElementById('currentMythicPity');
@@ -951,8 +966,6 @@
         const currentLMPityError = document.getElementById('currentLMPityError');
         const lmRateUpChanceError = document.getElementById('lmRateUpChanceError');
 
-
-        // --- DOM Elements (Probability Simulation) ---
         const anvilBudgetInput = document.getElementById('anvilBudget');
         const calculateProbabilityBtn = document.getElementById('calculateProbabilityBtn');
         const probabilityStatusDiv = document.getElementById('probabilityStatus');
@@ -964,24 +977,18 @@
         const probabilityBtnText = calculateProbabilityBtn.querySelector('.btn-text');
         const probabilityBtnSpinner = calculateProbabilityBtn.querySelector('.spinner');
         
-        // --- DOM Elements (Customize View & Theme) ---
         const sectionToggleContainer = document.getElementById('sectionToggleContainer');
         const reorderableSectionsContainer = document.getElementById('reorderableSectionsContainer'); 
         const SECTION_VISIBILITY_STORAGE_KEY = 'anvilCalcSectionVisibility_v2'; 
         const SECTION_ORDER_STORAGE_KEY = 'anvilCalcSectionOrder_v2';
 
-        // --- DOM Elements (Configurable Bleed System) ---
         const currentLMSInput = document.getElementById('currentLMSInput');
         const currentNMSInput = document.getElementById('currentNMSInput');
         const proposedLMSInput = document.getElementById('proposedLMSInput');
-        const proposedNMSInput = document.getElementById('proposedNMSInput');
         const currentLMSError = document.getElementById('currentLMSError');
         const currentNMSError = document.getElementById('currentNMSError');
         const proposedLMSError = document.getElementById('proposedLMSError');
-        const proposedNMSError = document.getElementById('proposedNMSError');
 
-
-        // --- Core Calculation Functions (Identical) ---
         function calculateExpectedDrawsPerMythic(mythicProbability, hardPity) {
             if (!(mythicProbability > 0 && mythicProbability <= 1) || hardPity < 1) { return NaN; }
             let expectedDraws = 0.0;
@@ -1017,7 +1024,6 @@
             return Math.ceil(targetShards / avgShardsPerMythic) * drawsPerMythic;
         }
 
-        // --- DOM Elements (Calculator Inputs & Outputs) (Identical) ---
         const startStarLevelSelect = document.getElementById('startStarLevel');
         const targetStarLevelSelect = document.getElementById('targetStarLevel');
         const calculateBtn = document.getElementById('calculateBtn');
@@ -1076,7 +1082,6 @@
         const detailAnvilsWorstProposedSpan = document.getElementById('detailAnvilsWorstProposed');
         const starLevelError = document.getElementById('starLevelError');
 
-        // --- Game Constants and Data (Identical) ---
         let isUnlockCostIncluded = false;
         const NM_GUARANTEE_THRESHOLD = 3; 
         const SHARD_REQUIREMENTS = {
@@ -1086,30 +1091,31 @@
             "Gold 1-Star": 400, "Gold 2-Star": 440, "Gold 3-Star": 480, "Gold 4-Star": 540, "Gold 5-Star": 600,
             "Red 1-Star": 680, "Red 2-Star": 760, "Red 3-Star": 840, "Red 4-Star": 920, "Red 5-Star": 1000
         };
-        // Removed hardcoded bleed system constants, will be read from inputs
         
-        // --- Firebase Initialization and Auth ---
         async function initializeFirebaseAndAuth() {
             if (!firebaseConfig.projectId || firebaseConfig.projectId === "YOUR_FALLBACK_PROJECT_ID") {
                 console.warn("Firebase config is using fallback values or is incomplete. Firestore features will be disabled.");
                 userIdDisplay.textContent = "User ID: Firebase not configured";
                 disableChampionManagementFeatures(true, "Firebase not configured.");
+                logAnalyticEvent('firebase_auth_status', { status: 'config_issue', method: 'none' });
                 return false; 
             }
             try {
                 fbApp = initializeApp(firebaseConfig);
                 fbAuth = getAuth(fbApp);
                 fbDb = getFirestore(fbApp);
-                fbAnalytics = getAnalytics(fbApp); // Initialize Analytics
+                fbAnalytics = getAnalytics(fbApp); 
+                logAnalyticEvent('firebase_sdk_initialized');
 
                 onAuthStateChanged(fbAuth, async (user) => {
                     if (user) {
                         currentUserId = user.uid;
                         console.log("User is signed in with UID:", currentUserId);
-                        userIdDisplay.textContent = `User ID: ${currentUserId.substring(0,8)}...`; // Show partial ID
+                        userIdDisplay.textContent = `User ID: ${currentUserId.substring(0,8)}...`; 
                         championsColRef = collection(fbDb, `artifacts/${appId}/users/${currentUserId}/champions`);
                         await populateSavedChampionsDropdownFromFirestore();
                         disableChampionManagementFeatures(false);
+                        logAnalyticEvent('firebase_auth_status', { status: 'signed_in', method: user.isAnonymous ? 'anonymous' : 'custom_token_or_other', user_id_prefix: currentUserId.substring(0,8) });
                     } else {
                         currentUserId = null;
                         console.log("User is signed out.");
@@ -1118,6 +1124,7 @@
                         if (unsubscribeChampionsListener) { unsubscribeChampionsListener(); unsubscribeChampionsListener = null; }
                         savedChampionsSelect.innerHTML = '<option value="">-- Sign in to manage configurations --</option>';
                         disableChampionManagementFeatures(true, "Sign in to use cloud save.");
+                        logAnalyticEvent('firebase_auth_status', { status: 'signed_out', method: 'none' });
                     }
                 });
 
@@ -1131,9 +1138,10 @@
                 return true;
             } catch (error) { 
                 console.error("Firebase Initialization or Authentication Error:", error); 
-                displayChampionStatus("Authentication failed. Cloud features disabled.", true, 'error');
+                displayUiNotification("Authentication failed. Cloud features disabled.", 'error', 'champion_config');
                 userIdDisplay.textContent = `User ID: Auth Error (${error.code || error.message})`;
                 disableChampionManagementFeatures(true, "Authentication error.");
+                logAnalyticEvent('firebase_auth_status', { status: 'failure', method: (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) ? 'custom_token' : 'anonymous', error_code: error.code, error_message: error.message });
                 return false;
             }
         }
@@ -1147,37 +1155,50 @@
                 savedChampionsSelect.innerHTML = `<option value="">-- ${reason} --</option>`;
             }
         }
+        
+        function displayUiNotification(message, type = 'info', area = 'general', isErrorForStatus = false) {
+            let statusDiv;
+            let statusClassPrefix = 'status-';
+            switch (area) {
+                case 'champion_config': statusDiv = championStatusDiv; break;
+                case 'probability_sim': statusDiv = probabilityStatusDiv; break;
+                case 'local_config': statusDiv = localConfigStatus; break;
+                default: statusDiv = championStatusDiv;
+            }
 
-        // --- Champion Management Functions (Firestore) ---
-        function displayChampionStatus(message, isError = false, type = '') { 
-            championStatusDiv.textContent = message;
-            championStatusDiv.className = 'status-message text-center py-1'; 
-            if (type === 'info' ) { 
-                championStatusDiv.classList.add('status-info');
-            } else if (isError || type === 'error') {
-                championStatusDiv.classList.add('status-error');
-            } else { 
-                championStatusDiv.classList.add('status-success');
+            if (!statusDiv) return;
+
+            statusDiv.textContent = message;
+            statusDiv.className = 'status-message text-center py-1';
+            
+            if (type === 'error' || isErrorForStatus) {
+                statusDiv.classList.add(statusClassPrefix + 'error');
+            } else if (type === 'success') {
+                statusDiv.classList.add(statusClassPrefix + 'success');
+            } else {
+                statusDiv.classList.add(statusClassPrefix + 'info');
             }
             
+            logAnalyticEvent('ui_notification_displayed', { type: type, area: area, message_length: message.length });
+
             setTimeout(() => {
-                championStatusDiv.textContent = '';
-                championStatusDiv.className = 'status-message mt-3';
+                statusDiv.textContent = '';
+                statusDiv.className = 'status-message mt-3';
             }, 4000);
         }
 
         async function saveChampionToFirestore() {
             if (!currentUserId || !championsColRef) {
-                displayChampionStatus("Not signed in. Cannot save configuration.", true, 'error');
+                displayUiNotification("Not signed in. Cannot save configuration.", 'error', 'champion_config');
                 return;
             }
             const championConfigName = championNameInput.value.trim();
             if (!championConfigName) {
-                displayChampionStatus("Configuration name cannot be empty.", true, 'error');
+                displayUiNotification("Configuration name cannot be empty.", 'error', 'champion_config');
                 return;
             }
             if (/[.#$[\]/]/.test(championConfigName) || championConfigName.length > 100) {
-                displayChampionStatus("Config name invalid (no .#$[]/) or too long.", true, 'error');
+                displayUiNotification("Config name invalid (no .#$[]/) or too long.", 'error', 'champion_config');
                 return;
             }
 
@@ -1194,30 +1215,30 @@
                 currentLMS: currentLMSInput.value,
                 currentNMS: currentNMSInput.value,
                 proposedLMS: proposedLMSInput.value,
-                proposedNMS: proposedNMSInput.value,
                 savedAt: serverTimestamp()
             };
 
             try {
                 const championDocRef = doc(championsColRef, championConfigName);
                 await setDoc(championDocRef, championData, { merge: true });
-                displayChampionStatus(`Configuration "${championConfigName}" saved successfully!`, false, 'success');
-                if(fbAnalytics) fbLogEvent(fbAnalytics, 'save_champion_config_firebase', { name_length: championConfigName.length });
+                displayUiNotification(`Configuration "${championConfigName}" saved successfully!`, 'success', 'champion_config');
+                logAnalyticEvent('save_config_firebase', { name_length: championConfigName.length, success: true });
                 championNameInput.value = ''; 
             } catch (e) {
-                displayChampionStatus(`Error saving: ${e.message}`, true, 'error');
+                displayUiNotification(`Error saving: ${e.message}`, 'error', 'champion_config');
                 console.error("Error saving to Firestore:", e);
+                logAnalyticEvent('save_config_firebase', { name_length: championConfigName.length, success: false, error_message: e.message });
             }
         }
 
         async function loadChampionFromFirestore(configNameToLoad = null) {
             if (!currentUserId || !championsColRef) {
-                displayChampionStatus("Not signed in. Cannot load configurations.", true, 'error');
+                displayUiNotification("Not signed in. Cannot load configurations.", 'error', 'champion_config');
                 return;
             }
             const championConfigName = configNameToLoad || savedChampionsSelect.value;
             if (!championConfigName) {
-                displayChampionStatus("No configuration selected/provided to load.", true, 'error');
+                displayUiNotification("No configuration selected/provided to load.", 'error', 'champion_config');
                 return;
             }
 
@@ -1240,50 +1261,54 @@
 
                     currentLMSInput.value = championData.currentLMS !== undefined ? championData.currentLMS : "40";
                     currentNMSInput.value = championData.currentNMS !== undefined ? championData.currentNMS : "0";
-                    proposedLMSInput.value = championData.proposedLMS !== undefined ? championData.proposedLMS : "25";
-                    proposedNMSInput.value = championData.proposedNMS !== undefined ? championData.proposedNMS : "5";
+                    proposedLMSInput.value = championData.proposedLMS !== undefined ? championData.proposedLMS : "40"; 
                     
-                    handleExpectedValueCalculation(); 
+                    handleExpectedValueCalculation('load_config_firebase'); 
                     probabilityResultsArea.classList.add('hidden');
                     probabilityResultsArea.innerHTML = '';
-                    probabilityStatusDiv.textContent = '';
+                    if(probabilityStatusDiv) probabilityStatusDiv.textContent = '';
 
-                    displayChampionStatus(`Configuration "${championConfigName}" loaded.`, false, 'success');
-                    if(fbAnalytics) fbLogEvent(fbAnalytics, 'load_champion_config_firebase');
+
+                    displayUiNotification(`Configuration "${championConfigName}" loaded.`, 'success', 'champion_config');
+                    logAnalyticEvent('load_config_firebase', { success: true, name_length: championConfigName.length });
                 } else {
-                    displayChampionStatus(`Configuration "${championConfigName}" not found.`, true, 'error');
+                    displayUiNotification(`Configuration "${championConfigName}" not found.`, 'error', 'champion_config');
+                    logAnalyticEvent('load_config_firebase', { success: false, name_length: championConfigName.length, reason: 'not_found' });
                 }
             } catch (e) {
-                displayChampionStatus(`Error loading: ${e.message}`, true, 'error');
+                displayUiNotification(`Error loading: ${e.message}`, 'error', 'champion_config');
                 console.error("Error loading from Firestore:", e);
+                logAnalyticEvent('load_config_firebase', { success: false, name_length: championConfigName.length, error_message: e.message });
             }
         }
         
         async function deleteChampionFromFirestore() {
             if (!currentUserId || !championsColRef) {
-                displayChampionStatus("Not signed in. Cannot delete configurations.", true, 'error');
+                displayUiNotification("Not signed in. Cannot delete configurations.", 'error', 'champion_config');
                 return;
             }
             const championConfigName = savedChampionsSelect.value;
             if (!championConfigName) {
-                displayChampionStatus("No configuration selected to delete.", true, 'error');
+                displayUiNotification("No configuration selected to delete.", 'error', 'champion_config');
                 return;
             }
             
             if (! (await showConfirmationModal(`Are you sure you want to delete the configuration "${championConfigName}"? This action cannot be undone.`))) {
-                displayChampionStatus("Deletion cancelled.", false, 'info');
+                displayUiNotification("Deletion cancelled.", 'info', 'champion_config');
+                logAnalyticEvent('delete_config_firebase_action', { action: 'cancelled', name_length: championConfigName.length });
                 return;
             }
 
             try {
                 const championDocRef = doc(championsColRef, championConfigName);
                 await deleteDoc(championDocRef);
-                displayChampionStatus(`Configuration "${championConfigName}" deleted.`, false, 'success');
-                 if(fbAnalytics) fbLogEvent(fbAnalytics, 'delete_champion_config_firebase');
+                displayUiNotification(`Configuration "${championConfigName}" deleted.`, 'success', 'champion_config');
+                logAnalyticEvent('delete_config_firebase_action', { action: 'confirmed', success: true, name_length: championConfigName.length });
                 championNameInput.value = '';
             } catch (e) {
-                displayChampionStatus(`Error deleting: ${e.message}`, true, 'error');
+                displayUiNotification(`Error deleting: ${e.message}`, 'error', 'champion_config');
                 console.error("Error deleting from Firestore:", e);
+                logAnalyticEvent('delete_config_firebase_action', { action: 'confirmed', success: false, name_length: championConfigName.length, error_message: e.message });
             }
         }
 
@@ -1313,14 +1338,15 @@
                 if (hadSelection && Array.from(savedChampionsSelect.options).some(opt => opt.value === hadSelection)) {
                     savedChampionsSelect.value = hadSelection;
                 }
+                logAnalyticEvent('firestore_dropdown_populated', { count: querySnapshot.size });
             }, (error) => { 
                 console.error("Error listening to champion configurations:", error);
-                displayChampionStatus("Error fetching configurations. Try refreshing.", true, 'error');
+                displayUiNotification("Error fetching configurations. Try refreshing.", 'error', 'champion_config');
                 savedChampionsSelect.innerHTML = '<option value="">-- Error loading --</option>';
+                logAnalyticEvent('firestore_listener_error', { collection: 'champions', error_message: error.message });
             });
         }
 
-        // --- Section Visibility and Order Customization ---
         let currentSectionOrder = []; 
         const allToggleableSections = [ 
             { id: 'championManagementSection', name: 'Champion Configurations', defaultVisible: true },
@@ -1373,7 +1399,7 @@
             const targetId = event.target.dataset.targetSectionId;
             const sectionToToggle = document.getElementById(targetId);
             if (sectionToToggle) { sectionToToggle.classList.toggle('hidden', !event.target.checked); saveSectionVisibilityPreferences(); }
-            if(fbAnalytics) fbLogEvent(fbAnalytics, 'section_visibility_change', { section_id: targetId, is_visible: event.target.checked });
+            logAnalyticEvent('section_visibility_change', { section_id: targetId, is_visible: event.target.checked });
         }
         
         function moveSection(currentIndex, direction) {
@@ -1382,7 +1408,7 @@
             const itemToMove = currentSectionOrder.splice(currentIndex, 1)[0];
             currentSectionOrder.splice(newIndex, 0, itemToMove);
             saveSectionOrderPreferences(); renderSectionToggles(); renderSectionsInOrder(); 
-            if(fbAnalytics) fbLogEvent(fbAnalytics, 'section_order_change', { moved_section_id: itemToMove, direction: direction > 0 ? 'down' : 'up' });
+            logAnalyticEvent('section_order_change', { moved_section_id: itemToMove, direction: direction > 0 ? 'down' : 'up' });
         }
 
         function saveSectionVisibilityPreferences() {
@@ -1417,7 +1443,6 @@
             reorderableSectionsContainer.innerHTML = ''; reorderableSectionsContainer.appendChild(fragment);
         }
         
-        // --- Other utility functions (populateStarLevels, updateChart, etc.) ---
         function populateStarLevels() {
             startStarLevelSelect.innerHTML = ''; targetStarLevelSelect.innerHTML = '';
             const baseOption = document.createElement('option');
@@ -1499,23 +1524,9 @@
             }
         }
         
-        // --- Probability Simulation Functions ---
-        function displayProbabilityStatus(message, isError = false, type = '') { 
-            probabilityStatusDiv.textContent = message;
-            probabilityStatusDiv.className = 'status-message text-center py-1';
-            if (type === 'info' ) { 
-                probabilityStatusDiv.classList.add('status-info');
-            } else if (isError || type === 'error') {
-                probabilityStatusDiv.classList.add('status-error');
-            } else { 
-                probabilityStatusDiv.classList.add('status-success');
-            }
-            setTimeout(() => { probabilityStatusDiv.textContent = ''; probabilityStatusDiv.className = 'status-message mt-3'; }, 5000);
-        }
-
         function simulateSingleSuccessAttemptForDistribution(budget, mythicProb, hardPity, lmRateUp, nmGuarantee, 
                                              includeUnlock, targetShardsForUpgrade, 
-                                             lmShardsYield, nmShardsYield, 
+                                             systemConfig,
                                              initialMythicPity = 0, initialLMPityStreak = 0) { 
             
             let totalAnvilsSpent = 0;
@@ -1523,6 +1534,7 @@
             let mythicPityCounter = initialMythicPity; 
             let nmFailStreak = initialLMPityStreak;   
             let isUnlocked = !includeUnlock;
+            let nmPullCounterForProposedBonus = 0;
 
             if (includeUnlock && !isUnlocked) {
                 while (totalAnvilsSpent < budget) {
@@ -1533,32 +1545,56 @@
                         if (nmFailStreak >= nmGuarantee || Math.random() < lmRateUp) {
                             isUnlocked = true;
                             nmFailStreak = 0; 
-                            break; 
+                            currentShards += systemConfig.lmShardsYield; 
+                            break;
                         } else {
                             nmFailStreak++;
+                            if (systemConfig.type === 'proposed') {
+                                nmPullCounterForProposedBonus++;
+                                if (nmPullCounterForProposedBonus <= 6) {
+                                    const randomShards = [2, 3, 5][Math.floor(Math.random() * 3)];
+                                    currentShards += randomShards;
+                                }
+                            } else {
+                                currentShards += systemConfig.nmShardsYieldCurrent;
+                            }
                         }
                     }
                 }
-                if (!isUnlocked) return budget + 1; 
+                if (!isUnlocked) return budget + 1;
             }
 
-            if (targetShardsForUpgrade > 0) {
-                while (currentShards < targetShardsForUpgrade) {
-                    if (totalAnvilsSpent >= budget) return budget + 1; 
+            const remainingShardsNeeded = Math.max(0, targetShardsForUpgrade - (includeUnlock ? 0 : currentShards) );
+
+            if (remainingShardsNeeded > 0) {
+                 while (currentShards < targetShardsForUpgrade) {
+                    if (totalAnvilsSpent >= budget) return budget + 1;
 
                     mythicPityCounter++;
                     totalAnvilsSpent++;
                     if (mythicPityCounter >= hardPity || Math.random() < mythicProb) {
                         mythicPityCounter = 0; 
                         let isLMThisPull = (nmFailStreak >= nmGuarantee || Math.random() < lmRateUp);
-                        if (isLMThisPull) nmFailStreak = 0; else nmFailStreak++; 
-                        currentShards += isLMThisPull ? lmShardsYield : nmShardsYield;
+                        
+                        if (isLMThisPull) {
+                            nmFailStreak = 0;
+                            currentShards += systemConfig.lmShardsYield;
+                        } else {
+                            nmFailStreak++;
+                            if (systemConfig.type === 'proposed') {
+                                nmPullCounterForProposedBonus++;
+                                if (nmPullCounterForProposedBonus <= 6) {
+                                    const randomShards = [2, 3, 5][Math.floor(Math.random() * 3)];
+                                    currentShards += randomShards;
+                                }
+                            } else {
+                                currentShards += systemConfig.nmShardsYieldCurrent;
+                            }
+                        }
                     }
                 }
-                return totalAnvilsSpent; 
-            } else { 
-                return totalAnvilsSpent <= budget ? totalAnvilsSpent : budget + 1;
             }
+            return totalAnvilsSpent <= budget ? totalAnvilsSpent : budget + 1;
         }
         
         function getPercentile(sortedData, percentile) {
@@ -1581,7 +1617,7 @@
 
             const minCost = Math.min(...successfulRuns);
             let maxCost = Math.max(...successfulRuns); 
-            if (maxCost < minCost) maxCost = minCost; // Handle case where all successful runs have the same cost
+            if (maxCost < minCost) maxCost = minCost; 
 
             const binSize = Math.max(1, Math.ceil((maxCost - minCost + 1) / numBins));
             const bins = [];
@@ -1591,9 +1627,9 @@
                 const binStart = minCost + (i * binSize);
                 const binEnd = binStart + binSize - 1;
                 if (binStart > maxCost && bins.length > 0) break; 
-                bins.push({ start: binStart, end: Math.min(binEnd, maxCost), count: 0 }); // Ensure binEnd doesn't exceed maxCost
+                bins.push({ start: binStart, end: Math.min(binEnd, maxCost), count: 0 }); 
                 labels.push(`${binStart}-${Math.min(binEnd, maxCost)}`);
-                if (Math.min(binEnd, maxCost) >= maxCost) break; // Stop if last bin covers maxCost
+                if (Math.min(binEnd, maxCost) >= maxCost) break; 
             }
             
             let failures = 0;
@@ -1607,7 +1643,7 @@
                             break;
                         }
                     }
-                    if (!binned && bins.length > 0 && cost <= bins[bins.length-1].end) { // Catch edge cases for last bin
+                    if (!binned && bins.length > 0 && cost <= bins[bins.length-1].end) { 
                         bins[bins.length-1].count++;
                     }
                 } else {
@@ -1669,7 +1705,7 @@
                     plugins: {
                         tooltip: { 
                             titleColor: titleColor, bodyColor: chartFontColor, 
-                            backgroundColor: '#ffffff', // Fallback for light theme
+                            backgroundColor: '#ffffff', 
                             borderColor: chartGridColor, borderWidth:1,
                             callbacks: { label: context => `${context.dataset.label}: ${context.parsed.y} runs` } 
                         },
@@ -1682,8 +1718,9 @@
 
 
         function runProbabilitySimulation() {
+            logAnalyticEvent('calculation_triggered', { type: 'probability_simulation', source: 'button_click' });
             setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, true);
-            displayProbabilityStatus("Calculating probability distribution... this may take a moment.", false, 'info');
+            displayUiNotification("Calculating probability distribution... this may take a moment.", 'info', 'probability_sim');
             
             probabilityResultsArea.innerHTML = ` 
                 <p id="probabilitySummaryText" class="mb-2 text-center font-medium"></p>
@@ -1707,16 +1744,19 @@
             `;
             probabilityResultsArea.classList.remove('hidden'); 
             
-            // Re-fetch these elements as they are now part of the dynamically set innerHTML
             const probabilitySummaryTextEl_local = document.getElementById('probabilitySummaryText');
             const probSummaryCurrentEl_local = document.getElementById('probSummaryCurrent');
             const probSummaryProposedEl_local = document.getElementById('probSummaryProposed');
             const probabilitySimulationDetailsEl_local = document.getElementById('probabilitySimulationDetails');
 
-
             setTimeout(() => { 
                 const budget = parseInt(anvilBudgetInput.value);
-                if (isNaN(budget) || budget <= 0) { displayProbabilityStatus("Please enter a valid Anvil budget.", true, 'error'); setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, false); return; }
+                if (isNaN(budget) || budget <= 0) { 
+                    displayUiNotification("Please enter a valid Anvil budget.", 'error', 'probability_sim'); 
+                    setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, false); 
+                    logAnalyticEvent('probability_simulation_completed', { status: 'error', reason: 'invalid_budget', budget: anvilBudgetInput.value });
+                    return; 
+                }
                 
                 const mythicProb = parseFloat(mythicProbabilityInput.value);
                 const hardPity = parseInt(mythicHardPityInput.value);
@@ -1726,11 +1766,12 @@
                 const includeUnlock = isUnlockCostIncluded;
                 const startS = (startStarLevelSelect.value === "0_shards") ? 0 : (SHARD_REQUIREMENTS[startStarLevelSelect.value] || 0);
                 const targetS = SHARD_REQUIREMENTS[targetStarLevelSelect.value] || 0;
-                const shardsNeeded = Math.max(0, targetS - startS);
+                const shardsNeededForUpgrade = Math.max(0, targetS - startS);
 
                 if (isNaN(mythicProb) || isNaN(hardPity) || isNaN(lmRateUp) || initialMythicPity < 0 || (hardPity > 0 && initialMythicPity >= hardPity) || initialLMPityStreak < 0 || initialLMPityStreak >= NM_GUARANTEE_THRESHOLD) {
-                     displayProbabilityStatus("Invalid base pull rates or pity inputs for simulation.", true, 'error');
+                     displayUiNotification("Invalid base pull rates or pity inputs for simulation.", 'error', 'probability_sim');
                      setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, false);
+                     logAnalyticEvent('probability_simulation_completed', { status: 'error', reason: 'invalid_pull_rates_or_pity' });
                      return;
                 }
                 
@@ -1741,12 +1782,14 @@
                 const lmShardsCurrentVal = parseInt(currentLMSInput.value) || 0; 
                 const nmShardsCurrentVal = parseInt(currentNMSInput.value) || 0; 
                 const lmShardsProposedVal = parseInt(proposedLMSInput.value) || 0; 
-                const nmShardsProposedVal = parseInt(proposedNMSInput.value) || 0; 
+                
+                const currentSystemConfig = { type: 'current', lmShardsYield: lmShardsCurrentVal, nmShardsYieldCurrent: nmShardsCurrentVal };
+                const proposedSystemConfig = { type: 'proposed', lmShardsYield: lmShardsProposedVal };
 
 
                 for (let i = 0; i < NUM_SIM_RUNS; i++) {
-                    anvilCostsCurrent.push(simulateSingleSuccessAttemptForDistribution(budget, mythicProb, hardPity, lmRateUp, NM_GUARANTEE_THRESHOLD, includeUnlock, shardsNeeded, lmShardsCurrentVal, nmShardsCurrentVal, initialMythicPity, initialLMPityStreak));
-                    anvilCostsProposed.push(simulateSingleSuccessAttemptForDistribution(budget, mythicProb, hardPity, lmRateUp, NM_GUARANTEE_THRESHOLD, includeUnlock, shardsNeeded, lmShardsProposedVal, nmShardsProposedVal, initialMythicPity, initialLMPityStreak));
+                    anvilCostsCurrent.push(simulateSingleSuccessAttemptForDistribution(budget, mythicProb, hardPity, lmRateUp, NM_GUARANTEE_THRESHOLD, includeUnlock, shardsNeededForUpgrade, currentSystemConfig, initialMythicPity, initialLMPityStreak));
+                    anvilCostsProposed.push(simulateSingleSuccessAttemptForDistribution(budget, mythicProb, hardPity, lmRateUp, NM_GUARANTEE_THRESHOLD, includeUnlock, shardsNeededForUpgrade, proposedSystemConfig, initialMythicPity, initialLMPityStreak));
                 }
                 
                 const numBins = Math.min(20, Math.max(5, Math.floor(budget/20))); 
@@ -1769,35 +1812,54 @@
 
                 if(probabilitySimulationDetailsEl_local) probabilitySimulationDetailsEl_local.textContent = `Based on ${NUM_SIM_RUNS} simulated attempts for each system, starting with ${initialMythicPity} mythic pity and ${initialLMPityStreak} non-LM pulls.`;
                 
-                displayProbabilityStatus("Probability distribution calculation complete.", false, 'success');
+                displayUiNotification("Probability distribution calculation complete.", 'success', 'probability_sim');
                 setButtonLoadingState(calculateProbabilityBtn, probabilityBtnText, probabilityBtnSpinner, false);
+                logAnalyticEvent('probability_simulation_completed', { 
+                    status: 'success', 
+                    budget: budget, 
+                    shards_needed: shardsNeededForUpgrade,
+                    include_unlock: includeUnlock,
+                    current_sys_success_rate: parseFloat(histDataCurrent.successRate.toFixed(1)),
+                    proposed_sys_success_rate: parseFloat(histDataProposed.successRate.toFixed(1)),
+                    current_sys_median_cost: isNaN(histDataCurrent.medianCost) ? null : Math.round(histDataCurrent.medianCost),
+                    proposed_sys_median_cost: isNaN(histDataProposed.medianCost) ? null : Math.round(histDataProposed.medianCost)
+                });
             }, 50);
         }
 
-
-        // --- Main Expected Value Calculation Logic ---
-        function handleExpectedValueCalculation() {
+        function handleExpectedValueCalculation(triggerSource = 'unknown') {
+            logAnalyticEvent('calculation_triggered', { type: 'expected_value', source: triggerSource });
             setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, true);
             setTimeout(() => {
                 const inputs = validateAndGetEVInputs();
                 if (!inputs.isValid) {
                     setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, false);
+                    conclusionParagraph.textContent = 'Please correct the highlighted input errors.';
+                    logAnalyticEvent('ev_calculation_completed', { status: 'error', reason: 'input_validation', failed_fields: Object.keys(inputs.errors).join(',') });
                     return;
                 }
                 const metrics = performExpectedValueCalculations(inputs.data);
                 if (!metrics.isValid) {
                     conclusionParagraph.textContent = metrics.errorMessage || 'Error in EV calculation.';
                     setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, false);
+                    logAnalyticEvent('ev_calculation_completed', { status: 'error', reason: 'calculation_error', error_message: metrics.errorMessage });
                     return;
                 }
                 updateExpectedValueUI(metrics.data);
                 setButtonLoadingState(calculateBtn, calculateBtnText, calculateBtnSpinner, false);
+                logAnalyticEvent('ev_calculation_completed', { 
+                    status: 'success', 
+                    shards_needed: metrics.data.shardsNeededForUpgrade,
+                    include_unlock: isUnlockCostIncluded,
+                    current_avg_anvils: Math.round(isUnlockCostIncluded ? metrics.data.anvilsUnlockAvg + metrics.data.upgradeAnvilsCurrent : metrics.data.upgradeAnvilsCurrent),
+                    proposed_avg_anvils: Math.round(isUnlockCostIncluded ? metrics.data.anvilsUnlockAvg + metrics.data.upgradeAnvilsProposed : metrics.data.upgradeAnvilsProposed)
+                });
             }, 50);
         }
 
         function resetExpectedValueDisplayFields() {
             [mythicProbabilityError, mythicHardPityError, lmRateUpChanceError, starLevelError, currentMythicPityError, currentLMPityError, 
-             currentLMSError, currentNMSError, proposedLMSError, proposedNMSError].forEach(el => el.classList.add('hidden')); // Added bleed system errors
+             currentLMSError, currentNMSError, proposedLMSError].forEach(el => { if(el) el.classList.add('hidden'); }); 
             conclusionParagraph.textContent = '';
             document.querySelectorAll('#results span, .calculation-detail span').forEach(span => {
                 if (!span.closest('.btn') && !span.closest('#championStatus') && !span.closest('#probabilityStatus') && !span.closest('#localConfigStatus') ) { 
@@ -1819,11 +1881,10 @@
             const currentMythicPity = parseInt(currentMythicPityInput.value) || 0; 
             const currentLMPity = parseInt(currentLMPityInput.value) || 0; 
 
-            // Configurable Bleed System Values
             const lmShardsCurrent = parseInt(currentLMSInput.value);
             const nmShardsCurrent = parseInt(currentNMSInput.value);
             const lmShardsProposed = parseInt(proposedLMSInput.value);
-            const nmShardsProposed = parseInt(proposedNMSInput.value);
+            const nmShardsProposedForEV = 0;
 
             if (isNaN(mythicProbability) || mythicProbability <= 0 || mythicProbability > 1) { mythicProbabilityError.textContent = 'Invalid probability.'; mythicProbabilityError.classList.remove('hidden'); isValid = false; errors.mythicProbability = true;}
             if (isNaN(mythicHardPity) || mythicHardPity < 1) { mythicHardPityError.textContent = 'Invalid pity.'; mythicHardPityError.classList.remove('hidden'); isValid = false; errors.mythicHardPity = true;}
@@ -1838,12 +1899,9 @@
                 currentLMPityError.classList.remove('hidden'); isValid = false; errors.currentLMPity = true;
             }
 
-            // Validation for bleed system inputs
             if (isNaN(lmShardsCurrent) || lmShardsCurrent < 0) { currentLMSError.textContent = 'Invalid.'; currentLMSError.classList.remove('hidden'); isValid = false; errors.lmShardsCurrent = true; }
             if (isNaN(nmShardsCurrent) || nmShardsCurrent < 0) { currentNMSError.textContent = 'Invalid.'; currentNMSError.classList.remove('hidden'); isValid = false; errors.nmShardsCurrent = true; }
             if (isNaN(lmShardsProposed) || lmShardsProposed < 0) { proposedLMSError.textContent = 'Invalid.'; proposedLMSError.classList.remove('hidden'); isValid = false; errors.lmShardsProposed = true; }
-            if (isNaN(nmShardsProposed) || nmShardsProposed < 0) { proposedNMSError.textContent = 'Invalid.'; proposedNMSError.classList.remove('hidden'); isValid = false; errors.nmShardsProposed = true; }
-
 
             const startStarValue = startStarLevelSelect.value;
             const targetStarValue = targetStarLevelSelect.value;
@@ -1859,10 +1917,14 @@
             }
             shardsNeededForUpgradeSpan.textContent = shardsNeededForUpgrade.toString();
 
+            if (!isValid) {
+                logAnalyticEvent('input_validation_error', { failed_fields: Object.keys(errors).join(',') });
+            }
+
             return { 
                 isValid, 
                 data: { mythicProbability, mythicHardPity, lmRateUpChance, shardsNeededForUpgrade, currentMythicPity, currentLMPity,
-                        lmShardsCurrent, nmShardsCurrent, lmShardsProposed, nmShardsProposed }, 
+                        lmShardsCurrent, nmShardsCurrent, lmShardsProposed, nmShardsProposed: nmShardsProposedForEV }, 
                 errors 
             };
         }
@@ -1914,7 +1976,6 @@
                     upgradeAnvilsBestCurrent, upgradeAnvilsWorstCurrent,
                     upgradeAnvilsBestProposed, upgradeAnvilsWorstProposed,
                     shardsNeededForUpgrade,
-                    // Pass through configured bleed values for UI update
                     lmShardsCurrent, nmShardsCurrent, lmShardsProposed, nmShardsProposed
                 }
             };
@@ -1929,7 +1990,7 @@
                 upgradeAnvilsBestCurrent, upgradeAnvilsWorstCurrent,
                 upgradeAnvilsBestProposed, upgradeAnvilsWorstProposed,
                 shardsNeededForUpgrade,
-                lmShardsCurrent, nmShardsCurrent, lmShardsProposed, nmShardsProposed // Received from metrics
+                lmShardsCurrent, nmShardsCurrent, lmShardsProposed
             } = metrics;
 
             calcDrawsPerMythicSpan.textContent = drawsPerMythicAverage.toFixed(2);
@@ -1937,11 +1998,10 @@
             calcAvgShardsCurrentSpan.textContent = avgEffShardsCurr.toFixed(2);
             calcAvgShardsProposedSpan.textContent = avgEffShardsProp.toFixed(2);
 
-            // Update detail spans with configured bleed values
             detailLMSCurrentSpan.textContent = lmShardsCurrent.toString();
             detailNMSCurrentSpan.textContent = nmShardsCurrent.toString();
             detailLMSProposedSpan.textContent = lmShardsProposed.toString();
-            detailNMSProposedSpan.textContent = nmShardsProposed.toString();
+            detailNMSProposedSpan.textContent = "0 (after first 6 NM bonus pulls)";
 
 
             if (isUnlockCostIncluded) {
@@ -2010,21 +2070,6 @@
             updateMainAnvilCostChart(chartCostsCurr, chartCostsProp, chartLabels, isUnlockCostIncluded, anvilsUnlockAvg);
         }
 
-        // --- Local Import/Export Functions ---
-        function displayLocalConfigStatus(message, isError = false) {
-            localConfigStatus.textContent = message;
-            localConfigStatus.className = 'status-message text-center py-1';
-            if (isError) {
-                localConfigStatus.classList.add('status-error');
-            } else {
-                localConfigStatus.classList.add('status-success');
-            }
-            setTimeout(() => {
-                localConfigStatus.textContent = '';
-                localConfigStatus.className = 'status-message mt-3';
-            }, 4000);
-        }
-
         function exportConfiguration() {
             const configData = {
                 championName: championNameInput.value.trim() || "Unnamed Export",
@@ -2038,8 +2083,7 @@
                 targetStarLevel: targetStarLevelSelect.value,
                 currentLMS: currentLMSInput.value,
                 currentNMS: currentNMSInput.value,
-                proposedLMS: proposedLMSInput.value,
-                proposedNMS: proposedNMSInput.value
+                proposedLMS: proposedLMSInput.value
             };
 
             try {
@@ -2075,7 +2119,7 @@
                 copyButton.onclick = () => {
                     codeTextarea.select();
                     document.execCommand('copy'); 
-                    displayLocalConfigStatus('Code copied to clipboard!', false);
+                    displayUiNotification('Code copied to clipboard!', 'success', 'local_config');
                 };
 
                 const closeButton = document.createElement('button');
@@ -2091,20 +2135,21 @@
                 exportModalBackdrop.appendChild(exportModalContent);
                 document.body.appendChild(exportModalBackdrop);
 
-                displayLocalConfigStatus('Configuration exported!', false);
-                if(fbAnalytics) fbLogEvent(fbAnalytics, 'export_config_local');
+                displayUiNotification('Configuration exported!', 'success', 'local_config');
+                logAnalyticEvent('export_config_local', { success: true });
 
 
             } catch (e) {
-                displayLocalConfigStatus('Error exporting configuration.', true);
+                displayUiNotification('Error exporting configuration.', 'error', 'local_config');
                 console.error("Error exporting configuration:", e);
+                logAnalyticEvent('export_config_local', { success: false, error_message: e.message });
             }
         }
 
         function importConfiguration() {
             const jsonString = importConfigText.value.trim(); 
             if (!jsonString) {
-                displayLocalConfigStatus('Paste configuration text first.', true);
+                displayUiNotification('Paste configuration text first.', 'error', 'local_config');
                 return;
             }
 
@@ -2128,27 +2173,26 @@
                 
                 currentLMSInput.value = configData.currentLMS !== undefined ? configData.currentLMS : "40";
                 currentNMSInput.value = configData.currentNMS !== undefined ? configData.currentNMS : "0";
-                proposedLMSInput.value = configData.proposedLMS !== undefined ? configData.proposedLMS : "25";
-                proposedNMSInput.value = configData.proposedNMS !== undefined ? configData.proposedNMS : "5"; 
+                proposedLMSInput.value = configData.proposedLMS !== undefined ? configData.proposedLMS : "40"; 
 
 
-                handleExpectedValueCalculation();
+                handleExpectedValueCalculation('import_config_local');
                 probabilityResultsArea.classList.add('hidden');
-                probabilityResultsArea.innerHTML = '';
-                probabilityStatusDiv.textContent = '';
+                probabilityResultsArea.innerHTML = ''; 
+                if(probabilityStatusDiv) probabilityStatusDiv.textContent = '';
 
-                displayLocalConfigStatus('Configuration imported successfully!', false);
-                if(fbAnalytics) fbLogEvent(fbAnalytics, 'import_config_local');
+
+                displayUiNotification('Configuration imported successfully!', 'success', 'local_config');
+                logAnalyticEvent('import_config_local', { success: true });
                 importConfigText.value = ''; 
 
             } catch (e) {
-                displayLocalConfigStatus('Error importing configuration. Invalid or corrupted JSON.', true);
+                displayUiNotification('Error importing configuration. Invalid or corrupted JSON.', 'error', 'local_config');
                 console.error("Error importing configuration:", e);
+                logAnalyticEvent('import_config_local', { success: false, error_message: e.message });
             }
         }
 
-
-        // Custom Confirmation Modal
         function showConfirmationModal(message) {
             return new Promise((resolve) => {
                 const modalBackdrop = document.createElement('div');
@@ -2189,13 +2233,14 @@
             });
         }
 
-
         document.addEventListener('DOMContentLoaded', async () => {
             populateStarLevels();
             updateToggleUnlockButtonAppearance();
             initializeSectionCustomization(); 
             
             await initializeFirebaseAndAuth(); 
+            logAnalyticEvent('page_view', { app_id: appId });
+
 
             saveChampionBtn.addEventListener('click', saveChampionToFirestore);
             loadChampionBtn.addEventListener('click', () => loadChampionFromFirestore());
@@ -2205,29 +2250,62 @@
             if(importConfigBtn) importConfigBtn.addEventListener('click', importConfiguration);
 
             calculateProbabilityBtn.addEventListener('click', runProbabilitySimulation); 
-            calculateBtn.addEventListener('click', handleExpectedValueCalculation);
+            calculateBtn.addEventListener('click', () => handleExpectedValueCalculation('ev_button_click'));
             
-            [mythicProbabilityInput, mythicHardPityInput, lmRateUpChanceInput, 
-             currentMythicPityInput, currentLMPityInput, anvilBudgetInput,
-             currentLMSInput, currentNMSInput, proposedLMSInput, proposedNMSInput 
-            ].forEach(el => {
-                if(el) el.addEventListener('input', handleExpectedValueCalculation);
+            const evTriggerInputs = [mythicProbabilityInput, mythicHardPityInput, lmRateUpChanceInput, 
+                                     currentMythicPityInput, currentLMPityInput, anvilBudgetInput,
+                                     currentLMSInput, currentNMSInput, proposedLMSInput];
+            
+            evTriggerInputs.forEach(el => {
+                if(el) el.addEventListener('input', (event) => {
+                    handleExpectedValueCalculation(`input_change_${event.target.id}`);
+                });
             });
             
             [startStarLevelSelect, targetStarLevelSelect].forEach(el => {
-                if(el) el.addEventListener('change', handleExpectedValueCalculation);
+                if(el) el.addEventListener('change', (event) => {
+                    handleExpectedValueCalculation(`select_change_${event.target.id}`);
+                });
             });
             
             if(toggleUnlockCostBtn) {
                 toggleUnlockCostBtn.addEventListener('click', () => {
                     isUnlockCostIncluded = !isUnlockCostIncluded;
                     updateToggleUnlockButtonAppearance();
-                    if(fbAnalytics) fbLogEvent(fbAnalytics, 'toggle_unlock_cost', { included: isUnlockCostIncluded });
-                    handleExpectedValueCalculation();
+                    logAnalyticEvent('toggle_unlock_cost', { included: isUnlockCostIncluded });
+                    handleExpectedValueCalculation('toggle_unlock_cost');
                 });
             }
+
+            const detailsElements = {
+                'customizeViewDetails': 'customize_view',
+                'detailedCalculationsDetails': 'detailed_ev',
+                'explanationSection': 'explanation_guide'
+            };
+
+            for (const id in detailsElements) {
+                const element = document.getElementById(id);
+                if (element && element.tagName === 'DETAILS') {
+                    element.addEventListener('toggle', function() {
+                        logAnalyticEvent('details_section_toggled', { 
+                            section_name: detailsElements[id], 
+                            is_open: this.open 
+                        });
+                    });
+                } else if (element) {
+                     const parentDetails = element.closest('details');
+                     if(parentDetails && parentDetails.id === id) {
+                        parentDetails.addEventListener('toggle', function() {
+                             logAnalyticEvent('details_section_toggled', { 
+                                section_name: detailsElements[id], 
+                                is_open: this.open 
+                            });
+                        });
+                     }
+                }
+            }
             
-            handleExpectedValueCalculation(); // Initial calculation
+            handleExpectedValueCalculation('initial_load'); 
         });
     </script>
 </body>
