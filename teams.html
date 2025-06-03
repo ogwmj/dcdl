@@ -851,7 +851,7 @@
     // Firebase SDK imports
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, getDocs, doc, setDoc, getDoc, deleteDoc, query, where, onSnapshot, setLogLevel, orderBy, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js"; 
+    import { getFirestore, collection, getDocs, doc, setDoc, getDoc, deleteDoc, query, where, onSnapshot, orderBy, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js"; 
 
     // --- Unicode Icon Definitions ---
     const ICON_ADD = '➕';
@@ -918,7 +918,6 @@
     swapChampionModalEl.className = 'modal-backdrop hidden';
     document.body.appendChild(swapChampionModalEl); // Add to body once
 
-
     // --- Toast Notification Function ---
     function showToast(message, type = 'info', duration = 3000) {
         if (!toastContainer) return;
@@ -968,7 +967,6 @@
             app = initializeApp(firebaseConfig);
             auth = getAuth(app);
             db = getFirestore(app);
-            setLogLevel('debug'); 
 
             loadingIndicatorEl.classList.remove('hidden');
             errorIndicatorEl.classList.add('hidden');
