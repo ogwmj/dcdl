@@ -976,19 +976,15 @@
             return new Promise((resolve, reject) => {
                 const unsubscribe = onAuthStateChanged(auth, async (user) => {
                     if (user) {
-                        console.log("User is signed in:", user.uid);
                         userId = user.uid;
                         userIdDisplay.textContent = `User ID: ${userId.substring(0,8)}...`; 
                         resolve();
                     } else {
-                        console.log("User is not signed in. Attempting to sign in...");
                         try {
                             if (initialAuthToken) {
                                 await signInWithCustomToken(auth, initialAuthToken);
-                                console.log("Signed in with custom token.");
                             } else {
                                 await signInAnonymously(auth);
-                                console.log("Signed in anonymously.");
                             }
                         } catch (error) {
                             console.error("Error during sign-in:", error);
@@ -1108,7 +1104,6 @@
             const synergiesCollectionRef = collection(db, `artifacts/${appId}/public/data/synergies`);
             const querySnapshot = await getDocs(synergiesCollectionRef);
             dbSynergies = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (a.name || "").localeCompare(b.name || ""));
-            console.log("Synergies loaded:", dbSynergies.length);
             renderAvailableSynergies(); 
         } catch (error) {
             console.error("Error fetching synergies:", error);
@@ -1149,7 +1144,6 @@
 
     async function fetchChampions() {
          try {
-            console.log(`Fetching champions from: artifacts/${appId}/public/data/champions`);
             const championsCollectionRef = collection(db, `artifacts/${appId}/public/data/champions`);
             const querySnapshot = await getDocs(championsCollectionRef);
             dbChampions = querySnapshot.docs.map(doc => {
@@ -1160,7 +1154,6 @@
                     isHealer: data.isHealer === true 
                 };
             }); 
-            console.log("Champions fetched. Sample isHealer status:", dbChampions.slice(0,5).map(c => ({name: c.name, isHealer: c.isHealer}))); 
         } catch (error) {
             console.error("Error fetching champions:", error);
             showError("Error fetching champions from Firestore.", error.message);
@@ -1170,11 +1163,9 @@
 
     async function fetchLegacyPieces() {
         try {
-            console.log(`Fetching legacy pieces from: artifacts/${appId}/public/data/legacyPieces`);
             const legacyPiecesCollectionRef = collection(db, `artifacts/${appId}/public/data/legacyPieces`);
             const querySnapshot = await getDocs(legacyPiecesCollectionRef);
             dbLegacyPieces = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            console.log("Legacy Pieces fetched successfully. Count:", dbLegacyPieces.length);
             populateLegacyPieceSelect(); 
         } catch (error) {
             console.error("Error fetching legacy pieces:", error);
@@ -1185,7 +1176,6 @@
     }
     
     function populateChampionSelect() {
-        console.log("Populating champion select. dbChampions:", dbChampions.length, "playerRoster:", playerChampionRoster.length);
         if (!champSelectDbEl) {
             console.error("FATAL: Champion select dropdown element (champ-select-db) not found in DOM!");
             return;
@@ -1194,7 +1184,6 @@
         champSelectDbEl.innerHTML = '<option value="">-- Select Champion --</option>'; 
 
         if (dbChampions.length === 0) {
-            console.log("No base champions in dbChampions to populate dropdown.");
             return;
         }
         
@@ -1203,7 +1192,6 @@
         const availableChampions = dbChampions.filter(dbChamp => 
             !rosteredDbChampionIds.includes(dbChamp.id) || (editingChampionId && playerChampionRoster.find(c => c.id === editingChampionId)?.dbChampionId === dbChamp.id)
         );
-        console.log("Available champions for dropdown:", availableChampions.length);
 
         const sortedAvailableChampions = [...availableChampions].sort((a, b) => (a.name || "Unnamed Champion").localeCompare(b.name || "Unnamed Champion"));
 
@@ -1227,12 +1215,10 @@
             currentSelectedChampionClass = null; 
             champInherentSynergiesDisplayEl.textContent = 'Select a base champion to see synergies.';
         }
-        populateLegacyPieceSelect(currentSelectedChampionClass); 
-        console.log("Champion select dropdown populated/re-populated."); 
+        populateLegacyPieceSelect(currentSelectedChampionClass);
     }
 
-    function populateLegacyPieceSelect(championClass = null) { 
-        console.log("Populating legacy piece select. Element found:", !!legacyPieceSelectEl, "For class:", championClass);
+    function populateLegacyPieceSelect(championClass = null) {
         if (!legacyPieceSelectEl) {
             console.error("FATAL: Legacy Piece select dropdown element (legacy-piece-select) not found in DOM!");
             return;
@@ -1241,7 +1227,6 @@
         legacyPieceSelectEl.innerHTML = '<option value="">-- None --</option>'; 
         
         if (dbLegacyPieces.length === 0) {
-            console.log("No legacy pieces in dbLegacyPieces to populate dropdown.");
             return;
         }
 
@@ -1253,13 +1238,11 @@
                 const description = (lp.description || "").toLowerCase();
                 return description === "" || description.includes(lowerChampionClass);
             });
-            console.log(`Filtered legacy pieces for class "${championClass}": ${filteredLegacyPieces.length}`);
         } else {
              filteredLegacyPieces = dbLegacyPieces.filter(lp => {
                 const description = (lp.description || "").toLowerCase();
                 return description === ""; 
             });
-             console.log(`No specific champion class, showing general legacy pieces: ${filteredLegacyPieces.length}`);
         }
 
         const sortedLegacyPieces = [...filteredLegacyPieces].sort((a,b) => (a.name || "Unnamed LP").localeCompare(b.name || "Unnamed LP"));
@@ -1278,7 +1261,6 @@
         if (sortedLegacyPieces.some(lp => lp.id === currentSelectedLegacyId)) {
             legacyPieceSelectEl.value = currentSelectedLegacyId;
         }
-        console.log("Legacy Piece select dropdown populated/re-populated.");
     }
 
 
@@ -1319,7 +1301,6 @@
         try {
             const rosterDocRef = doc(db, `artifacts/${appId}/users/${userId}/roster/myRoster`);
             await setDoc(rosterDocRef, { champions: playerChampionRoster });
-            console.log("Player roster saved to Firestore.");
             showToast("Roster saved successfully!", "success");
         } catch (error) {
             console.error("Error saving player roster:", error);
@@ -1332,7 +1313,6 @@
 
     async function loadPlayerRosterFromFirestore() {
         if (!userId) {
-            console.log("Cannot load roster: User not authenticated yet. Will try after auth.");
             return;
         }
         try {
@@ -1353,13 +1333,10 @@
                             inherentSynergies: baseDetails ? (baseDetails.inherentSynergies || []) : (savedChamp.inherentSynergies || [])
                         };
                     });
-                    console.log("Player roster loaded and refreshed. Sample isHealer:", playerChampionRoster.slice(0,5).map(p=>({name:p.name, isHealer: p.isHealer})));
                 } else {
-                    playerChampionRoster = []; 
-                    console.log("No champions array in roster document or roster is empty.");
+                    playerChampionRoster = [];
                 }
             } else {
-                console.log("No saved roster found for this user.");
                 playerChampionRoster = []; 
             }
             renderPlayerChampionRoster(); 
@@ -2634,3 +2611,4 @@
 </script>
 </body>
 </html>
+�
