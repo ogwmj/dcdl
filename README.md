@@ -1,3 +1,4 @@
-# DC: Dark Legion Stuff
-Bleed calculator for DC: Dark Legion
-Team selector for DC: Dark Legion
+# DC: Dark Legion Tooling
+[DC: Dark Legion - Anvil Calculator](calculator.html)
+
+[DC: Dark Legion - Optimal Team Builder](teams.html)
