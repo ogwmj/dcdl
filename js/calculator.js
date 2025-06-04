@@ -44,7 +44,8 @@ const CONSTANTS = {
         projectId: "dc-dark-legion-tools",
         storageBucket: "dc-dark-legion-tools.appspot.com",
         messagingSenderId: "786517074225",
-        appId: "1:786517074225:web:9f14dc4dcae0705fcfd010"
+        appId: "1:786517074225:web:9f14dc4dcae0705fcfd010",
+        measurementId: "G-FTF00DHGV6"
     },
     /** The number of non-LM pulls before an LM pull is guaranteed. @type {number} */
     NM_GUARANTEE_THRESHOLD: 3,
