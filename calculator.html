@@ -826,134 +826,176 @@
                         (Total from Base)</h3>
                     <canvas id="anvilCostChart"></canvas>
                 </div>
-            </div> 
-
-            <div id="explanationSection" class="calc-section alt-bg" data-section-name="Features & Terminology Guide">
-                <h2 class="text-2xl font-bold mb-6 text-center">Anvil Calculator Guide</h2>
-
-                <h3>Introduction</h3>
-                <p>This calculator is designed to help you estimate the resources (primarily "Anvils") needed to unlock and upgrade Limited Mythic (LM) characters in gacha games that use a similar pull and pity system. It provides both long-term average costs (Expected Value) and short-term probability distributions based on your current progress and budget.</p>
-
-                <h3>Core Concepts & Terminology</h3>
-                <p>Understanding these terms will help you use the calculator effectively:</p>
-                <ul>
-                    <li><strong>Anvils:</strong> The in-game currency or item used to perform a "pull" or "summon" on a character banner.</li>
-                    <li><strong>Mythic Character:</strong> A high-rarity character type. This calculator focuses on "Limited Mythic" characters.</li>
-                    <li><strong>Limited Mythic (LM):</strong> A specific, featured Mythic character available on a banner for a limited time. This is usually the primary target for players.</li>
-                    <li><strong>Mythic Base Probability:</strong> The fundamental chance (e.g., 3.84% or <code>0.0384</code>) of pulling *any* Mythic character on a single Anvil pull, before any pity systems are considered.</li>
-                    <li><strong>Mythic Hard Pity:</strong> The maximum number of Anvil pulls after which you are guaranteed to receive *any* Mythic character if you haven't pulled one already. For example, if hard pity is 50, your 50th pull will be a Mythic if the previous 49 were not.</li>
-                    <li><strong>Limited Mythic Rate-Up Chance:</strong> When you do pull a Mythic character, this is the probability that the Mythic you pulled is the featured Limited Mythic (LM) character. For example, a 26.9% (or <code>0.269</code>) rate-up means if you pull a Mythic, there's a 26.9% chance it's the LM.</li>
-                    <li><strong>LM Guarantee (Non-LM Pity / "Fail Three Times"):</strong> Many games have a system to ensure you eventually get the featured LM. This calculator hardcodes a common version: if you pull a certain number of Mythic characters that are *not* the featured LM (e.g., 3 Non-LM Mythics in a row), your *next* Mythic pull is guaranteed to be the featured LM. The "Non-LM Mythics Pulled (for LM Guarantee)" input lets you track this.</li>
-                    <li><strong>Star Levels & Shards:</strong> Characters often have star levels (e.g., 1-Star White to 5-Star Red). Upgrading to the next star level requires a specific number of "shards" (or character-specific fragments/duplicates).</li>
-                    <li><strong>Shard Bleed Systems:</strong> When you pull a duplicate of a Mythic character you already own (or sometimes any Mythic during an LM banner), you often receive shards for the *featured LM* instead of (or in addition to) shards for the character you actually pulled. This calculator compares two such "bleed" systems:
-                        <ul>
-                            <li><strong>Current System:</strong> Defines how many LM shards and Non-LM character shards you get.</li>
-                            <li><strong>Proposed System:</strong> A hypothetical alternative system for comparison. For LM pulls, it uses the configured LM shard value. For NM pulls, the first 6 give random (2, 3, or 5) LM shards, and 0 thereafter.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Expected Value (EV):</strong> In this context, the average number of Anvils you would expect to spend to achieve a goal (like unlocking an LM or getting enough shards for an upgrade) if you repeated the process many, many times. It's a long-term average and doesn't guarantee your individual experience will match it.</li>
-                    <li><strong>Probability Distribution:</strong> Shows the likelihood of different Anvil cost outcomes for achieving your goal within a specific budget, based on many simulated attempts. This gives a better sense of risk and potential cost variation than EV alone.</li>
-                </ul>
-
-                <h3>Calculator Features Explained</h3>
-                
-                <h4>1. Champion Configurations</h4>
-                <p>This section allows you to save and load your calculator settings.</p>
-                <ul>
-                    <li><strong>Configuration Name:</strong> Give your current set of inputs a unique name.</li>
-                    <li><strong>Save Current Settings:</strong> Saves all your current inputs (probabilities, pity, star levels, etc.) to your browser's local storage (or cloud if Firebase is active) under the entered name.</li>
-                    <li><strong>Load Configuration:</strong> Select a previously saved configuration from the dropdown.</li>
-                    <li><strong>Load Selected:</strong> Populates all calculator fields with the values from the selected configuration.</li>
-                    <li><strong>Delete Selected:</strong> Removes the selected configuration from your saved list.</li>
-                </ul>
-
-                <h4>2. Base Pull Rates</h4>
-                <p>Configure the fundamental probabilities of your pulls.</p>
-                <ul>
-                    <li><strong>Mythic Base Probability:</strong> Enter the game's stated base chance of pulling any Mythic character (e.g., for 3.84%, enter <code>0.0384</code>).</li>
-                    <li><strong>Mythic Hard Pity:</strong> Enter the number of pulls at which a Mythic is guaranteed (e.g., <code>50</code>).</li>
-                    <li><strong>Limited Mythic Rate-Up Chance:</strong> When a Mythic is pulled, what's the chance it's the featured LM? (e.g., for 26.9%, enter <code>0.269</code>).</li>
-                </ul>
-
-                <h4>3. Select Upgrade Range</h4>
-                <p>Define your character upgrade goal.</p>
-                <ul>
-                    <li><strong>Starting Star Level:</strong> The current star level of your character. "Base Character (0 Shards)" means you haven't unlocked them or have no progression shards.</li>
-                    <li><strong>Target Star Level:</strong> The desired star level you want to reach.</li>
-                    <li><strong>Initial Unlock Cost (Toggle):</strong>
-                        <ul>
-                            <li><strong>OFF:</strong> Calculations assume you have *already unlocked* the LM character. Costs shown are only for accumulating shards for the selected star upgrade.</li>
-                            <li><strong>ON:</strong> Calculations will *include* the estimated cost to pull your first copy of the LM character, *in addition* to the shards needed for the selected upgrade.</li>
-                        </ul>
-                    </li>
-                </ul>
-                
-                <h4>4. Shard Bleed Systems</h4>
-                <p>This section allows you to configure shard yields for LM and NM pulls under two systems.</p>
-                <ul>
-                    <li><strong>Current System:</strong> Input fields for shards from LM pulls and NM pulls (as LM shards).</li>
-                    <li><strong>Proposed System:</strong>
-                        <ul>
-                            <li>Input field for shards from an LM pull.</li>
-                            <li>NM pulls: The first 6 NM pulls grant a random 2, 3, or 5 LM shards. Subsequent NM pulls grant 0 LM shards. This rule is fixed and described in the UI.</li>
-                        </ul>
-                    </li>
-                </ul>
-
-
-                <h4>5. Calculate Anvils (Expected Value) Button</h4>
-                <p>This is the main calculation button. It uses the inputs from "Base Pull Rates," "Upgrade Range," and "Shard Bleed Systems" to compute the average (Expected Value) Anvils needed. Results are shown in the "Expected Value Calculation Results" section.</p>
-
-                <h4>6. Probability of Success within Budget</h4>
-                <p>This simulation helps understand your chances with a fixed Anvil budget.</p>
-                <ul>
-                    <li><strong>Current Mythic Pity Count:</strong> How many pulls have you made since your *last* Mythic character? If you just got a Mythic, this is 0. This value should be less than your "Mythic Hard Pity".</li>
-                    <li><strong>Non-LM Mythics Pulled (for LM Guarantee):</strong> How many *non-featured* Mythics have you pulled in a row since your last *featured LM*? If the LM guarantee is "after 3 non-LMs", this value can be 0, 1, or 2.</li>
-                    <li><strong>Your Anvil Budget:</strong> How many Anvils are you willing to spend for this attempt?</li>
-                    <li><strong>Calculate Probability & Show Distribution Button:</strong> Runs thousands of simulated pulling sessions based on *all* your current inputs (including pity and budget). It then displays:
-                        <ul>
-                            <li>A summary of success rate (chance to achieve your goal within budget).</li>
-                            <li>Median and 90th percentile (P90) Anvil costs for *successful* attempts.</li>
-                            <li>Two histogram charts showing the distribution of Anvil costs for both the "Current" and "Proposed" bleed systems. This helps visualize the likelihood of different cost outcomes.</li>
-                        </ul>
-                    </li>
-                </ul>
-
-                <h4>7. Results Sections</h4>
-                <h5>Expected Value Calculation Results:</h5>
-                <ul>
-                    <li><strong>Initial Unlock Cost (if toggled ON):</strong> Average, Best, and Worst-case Anvils to get the *first copy* of the LM.</li>
-                    <li><strong>Shards Needed for This Upgrade:</strong> Calculated based on your Start/Target Star Levels.</li>
-                    <li><strong>Current/Proposed Bleed System Costs:</strong> Shows Average, Best, and Worst-case Anvils for the selected shard upgrade (or total including unlock if toggled ON). "Best Case" usually assumes you get LMs frequently. "Worst Case" assumes you hit pity for every Mythic and hit the LM guarantee pity.</li>
-                    <li><strong>Conclusion:</strong> A brief comparison of the two bleed systems based on average costs.</li>
-                </ul>
-                <h5>Detailed Calculations (Expected Value) (Expandable):</h5>
-                <p>Provides a breakdown of intermediate values used in the EV calculations, such as average draws per Mythic, effective shards per Mythic under each system, etc. This is for users interested in the underlying numbers.</p>
-                <h5>Anvil Cost Chart (EV):</h5>
-                <p>Visualizes the *total average* Anvils needed to reach each star level from a base character (0 shards), for both bleed systems. If "Include Initial Unlock" is ON, this chart also includes the unlock cost.</p>
-                
-                <h4>8. Customize Visible Sections & Order</h4>
-                <p>This expandable section at the top allows you to:</p>
-                    <ul>
-                        <li><strong>Hide/Show Sections:</strong> Uncheck a box to hide a section you don't frequently use, or check it to show it again.</li>
-                        <li><strong>Reorder Sections:</strong> Use the Up (↑) and Down (↓) arrows next to each section name to change its display order on the page.</li>
-                    </ul>
-                    <p>Your preferences for visibility and order are saved in your browser.</p>
-
-                <h3>Understanding the Math (Conceptual)</h3>
-                <ul>
-                    <li><strong>Expected Value (EV):</strong> The EV calculations are based on statistical averages. For example, "Average Draws per Mythic" considers the base probability and the hard pity to determine, on average, how many pulls it takes to get one Mythic. Similarly, "Avg Effective Shards per Mythic" considers the LM rate-up, LM guarantee, and shard yields to find the average number of LM-specific shards gained per Mythic pulled. These averages are then used to estimate the total Anvils. For the Proposed System's NM shards, the EV calculation assumes 0 shards from NM pulls for long-term progression, as the 2/3/5 shard bonus is limited to the first 6 NM pulls.</li>
-                    <li><strong>Probability Simulation:</strong> This feature runs many (e.g., 10,000) simulated "pulling sessions" using random number generation according to the probabilities you've set. It starts each simulated session from your specified "Current Pity" values. For the Proposed System, it correctly models the random shard gain for the first 6 NM pulls and 0 thereafter. By observing how many Anvils each simulated session takes to reach your goal (or if it fails within the budget), it can build a distribution of outcomes and calculate success rates.</li>
-                </ul>
-
-                <h3>Tips for Using the Calculator</h3>
-                <ul>
-                    <li>Use this tool for planning your resource allocation and understanding potential costs.</li>
-                    <li>Remember that gacha games are based on randomness. The "Expected Value" is an average over many trials; your personal experience in a single attempt can vary significantly.</li>
-                    <li>The "Probability Distribution" gives a better sense of this variance and the risk involved for a specific budget.</li>
-                    <li>Keep your "Current Pity" inputs updated for the most accurate personal probability simulations.</li>
-                </ul>
             </div>
+            
+            <div id="explanationSection" class="calc-section alt-bg p-4 md:p-6 rounded-lg shadow-md" data-section-name="Features & Terminology Guide">
+                <h2 class="text-3xl font-bold mb-10 text-center text-slate-800">Anvil Calculator Guide</h2>
+
+                <!-- Introduction Section -->
+                <section class="mb-10 bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-2xl font-semibold text-slate-700 mb-4 pb-2 border-b border-slate-200">Introduction</h3>
+                    <div class="mt-3">
+                        <p class="text-slate-600 leading-relaxed">This calculator is designed to help you estimate the resources (primarily "Anvils") needed to unlock and upgrade Limited Mythic (LM) characters in gacha games that use a similar pull and pity system. It provides both long-term average costs (Expected Value) and short-term probability distributions based on your current progress and budget.</p>
+                    </div>
+                </section>
+
+                <!-- Core Concepts & Terminology Section -->
+                <section class="mb-10 bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-2xl font-semibold text-slate-700 mb-4 pb-2 border-b border-slate-200">Core Concepts & Terminology</h3>
+                    <div class="mt-3">
+                        <p class="text-slate-600 leading-relaxed mb-4">Understanding these terms will help you use the calculator effectively:</p>
+                        <ul class="space-y-4 pl-5">
+                            <li><strong class="text-slate-700 block mb-1">Anvils:</strong> The in-game currency or item used to perform a "pull" or "summon" on a character banner.</li>
+                            <li><strong class="text-slate-700 block mb-1">Mythic Character:</strong> A high-rarity character type. This calculator focuses on "Limited Mythic" characters.</li>
+                            <li><strong class="text-slate-700 block mb-1">Limited Mythic (LM):</strong> A specific, featured Mythic character available on a banner for a limited time. This is usually the primary target for players.</li>
+                            <li><strong class="text-slate-700 block mb-1">Mythic Base Probability:</strong> The fundamental chance (e.g., 3.84% or <code class="bg-slate-100 text-red-600 px-1.5 py-1 rounded text-sm">0.0384</code>) of pulling *any* Mythic character on a single Anvil pull, before any pity systems are considered.</li>
+                            <li><strong class="text-slate-700 block mb-1">Mythic Hard Pity:</strong> The maximum number of Anvil pulls after which you are guaranteed to receive *any* Mythic character if you haven't pulled one already. For example, if hard pity is 50, your 50th pull will be a Mythic if the previous 49 were not.</li>
+                            <li><strong class="text-slate-700 block mb-1">Limited Mythic Rate-Up Chance:</strong> When you do pull a Mythic character, this is the probability that the Mythic you pulled is the featured Limited Mythic (LM) character. For example, a 26.9% (or <code class="bg-slate-100 text-red-600 px-1.5 py-1 rounded text-sm">0.269</code>) rate-up means if you pull a Mythic, there's a 26.9% chance it's the LM.</li>
+                            <li><strong class="text-slate-700 block mb-1">LM Guarantee (Non-LM Pity / "Fail Three Times"):</strong> Many games have a system to ensure you eventually get the featured LM. This calculator hardcodes a common version: if you pull a certain number of Mythic characters that are *not* the featured LM (e.g., 3 Non-LM Mythics in a row), your *next* Mythic pull is guaranteed to be the featured LM. The "Non-LM Mythics Pulled (for LM Guarantee)" input lets you track this.</li>
+                            <li><strong class="text-slate-700 block mb-1">Star Levels & Shards:</strong> Characters often have star levels (e.g., 1-Star White to 5-Star Red). Upgrading to the next star level requires a specific number of "shards" (or character-specific fragments/duplicates).</li>
+                            <li class="bg-slate-50 p-4 rounded-md border border-slate-200">
+                                <strong class="text-slate-700 block mb-2">Shard Bleed Systems:</strong> When you pull a duplicate of a Mythic character you already own (or sometimes any Mythic during an LM banner), you often receive shards for the *featured LM* instead of (or in addition to) shards for the character you actually pulled. This calculator compares two such "bleed" systems:
+                                <ul class="list-disc space-y-1.5 pl-6 mt-2 text-sm text-slate-600">
+                                    <li><strong>Current System:</strong> Defines how many LM shards and Non-LM character shards you get.</li>
+                                    <li><strong>Proposed System:</strong> A hypothetical alternative system for comparison. For LM pulls, it uses the configured LM shard value. For NM pulls, the first 6 give random (2, 3, or 5) LM shards, and 0 thereafter.</li>
+                                </ul>
+                            </li>
+                            <li><strong class="text-slate-700 block mb-1">Expected Value (EV):</strong> In this context, the average number of Anvils you would expect to spend to achieve a goal (like unlocking an LM or getting enough shards for an upgrade) if you repeated the process many, many times. It's a long-term average and doesn't guarantee your individual experience will match it.</li>
+                            <li><strong class="text-slate-700 block mb-1">Probability Distribution:</strong> Shows the likelihood of different Anvil cost outcomes for achieving your goal within a specific budget, based on many simulated attempts. This gives a better sense of risk and potential cost variation than EV alone.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Calculator Features Explained Section -->
+                <section class="mb-10 bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-2xl font-semibold text-slate-700 mb-6 pb-2 border-b border-slate-200">Calculator Features Explained</h3>
+                    <div class="space-y-8">
+                        
+                        <section>
+                            <h4 class="text-xl font-semibold text-slate-700 mb-3">1. Champion Configurations</h4>
+                            <p class="text-slate-600 leading-relaxed mb-3">This section allows you to save and load your calculator settings.</p>
+                            <ul class="list-disc space-y-1.5 pl-6 text-slate-600">
+                                <li><strong>Configuration Name:</strong> Give your current set of inputs a unique name.</li>
+                                <li><strong>Save Current Settings:</strong> Saves all your current inputs (probabilities, pity, star levels, etc.) to your browser's local storage (or cloud if Firebase is active) under the entered name.</li>
+                                <li><strong>Load Configuration:</strong> Select a previously saved configuration from the dropdown.</li>
+                                <li><strong>Load Selected:</strong> Populates all calculator fields with the values from the selected configuration.</li>
+                                <li><strong>Delete Selected:</strong> Removes the selected configuration from your saved list.</li>
+                            </ul>
+                        </section>
+
+                        <section>
+                            <h4 class="text-xl font-semibold text-slate-700 mb-3">2. Base Pull Rates</h4>
+                            <p class="text-slate-600 leading-relaxed mb-3">Configure the fundamental probabilities of your pulls.</p>
+                            <ul class="list-disc space-y-1.5 pl-6 text-slate-600">
+                                <li><strong>Mythic Base Probability:</strong> Enter the game's stated base chance of pulling any Mythic character (e.g., for 3.84%, enter <code class="bg-slate-100 text-red-600 px-1.5 py-1 rounded text-sm">0.0384</code>).</li>
+                                <li><strong>Mythic Hard Pity:</strong> Enter the number of pulls at which a Mythic is guaranteed (e.g., <code class="bg-slate-100 text-red-600 px-1.5 py-1 rounded text-sm">50</code>).</li>
+                                <li><strong>Limited Mythic Rate-Up Chance:</strong> When a Mythic is pulled, what's the chance it's the featured LM? (e.g., for 26.9%, enter <code class="bg-slate-100 text-red-600 px-1.5 py-1 rounded text-sm">0.269</code>).</li>
+                            </ul>
+                        </section>
+
+                        <section>
+                            <h4 class="text-xl font-semibold text-slate-700 mb-3">3. Select Upgrade Range</h4>
+                            <p class="text-slate-600 leading-relaxed mb-3">Define your character upgrade goal.</p>
+                            <ul class="list-disc space-y-1.5 pl-6 text-slate-600">
+                                <li><strong>Starting Star Level:</strong> The current star level of your character. "Base Character (0 Shards)" means you haven't unlocked them or have no progression shards.</li>
+                                <li><strong>Target Star Level:</strong> The desired star level you want to reach.</li>
+                                <li class="bg-slate-50 p-3 rounded-md border border-slate-200 mt-2"><strong>Initial Unlock Cost (Toggle):</strong>
+                                    <ul class="list-circle space-y-1 pl-6 mt-1.5 text-sm">
+                                        <li><strong>OFF:</strong> Calculations assume you have *already unlocked* the LM character. Costs shown are only for accumulating shards for the selected star upgrade.</li>
+                                        <li><strong>ON:</strong> Calculations will *include* the estimated cost to pull your first copy of the LM character, *in addition* to the shards needed for the selected upgrade.</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </section>
+                        
+                        <section>
+                            <h4 class="text-xl font-semibold text-slate-700 mb-3">4. Shard Bleed Systems</h4>
+                            <p class="text-slate-600 leading-relaxed mb-3">This section allows you to configure shard yields for LM and NM pulls under two systems.</p>
+                            <ul class="list-disc space-y-1.5 pl-6 text-slate-600">
+                                <li><strong>Current System:</strong> Input fields for shards from LM pulls and NM pulls (as LM shards).</li>
+                                <li class="bg-slate-50 p-3 rounded-md border border-slate-200 mt-2"><strong>Proposed System:</strong>
+                                    <ul class="list-circle space-y-1 pl-6 mt-1.5 text-sm">
+                                        <li>Input field for shards from an LM pull.</li>
+                                        <li>NM pulls: The first 6 NM pulls grant a random 2, 3, or 5 LM shards. Subsequent NM pulls grant 0 LM shards. This rule is fixed and described in the UI.</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </section>
+
+                        <section>
+                            <h4 class="text-xl font-semibold text-slate-700 mb-3">5. Calculate Anvils (Expected Value) Button</h4>
+                            <p class="text-slate-600 leading-relaxed">This is the main calculation button. It uses the inputs from "Base Pull Rates," "Upgrade Range," and "Shard Bleed Systems" to compute the average (Expected Value) Anvils needed. Results are shown in the "Expected Value Calculation Results" section.</p>
+                        </section>
+
+                        <section>
+                            <h4 class="text-xl font-semibold text-slate-700 mb-3">6. Probability of Success within Budget</h4>
+                            <p class="text-slate-600 leading-relaxed mb-3">This simulation helps understand your chances with a fixed Anvil budget.</p>
+                            <ul class="list-disc space-y-1.5 pl-6 text-slate-600">
+                                <li><strong>Current Mythic Pity Count:</strong> How many pulls have you made since your *last* Mythic character? If you just got a Mythic, this is 0. This value should be less than your "Mythic Hard Pity".</li>
+                                <li><strong>Non-LM Mythics Pulled (for LM Guarantee):</strong> How many *non-featured* Mythics have you pulled in a row since your last *featured LM*? If the LM guarantee is "after 3 non-LMs", this value can be 0, 1, or 2.</li>
+                                <li><strong>Your Anvil Budget:</strong> How many Anvils are you willing to spend for this attempt?</li>
+                                <li class="bg-slate-50 p-3 rounded-md border border-slate-200 mt-2"><strong>Calculate Probability & Show Distribution Button:</strong> Runs thousands of simulated pulling sessions based on *all* your current inputs (including pity and budget). It then displays:
+                                    <ul class="list-circle space-y-1 pl-6 mt-1.5 text-sm">
+                                        <li>A summary of success rate (chance to achieve your goal within budget).</li>
+                                        <li>Median and 90th percentile (P90) Anvil costs for *successful* attempts.</li>
+                                        <li>Two histogram charts showing the distribution of Anvil costs for both the "Current" and "Proposed" bleed systems. This helps visualize the likelihood of different cost outcomes.</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </section>
+
+                        <section>
+                            <h4 class="text-xl font-semibold text-slate-700 mb-3">7. Results Sections</h4>
+                            <h5 class="text-lg font-medium text-slate-600 mt-4 mb-2">Expected Value Calculation Results:</h5>
+                            <ul class="list-disc space-y-1.5 pl-6 text-slate-600">
+                                <li><strong>Initial Unlock Cost (if toggled ON):</strong> Average, Best, and Worst-case Anvils to get the *first copy* of the LM.</li>
+                                <li><strong>Shards Needed for This Upgrade:</strong> Calculated based on your Start/Target Star Levels.</li>
+                                <li><strong>Current/Proposed Bleed System Costs:</strong> Shows Average, Best, and Worst-case Anvils for the selected shard upgrade (or total including unlock if toggled ON). "Best Case" usually assumes you get LMs frequently. "Worst Case" assumes you hit pity for every Mythic and hit the LM guarantee pity.</li>
+                                <li><strong>Conclusion:</strong> A brief comparison of the two bleed systems based on average costs.</li>
+                            </ul>
+                            <h5 class="text-lg font-medium text-slate-600 mt-4 mb-2">Detailed Calculations (Expected Value) (Expandable):</h5>
+                            <p class="text-slate-600 leading-relaxed pl-6">Provides a breakdown of intermediate values used in the EV calculations, such as average draws per Mythic, effective shards per Mythic under each system, etc. This is for users interested in the underlying numbers.</p>
+                            <h5 class="text-lg font-medium text-slate-600 mt-4 mb-2">Anvil Cost Chart (EV):</h5>
+                            <p class="text-slate-600 leading-relaxed pl-6">Visualizes the *total average* Anvils needed to reach each star level from a base character (0 shards), for both bleed systems. If "Include Initial Unlock" is ON, this chart also includes the unlock cost.</p>
+                        </section>
+                        
+                        <section>
+                            <h4 class="text-xl font-semibold text-slate-700 mb-3">8. Customize Visible Sections & Order</h4>
+                            <p class="text-slate-600 leading-relaxed mb-3">This expandable section at the top allows you to:</p>
+                            <ul class="list-disc space-y-1.5 pl-6 text-slate-600">
+                                <li><strong>Hide/Show Sections:</strong> Uncheck a box to hide a section you don't frequently use, or check it to show it again.</li>
+                                <li><strong>Reorder Sections:</strong> Use the Up (↑) and Down (↓) arrows next to each section name to change its display order on the page.</li>
+                            </ul>
+                            <p class="text-slate-600 leading-relaxed pl-6 mt-2">Your preferences for visibility and order are saved in your browser.</p>
+                        </section>
+                    </div>
+                </section>
+
+                <!-- Understanding the Math Section -->
+                <section class="mb-10 bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-2xl font-semibold text-slate-700 mb-4 pb-2 border-b border-slate-200">Understanding the Math (Conceptual)</h3>
+                    <div class="mt-3">
+                        <ul class="space-y-4 pl-5 text-slate-600 leading-relaxed">
+                            <li><strong class="text-slate-700 block mb-1">Expected Value (EV):</strong> The EV calculations are based on statistical averages. For example, "Average Draws per Mythic" considers the base probability and the hard pity to determine, on average, how many pulls it takes to get one Mythic. Similarly, "Avg Effective Shards per Mythic" considers the LM rate-up, LM guarantee, and shard yields to find the average number of LM-specific shards gained per Mythic pulled. These averages are then used to estimate the total Anvils. For the Proposed System's NM shards, the EV calculation assumes 0 shards from NM pulls for long-term progression, as the 2/3/5 shard bonus is limited to the first 6 NM pulls.</li>
+                            <li><strong class="text-slate-700 block mb-1">Probability Simulation:</strong> This feature runs many (e.g., 10,000) simulated "pulling sessions" using random number generation according to the probabilities you've set. It starts each simulated session from your specified "Current Pity" values. For the Proposed System, it correctly models the random shard gain for the first 6 NM pulls and 0 thereafter. By observing how many Anvils each simulated session takes to reach your goal (or if it fails within the budget), it can build a distribution of outcomes and calculate success rates.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Tips for Using the Calculator Section -->
+                <section class="mb-6 bg-white p-6 rounded-lg shadow"> <!-- mb-6 to match others, or remove if it's the last element -->
+                    <h3 class="text-2xl font-semibold text-slate-700 mb-4 pb-2 border-b border-slate-200">Tips for Using the Calculator</h3>
+                    <div class="mt-3">
+                        <ul class="list-disc space-y-2.5 pl-6 text-slate-600 leading-relaxed">
+                            <li>Use this tool for planning your resource allocation and understanding potential costs.</li>
+                            <li>Remember that gacha games are based on randomness. The "Expected Value" is an average over many trials; your personal experience in a single attempt can vary significantly.</li>
+                            <li>The "Probability Distribution" gives a better sense of this variance and the risk involved for a specific budget.</li>
+                            <li>Keep your "Current Pity" inputs updated for the most accurate personal probability simulations.</li>
+                        </ul>
+                    </div>
+                </section>
+            </div>
+
         </details>
 
     </div>
