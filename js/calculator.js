@@ -1060,7 +1060,7 @@ function validateAndGetEVInputs() {
     data.mythicHardPity = validate(parseInt(DOM.mythicHardPityInput.value, 10), v => !isNaN(v) && v >= 1, DOM.mythicHardPityError, 'Must be >= 1');
     data.lmRateUpChance = validate(parseFloat(DOM.lmRateUpChanceInput.value), v => !isNaN(v) && v >= 0 && v <= 1, DOM.lmRateUpChanceError, 'Must be 0 to 1');
     data.currentMythicPity = validate(parseInt(DOM.currentMythicPityInput.value, 10) || 0, v => !isNaN(v) && v >= 0 && v < data.mythicHardPity, DOM.currentMythicPityError, `Must be 0 to ${data.mythicHardPity - 1}`);
-    data.currentLMPity = validate(parseInt(DOM.currentLMPityInput.value, 10) || 0, v => !isNaN(v) && v >= 0 && v < CONSTANTS.NM_GUARANTEE_THRESHOLD, DOM.currentLMPityError, `Must be 0 to ${CONSTANTS.NM_GUARANTEE_THRESHOLD - 1}`);
+    data.currentLMPity = validate(parseInt(DOM.currentLMPityInput.value, 10) || 0, v => !isNaN(v) && v >= 0 && v <= CONSTANTS.NM_GUARANTEE_THRESHOLD, DOM.currentLMPityError, `Must be 0 to ${CONSTANTS.NM_GUARANTEE_THRESHOLD}`);
     
     data.lmShardsCurrent = validate(parseInt(DOM.currentLMSInput.value, 10), v => !isNaN(v) && v >= 0, DOM.currentLMSError, 'Invalid');
     data.nmShardsCurrent = validate(parseInt(DOM.currentNMSInput.value, 10), v => !isNaN(v) && v >= 0, DOM.currentNMSError, 'Invalid');
