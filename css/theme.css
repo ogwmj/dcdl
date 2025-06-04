@@ -1,0 +1,8 @@
+/* Custom CSS for thematic elements and animations not directly covered by Tailwind */
+body {
+    font-family: 'Inter', sans-serif;
+    /* Deep, dark background for a futuristic/heroic lair feel */
+    background-color: #0d1226; /* A very dark blue/purple */
+    color: #e2e8f0; /* Light off-white for text contrast */
+    overflow-x: hidden; /* Prevent horizontal scroll bars, especially with animations */
+}
