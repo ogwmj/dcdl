@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Shared Team - DC: Dark Legion Tools</title>
+
+    <!-- Basic Social Media Meta Tags (will be updated by JS) -->
+    <meta property="og:title" content="View Shared Team - DC: Dark Legion Tools">
+    <meta property="og:description" content="Check out this shared team!">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content=""> <!-- To be filled by share.js -->
+    <meta property="og:image:width" content=""> <!-- To be filled by share.js -->
+    <meta property="og:image:height" content=""> <!-- To be filled by share.js -->
+    <meta property="og:url" content=""> <!-- To be filled by share.js -->
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="View Shared Team - DC: Dark Legion Tools">
+    <meta name="twitter:description" content="Check out this shared team!">
+    <meta name="twitter:image" content=""> <!-- To be filled by share.js -->
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="css/theme.css" rel="stylesheet">
+    <link href="css/share.css" rel="stylesheet"> <!-- Styles for the hero banner -->
+
+    <style>
+        /* Custom font for Inter */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+    </style>
+</head>
+<body class="bg-gray-100">
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="ogwmj" data-description="Support me on Buy me a coffee!" data-message="No pressure." data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+
+    <!-- Navigation Menu -->
+    <nav class="bg-slate-900 bg-opacity-80 backdrop-filter backdrop-blur-md shadow-lg sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+            <div class="flex items-center">
+                <a href="index.html" class="flex-shrink-0 text-white text-2xl font-bold glowing-text-nav">
+                DC:DL Tools
+                </a>
+            </div>
+            <div class="hidden md:block">
+                <div class="ml-10 flex items-baseline space-x-4">
+                <a href="index.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                <a href="calculator.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Anvil Calculator</a>
+                <a href="teams.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Team Builder</a>
+                </div>
+            </div>
+            <div class="-mr-2 flex md:hidden">
+                <button type="button" id="mobile-menu-button" class="bg-slate-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+                <span class="sr-only">Open main menu</span>
+                <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+                <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                </button>
+            </div>
+            </div>
+        </div>
+        <div class="md:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <a href="index.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
+            <a href="calculator.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Anvil Calculator</a>
+            <a href="teams.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Team Builder</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="combined-image-display-area">
+        <p id="loadingMessage">Generating hero banner...</p>
+        <img id="staticHeroBannerImage" src="" alt="Combined Hero Banner" style="display: none;"> <!-- Initially hidden, shown by JS -->
+    </div>
+    
+    <!-- Hidden container for hero images (used by share.js for banner generation) -->
+    <!-- This should be populated dynamically if team members are part of the banner -->
+    <div class="source-image-data-container" id="heroSourceData" aria-hidden="true">
+        <!-- Example Panels - These would ideally be populated by teams.js based on the shared team members -->
+        <!-- The share.js script will look for .hero-panel and <img> tags inside them -->
+        <div class="hero-panel"> <!-- Style for width/height removed, JS config drives canvas panel size -->
+            <img src="img/champions/avatars/Batman.webp" alt="Batman" crossorigin="anonymous"
+                    onerror="this.dataset.error='true'; this.src='https://placehold.co/200x240/1a202c/e2e8f0?text=Batman+Err';">
+        </div>
+        <div class="hero-panel">
+            <img src="img/champions/avatars/GreenLantern.webp" alt="Green Lantern" crossorigin="anonymous"
+                    onerror="this.dataset.error='true'; this.src='https://placehold.co/200x240/1a202c/e2e8f0?text=GL+Err';">
+        </div>
+        <div class="hero-panel">
+            <img src="img/champions/avatars/Cyborg.webp" alt="Cyborg" crossorigin="anonymous"
+                    onerror="this.dataset.error='true'; this.src='https://placehold.co/200x240/1a202c/e2e8f0?text=Cyborg+Err';">
+        </div>
+        <div class="hero-panel">
+            <img src="img/champions/avatars/Robin.webp" alt="Robin" crossorigin="anonymous"
+                    onerror="this.dataset.error='true'; this.src='https://placehold.co/200x240/1a202c/e2e8f0?text=Robin+Err';">
+        </div>
+        <div class="hero-panel">
+            <img src="img/champions/avatars/RedRobin.webp" alt="Red Robin" crossorigin="anonymous"
+                    onerror="this.dataset.error='true'; this.src='https://placehold.co/200x240/1a202c/e2e8f0?text=RR+Err';">
+        </div>
+        <!-- Add more hero panels as needed, or this will be populated dynamically by teams.js -->
+    </div>
+
+
+    <div class="main-content-container"> <!-- Renamed class from .container to avoid conflict -->
+        <!-- Loading and Error Indicators (used by teams.js) -->
+        <div id="loading-indicator" class="text-center card hidden">
+            <div class="loading-spinner"></div>
+            <p class="text-indigo-600">Loading ...</p> <!-- Generic loading message -->
+        </div>
+        <div id="error-indicator" class="text-center card hidden p-4 bg-red-100 border border-red-300 text-red-700">
+            <p>Error loading data.</p>
+            <p id="error-message-details" class="text-xs mt-1"></p>
+        </div>
+
+        <!-- Section for Displaying Shared Team (from teams.js) -->
+        <section id="shared-team-view-section" class="card hidden"> <!-- This section is shown/hidden by teams.js -->
+            <div class="calc-section">
+                <h2 id="shared-team-name" class="text-2xl font-bold text-indigo-700 mb-4 text-center">Shared Team</h2>
+                <!-- Old banner display area removed from here -->
+                <div id="shared-team-output" class="mt-6 p-4 border-t border-gray-200">
+                    <p class="text-gray-500 text-center">Loading shared team details...</p>
+                </div>
+                <div class="mt-6 text-center">
+                    <a class="btn btn-success" href="teams.html" title="Go to Team Builder"><span class="btn-icon">↩️</span> Go to Team Builder</a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- This div is mainly for teams.js to potentially hide if it finds it, not strictly necessary for share.html -->
+        <div id="main-app-content" class="hidden"></div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script type="module" src="js/teams.js"></script> <!-- For shared team data loading -->
+    <script type="module" src="js/share.js"></script> <!-- For hero banner generation -->
+    <script type="text/javascript" src="js/navigation.js"></script>
+</body>
+</html>
