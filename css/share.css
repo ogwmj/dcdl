@@ -13,7 +13,6 @@
 body {
     font-family: 'Inter', sans-serif;
     color: var(--text-primary);
-    background-color: var(--bg-secondary); /* Light gray background for the page */
 }
 .container {
     max-width: 90%; /* Default max-width */
