@@ -74,7 +74,7 @@ h2 { color: var(--text-primary); border-bottom: 1px solid var(--border-primary);
 .score-chart-container { @apply w-full bg-gray-200 rounded-full h-6 mb-4 flex overflow-hidden border border-gray-300; }
 .score-chart-segment { @apply h-full flex items-center justify-center text-xs font-medium text-white text-center p-1 leading-none; transition: width 0.5s ease-in-out; }
 .score-chart-segment-label { @apply text-xs text-gray-700 mt-1; }
-.icon-wrapper { display: inline-flex; align-items: center; }
+.icon-wrapper { display: inline-flex; align-items: center; width: 30px; }
 
 /* Styles for the banner display area, ensuring it's centered and responsive */
 .hero-banner-container {
