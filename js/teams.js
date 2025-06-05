@@ -4,34 +4,15 @@
  * This script handles:
  * - Firebase initialization and authentication.
  * - Fetching and displaying game data (champions, synergies, legacy pieces) from Firestore.
- * - Player champion roster management:
- * - Adding, editing, and removing champions from the user's roster.
- * - Persisting the roster to Firestore.
- * - Importing and exporting roster data.
- * - Pre-filling the roster.
- * - Optimal team calculation:
- * - Generating team combinations based on the player's roster.
- * - Applying rules like requiring a healer or excluding champions from saved teams.
- * - Calculating team scores based on individual champion scores, active synergies, and class diversity.
- * - Displaying the best team found, including score breakdown and active synergies.
- * - Allowing users to swap champions in the calculated team and recalculate.
- * - Saved teams management:
- * - Saving calculated or modified teams with custom names to Firestore.
- * - Loading and displaying saved teams.
- * - Renaming, deleting, and sharing/unsharing saved teams via public links.
- * - UI interactions:
- * - Populating dropdowns and tables.
- * - Managing modals for input, confirmation, processing, and sharing.
- * - Handling toast notifications for user feedback.
- * - Making synergy sections collapsible.
- * - URL parameter handling for viewing publicly shared teams.
+ * - Player champion roster management.
+ * - Optimal team calculation.
+ * - Saved teams management.
+ * - UI interactions.
+ * - URL parameter handling for viewing publicly shared teams, including dynamic banner generation.
  * - Firebase Analytics for tracking user events.
  *
- * The script uses jQuery for DataTables integration and vanilla JavaScript for other DOM manipulations and logic.
- * It relies on several global constants for game mechanics (e.g., rarity scores, synergy bonuses) and UI elements.
- *
  * @author Originally by the user, refactored and documented by Google's Gemini.
- * @version 2.0.0
+ * @version 2.1.0 - Added dynamic hero banner integration for share.html
  */
 
 // --- Firebase SDK Imports ---
@@ -40,8 +21,12 @@ import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged }
 import { getFirestore, collection, getDocs, doc, setDoc, getDoc, deleteDoc, query, where, onSnapshot, setLogLevel, orderBy, addDoc, updateDoc, serverTimestamp, deleteField } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
+// --- Custom Module Imports ---
+// MODIFICATION: Import createDynamicHeroBanner from share.js
+import { createDynamicHeroBanner } from './share.js';
+
 // =================================================================================================
-// SECTION: Constants
+// #region: Constants
 // =================================================================================================
 
 /** @type {string} Icon for adding an item. */
@@ -110,7 +95,7 @@ const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial
 
 
 // =================================================================================================
-// SECTION: Global State Variables
+// #region: Global State Variables
 // =================================================================================================
 
 /** @type {import("firebase/app").FirebaseApp} Firebase app instance. */
@@ -157,7 +142,7 @@ let currentBestTeamForSaving = null;
 let savedTeams = [];
 
 // =================================================================================================
-// SECTION: DOM Element Selectors
+// #region: DOM Element Selectors
 // =================================================================================================
 
 const loadingIndicatorEl = document.getElementById('loading-indicator');
@@ -228,7 +213,7 @@ document.body.appendChild(swapChampionModalEl);
 
 
 // =================================================================================================
-// SECTION: Data Definitions & Utility Functions
+// #region: Data Definitions & Utility Functions
 // =================================================================================================
 
 /**
@@ -451,7 +436,7 @@ function generateCombinations(array, k) {
 
 
 // =================================================================================================
-// SECTION: Firebase Initialization & Auth
+// #region: Firebase Initialization & Auth
 // =================================================================================================
 
 /**
@@ -517,7 +502,7 @@ async function initializeFirebase() {
 
 
 // =================================================================================================
-// SECTION: Data Fetching Functions
+// #region: Data Fetching Functions
 // =================================================================================================
 
 /**
@@ -582,12 +567,18 @@ async function fetchLegacyPieces() {
         const legacyPiecesCollectionRef = collection(db, `artifacts/${appId}/public/data/legacyPieces`);
         const querySnapshot = await getDocs(legacyPiecesCollectionRef);
         dbLegacyPieces = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        populateLegacyPieceSelect();
+        
+        if (legacyPieceSelectEl) { // Check if element exists (for teams.html)
+            populateLegacyPieceSelect();
+        }
     } catch (error) {
         console.error("Error fetching legacy pieces:", error);
         showError("Error fetching legacy pieces from Firestore.", error.message);
         dbLegacyPieces = [];
-        populateLegacyPieceSelect(); // Populate with empty or default
+        
+        if (legacyPieceSelectEl) { // Also check here for teams.html
+            populateLegacyPieceSelect(); // Populate with empty or default if element exists
+        }
     }
 }
 
@@ -681,7 +672,7 @@ async function loadSavedTeams() {
 
 
 // =================================================================================================
-// SECTION: UI Population & Rendering Functions
+// #region: UI Population & Rendering Functions
 // =================================================================================================
 
 /**
@@ -728,6 +719,8 @@ function populateGearRarityOptions() {
  * Renders the list of available synergies in the UI, making them collapsible.
  */
 function renderAvailableSynergies() {
+    // This function is specific to teams.html and should not run on share.html
+    // if synergiesListEl is not present.
     if (!synergiesListEl) return;
     synergiesListEl.innerHTML = '';
 
@@ -844,8 +837,8 @@ function renderAvailableSynergies() {
  */
 function populateChampionSelect() {
     if (!champSelectDbEl) {
-        console.error("FATAL: Champion select dropdown element (champ-select-db) not found in DOM!");
-        return;
+        // console.error("FATAL: Champion select dropdown element (champ-select-db) not found in DOM!");
+        return; // Do not proceed if the element doesn't exist (e.g., on share.html)
     }
     const currentSelectedValue = editingChampionId ? playerChampionRoster.find(c => c.id === editingChampionId)?.dbChampionId : champSelectDbEl.value;
     champSelectDbEl.innerHTML = '<option value="">-- Select Champion --</option>';
@@ -891,8 +884,8 @@ function populateChampionSelect() {
  */
 function populateLegacyPieceSelect(championClass = null) {
     if (!legacyPieceSelectEl) {
-        console.error("FATAL: Legacy Piece select dropdown element (legacy-piece-select) not found in DOM!");
-        return;
+        // console.error("FATAL: Legacy Piece select dropdown element (legacy-piece-select) not found in DOM!");
+        return; // Do not proceed if not on teams.html
     }
     const currentSelectedLegacyId = legacyPieceSelectEl.value;
     legacyPieceSelectEl.innerHTML = '<option value="">-- None --</option>';
@@ -940,7 +933,7 @@ function populateLegacyPieceSelect(championClass = null) {
  * Renders the player's champion roster in a DataTable.
  */
 function renderPlayerChampionRoster() {
-    if (!championsRosterTableWrapperEl) return;
+    if (!championsRosterTableWrapperEl) return; // Only run on teams.html
 
     if (rosterDataTable) {
         rosterDataTable.clear().destroy();
@@ -1029,7 +1022,7 @@ function renderPlayerChampionRoster() {
  * Renders the list of saved teams in the UI.
  */
 function renderSavedTeams() {
-    if (!savedTeamsListEl || !selectExclusionTeamDropdownEl) return;
+    if (!savedTeamsListEl || !selectExclusionTeamDropdownEl) return; // Only run on teams.html
     savedTeamsListEl.innerHTML = '';
     selectExclusionTeamDropdownEl.innerHTML = '';
 
@@ -1134,10 +1127,11 @@ function renderSavedTeams() {
 }
 
 /**
- * Renders the details of a shared team.
+ * Renders the details of a shared team and triggers hero banner generation.
  * @param {Object} teamObject - The shared team data object.
+ * @async
  */
-function renderSharedTeam(teamObject) {
+async function renderSharedTeam(teamObject) { // MODIFICATION: Made async
     if (!sharedTeamOutputEl) return;
     if (!teamObject) {
         sharedTeamOutputEl.innerHTML = '<p class="text-red-500">Error: Invalid shared team data provided.</p>';
@@ -1191,11 +1185,18 @@ function renderSharedTeam(teamObject) {
     html += `<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-4">`;
     if (teamObject.members && Array.isArray(teamObject.members)) {
         teamObject.members.forEach((member) => {
+            const imageName = (member.name || "UnknownChampion").replace(/[^a-zA-Z0-9-_]/g, '');
+            const championImageSrc = `img/champions/avatars/${imageName}.webp`;
+            const placeholderImageOnError = `https://placehold.co/150x200/e2e8f0/64748b?text=${encodeURIComponent(member.name || 'Champion')}`;
+
             const classNameForIcon = (member.class && member.class !== "N/A") ? member.class.trim().replace(/\s+/g, '_') : "UnknownClass";
             const healerIconHtml = member.isHealer ? getHealerPlaceholder() : '';
             const starRatingHTML = getStarRatingHTML(member.starColorTier);
 
             html += `<div class="p-3 border rounded-lg shadow-md bg-white flex flex-col justify-between champion-card">`;
+            // The champion card image is now handled by the hero banner, so we don't need a large image here.
+            // We can keep the small class icon and details.
+            html += `   <img src="${championImageSrc}" alt="${member.name || 'Champion'}" class="w-full h-auto object-cover rounded-md mb-2" onerror="this.onerror=null; this.src='${placeholderImageOnError}';">`;
             html += `   <div>`;
             html += `       <div class="flex items-center mb-2">`;
             html += `           ${getClassPlaceholder(member.class, 'result-icon class-icon mr-2')}`;
@@ -1258,7 +1259,58 @@ function renderSharedTeam(teamObject) {
         html += `<p class="text-gray-600 mt-6">No team synergies were active for this team.</p>`;
     }
     sharedTeamOutputEl.innerHTML = html;
+
+    // --- MODIFICATION: Populate hero banner data and call banner generation ---
+    const heroSourceDataContainer = document.getElementById('heroSourceData');
+    if (heroSourceDataContainer && teamObject.members && Array.isArray(teamObject.members)) {
+        heroSourceDataContainer.innerHTML = ''; // Clear existing placeholder/stale images
+
+        // Limit to 5 members for the banner or as per banner design capacity
+        const membersForBanner = teamObject.members.slice(0, 5); 
+
+        membersForBanner.forEach(member => {
+            const panelDiv = document.createElement('div');
+            panelDiv.className = 'hero-panel'; // Class expected by share.js
+
+            const img = document.createElement('img');
+            const imageName = (member.name || "UnknownChampion").replace(/[^a-zA-Z0-9-_]/g, '');
+            img.src = `img/champions/avatars/${imageName}.webp`;
+            img.alt = member.name || "Champion";
+            img.crossOrigin = "anonymous";
+            img.onerror = function() {
+                this.dataset.error = 'true';
+                this.src = `https://placehold.co/200x240/1a202c/e2e8f0?text=${encodeURIComponent(member.name || 'Err')}`;
+            };
+            panelDiv.appendChild(img);
+            heroSourceDataContainer.appendChild(panelDiv);
+        });
+
+        // Prepare config for the banner
+        const bannerConfig = {
+            bannerTitle: teamObject.name || "Shared Team", // Use the team's name for the banner title
+            pageDescription: `View the shared team: ${teamObject.name}. Total Score: ${Math.round(teamObject.totalScore)}.`,
+            // Potentially add other dynamic overrides here if needed, e.g., different background based on team type
+        };
+
+        // Call the banner creation function from share.js
+        // Wait a brief moment for the DOM to update with new images if any are dynamically added above.
+        // This is a common pattern, but for robust solutions, MutationObserver or specific callbacks are better.
+        // For simplicity, a small timeout can work if image sources are immediately available.
+        // If images in heroSourceDataContainer are also loaded async, this needs more careful timing.
+        // Assuming images are simple paths and will be processed by share.js's own loading.
+        setTimeout(async () => {
+            try {
+                await createDynamicHeroBanner(bannerConfig);
+                if (analytics) logEvent(analytics, 'hero_banner_generated', { team_name: teamObject.name });
+            } catch (bannerError) {
+                console.error("Error generating dynamic hero banner:", bannerError);
+                if (analytics) logEvent(analytics, 'hero_banner_error', { team_name: teamObject.name, error_message: bannerError.message });
+            }
+        }, 0); // Execute on the next tick
+    }
+    // --- END MODIFICATION ---
 }
+
 
 /**
  * Displays the results of the optimal team calculation.
@@ -1417,7 +1469,7 @@ function renderTeamDisplay(teamObject, isModifiable = true) {
 
 
 // =================================================================================================
-// SECTION: Champion Roster Management
+// #region: Champion Roster Management
 // =================================================================================================
 
 /**
@@ -1466,8 +1518,11 @@ async function savePlayerRosterToFirestore() {
  * Resets the champion input form to its default state.
  */
 function resetChampionForm() {
-    if (champSelectDbEl) champSelectDbEl.value = "";
-    if (champSelectDbEl) champSelectDbEl.disabled = false;
+    // Only operate if form elements exist (i.e., on teams.html)
+    if (!champSelectDbEl) return; 
+
+    champSelectDbEl.value = "";
+    champSelectDbEl.disabled = false;
     if (champBaseRarityDisplayEl) champBaseRarityDisplayEl.value = "";
     if (champClassDisplayEl) champClassDisplayEl.value = "";
     if (champHealerStatusDisplayEl) champHealerStatusDisplayEl.value = "";
@@ -1483,6 +1538,7 @@ function resetChampionForm() {
     if (addUpdateChampionBtn) {
         addUpdateChampionBtn.innerHTML = `<span class="btn-icon">${ICON_ADD}</span> <span class="btn-text">Add Champion to Roster</span> <span id="save-roster-indicator" class="saving-indicator hidden"></span>`;
     }
+     if (cancelEditBtn) cancelEditBtn.classList.add('hidden');
 }
 
 /**
@@ -1536,7 +1592,7 @@ window.editChampion = (championIdParam) => {
 function cancelEditMode() {
     editingChampionId = null;
     if (formModeTitleEl) formModeTitleEl.textContent = "Add Your Champions to Roster";
-    resetChampionForm();
+    resetChampionForm(); // This already checks for element existence
     if (cancelEditBtn) cancelEditBtn.classList.add('hidden');
     if (champSelectDbEl) champSelectDbEl.disabled = false;
     populateChampionSelect(); // Repopulate to include all available champions
@@ -1575,7 +1631,7 @@ window.removePlayerChampion = async (championIdParam) => {
 
 
 // =================================================================================================
-// SECTION: Team Calculation Logic
+// #region: Team Calculation Logic
 // =================================================================================================
 
 /**
@@ -1711,7 +1767,7 @@ function recalculateTeamScore(teamMembersArray) {
 }
 
 // =================================================================================================
-// SECTION: Saved Teams Management
+// #region: Saved Teams Management
 // =================================================================================================
 
 /**
@@ -1905,7 +1961,9 @@ window.shareTeam = async (teamId) => {
                 const privateTeamDocRef = doc(db, `artifacts/${appId}/users/${userId}/savedTeams`, teamId);
                 await updateDoc(privateTeamDocRef, { publicShareId: docRef.id });
 
-                const shareLink = `${window.location.origin}${window.location.pathname}?sharedTeamId=${docRef.id}`;
+                // MODIFIED: Construct the path to share.html. Adjust '/dcdl/' if your project structure is different
+                // For example, if share.html is at the root, it would be `${window.location.origin}/share.html?sharedTeamId=${docRef.id}`
+                const shareLink = `${window.location.origin}${window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'))}/share.html?sharedTeamId=${docRef.id}`;
                 openShareTeamModal(shareLink);
                 showToast("Public share link generated!", "success");
                 loadSavedTeams(); // Refresh to show unshare button
@@ -1966,59 +2024,91 @@ window.unshareTeam = async (savedTeamId, publicShareId) => {
 
 /**
  * Handles the display of a team if a sharedTeamId is present in the URL.
- * @returns {Promise<boolean>} True if a shared team was handled, false otherwise.
+ * If on teams.html, redirects to share.html.
+ * If on share.html, loads and displays the team.
+ * @returns {Promise<boolean>} True if a shared team was handled (displayed or redirected), false otherwise.
  * @async
  */
 async function handleSharedTeamLink() {
     const urlParams = new URLSearchParams(window.location.search);
     const sharedTeamId = urlParams.get('sharedTeamId');
+    const currentPagePath = window.location.pathname; // e.g., "/teams.html" or "/share.html"
 
     if (sharedTeamId) {
-        if (loadingIndicatorEl) loadingIndicatorEl.classList.remove('hidden');
-        if (mainAppContentEl) mainAppContentEl.classList.add('hidden');
-        if (sharedTeamViewSectionEl) sharedTeamViewSectionEl.classList.remove('hidden');
-        if (sharedTeamOutputEl) sharedTeamOutputEl.innerHTML = '<div class="loading-spinner"></div><p class="text-center text-indigo-600">Loading shared team...</p>';
+        // Construct the expected base path for share.html.
+        // This assumes share.html is in the same directory as teams.html or the entry point.
+        let basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+        if (basePath === "") basePath = "."; // Handle root path if index.html is used as entry
 
-        try {
-            if (!db) { // Ensure Firebase is initialized
-                await initializeFirebase();
-                 // Ensure necessary game data is loaded for rendering
-                await Promise.all([
-                    fetchChampions(),
-                    fetchSynergiesAndRender(), // Synergies might be needed for display
-                    fetchLegacyPieces()
-                ]);
-            }
-            const sharedTeamDocRef = doc(db, `artifacts/${appId}/public/data/sharedTeams`, sharedTeamId);
-            const docSnap = await getDoc(sharedTeamDocRef);
+        const sharePageUrl = `${window.location.origin}${basePath}/share.html?sharedTeamId=${sharedTeamId}`;
 
-            if (docSnap.exists()) {
-                const sharedTeamData = docSnap.data();
-                if (sharedTeamNameEl) sharedTeamNameEl.textContent = sharedTeamData.name || "Shared Team";
-                renderSharedTeam(sharedTeamData);
-                if (analytics) logEvent(analytics, 'view_shared_team', { shared_team_id: sharedTeamId });
-            } else {
-                if (sharedTeamOutputEl) sharedTeamOutputEl.innerHTML = '<p class="text-red-500 text-center">Shared team not found or link is invalid.</p>';
+
+        // Check if current page is teams.html or index.html (or root) and needs redirecting
+        if (currentPagePath.includes('teams.html') || currentPagePath === '/' || currentPagePath.endsWith('index.html') || !currentPagePath.includes('share.html')) {
+            window.location.href = sharePageUrl;
+            return true; // Indicate action taken (redirecting), stop further processing on teams.html
+        } else if (currentPagePath.includes('share.html')) {
+            // Current page is share.html, proceed to load and display
+            if (loadingIndicatorEl) loadingIndicatorEl.classList.remove('hidden');
+            if (mainAppContentEl) mainAppContentEl.classList.add('hidden'); 
+            if (sharedTeamViewSectionEl) {
+                sharedTeamViewSectionEl.classList.remove('hidden');
+                if(sharedTeamOutputEl) sharedTeamOutputEl.innerHTML = '<div class="loading-spinner"></div><p class="text-center text-indigo-600">Loading shared team...</p>';
             }
-        } catch (error) {
-            console.error("Error fetching shared team:", error);
-            if (sharedTeamOutputEl) sharedTeamOutputEl.innerHTML = '<p class="text-red-500 text-center">Error loading shared team.</p>';
-            showToast("Error loading shared team: " + error.message, "error");
-        } finally {
-            if (loadingIndicatorEl) loadingIndicatorEl.classList.add('hidden');
+
+            try {
+                if (!db) { 
+                    console.warn("DB not initialized in handleSharedTeamLink, main should have initialized it.");
+                    await initializeFirebase(); 
+                    if (dbChampions.length === 0) await fetchChampions();
+                    if (dbSynergies.length === 0) await fetchSynergiesAndRender(); // Only populates data, doesn't render list on share.html
+                    if (dbLegacyPieces.length === 0) await fetchLegacyPieces();
+                }
+
+                const sharedTeamDocRef = doc(db, `artifacts/${appId}/public/data/sharedTeams`, sharedTeamId);
+                const docSnap = await getDoc(sharedTeamDocRef);
+
+                if (docSnap.exists()) {
+                    const sharedTeamData = docSnap.data();
+                    if (sharedTeamNameEl) sharedTeamNameEl.textContent = sharedTeamData.name || "Shared Team";
+                    
+                    // MODIFICATION: Call renderSharedTeam which now also handles banner generation
+                    await renderSharedTeam(sharedTeamData); // Now async
+
+                    if (analytics) logEvent(analytics, 'view_shared_team', { shared_team_id: sharedTeamId, team_name: sharedTeamData.name });
+                } else {
+                    if (sharedTeamOutputEl) sharedTeamOutputEl.innerHTML = '<p class="text-red-500 text-center">Shared team not found or link is invalid.</p>';
+                }
+            } catch (error) {
+                console.error("Error fetching shared team:", error);
+                if (sharedTeamOutputEl) sharedTeamOutputEl.innerHTML = '<p class="text-red-500 text-center">Error loading shared team data.</p>';
+                showToast("Error loading shared team: " + error.message, "error");
+            } finally {
+                if (loadingIndicatorEl) loadingIndicatorEl.classList.add('hidden');
+            }
+            return true; // Shared team was handled on share.html
         }
-        return true; // Shared team was handled
-    } else {
-        // Normal app flow, not a shared link
-        if (mainAppContentEl) mainAppContentEl.classList.remove('hidden');
-        if (sharedTeamViewSectionEl) sharedTeamViewSectionEl.classList.add('hidden');
-        return false; // No shared team to handle
+    } else { // No sharedTeamId in URL
+        if (currentPagePath.includes('share.html')) {
+            // If on share.html without a sharedTeamId, show an error.
+            if (sharedTeamOutputEl) sharedTeamOutputEl.innerHTML = '<p class="text-red-500 text-center">No shared team ID provided in the link. <a href="teams.html" class="text-blue-600 hover:underline">Go to Team Builder</a></p>';
+            if (loadingIndicatorEl) loadingIndicatorEl.classList.add('hidden');
+            if (mainAppContentEl) mainAppContentEl.classList.add('hidden');
+            if (sharedTeamViewSectionEl) sharedTeamViewSectionEl.classList.remove('hidden'); 
+            const heroBannerLoadingMsg = document.getElementById('loadingMessage');
+            if(heroBannerLoadingMsg) heroBannerLoadingMsg.textContent = 'No team to display for banner.';
+            return true; 
+        }
+         if (mainAppContentEl) mainAppContentEl.classList.remove('hidden');
+         if (sharedTeamViewSectionEl) sharedTeamViewSectionEl.classList.add('hidden');
+        return false; 
     }
+    return false; 
 }
 
 
 // =================================================================================================
-// SECTION: Modal Management
+// #region: Modal Management
 // =================================================================================================
 
 /**
@@ -2237,7 +2327,7 @@ window.handleOpenSwapModal = (indexToReplace) => {
 
 
 // =================================================================================================
-// SECTION: Event Listeners
+// #region: Event Listeners
 // =================================================================================================
 
 if (champSelectDbEl) {
@@ -2880,7 +2970,7 @@ window.handleResetTeam = () => {
 }
 
 // =================================================================================================
-// SECTION: Main Execution Block
+// #region: Main Execution Block
 // =================================================================================================
 
 /**
@@ -2889,13 +2979,42 @@ window.handleResetTeam = () => {
  */
 async function main() {
     try {
-        await initializeFirebase();
+        await initializeFirebase(); // Initialize Firebase first
         if (analytics) logEvent(analytics, 'page_view', { page_title: document.title, page_location: window.location.href });
 
-        const isSharedView = await handleSharedTeamLink();
+        // This will either redirect (if on teams.html with ID) or start loading (if on share.html with ID)
+        const sharedViewHandledOrRedirected = await handleSharedTeamLink();
 
-        if (!isSharedView) { // Only run main app setup if not in shared view
-            // Set button icons/text (can be done once)
+        const currentPagePath = window.location.pathname;
+
+        if (sharedViewHandledOrRedirected && !currentPagePath.includes('share.html')) {
+            // If redirected from teams.html, stop further execution for teams.html
+            return;
+        }
+
+        if (currentPagePath.includes('share.html')) {
+            // On share.html: handleSharedTeamLink initiated display.
+            // Game data fetching is handled within handleSharedTeamLink or here if needed before renderSharedTeam
+            if (loadingIndicatorEl) loadingIndicatorEl.classList.remove('hidden');
+
+            // Ensure essential game data is fetched for renderSharedTeam to work correctly.
+            // It might be fetched inside handleSharedTeamLink, but ensuring it here too.
+            if (dbChampions.length === 0) await fetchChampions();
+            if (dbSynergies.length === 0) await fetchSynergiesAndRender(); // Only populates data, no UI list on share.html
+            if (dbLegacyPieces.length === 0) await fetchLegacyPieces();
+            
+            // If handleSharedTeamLink didn't already display (e.g., if it's refactored to just get ID)
+            // then one might call a display function here.
+            // However, with current structure, handleSharedTeamLink does the display.
+
+            if (loadingIndicatorEl) loadingIndicatorEl.classList.add('hidden');
+            // The rest of the main function (builder UI setup) should be skipped for share.html
+            return;
+        }
+
+
+        // --- The rest of this block is for teams.html specific setup ---
+        if (document.getElementById('champions-section')) { // Guard for teams.html elements
             if (addUpdateChampionBtn) addUpdateChampionBtn.innerHTML = `<span class="btn-icon">${ICON_ADD}</span> <span class="btn-text">Add Champion to Roster</span> <span id="save-roster-indicator" class="saving-indicator hidden"></span>`;
             if (cancelEditBtn) cancelEditBtn.innerHTML = `<span class="btn-icon">${ICON_CANCEL}</span> <span class="btn-text">Cancel Edit</span>`;
             if (calculateBtn) calculateBtn.innerHTML = `<span class="btn-icon">${ICON_CALCULATE}</span> <span class="btn-text">Calculate Best Team</span>`;
@@ -2908,7 +3027,6 @@ async function main() {
             if (confirmModalCancelBtn) confirmModalCancelBtn.innerHTML = `<span class="btn-icon">${ICON_CANCEL}</span> <span class="btn-text">Cancel</span>`;
             if (copyShareLinkBtn) copyShareLinkBtn.innerHTML = `<span class="btn-icon">${ICON_COPY}</span> <span class="btn-text">Copy Link</span>`;
 
-            // Populate static dropdowns
             populateStarColorOptions(champStarColorEl, STAR_COLOR_TIERS, "Unlocked");
             populateStarColorOptions(legacyPieceStarColorEl, LEGACY_PIECE_STAR_TIER_SCORE, "Unlocked");
             populateGearRarityOptions();
