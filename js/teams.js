@@ -1961,9 +1961,8 @@ window.shareTeam = async (teamId) => {
                 const privateTeamDocRef = doc(db, `artifacts/${appId}/users/${userId}/savedTeams`, teamId);
                 await updateDoc(privateTeamDocRef, { publicShareId: docRef.id });
 
-                // MODIFIED: Construct the path to share.html. Adjust '/dcdl/' if your project structure is different
                 // For example, if share.html is at the root, it would be `${window.location.origin}/share.html?sharedTeamId=${docRef.id}`
-                const shareLink = `${window.location.origin}${window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'))}/share.html?sharedTeamId=${docRef.id}`;
+                const shareLink = `${window.location.origin}/dcdl/share.html?sharedTeamId=${docRef.id}`;
                 openShareTeamModal(shareLink);
                 showToast("Public share link generated!", "success");
                 loadSavedTeams(); // Refresh to show unshare button
@@ -2040,7 +2039,7 @@ async function handleSharedTeamLink() {
         let basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
         if (basePath === "") basePath = "."; // Handle root path if index.html is used as entry
 
-        const sharePageUrl = `${window.location.origin}${basePath}/share.html?sharedTeamId=${sharedTeamId}`;
+        const sharePageUrl = `${window.location.origin}${basePath}/dcdl/share.html?sharedTeamId=${sharedTeamId}`;
 
 
         // Check if current page is teams.html or index.html (or root) and needs redirecting
