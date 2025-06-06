@@ -71,16 +71,12 @@
     </nav>
 
     <div class="combined-image-display-area">
-        <p id="loadingMessage">Generating hero banner...</p>
-        <img id="staticHeroBannerImage" src="" alt="Combined Hero Banner" style="display: none;"> <!-- Initially hidden, shown by JS -->
+        <p id="loadingMessage">Generating Champion banner...</p>
+        <img id="staticHeroBannerImage" src="" alt="Combined Hero Banner" style="display: none;">
     </div>
     
-    <!-- Hidden container for hero images (used by share.js for banner generation) -->
-    <!-- This should be populated dynamically if team members are part of the banner -->
     <div class="source-image-data-container" id="heroSourceData" aria-hidden="true">
-        <!-- Example Panels - These would ideally be populated by teams.js based on the shared team members -->
-        <!-- The share.js script will look for .hero-panel and <img> tags inside them -->
-        <div class="hero-panel"> <!-- Style for width/height removed, JS config drives canvas panel size -->
+        <div class="hero-panel">
             <img src="img/champions/avatars/Batman.webp" alt="Batman" crossorigin="anonymous"
                     onerror="this.dataset.error='true'; this.src='https://placehold.co/200x240/1a202c/e2e8f0?text=Batman+Err';">
         </div>
@@ -100,26 +96,22 @@
             <img src="img/champions/avatars/RedRobin.webp" alt="Red Robin" crossorigin="anonymous"
                     onerror="this.dataset.error='true'; this.src='https://placehold.co/200x240/1a202c/e2e8f0?text=RR+Err';">
         </div>
-        <!-- Add more hero panels as needed, or this will be populated dynamically by teams.js -->
     </div>
 
 
-    <div class="main-content-container"> <!-- Renamed class from .container to avoid conflict -->
-        <!-- Loading and Error Indicators (used by teams.js) -->
+    <div class="main-content-container">
         <div id="loading-indicator" class="text-center card hidden">
             <div class="loading-spinner"></div>
-            <p class="text-indigo-600">Loading ...</p> <!-- Generic loading message -->
+            <p class="text-indigo-600">Loading ...</p>
         </div>
         <div id="error-indicator" class="text-center card hidden p-4 bg-red-100 border border-red-300 text-red-700">
             <p>Error loading data.</p>
             <p id="error-message-details" class="text-xs mt-1"></p>
         </div>
 
-        <!-- Section for Displaying Shared Team (from teams.js) -->
-        <section id="shared-team-view-section" class="card hidden"> <!-- This section is shown/hidden by teams.js -->
+        <section id="shared-team-view-section" class="card hidden">
             <div class="calc-section">
                 <h2 id="shared-team-name" class="text-2xl font-bold text-indigo-700 mb-4 text-center">Shared Team</h2>
-                <!-- Old banner display area removed from here -->
                 <div id="shared-team-output" class="mt-6 p-4 border-t border-gray-200">
                     <p class="text-gray-500 text-center">Loading shared team details...</p>
                 </div>
@@ -129,14 +121,13 @@
             </div>
         </section>
         
-        <!-- This div is mainly for teams.js to potentially hide if it finds it, not strictly necessary for share.html -->
-        <div id="main-app-content" class="hidden"></div>
     </div>
 
     <div id="toast-container"></div>
-
-    <script type="module" src="js/teams.js"></script> <!-- For shared team data loading -->
-    <script type="module" src="js/share.js"></script> <!-- For hero banner generation -->
+    <feedback-widget></feedback-widget>
+    <script type="module" src="js/feedback-widget.js"></script>
+    <script type="module" src="js/teams.js"></script>
+    <script type="module" src="js/share.js"></script>
     <script type="text/javascript" src="js/navigation.js"></script>
 </body>
 </html>
