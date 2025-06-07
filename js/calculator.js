@@ -18,7 +18,9 @@ import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken }
 import { getFirestore, collection, doc, getDoc, setDoc, deleteDoc, onSnapshot, query, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAnalytics, logEvent as fbLogEventInternal } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
-// #region --- CONSTANTS & CONFIGURATION ---
+// =================================================================================================
+// #region: --- CONSTANTS & CONFIGURATION ---
+// =================================================================================================
 
 /**
  * @typedef {object} FirebaseConfig
@@ -91,9 +93,9 @@ const CONSTANTS = {
     },
 };
 
-// #endregion
-
-// #region --- APPLICATION STATE ---
+// =================================================================================================
+// #region: --- APPLICATION STATE ---
+// =================================================================================================
 
 /**
  * Centralized state for the application.
@@ -122,9 +124,9 @@ const state = {
     currentSectionOrder: [],
 };
 
-// #endregion
-
-// #region --- DOM ELEMENT REFERENCES ---
+// =================================================================================================
+// #region: --- DOM ELEMENT REFERENCES ---
+// =================================================================================================
 
 /**
  * A collection of cached DOM element references.
@@ -240,9 +242,9 @@ const DOM = {
     detailAnvilsWorstProposedSpan: document.getElementById('detailAnvilsWorstProposed'),
 };
 
-// #endregion
-
-// #region --- SERVICES ---
+// =================================================================================================
+// #region: --- SERVICES ---
+// =================================================================================================
 
 // ## Analytics Service ##
 
@@ -578,9 +580,9 @@ async function populateSavedChampionsDropdownFromFirestore() {
 }
 
 
-// #endregion
-
-// #region --- UI CONTROLLERS & DOM MANIPULATION ---
+// =================================================================================================
+// #region: --- UI CONTROLLERS & DOM MANIPULATION ---
+// =================================================================================================
 
 const UI = {
     /**
@@ -1029,9 +1031,9 @@ const SectionCustomizer = {
     }
 };
 
-// #endregion
-
-// #region --- CORE LOGIC & EVENT HANDLERS ---
+// =================================================================================================
+// #region: --- CORE LOGIC & EVENT HANDLERS ---
+// =================================================================================================
 
 /**
  * Gathers and validates all user inputs required for the Expected Value calculation.
@@ -1344,9 +1346,9 @@ function importConfiguration() {
     }
 }
 
-// #endregion
-
-// #region --- PROBABILITY SIMULATION ---
+// =================================================================================================
+// #region: --- PROBABILITY SIMULATION ---
+// =================================================================================================
 
 /**
  * Simulates a single attempt to reach a shard goal within a budget.
@@ -1554,9 +1556,9 @@ function runProbabilitySimulation() {
     }, 50);
 }
 
-// #endregion
-
-// #region --- INITIALIZATION ---
+// =================================================================================================
+// #region: --- INITIALIZATION ---
+// =================================================================================================
 
 /**
  * Attaches all necessary event listeners to the DOM elements.
