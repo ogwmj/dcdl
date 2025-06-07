@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Changelog & Roadmap | DC: Dark Legion Tools</title>
+    <meta name="description" content="Stay updated with the latest changes, bug fixes, and new features for the DC: Dark Legion Tools. See what's coming next on our development roadmap.">
+    <meta name="keywords" content="DC: Dark Legion, Changelog, Updates, Roadmap, Planned Features, DC Universe, FunPlus, Guide">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Reusing the core styles from your index.html for consistency */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1226; /* A very dark blue/purple */
+            color: #e2e8f0; /* Light off-white for text contrast */
+            overflow-x: hidden;
+        }
+
+        /* Full-screen background image */
+        .background-hero {
+            background-image: url('img/bg/landscape_1.png'); /* Ensure this path is correct */
+            background-size: cover;
+            background-position: center;
+            position: fixed; /* Use fixed to keep it in place on scroll */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            filter: brightness(0.4) grayscale(0.5);
+            animation: subtlePan 60s linear infinite alternate;
+        }
+
+        @keyframes subtlePan {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+
+        /* Glowing text effect for main titles */
+        .glowing-text {
+            text-shadow: 0 0 8px rgba(59, 130, 246, 0.6),
+                         0 0 15px rgba(59, 130, 246, 0.4),
+                         0 0 25px rgba(59, 130, 246, 0.2);
+        }
+        
+        /* Style for the active navigation link */
+        .nav-link.active {
+            background-color: #3b82f6; /* Tailwind Blue 500 */
+            color: white;
+            text-shadow: 0 0 5px rgba(59, 130, 246, 0.7);
+        }
+        .glowing-text-nav {
+            text-shadow: 0 0 6px rgba(59, 130, 246, 0.5),
+                         0 0 12px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Styling for content cards */
+        .content-card {
+            background-color: rgba(17, 24, 39, 0.8); /* Darker, semi-transparent background */
+            backdrop-filter: blur(8px); /* Frosted glass effect for depth */
+            border: 1px solid rgba(59, 130, 246, 0.2); /* Subtle blue border */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Styling for changelog entry tags */
+        .change-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+        .change-tag-new { background-color: #10b981; color: #ffffff; } /* Green */
+        .change-tag-fix { background-color: #ef4444; color: #ffffff; } /* Red */
+        .change-tag-improvement { background-color: #3b82f6; color: #ffffff; } /* Blue */
+        .change-tag-data { background-color: #f59e0b; color: #ffffff; } /* Amber */
+
+    </style>
+</head>
+<body class="relative min-h-screen">
+
+    <div class="background-hero"></div>
+
+    <nav class="bg-slate-900 bg-opacity-80 backdrop-filter backdrop-blur-md shadow-lg sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex-shrink-0 text-white text-2xl font-bold glowing-text-nav">
+                    DC:DL Tools
+                    </a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="index.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="calculator.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Anvil Calculator</a>
+                        <a href="teams.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Team Builder</a>
+                        <a href="changemap.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Changemap</a>
+                    </div>
+                </div>
+                <div class="-mr-2 flex md:hidden">
+                    <!-- Mobile menu button -->
+                    <button type="button" id="mobile-menu-button" class="bg-slate-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="md:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="calculator.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Anvil Calculator</a>
+                <a href="teams.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Team Builder</a>
+                <a href="changemap.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">ChangeMap</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="relative z-10 py-12 px-4">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-3 glowing-text">Changelog & Roadmap</h1>
+            <p class="text-lg md:text-xl text-blue-200">The latest updates and our plans for the future.</p>
+        </header>
+
+        <main class="max-w-6xl mx-auto space-y-12">
+            <!-- Calculator Changelog Section -->
+            <section id="calculator-changelog" class="content-card p-6 md:p-8 rounded-xl">
+                <h2 class="text-3xl font-bold text-blue-300 mb-6 border-b border-blue-400 border-opacity-30 pb-3">Calculator Updates</h2>
+                <div class="space-y-8">
+                    <!-- Changelog Entry -->
+                    <article>
+                        <h3 class="text-2xl font-semibold text-gray-100">Version 1.0.0 <span class="text-base font-normal text-gray-400 ml-2">- May 15, 2024</span></h3>
+                         <div class="mt-3">
+                            <span class="change-tag change-tag-new">New</span>
+                        </div>
+                        <ul class="list-disc list-inside mt-2 space-y-2 text-gray-300 pl-2">
+                            <li>Initial release of the DC: Dark Legion Anvil Calculator.</li>
+                        </ul>
+                    </article>
+                </div>
+            </section>
+
+            <!-- Teams Changelog Section -->
+            <section id="teams-changelog" class="content-card p-6 md:p-8 rounded-xl">
+                <h2 class="text-3xl font-bold text-blue-300 mb-6 border-b border-blue-400 border-opacity-30 pb-3">Team Builder Updates</h2>
+                <div class="space-y-8">
+                    <!-- Changelog Entry -->
+                    <article>
+                        <h3 class="text-2xl font-semibold text-gray-100">Version 3.3.1 <span class="text-base font-normal text-gray-400 ml-2">- June 7, 2024</span></h3>
+                        <div class="mt-3">
+                            <span class="change-tag change-tag-new">New</span>
+                            <span class="change-tag change-tag-improvement">Improvement</span>
+                        </div>
+                        <ul class="list-disc list-inside mt-2 space-y-2 text-gray-300 pl-2">
+                            <li><strong>Team Sharing:</strong> You can now generate a unique link to share your saved teams with others!</li>
+                            <li><strong>UI Enhancements:</strong> Improved the layout of the team results card for better readability on mobile devices.</li>
+                            <li>Added loading indicators for a smoother user experience during calculations.</li>
+                        </ul>
+                    </article>
+
+                    <!-- Changelog Entry -->
+                    <article>
+                        <h3 class="text-2xl font-semibold text-gray-100">Version 1.1.2 <span class="text-base font-normal text-gray-400 ml-2">- May 28, 2024</span></h3>
+                        <div class="mt-3">
+                            <span class="change-tag change-tag-fix">Fix</span>
+                             <span class="change-tag change-tag-data">Data</span>
+                        </div>
+                        <ul class="list-disc list-inside mt-2 space-y-2 text-gray-300 pl-2">
+                            <li>Corrected an issue where Legacy Piece stats were not applying correctly in the Team Builder.</li>
+                            <li>Updated synergy data for 'The Flash' and 'Wonder Woman' to reflect the latest game patch.</li>
+                        </ul>
+                    </article>
+                </div>
+            </section>
+
+            <!-- Roadmap Section -->
+            <section id="roadmap" class="content-card p-6 md:p-8 rounded-xl">
+                <h2 class="text-3xl font-bold text-blue-300 mb-6 border-b border-blue-400 border-opacity-30 pb-3">Future Roadmap</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Column 1: In Progress & Next Up -->
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="text-2xl font-semibold text-gray-100 mb-3">🚀 Next Up</h3>
+                            <ul class="list-disc list-inside space-y-2 text-gray-300">
+                                <li>Change "Proposed Updates" to "Current System" for anvil calculator.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-semibold text-gray-100 mb-3">💡 Considering</h3>
+                             <ul class="list-disc list-inside space-y-2 text-gray-300">
+                                <li>Villain-specific team building guides.</li>
+                                <li>Integration with user accounts to sync rosters across devices.</li>
+                                <li>Light/Dark theme toggle.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Column 2: Recently Completed -->
+                    <div>
+                        <h3 class="text-2xl font-semibold text-gray-100 mb-3">✅ Recently Completed</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-300">
+                            <li>Team Sharing Links</li>
+                            <li>Roster Import/Export</li>
+                            <li>Mobile UI Improvements</li>
+                            <li>Initial Site Launch</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="relative z-10 text-gray-500 text-sm py-8 text-center mt-12">
+        <p>Not affiliated with Warner Bros. Entertainment, DC Comics, or any official game publisher. This is a fan-made site for the game DC: Dark Legion by FunPlus.</p>
+    </footer>
+    
+    <!-- Navigation script -->
+    <script src="js/navigation.js"></script>
+
+</body>
+</html>
