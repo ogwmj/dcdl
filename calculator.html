@@ -503,6 +503,23 @@
         </details>
         
         <div id="reorderableSectionsContainer">
+
+            <!-- NEW: Champion Guidance Section -->
+            <div id="championGuidanceSection" class="calc-section bg-blue-50 border-blue-200" data-section-name="Champion Guidance">
+                <h2 class="text-xl font-semibold mb-4 text-blue-800">Champion Guidance</h2>
+                <div class="input-group">
+                    <label for="lmChampionSelect" class="block text-sm">Select a Limited Mythic Champion:</label>
+                    <select id="lmChampionSelect" class="block w-full" disabled>
+                        <option value="">-- Loading Champions... --</option>
+                    </select>
+                </div>
+                <div id="guidanceButtons" class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 hidden">
+                    <button id="f2pRecBtn" class="btn btn-secondary py-2.5">Apply F2P Recommendation</button>
+                    <button id="minRecBtn" class="btn btn-secondary py-2.5">Apply Minimum Recommendation</button>
+                </div>
+                 <div id="guidanceStatus" class="status-message mt-3"></div>
+            </div>
+            
             <div id="championManagementSection" class="calc-section bg-gray-50" data-section-name="Champion Configurations">
                 <h2 class="text-xl font-semibold mb-4">Manage Champion Configurations</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
