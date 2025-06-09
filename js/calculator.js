@@ -7,15 +7,16 @@
  *
  * The application integrates with Firebase for user authentication (anonymous), cloud storage of user-defined configurations, and analytics.
  * It also supports local import/export of settings via JSON and allows for UI customization (hiding/reordering sections).
+ * A new "Champion Guidance" feature pulls champion data and provides upgrade recommendations based on pre-defined guides.
  *
  * @author Originally by the user, refactored and documented by Google's Gemini.
- * @version 2.0.0
+ * @version 3.0.0 - Added preset recommendation logic to dropdowns
  */
 
 // --- Firebase SDK Imports ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, collection, doc, getDoc, setDoc, deleteDoc, onSnapshot, query, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, collection, doc, getDoc, setDoc, deleteDoc, onSnapshot, query, serverTimestamp, orderBy, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAnalytics, logEvent as fbLogEventInternal } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
 // =================================================================================================
@@ -73,6 +74,7 @@ const CONSTANTS = {
      * @type {Array<{id: string, name: string, defaultVisible: boolean}>}
      */
     ALL_TOGGLEABLE_SECTIONS: [
+        { id: 'championGuidanceSection', name: 'Champion Guidance', defaultVisible: true },
         { id: 'championManagementSection', name: 'Champion Configurations', defaultVisible: true },
         { id: 'basePullRatesSection', name: 'Base Pull Rates', defaultVisible: true },
         { id: 'upgradeRangeSection', name: 'Upgrade Range', defaultVisible: true },
@@ -133,6 +135,13 @@ const state = {
  * @namespace
  */
 const DOM = {
+    // Champion Guidance
+    lmChampionSelect: document.getElementById('lmChampionSelect'),
+    guidanceButtons: document.getElementById('guidanceButtons'),
+    f2pRecBtn: document.getElementById('f2pRecBtn'),
+    minRecBtn: document.getElementById('minRecBtn'),
+    guidanceStatus: document.getElementById('guidanceStatus'),
+
     // Champion Management
     championNameInput: document.getElementById('championName'),
     saveChampionBtn: document.getElementById('saveChampionBtn'),
@@ -403,6 +412,7 @@ async function handleAuthStateChange(user) {
         state.championsColRef = collection(state.fbDb, `artifacts/${CONSTANTS.APP_ID}/users/${state.currentUserId}/champions`);
         
         await populateSavedChampionsDropdownFromFirestore();
+        await populateLMChampionsDropdown(); // NEW: Populate the master champion list
         UI.disableChampionManagementFeatures(false);
         logAnalyticEvent('firebase_auth_status', { status: 'signed_in', method: user.isAnonymous ? 'anonymous' : 'custom' });
     } else {
@@ -414,6 +424,8 @@ async function handleAuthStateChange(user) {
             state.unsubscribeChampionsListener = null;
         }
         DOM.savedChampionsSelect.innerHTML = '<option value="">-- Sign in to manage configurations --</option>';
+        DOM.lmChampionSelect.innerHTML = '<option value="">-- Sign in to load champions --</option>';
+        DOM.lmChampionSelect.disabled = true;
         UI.disableChampionManagementFeatures(true, "Sign in to use cloud save.");
         logAnalyticEvent('firebase_auth_status', { status: 'signed_out' });
     }
@@ -570,13 +582,57 @@ async function populateSavedChampionsDropdownFromFirestore() {
         if (hadSelection && Array.from(DOM.savedChampionsSelect.options).some(opt => opt.value === hadSelection)) {
             DOM.savedChampionsSelect.value = hadSelection;
         }
-        logAnalyticEvent('firestore_dropdown_populated', { count: querySnapshot.size });
+        logAnalyticEvent('firestore_dropdown_populated', { type: 'user_configs', count: querySnapshot.size });
     }, (error) => {
         console.error("Error listening to champion configurations:", error);
         UI.displayNotification("Error fetching configurations.", 'error', 'champion_config');
         DOM.savedChampionsSelect.innerHTML = '<option value="">-- Error loading --</option>';
         logAnalyticEvent('firestore_listener_error', { error_message: error.message });
     });
+}
+
+/**
+ * Fetches the master list of Limited Mythic champions from the public Firestore collection and populates the guidance dropdown.
+ * Recommendation data is stored on the option elements themselves.
+ * @async
+ */
+async function populateLMChampionsDropdown() {
+    if (!state.fbDb) {
+        DOM.lmChampionSelect.innerHTML = '<option value="">-- DB Error --</option>';
+        return;
+    }
+    DOM.lmChampionSelect.disabled = true;
+
+    try {
+        const publicChampionsRef = collection(state.fbDb, `artifacts/${CONSTANTS.APP_ID}/public/data/champions`);
+        const q = query(publicChampionsRef, where("baseRarity", "==", "Limited Mythic"), orderBy("name"));
+        const querySnapshot = await getDocs(q);
+        
+        DOM.lmChampionSelect.innerHTML = '<option value="">-- Select a Champion --</option>';
+        if (querySnapshot.empty) {
+            DOM.lmChampionSelect.innerHTML = '<option value="">-- No LM Champions Found --</option>';
+        } else {
+            querySnapshot.forEach((doc) => {
+                const champData = doc.data();
+                const option = document.createElement('option');
+                option.value = champData.name || doc.id;
+                option.textContent = champData.name || doc.id;
+                
+                // Store recommendation data directly on the option element for easy access later
+                option.dataset.recMin = champData.recommendationMin || 'not set';
+                option.dataset.recF2p = champData.recommendationF2P || 'not set';
+
+                DOM.lmChampionSelect.appendChild(option);
+            });
+            DOM.lmChampionSelect.disabled = false;
+        }
+        logAnalyticEvent('firestore_dropdown_populated', { type: 'lm_champions', count: querySnapshot.size });
+    } catch(error) {
+        console.error("Error fetching LM champions:", error);
+        DOM.lmChampionSelect.innerHTML = '<option value="">-- Error Loading Champions --</option>';
+        UI.displayNotification("Could not load champion list.", 'error', 'guidance');
+        logAnalyticEvent('firestore_public_read_error', { collection: 'champions', error_message: error.message });
+    }
 }
 
 
@@ -586,7 +642,7 @@ async function populateSavedChampionsDropdownFromFirestore() {
 
 const UI = {
     /**
-     * @typedef {'champion_config' | 'probability_sim' | 'local_config' | 'general'} NotificationArea
+     * @typedef {'champion_config' | 'probability_sim' | 'local_config' | 'guidance' | 'general'} NotificationArea
      * @typedef {'info' | 'success' | 'error'} NotificationType
      */
 
@@ -602,6 +658,7 @@ const UI = {
             case 'champion_config': statusDiv = DOM.championStatusDiv; break;
             case 'probability_sim': statusDiv = DOM.probabilityStatusDiv; break;
             case 'local_config': statusDiv = DOM.localConfigStatus; break;
+            case 'guidance': statusDiv = DOM.guidanceStatus; break;
             default: statusDiv = DOM.championStatusDiv;
         }
         if (!statusDiv) return;
@@ -1034,6 +1091,76 @@ const SectionCustomizer = {
 // =================================================================================================
 // #region: --- CORE LOGIC & EVENT HANDLERS ---
 // =================================================================================================
+
+/**
+ * Handles applying a star level recommendation from the Champion Guidance section.
+ * Reads recommendation data from the selected dropdown option's dataset.
+ * @param {Event} event - The event that triggered the handler (e.g., button click).
+ */
+function handleChampionGuidance(event) {
+    const selectedOption = DOM.lmChampionSelect.options[DOM.lmChampionSelect.selectedIndex];
+    const selectedChampionName = selectedOption.value;
+
+    if (!selectedChampionName) {
+        UI.displayNotification("Please select a champion first.", 'info', 'guidance');
+        return;
+    }
+
+    const triggerId = event.target.id;
+    let targetLevel;
+    
+    if (triggerId === 'f2pRecBtn') {
+        targetLevel = selectedOption.dataset.recF2p;
+    } else if (triggerId === 'minRecBtn') {
+        targetLevel = selectedOption.dataset.recMin;
+    } else {
+        return; // Should not happen if only the buttons trigger this
+    }
+
+    // Handle the case where recommendation is not yet set in the database
+    if (targetLevel === 'not set' || !targetLevel) {
+        UI.displayNotification(`Recommendation for ${selectedChampionName} is not set yet.`, 'info', 'guidance');
+        // Reset fields to base to avoid confusion
+        DOM.startStarLevelSelect.value = '0_shards';
+        DOM.targetStarLevelSelect.value = '0_shards';
+        handleExpectedValueCalculation('guidance_reset'); // Recalculate to show 0 cost
+        return;
+    }
+    
+    // Set start level to base character
+    DOM.startStarLevelSelect.value = '0_shards';
+
+    // Handle special keywords from the guide
+    if (targetLevel === 'skip') {
+        DOM.targetStarLevelSelect.value = '0_shards'; // Set target to base to show 0 cost
+        UI.displayNotification(`${selectedChampionName} is a recommended 'Skip'. Target set to base.`, 'info', 'guidance');
+    } else if (targetLevel === 'max') {
+        DOM.targetStarLevelSelect.value = 'Red 5-Star';
+        UI.displayNotification(`'As High As You Can Go' set to Red 5-Star for ${selectedChampionName}.`, 'info', 'guidance');
+    } else if (Object.keys(CONSTANTS.SHARD_REQUIREMENTS).includes(targetLevel)) {
+        DOM.targetStarLevelSelect.value = targetLevel;
+        UI.displayNotification(`Recommendation applied for ${selectedChampionName}.`, 'success', 'guidance');
+    } else {
+        UI.displayNotification(`Could not find star level '${targetLevel}' for ${selectedChampionName}.`, 'error', 'guidance');
+        return;
+    }
+    
+    // Automatically turn on "Include Initial Unlock" when a recommendation is applied
+    state.isUnlockCostIncluded = true;
+    UI.updateToggleUnlockButtonAppearance();
+    logAnalyticEvent('toggle_unlock_cost_auto', { included: true, source: 'guidance_button' });
+
+
+    logAnalyticEvent('guidance_recommendation_applied', {
+        champion: selectedChampionName,
+        recommendation_type: triggerId,
+        target_level: DOM.targetStarLevelSelect.value
+    });
+
+    // Automatically trigger the main calculation
+    handleExpectedValueCalculation('guidance_button_click');
+}
+
 
 /**
  * Gathers and validates all user inputs required for the Expected Value calculation.
@@ -1564,20 +1691,36 @@ function runProbabilitySimulation() {
  * Attaches all necessary event listeners to the DOM elements.
  */
 function attachEventListeners() {
-    // Firebase actions
+    // --- Champion Guidance ---
+    DOM.lmChampionSelect.addEventListener('change', () => {
+        const selected = DOM.lmChampionSelect.value;
+        // Show/hide recommendation buttons if a valid champion is selected
+        DOM.guidanceButtons.classList.toggle('hidden', !selected);
+
+        // Apply default LM settings when a champion is selected
+        if(selected) {
+            UI.applyConfigToInputs({}); // Resets to default values
+            logAnalyticEvent('guidance_champion_selected', { champion: selected });
+            handleExpectedValueCalculation('guidance_champion_select');
+        }
+    });
+    DOM.f2pRecBtn.addEventListener('click', handleChampionGuidance);
+    DOM.minRecBtn.addEventListener('click', handleChampionGuidance);
+
+    // --- Firebase Actions ---
     DOM.saveChampionBtn.addEventListener('click', saveChampionToFirestore);
     DOM.loadChampionBtn.addEventListener('click', () => loadChampionFromFirestore());
     DOM.deleteChampionBtn.addEventListener('click', deleteChampionFromFirestore);
 
-    // Local config actions
+    // --- Local Config Actions ---
     DOM.exportConfigBtn.addEventListener('click', exportConfiguration);
     DOM.importConfigBtn.addEventListener('click', importConfiguration);
 
-    // Calculation triggers
+    // --- Calculation Triggers ---
     DOM.calculateProbabilityBtn.addEventListener('click', runProbabilitySimulation);
     DOM.calculateBtn.addEventListener('click', () => handleExpectedValueCalculation('ev_button_click'));
     
-    // Auto-recalculate on input change for EV
+    // --- Auto-recalculate on input change for EV ---
     const evTriggerInputs = [
         DOM.mythicProbabilityInput, DOM.mythicHardPityInput, DOM.lmRateUpChanceInput,
         DOM.currentMythicPityInput, DOM.currentLMPityInput, DOM.currentLMSInput,
@@ -1587,7 +1730,7 @@ function attachEventListeners() {
         if(el) el.addEventListener('input', (e) => handleExpectedValueCalculation(`input_change_${e.target.id}`));
     });
 
-    // Toggle unlock cost
+    // --- Toggle Unlock Cost ---
     DOM.toggleUnlockCostBtn.addEventListener('click', () => {
         state.isUnlockCostIncluded = !state.isUnlockCostIncluded;
         UI.updateToggleUnlockButtonAppearance();
@@ -1595,7 +1738,7 @@ function attachEventListeners() {
         handleExpectedValueCalculation('toggle_unlock_cost');
     });
 
-    // Analytics for details/summary toggles
+    // --- Analytics for Details/Summary Toggles ---
     document.querySelectorAll('details').forEach(detailsEl => {
         detailsEl.addEventListener('toggle', function() {
             logAnalyticEvent('details_section_toggled', {
@@ -1615,7 +1758,7 @@ async function main() {
     UI.updateToggleUnlockButtonAppearance();
     SectionCustomizer.initialize();
     
-    await initializeFirebaseAndAuth();
+    await initializeFirebaseAndAuth(); // This will trigger populating the dropdowns
     logAnalyticEvent('page_view', { app_id: CONSTANTS.APP_ID });
 
     attachEventListeners();
