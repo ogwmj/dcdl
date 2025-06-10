@@ -2,15 +2,15 @@
  * @file calculator.js
  * @fileoverview Interactive web application to calculate and simulate the "Anvil" cost for character upgrades in a gacha game.
  * It features two main functionalities:
- * 1.  **Expected Value (EV) Calculation**: Determines the average, best-case, and worst-case Anvil cost to upgrade a character between specified star levels, comparing a "Current" and a "Proposed" shard acquisition system.
+ * 1.  **Expected Value (EV) Calculation**: Determines the average, best-case, and worst-case Anvil cost to upgrade a character between specified star levels.
  * 2.  **Probability Simulation**: Runs a Monte Carlo simulation to find the probability of successfully achieving an upgrade goal within a given Anvil budget.
  *
- * The application integrates with Firebase for user authentication (anonymous), cloud storage of user-defined configurations, and analytics.
- * It also supports local import/export of settings via JSON and allows for UI customization (hiding/reordering sections).
- * A new "Champion Guidance" feature pulls champion data and provides upgrade recommendations based on pre-defined guides.
+ * The application integrates with Firebase for user authentication, cloud storage of configurations, and analytics.
+ * It also supports local import/export of settings and allows for UI customization.
+ * A "Champion Guidance" feature pulls champion data and provides upgrade recommendations.
  *
  * @author Originally by the user, refactored and documented by Google's Gemini.
- * @version 3.0.0 - Added preset recommendation logic to dropdowns
+ * @version 3.0.0 - Commented out bonus NM shard logic.
  */
 
 // --- Firebase SDK Imports ---
@@ -18,6 +18,44 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebas
 import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, collection, doc, getDoc, setDoc, deleteDoc, onSnapshot, query, serverTimestamp, orderBy, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAnalytics, logEvent as fbLogEventInternal } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+
+/**
+ * Creates a debounced function that delays invoking `func` until after `wait` milliseconds have elapsed
+ * since the last time the debounced function was invoked.
+ * @param {Function} func The function to debounce.
+ * @param {number} wait The number of milliseconds to delay.
+ * @returns {Function} Returns the new debounced function.
+ */
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+/**
+ * Creates a memoized version of a function. The cache is a simple object, so it's best for functions with primitive arguments.
+ * @param {Function} func The function to memoize.
+ * @returns {Function} The new memoized function.
+ */
+function memoize(func) {
+    const cache = {};
+    return function(...args) {
+        const key = JSON.stringify(args);
+        if (cache[key]) {
+            return cache[key];
+        }
+        const result = func.apply(this, args);
+        cache[key] = result;
+        return result;
+    };
+}
+
 
 // =================================================================================================
 // #region: --- CONSTANTS & CONFIGURATION ---
@@ -54,10 +92,6 @@ const CONSTANTS = {
     NM_GUARANTEE_THRESHOLD: 3,
     /** The number of simulation runs for the probability calculation. @type {number} */
     NUM_SIM_RUNS: 10000,
-    /** Local storage key for section visibility preferences. @type {string} */
-    SECTION_VISIBILITY_STORAGE_KEY: 'anvilCalcSectionVisibility_v2',
-    /** Local storage key for section order preferences. @type {string} */
-    SECTION_ORDER_STORAGE_KEY: 'anvilCalcSectionOrder_v2',
     /**
      * Shards required to reach each star level.
      * @type {Object.<string, number>}
@@ -69,23 +103,6 @@ const CONSTANTS = {
         "Gold 1-Star": 400, "Gold 2-Star": 440, "Gold 3-Star": 480, "Gold 4-Star": 540, "Gold 5-Star": 600,
         "Red 1-Star": 680, "Red 2-Star": 760, "Red 3-Star": 840, "Red 4-Star": 920, "Red 5-Star": 1000
     },
-    /**
-     * Configuration for all toggleable UI sections.
-     * @type {Array<{id: string, name: string, defaultVisible: boolean}>}
-     */
-    ALL_TOGGLEABLE_SECTIONS: [
-        { id: 'championGuidanceSection', name: 'Champion Guidance', defaultVisible: true },
-        { id: 'championManagementSection', name: 'Champion Configurations', defaultVisible: true },
-        { id: 'basePullRatesSection', name: 'Base Pull Rates', defaultVisible: true },
-        { id: 'upgradeRangeSection', name: 'Upgrade Range', defaultVisible: true },
-        { id: 'advisoryBox', name: 'Advisory Note', defaultVisible: true },
-        { id: 'shardBleedSystemsSection', name: 'Shard Bleed Systems', defaultVisible: true },
-        { id: 'probabilitySection', name: 'Probability Simulation', defaultVisible: true },
-        { id: 'results', name: 'Expected Value Results', defaultVisible: true },
-        { id: 'detailedCalculationsDetails', name: 'Detailed EV Calculations', defaultVisible: true },
-        { id: 'mainAnvilCostChartContainer', name: 'Anvil Cost Chart (EV)', defaultVisible: true },
-        { id: 'explanationSection', name: 'Features & Terminology Guide', defaultVisible: false }
-    ],
     /** Chart.js styling options */
     CHART_STYLING: {
         GRID_COLOR: 'rgba(0, 0, 0, 0.1)',
@@ -93,6 +110,10 @@ const CONSTANTS = {
         TITLE_COLOR: '#1e293b',
         TOOLTIP_BG_COLOR: '#f8fafc',
     },
+     /** Debounce wait time in milliseconds for input calculations. @type {number} */
+    DEBOUNCE_WAIT_MS: 300,
+    /** Max steps in the guided mode wizard. @type {number} */
+    WIZARD_MAX_STEPS: 2,
 };
 
 // =================================================================================================
@@ -122,8 +143,10 @@ const state = {
     anvilCostChart: null,
     /** Whether the initial character unlock cost is included in calculations. @type {boolean} */
     isUnlockCostIncluded: false,
-    /** The current order of UI sections. @type {string[]} */
-    currentSectionOrder: [],
+    /** NEW: Flag for guided mode. @type {boolean} */
+    isGuidedMode: false,
+    /** NEW: Current step in the wizard. @type {number} */
+    wizardCurrentStep: 1,
 };
 
 // =================================================================================================
@@ -135,121 +158,96 @@ const state = {
  * @namespace
  */
 const DOM = {
-    // Champion Guidance
+    // --- Main Containers ---
+    calculatorSectionsContainer: document.getElementById('calculator-sections-container'),
+
+    // --- View Switcher & Wizard ---
+    switchToAdvancedBtn: document.getElementById('switchToAdvancedBtn'),
+    switchToGuidedBtn: document.getElementById('switchToGuidedBtn'),
+    wizardContainer: document.getElementById('wizard-container'),
+    wizardStep1: document.getElementById('wizard-step-1'),
+    wizardStep2: document.getElementById('wizard-step-2'),
+    wizardStep3: document.getElementById('wizard-step-3'),
+    wizardBudgetInputContainer: document.getElementById('wizard-budget-input-container'),
+    wizardProbabilityStatus: document.getElementById('wizard-probability-status'),
+    wizardResultsContainer: document.getElementById('wizard-results-container'),
+    wizardNavigation: document.getElementById('wizard-navigation'),
+    wizardBackBtn: document.getElementById('wizardBackBtn'),
+    wizardNextBtn: document.getElementById('wizardNextBtn'),
+    wizardStepIndicator: document.getElementById('wizard-step-indicator'),
+
+    // --- Advanced View Sections ---
+    championGuidanceSection: document.getElementById('championGuidanceSection'),
+    probabilitySection: document.getElementById('probabilitySection'),
+    anvilBudgetInputGroup: document.getElementById('anvilBudgetInputGroup'),
+    results: document.getElementById('results'),
+    probabilityResultsArea: document.getElementById('probabilityResultsArea'),
+
+    // --- Inputs & Controls (shared or advanced) ---
     lmChampionSelect: document.getElementById('lmChampionSelect'),
     guidanceButtons: document.getElementById('guidanceButtons'),
     f2pRecBtn: document.getElementById('f2pRecBtn'),
     minRecBtn: document.getElementById('minRecBtn'),
     guidanceStatus: document.getElementById('guidanceStatus'),
-
-    // Champion Management
-    championNameInput: document.getElementById('championName'),
-    saveChampionBtn: document.getElementById('saveChampionBtn'),
-    savedChampionsSelect: document.getElementById('savedChampions'),
-    loadChampionBtn: document.getElementById('loadChampionBtn'),
-    deleteChampionBtn: document.getElementById('deleteChampionBtn'),
-    championStatusDiv: document.getElementById('championStatus'),
     userIdDisplay: document.getElementById('userIdDisplay'),
-
-    // Local Config
-    exportConfigBtn: document.getElementById('exportConfigBtn'),
-    importConfigText: document.getElementById('importConfigText'),
-    importConfigBtn: document.getElementById('importConfigBtn'),
-    localConfigStatus: document.getElementById('localConfigStatus'),
-
-    // Base Inputs
     mythicProbabilityInput: document.getElementById('mythicProbability'),
     mythicHardPityInput: document.getElementById('mythicHardPity'),
     currentMythicPityInput: document.getElementById('currentMythicPity'),
     currentLMPityInput: document.getElementById('currentLMPity'),
     lmRateUpChanceInput: document.getElementById('lmRateUpChance'),
-
-    // Shard System Inputs
-    currentLMSInput: document.getElementById('currentLMSInput'),
-    currentNMSInput: document.getElementById('currentNMSInput'),
-    proposedLMSInput: document.getElementById('proposedLMSInput'),
-
-    // Error Displays
-    mythicProbabilityError: document.getElementById('mythicProbabilityError'),
-    mythicHardPityError: document.getElementById('mythicHardPityError'),
-    currentMythicPityError: document.getElementById('currentMythicPityError'),
-    currentLMPityError: document.getElementById('currentLMPityError'),
-    lmRateUpChanceError: document.getElementById('lmRateUpChanceError'),
-    currentLMSError: document.getElementById('currentLMSError'),
-    currentNMSError: document.getElementById('currentNMSError'),
-    proposedLMSError: document.getElementById('proposedLMSError'),
-    starLevelError: document.getElementById('starLevelError'),
-
-    // Probability Simulation
+    lmShardsYieldInput: document.getElementById('lmShardsYield'),
     anvilBudgetInput: document.getElementById('anvilBudget'),
-    calculateProbabilityBtn: document.getElementById('calculateProbabilityBtn'),
-    probabilityStatusDiv: document.getElementById('probabilityStatus'),
-    probabilityResultsArea: document.getElementById('probabilityResultsArea'),
-
-    // Section Customization
-    sectionToggleContainer: document.getElementById('sectionToggleContainer'),
-    reorderableSectionsContainer: document.getElementById('reorderableSectionsContainer'),
-
-    // Expected Value Calculation
     startStarLevelSelect: document.getElementById('startStarLevel'),
     targetStarLevelSelect: document.getElementById('targetStarLevel'),
     calculateBtn: document.getElementById('calculateBtn'),
     toggleUnlockCostBtn: document.getElementById('toggleUnlockCostBtn'),
 
-    // EV Results Display
-    advisoryBox: document.getElementById('advisoryBox'),
-    advisoryMessage: document.getElementById('advisoryMessage'),
+    // --- Error & Status Displays ---
+    mythicProbabilityError: document.getElementById('mythicProbabilityError'),
+    mythicHardPityError: document.getElementById('mythicHardPityError'),
+    currentMythicPityError: document.getElementById('currentMythicPityError'),
+    currentLMPityError: document.getElementById('currentLMPityError'),
+    lmRateUpChanceError: document.getElementById('lmRateUpChanceError'),
+    lmShardsYieldError: document.getElementById('lmShardsYieldError'),
+    starLevelError: document.getElementById('starLevelError'),
+    probabilityStatusDiv: document.getElementById('probabilityStatus'),
+    
+    // --- Results Display ---
     shardsNeededForUpgradeSpan: document.getElementById('shardsNeededForUpgrade'),
-    anvilsCurrentSpan: document.getElementById('anvilsCurrent'),
-    anvilsProposedSpan: document.getElementById('anvilsProposed'),
-    anvilsBestCurrentSpan: document.getElementById('anvilsBestCurrent'),
-    anvilsWorstCurrentSpan: document.getElementById('anvilsWorstCurrent'),
-    anvilsBestProposedSpan: document.getElementById('anvilsBestProposed'),
-    anvilsWorstProposedSpan: document.getElementById('anvilsWorstProposed'),
-    conclusionParagraph: document.getElementById('conclusion'),
-    currentSystemTitle: document.getElementById('currentSystemTitle'),
-    proposedSystemTitle: document.getElementById('proposedSystemTitle'),
+    anvilsAvgSpan: document.getElementById('anvilsAvg'),
+    anvilsBestSpan: document.getElementById('anvilsBest'),
+    anvilsWorstSpan: document.getElementById('anvilsWorst'),
+    systemTitle: document.getElementById('systemTitle'),
     unlockCostSection: document.getElementById('unlockCostSection'),
     anvilsUnlockAvgSpan: document.getElementById('anvilsUnlockAvg'),
     anvilsUnlockBestSpan: document.getElementById('anvilsUnlockBest'),
     anvilsUnlockWorstSpan: document.getElementById('anvilsUnlockWorst'),
     anvilCostBreakdownNote: document.getElementById('anvilCostBreakdownNote'),
+    probabilitySummaryText: document.getElementById('probabilitySummaryText'),
     
-    // EV Detailed Calculations Display
+    // --- Detailed Calculations Display ---
     detailUnlockCostSection: document.getElementById('detailUnlockCostSection'),
     calcDrawsPerMythicSpan: document.getElementById('calcDrawsPerMythic'),
     calcWorstCaseMythicsForLMSpan: document.getElementById('calcWorstCaseMythicsForLM'),
-    calcAvgShardsCurrentSpan: document.getElementById('calcAvgShardsCurrent'),
-    calcAvgShardsProposedSpan: document.getElementById('calcAvgShardsProposed'),
-    detailLMSCurrentSpan: document.getElementById('detailLMSCurrent'),
-    detailNMSCurrentSpan: document.getElementById('detailNMSCurrent'),
-    detailLMSProposedSpan: document.getElementById('detailLMSProposed'),
-    detailNMSProposedSpan: document.getElementById('detailNMSProposed'),
+    calcAvgShardsSpan: document.getElementById('calcAvgShards'),
+    detailLMSSpan: document.getElementById('detailLMS'),
+    detailNMSSpan: document.getElementById('detailNMS'),
     detailAvgMythicsForLMSpan: document.getElementById('detailAvgMythicsForLM'),
     detailAnvilsUnlockAvgSpan: document.getElementById('detailAnvilsUnlockAvg'),
     detailAnvilsUnlockBestSpan: document.getElementById('detailAnvilsUnlockBest'),
     detailAnvilsUnlockWorstSpan: document.getElementById('detailAnvilsUnlockWorst'),
-    detailTargetShardsCurrentSpan: document.getElementById('detailTargetShardsCurrent'),
-    detailAvgShardsCurrentSpan: document.getElementById('detailAvgShardsCurrent'),
-    detailMythicPullsAvgCurrentSpan: document.getElementById('detailMythicPullsAvgCurrent'),
-    detailAnvilsAvgCurrentSpan: document.getElementById('detailAnvilsAvgCurrent'),
-    detailBestShardsCurrentSpan: document.getElementById('detailBestShardsCurrent'),
-    detailMythicPullsBestCurrentSpan: document.getElementById('detailMythicPullsBestCurrent'),
-    detailAnvilsBestCurrentSpan: document.getElementById('detailAnvilsBestCurrent'),
-    detailWorstShardsCurrentSpan: document.getElementById('detailWorstShardsCurrent'),
-    detailMythicPullsWorstCurrentSpan: document.getElementById('detailMythicPullsWorstCurrent'),
-    detailAnvilsWorstCurrentSpan: document.getElementById('detailAnvilsWorstCurrent'),
-    detailTargetShardsProposedSpan: document.getElementById('detailTargetShardsProposed'),
-    detailAvgShardsProposedSpan: document.getElementById('detailAvgShardsProposed'),
-    detailMythicPullsAvgProposedSpan: document.getElementById('detailMythicPullsAvgProposed'),
-    detailAnvilsAvgProposedSpan: document.getElementById('detailAnvilsAvgProposed'),
-    detailBestShardsProposedSpan: document.getElementById('detailBestShardsProposed'),
-    detailMythicPullsBestProposedSpan: document.getElementById('detailMythicPullsBestProposed'),
-    detailAnvilsBestProposedSpan: document.getElementById('detailAnvilsBestProposed'),
-    detailWorstShardsProposedSpan: document.getElementById('detailWorstShardsProposed'),
-    detailMythicPullsWorstProposedSpan: document.getElementById('detailMythicPullsWorstProposed'),
-    detailAnvilsWorstProposedSpan: document.getElementById('detailAnvilsWorstProposed'),
+    detailTargetShardsSpan: document.getElementById('detailTargetShards'),
+    detailAvgShardsSpan: document.getElementById('detailAvgShards'),
+    detailMythicPullsAvgSpan: document.getElementById('detailMythicPullsAvg'),
+    detailAnvilsAvgSpan: document.getElementById('detailAnvilsAvg'),
+    detailBestShardsSpan: document.getElementById('detailBestShards'),
+    detailMythicPullsBestSpan: document.getElementById('detailMythicPullsBest'),
+    detailAnvilsBestSpan: document.getElementById('detailAnvilsBest'),
+    detailWorstShardsSpan: document.getElementById('detailWorstShards'),
+    detailMythicPullsWorstSpan: document.getElementById('detailMythicPullsWorst'),
+    detailAnvilsWorstSpan: document.getElementById('detailAnvilsWorst'),
 };
+
 
 // =================================================================================================
 // #region: --- SERVICES ---
@@ -270,7 +268,7 @@ function logAnalyticEvent(eventName, params = {}) {
             console.warn(`Analytics event "${eventName}" failed:`, e);
         }
     } else {
-        console.log(`Analytics (not ready): ${eventName}`, params);
+        // console.log(`Analytics (not ready): ${eventName}`, params);
     }
 }
 
@@ -284,12 +282,12 @@ function logAnalyticEvent(eventName, params = {}) {
  */
 
 /**
- * Calculates the expected number of draws required to obtain one mythic item.
+ * Calculates the expected number of draws required to obtain one mythic item. This function is memoized for performance.
  * @param {number} mythicProbability - The base probability of a mythic pull (0 to 1).
  * @param {number} hardPity - The number of draws at which a mythic is guaranteed.
  * @returns {number} The expected number of draws per mythic, or NaN if inputs are invalid.
  */
-function calculateExpectedDrawsPerMythic(mythicProbability, hardPity) {
+const calculateExpectedDrawsPerMythic = memoize((mythicProbability, hardPity) => {
     if (!(mythicProbability > 0 && mythicProbability <= 1) || hardPity < 1) {
         return NaN;
     }
@@ -300,17 +298,17 @@ function calculateExpectedDrawsPerMythic(mythicProbability, hardPity) {
     }
     expectedDraws += hardPity * Math.pow(1 - mythicProbability, hardPity - 1);
     return expectedDraws;
-}
+});
 
 /**
- * Calculates metrics for a full "Legendary Mythic" (LM) cycle.
+ * Calculates metrics for a full "Legendary Mythic" (LM) cycle. This function is memoized for performance.
  * @param {number} lmShardYield - The number of shards from an LM pull.
  * @param {number} nmShardYield - The number of shards from a Non-Mythic (NM) pull.
  * @param {number} lmRateUpChance - The probability of a mythic being an LM (0 to 1).
  * @param {number} nmGuaranteeThreshold - The number of NM pulls before an LM is guaranteed.
  * @returns {LmCycleMetrics} The calculated metrics for the cycle.
  */
-function calculateLmCycleMetrics(lmShardYield, nmShardYield, lmRateUpChance, nmGuaranteeThreshold) {
+const calculateLmCycleMetrics = memoize((lmShardYield, nmShardYield, lmRateUpChance, nmGuaranteeThreshold) => {
     if (!(lmRateUpChance >= 0 && lmRateUpChance <= 1) || nmGuaranteeThreshold < 0) {
         return { averageShardsPerEffectiveMythic: NaN, expectedMythicPullsPerLmCycle: NaN, worstCaseMythicPullsPerLmCycle: NaN };
     }
@@ -341,7 +339,8 @@ function calculateLmCycleMetrics(lmShardYield, nmShardYield, lmRateUpChance, nmG
         expectedMythicPullsPerLmCycle: totalExpectedMythicPullsInCycle,
         worstCaseMythicPullsPerLmCycle: nmGuaranteeThreshold + 1
     };
-}
+});
+
 
 /**
  * Calculates the total number of anvils needed to acquire a target number of shards.
@@ -369,7 +368,6 @@ async function initializeFirebaseAndAuth() {
     if (!CONSTANTS.FIREBASE_CONFIG.projectId || CONSTANTS.FIREBASE_CONFIG.projectId.includes("YOUR_FALLBACK")) {
         console.warn("Firebase config is incomplete. Firestore features will be disabled.");
         DOM.userIdDisplay.textContent = "User ID: Firebase not configured";
-        UI.disableChampionManagementFeatures(true, "Firebase not configured.");
         logAnalyticEvent('firebase_auth_status', { status: 'config_issue' });
         return false;
     }
@@ -383,7 +381,6 @@ async function initializeFirebaseAndAuth() {
 
         onAuthStateChanged(state.fbAuth, handleAuthStateChange);
 
-        // Prefer custom token if provided, otherwise sign in anonymously.
         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
             await signInWithCustomToken(state.fbAuth, __initial_auth_token);
         } else {
@@ -392,9 +389,8 @@ async function initializeFirebaseAndAuth() {
         return true;
     } catch (error) {
         console.error("Firebase Initialization or Authentication Error:", error);
-        UI.displayNotification("Authentication failed. Cloud features disabled.", 'error', 'champion_config');
+        UI.displayNotification("Authentication failed. Cloud features disabled.", 'error', 'guidance');
         DOM.userIdDisplay.textContent = `User ID: Auth Error`;
-        UI.disableChampionManagementFeatures(true, "Authentication error.");
         logAnalyticEvent('firebase_auth_status', { status: 'failure', error_code: error.code, error_message: error.message });
         return false;
     }
@@ -410,185 +406,16 @@ async function handleAuthStateChange(user) {
         state.currentUserId = user.uid;
         DOM.userIdDisplay.textContent = `User ID: ${state.currentUserId.substring(0, 8)}...`;
         state.championsColRef = collection(state.fbDb, `artifacts/${CONSTANTS.APP_ID}/users/${state.currentUserId}/champions`);
-        
-        await populateSavedChampionsDropdownFromFirestore();
-        await populateLMChampionsDropdown(); // NEW: Populate the master champion list
-        UI.disableChampionManagementFeatures(false);
+        await populateLMChampionsDropdown(); 
         logAnalyticEvent('firebase_auth_status', { status: 'signed_in', method: user.isAnonymous ? 'anonymous' : 'custom' });
     } else {
         state.currentUserId = null;
         DOM.userIdDisplay.textContent = "User ID: Not signed in";
         state.championsColRef = null;
-        if (state.unsubscribeChampionsListener) {
-            state.unsubscribeChampionsListener();
-            state.unsubscribeChampionsListener = null;
-        }
-        DOM.savedChampionsSelect.innerHTML = '<option value="">-- Sign in to manage configurations --</option>';
         DOM.lmChampionSelect.innerHTML = '<option value="">-- Sign in to load champions --</option>';
         DOM.lmChampionSelect.disabled = true;
-        UI.disableChampionManagementFeatures(true, "Sign in to use cloud save.");
         logAnalyticEvent('firebase_auth_status', { status: 'signed_out' });
     }
-}
-
-/**
- * Saves the current calculator configuration to Firestore under the current user's profile.
- * @async
- */
-async function saveChampionToFirestore() {
-    if (!state.currentUserId || !state.championsColRef) {
-        UI.displayNotification("Not signed in. Cannot save.", 'error', 'champion_config');
-        return;
-    }
-    const championConfigName = DOM.championNameInput.value.trim();
-    if (!championConfigName) {
-        UI.displayNotification("Configuration name cannot be empty.", 'error', 'champion_config');
-        return;
-    }
-    if (/[.#$[\]/]/.test(championConfigName) || championConfigName.length > 100) {
-        UI.displayNotification("Config name contains invalid characters or is too long.", 'error', 'champion_config');
-        return;
-    }
-
-    const championData = {
-        name: championConfigName,
-        mythicProbability: DOM.mythicProbabilityInput.value,
-        mythicHardPity: DOM.mythicHardPityInput.value,
-        lmRateUpChance: DOM.lmRateUpChanceInput.value,
-        currentMythicPity: DOM.currentMythicPityInput.value,
-        currentLMPity: DOM.currentLMPityInput.value,
-        includeUnlockCost: state.isUnlockCostIncluded,
-        startStarLevel: DOM.startStarLevelSelect.value,
-        targetStarLevel: DOM.targetStarLevelSelect.value,
-        currentLMS: DOM.currentLMSInput.value,
-        currentNMS: DOM.currentNMSInput.value,
-        proposedLMS: DOM.proposedLMSInput.value,
-        savedAt: serverTimestamp()
-    };
-
-    try {
-        const championDocRef = doc(state.championsColRef, championConfigName);
-        await setDoc(championDocRef, championData, { merge: true });
-        UI.displayNotification(`Configuration "${championConfigName}" saved successfully!`, 'success', 'champion_config');
-        logAnalyticEvent('save_config_firebase', { success: true });
-        DOM.championNameInput.value = '';
-    } catch (e) {
-        UI.displayNotification(`Error saving: ${e.message}`, 'error', 'champion_config');
-        console.error("Error saving to Firestore:", e);
-        logAnalyticEvent('save_config_firebase', { success: false, error_message: e.message });
-    }
-}
-
-/**
- * Loads a selected configuration from Firestore and applies it to the UI.
- * @async
- * @param {string|null} [configNameToLoad=null] - The name of the config to load. If null, uses the value from the dropdown.
- */
-async function loadChampionFromFirestore(configNameToLoad = null) {
-    if (!state.currentUserId || !state.championsColRef) {
-        UI.displayNotification("Not signed in. Cannot load configurations.", 'error', 'champion_config');
-        return;
-    }
-    const championConfigName = configNameToLoad || DOM.savedChampionsSelect.value;
-    if (!championConfigName) {
-        UI.displayNotification("No configuration selected to load.", 'error', 'champion_config');
-        return;
-    }
-
-    try {
-        const championDocRef = doc(state.championsColRef, championConfigName);
-        const docSnap = await getDoc(championDocRef);
-
-        if (docSnap.exists()) {
-            const championData = docSnap.data();
-            UI.applyConfigToInputs(championData);
-            handleExpectedValueCalculation('load_config_firebase');
-            UI.displayNotification(`Configuration "${championConfigName}" loaded.`, 'success', 'champion_config');
-            logAnalyticEvent('load_config_firebase', { success: true });
-        } else {
-            UI.displayNotification(`Configuration "${championConfigName}" not found.`, 'error', 'champion_config');
-            logAnalyticEvent('load_config_firebase', { success: false, reason: 'not_found' });
-        }
-    } catch (e) {
-        UI.displayNotification(`Error loading: ${e.message}`, 'error', 'champion_config');
-        console.error("Error loading from Firestore:", e);
-        logAnalyticEvent('load_config_firebase', { success: false, error_message: e.message });
-    }
-}
-
-/**
- * Deletes the selected configuration from Firestore after user confirmation.
- * @async
- */
-async function deleteChampionFromFirestore() {
-    if (!state.currentUserId || !state.championsColRef) {
-        UI.displayNotification("Not signed in. Cannot delete.", 'error', 'champion_config');
-        return;
-    }
-    const championConfigName = DOM.savedChampionsSelect.value;
-    if (!championConfigName) {
-        UI.displayNotification("No configuration selected to delete.", 'error', 'champion_config');
-        return;
-    }
-
-    const confirmed = await UI.showConfirmationModal(`Delete "${championConfigName}"? This cannot be undone.`);
-    if (!confirmed) {
-        UI.displayNotification("Deletion cancelled.", 'info', 'champion_config');
-        logAnalyticEvent('delete_config_action', { action: 'cancelled' });
-        return;
-    }
-
-    try {
-        await deleteDoc(doc(state.championsColRef, championConfigName));
-        UI.displayNotification(`Configuration "${championConfigName}" deleted.`, 'success', 'champion_config');
-        logAnalyticEvent('delete_config_action', { action: 'confirmed', success: true });
-        DOM.championNameInput.value = '';
-    } catch (e) {
-        UI.displayNotification(`Error deleting: ${e.message}`, 'error', 'champion_config');
-        console.error("Error deleting from Firestore:", e);
-        logAnalyticEvent('delete_config_action', { action: 'confirmed', success: false, error_message: e.message });
-    }
-}
-
-/**
- * Fetches and listens for real-time updates to the saved champion configurations from Firestore and populates the dropdown.
- * @async
- */
-async function populateSavedChampionsDropdownFromFirestore() {
-    if (!state.currentUserId || !state.championsColRef) {
-        DOM.savedChampionsSelect.innerHTML = '<option value="">-- Not signed in --</option>';
-        return;
-    }
-    if (state.unsubscribeChampionsListener) {
-        state.unsubscribeChampionsListener();
-    }
-
-    const q = query(state.championsColRef, orderBy("name"));
-    state.unsubscribeChampionsListener = onSnapshot(q, (querySnapshot) => {
-        const hadSelection = DOM.savedChampionsSelect.value;
-        DOM.savedChampionsSelect.innerHTML = ''; // Clear existing
-        if (querySnapshot.empty) {
-            DOM.savedChampionsSelect.innerHTML = '<option value="">-- No configurations saved --</option>';
-        } else {
-            DOM.savedChampionsSelect.innerHTML = '<option value="">-- Select a Configuration --</option>';
-            querySnapshot.forEach((docSnap) => {
-                const option = document.createElement('option');
-                option.value = docSnap.id;
-                option.textContent = docSnap.data().name || docSnap.id;
-                DOM.savedChampionsSelect.appendChild(option);
-            });
-        }
-        // Restore previous selection if it still exists
-        if (hadSelection && Array.from(DOM.savedChampionsSelect.options).some(opt => opt.value === hadSelection)) {
-            DOM.savedChampionsSelect.value = hadSelection;
-        }
-        logAnalyticEvent('firestore_dropdown_populated', { type: 'user_configs', count: querySnapshot.size });
-    }, (error) => {
-        console.error("Error listening to champion configurations:", error);
-        UI.displayNotification("Error fetching configurations.", 'error', 'champion_config');
-        DOM.savedChampionsSelect.innerHTML = '<option value="">-- Error loading --</option>';
-        logAnalyticEvent('firestore_listener_error', { error_message: error.message });
-    });
 }
 
 /**
@@ -618,7 +445,6 @@ async function populateLMChampionsDropdown() {
                 option.value = champData.name || doc.id;
                 option.textContent = champData.name || doc.id;
                 
-                // Store recommendation data directly on the option element for easy access later
                 option.dataset.recMin = champData.recommendationMin || 'not set';
                 option.dataset.recF2p = champData.recommendationF2P || 'not set';
 
@@ -642,7 +468,7 @@ async function populateLMChampionsDropdown() {
 
 const UI = {
     /**
-     * @typedef {'champion_config' | 'probability_sim' | 'local_config' | 'guidance' | 'general'} NotificationArea
+     * @typedef {'guidance' | 'probability_sim' | 'wizard'} NotificationArea
      * @typedef {'info' | 'success' | 'error'} NotificationType
      */
 
@@ -650,42 +476,28 @@ const UI = {
      * Displays a temporary notification message in a specified area of the UI.
      * @param {string} message - The message to display.
      * @param {NotificationType} [type='info'] - The type of notification (info, success, error).
-     * @param {NotificationArea} [area='general'] - The UI area where the notification should appear.
+     * @param {NotificationArea} [area='guidance'] - The UI area where the notification should appear.
      */
-    displayNotification(message, type = 'info', area = 'general') {
+    displayNotification(message, type = 'info', area = 'guidance') {
         let statusDiv;
         switch (area) {
-            case 'champion_config': statusDiv = DOM.championStatusDiv; break;
             case 'probability_sim': statusDiv = DOM.probabilityStatusDiv; break;
-            case 'local_config': statusDiv = DOM.localConfigStatus; break;
-            case 'guidance': statusDiv = DOM.guidanceStatus; break;
-            default: statusDiv = DOM.championStatusDiv;
+            case 'wizard': statusDiv = state.isGuidedMode ? DOM.wizardProbabilityStatus : DOM.probabilityStatusDiv; break;
+            case 'guidance':
+            default: statusDiv = DOM.guidanceStatus;
         }
         if (!statusDiv) return;
 
         statusDiv.textContent = message;
         statusDiv.className = `status-message text-center py-1 status-${type}`;
-        logAnalyticEvent('ui_notification_displayed', { type, area });
+        logAnalyticEvent('ui_notification_displayed', { type, area, message });
 
         setTimeout(() => {
-            statusDiv.textContent = '';
-            statusDiv.className = 'status-message mt-3';
+            if (statusDiv.textContent === message) {
+                statusDiv.textContent = '';
+                statusDiv.className = 'status-message mt-3';
+            }
         }, 4000);
-    },
-
-    /**
-     * Enables or disables the champion management feature buttons and select input.
-     * @param {boolean} disable - True to disable the features, false to enable.
-     * @param {string} [reason=""] - A message to display in the dropdown when disabled.
-     */
-    disableChampionManagementFeatures(disable, reason = "") {
-        DOM.saveChampionBtn.disabled = disable;
-        DOM.loadChampionBtn.disabled = disable;
-        DOM.deleteChampionBtn.disabled = disable;
-        DOM.savedChampionsSelect.disabled = disable;
-        if (disable && reason) {
-            DOM.savedChampionsSelect.innerHTML = `<option value="">-- ${reason} --</option>`;
-        }
     },
 
     /**
@@ -694,6 +506,7 @@ const UI = {
      * @param {boolean} isLoading - True to show the loading state, false to return to normal.
      */
     setButtonLoadingState(button, isLoading) {
+        if (!button) return;
         const buttonText = button.querySelector('.btn-text');
         const spinner = button.querySelector('.spinner');
         if (isLoading) {
@@ -707,37 +520,6 @@ const UI = {
             if (buttonText) buttonText.style.display = 'inline-block';
             if (spinner) spinner.style.display = 'none';
         }
-    },
-
-    /**
-     * Shows a confirmation modal dialog.
-     * @param {string} message - The confirmation message to display to the user.
-     * @returns {Promise<boolean>} A promise that resolves to true if the user confirms, false otherwise.
-     */
-    showConfirmationModal(message) {
-        return new Promise((resolve) => {
-            const modalBackdrop = document.createElement('div');
-            modalBackdrop.className = 'modal-backdrop active';
-            const modalContent = document.createElement('div');
-            modalContent.className = 'modal-content';
-            modalContent.innerHTML = `
-                <p class="mb-4">${message}</p>
-                <div class="flex justify-end gap-3">
-                    <button class="btn btn-secondary px-4 py-2" id="cancelBtn">Cancel</button>
-                    <button class="btn btn-danger px-4 py-2" id="confirmBtn">Confirm</button>
-                </div>
-            `;
-            modalBackdrop.appendChild(modalContent);
-            document.body.appendChild(modalBackdrop);
-
-            const close = (result) => {
-                document.body.removeChild(modalBackdrop);
-                resolve(result);
-            };
-
-            modalContent.querySelector('#confirmBtn').onclick = () => close(true);
-            modalContent.querySelector('#cancelBtn').onclick = () => close(false);
-        });
     },
     
     /**
@@ -783,44 +565,20 @@ const UI = {
     },
 
     /**
-     * @typedef {object} ConfigData
-     * @property {string} [name]
-     * @property {string} [mythicProbability]
-     * @property {string} [mythicHardPity]
-     * @property {string} [lmRateUpChance]
-     * @property {string} [currentMythicPity]
-     * @property {string} [currentLMPity]
-     * @property {boolean} [includeUnlockCost]
-     * @property {string} [startStarLevel]
-     * @property {string} [targetStarLevel]
-     * @property {string} [currentLMS]
-     * @property {string} [currentNMS]
-     * @property {string} [proposedLMS]
+     * Resets the UI to its default state, used for Guided Mode.
      */
-    
-    /**
-     * Applies a configuration data object to all the relevant UI input fields.
-     * @param {ConfigData} configData - The configuration data to apply.
-     */
-    applyConfigToInputs(configData) {
-        DOM.mythicProbabilityInput.value = configData.mythicProbability || "0.0384";
-        DOM.mythicHardPityInput.value = configData.mythicHardPity || "50";
-        DOM.lmRateUpChanceInput.value = configData.lmRateUpChance || "0.269";
-        DOM.currentMythicPityInput.value = configData.currentMythicPity || "0";
-        DOM.currentLMPityInput.value = configData.currentLMPity || "0";
-        state.isUnlockCostIncluded = configData.includeUnlockCost === true;
+    resetToDefaults() {
+        DOM.mythicProbabilityInput.value = "0.0384";
+        DOM.mythicHardPityInput.value = "50";
+        DOM.lmRateUpChanceInput.value = "0.269";
+        DOM.currentMythicPityInput.value = "0";
+        DOM.currentLMPityInput.value = "0";
+        DOM.lmShardsYieldInput.value = "40";
+        DOM.anvilBudgetInput.value = "100";
+        DOM.startStarLevelSelect.value = "0_shards";
+        DOM.targetStarLevelSelect.value = Object.keys(CONSTANTS.SHARD_REQUIREMENTS)[0];
+        state.isUnlockCostIncluded = false;
         this.updateToggleUnlockButtonAppearance();
-        DOM.startStarLevelSelect.value = configData.startStarLevel || "0_shards";
-        DOM.targetStarLevelSelect.value = configData.targetStarLevel || Object.keys(CONSTANTS.SHARD_REQUIREMENTS)[0];
-        DOM.championNameInput.value = configData.name || configData.championName || ''; // Support both 'name' and 'championName'
-        DOM.currentLMSInput.value = configData.currentLMS !== undefined ? configData.currentLMS : "40";
-        DOM.currentNMSInput.value = configData.currentNMS !== undefined ? configData.currentNMS : "0";
-        DOM.proposedLMSInput.value = configData.proposedLMS !== undefined ? configData.proposedLMS : "40";
-        
-        // Reset simulation results area
-        DOM.probabilityResultsArea.classList.add('hidden');
-        DOM.probabilityResultsArea.innerHTML = '';
-        if(DOM.probabilityStatusDiv) DOM.probabilityStatusDiv.textContent = '';
     },
 };
 
@@ -839,7 +597,6 @@ function createChart(canvasId, chartData, chartOptions) {
         console.error(`Canvas element with ID '${canvasId}' not found.`);
         return null;
     }
-    // Destroy existing chart on this canvas if it exists
     if (window[canvasId + 'Instance']) {
         window[canvasId + 'Instance'].destroy();
     }
@@ -850,56 +607,24 @@ function createChart(canvasId, chartData, chartOptions) {
         data: chartData,
         options: chartOptions,
     });
-    window[canvasId + 'Instance'] = instance; // Cache instance
+    window[canvasId + 'Instance'] = instance;
     return instance;
 }
 
 /**
  * Updates the main anvil cost comparison chart with new data.
- * @param {number[]} currentCosts - Array of average costs for the current system.
- * @param {number[]} proposedCosts - Array of average costs for the proposed system.
+ * @param {number[]} costs - Array of average costs for the system.
  * @param {string[]} labels - Array of labels for the x-axis (star levels).
  * @param {boolean} includeUnlock - Whether to include the unlock cost in the bars.
  * @param {number} unlockCostAvgForChart - The average cost to unlock a character.
  */
-function updateMainAnvilCostChart(currentCosts, proposedCosts, labels, includeUnlock, unlockCostAvgForChart) {
-    const finalCurrentCosts = currentCosts.map(cost => includeUnlock ? cost + unlockCostAvgForChart : cost);
-    const finalProposedCosts = proposedCosts.map(cost => includeUnlock ? cost + unlockCostAvgForChart : cost);
-
+function updateMainAnvilCostChart(costs, labels, includeUnlock, unlockCostAvgForChart) {
+    const finalCosts = costs.map(cost => includeUnlock ? cost + unlockCostAvgForChart : cost);
     const data = {
         labels: labels,
-        datasets: [
-            { label: 'Current System (Avg Total)', data: finalCurrentCosts, backgroundColor: 'rgba(59, 130, 246, 0.7)' },
-            { label: 'Proposed System (Avg Total)', data: finalProposedCosts, backgroundColor: 'rgba(16, 185, 129, 0.7)' }
-        ]
+        datasets: [{ label: 'Avg Total Anvils', data: finalCosts, backgroundColor: 'rgba(59, 130, 246, 0.7)' }]
     };
-    const options = {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            y: {
-                beginAtZero: true,
-                title: { display: true, text: includeUnlock ? 'Total Anvils (Unlock + Upgrade)' : 'Anvils for Upgrade Only', color: CONSTANTS.CHART_STYLING.TITLE_COLOR },
-                grid: { color: CONSTANTS.CHART_STYLING.GRID_COLOR },
-                ticks: { color: CONSTANTS.CHART_STYLING.FONT_COLOR }
-            },
-            x: {
-                title: { display: true, text: 'Star Level', color: CONSTANTS.CHART_STYLING.TITLE_COLOR },
-                grid: { display: false },
-                ticks: { color: CONSTANTS.CHART_STYLING.FONT_COLOR }
-            }
-        },
-        plugins: {
-            legend: { labels: { color: CONSTANTS.CHART_STYLING.FONT_COLOR } },
-            tooltip: {
-                backgroundColor: CONSTANTS.CHART_STYLING.TOOLTIP_BG_COLOR,
-                titleColor: CONSTANTS.CHART_STYLING.TITLE_COLOR,
-                bodyColor: CONSTANTS.CHART_STYLING.FONT_COLOR,
-                callbacks: { label: context => `${context.dataset.label}: ${Math.round(context.raw)} Anvils` }
-            }
-        }
-    };
-    
+    const options = { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, title: { display: true, text: includeUnlock ? 'Total Anvils (Unlock + Upgrade)' : 'Anvils for Upgrade Only', color: CONSTANTS.CHART_STYLING.TITLE_COLOR }, grid: { color: CONSTANTS.CHART_STYLING.GRID_COLOR }, ticks: { color: CONSTANTS.CHART_STYLING.FONT_COLOR } }, x: { title: { display: true, text: 'Star Level', color: CONSTANTS.CHART_STYLING.TITLE_COLOR }, grid: { display: false }, ticks: { color: CONSTANTS.CHART_STYLING.FONT_COLOR } } }, plugins: { legend: { labels: { color: CONSTANTS.CHART_STYLING.FONT_COLOR } }, tooltip: { backgroundColor: CONSTANTS.CHART_STYLING.TOOLTIP_BG_COLOR, titleColor: CONSTANTS.CHART_STYLING.TITLE_COLOR, bodyColor: CONSTANTS.CHART_STYLING.FONT_COLOR, callbacks: { label: context => `${context.dataset.label}: ${Math.round(context.raw)} Anvils` } } } };
     state.anvilCostChart = createChart('anvilCostChart', data, options);
 }
 
@@ -907,186 +632,100 @@ function updateMainAnvilCostChart(currentCosts, proposedCosts, labels, includeUn
  * Displays a probability distribution histogram chart.
  * @param {string} canvasId - The ID of the canvas element for the chart.
  * @param {object} histogram - The histogram data (labels, data).
- * @param {string} systemLabel - A label for the system being displayed (e.g., "Current System").
  */
-function displayProbabilityDistributionChart(canvasId, histogram, systemLabel) {
-    const isCurrentSystem = systemLabel.toLowerCase().includes('current');
-    const data = {
-        labels: histogram.labels,
-        datasets: [{
-            label: `Anvil Cost Frequency`,
-            data: histogram.data,
-            backgroundColor: isCurrentSystem ? 'rgba(59, 130, 246, 0.7)' : 'rgba(16, 185, 129, 0.7)',
-        }]
-    };
-    const options = {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            y: { beginAtZero: true, title: { display: true, text: 'Number of Runs', color: CONSTANTS.CHART_STYLING.TITLE_COLOR }, grid: { color: CONSTANTS.CHART_STYLING.GRID_COLOR }, ticks: { color: CONSTANTS.CHART_STYLING.FONT_COLOR } },
-            x: { title: { display: true, text: 'Anvils Spent', color: CONSTANTS.CHART_STYLING.TITLE_COLOR }, grid: { display: false }, ticks: { color: CONSTANTS.CHART_STYLING.FONT_COLOR, autoSkip: true, maxTicksLimit: 15 } }
-        },
-        plugins: {
-            legend: { display: false },
-            tooltip: {
-                backgroundColor: CONSTANTS.CHART_STYLING.TOOLTIP_BG_COLOR,
-                titleColor: CONSTANTS.CHART_STYLING.TITLE_COLOR,
-                bodyColor: CONSTANTS.CHART_STYLING.FONT_COLOR,
-                callbacks: { label: context => `${context.dataset.label}: ${context.parsed.y} runs` }
-            }
-        }
-    };
-
+function displayProbabilityDistributionChart(canvasId, histogram) {
+    const data = { labels: histogram.labels, datasets: [{ label: `Anvil Cost Frequency`, data: histogram.data, backgroundColor: 'rgba(16, 185, 129, 0.7)', }] };
+    const options = { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, title: { display: true, text: 'Number of Runs', color: CONSTANTS.CHART_STYLING.TITLE_COLOR }, grid: { color: CONSTANTS.CHART_STYLING.GRID_COLOR }, ticks: { color: CONSTANTS.CHART_STYLING.FONT_COLOR } }, x: { title: { display: true, text: 'Anvils Spent', color: CONSTANTS.CHART_STYLING.TITLE_COLOR }, grid: { display: false }, ticks: { color: CONSTANTS.CHART_STYLING.FONT_COLOR, autoSkip: true, maxTicksLimit: 15 } } }, plugins: { legend: { display: false }, tooltip: { backgroundColor: CONSTANTS.CHART_STYLING.TOOLTIP_BG_COLOR, titleColor: CONSTANTS.CHART_STYLING.TITLE_COLOR, bodyColor: CONSTANTS.CHART_STYLING.FONT_COLOR, callbacks: { label: context => `${context.dataset.label}: ${context.parsed.y} runs` } } } };
     createChart(canvasId, data, options);
 }
 
-// ## Section Customization Controller ##
+// =================================================================================================
+// #region: --- GUIDED MODE WIZARD ---
+// =================================================================================================
 
 /**
- * Manages the visibility and order of UI sections.
- * @namespace
+ * Manages the view state between Advanced and Guided modes.
+ * @param {boolean} showGuided - True to show Guided Mode, false for Advanced.
  */
-const SectionCustomizer = {
-    /**
-     * Initializes section visibility and order from localStorage.
-     */
-    initialize() {
-        const visibilityPrefs = this.loadPreferences(CONSTANTS.SECTION_VISIBILITY_STORAGE_KEY);
-        const orderPrefs = this.loadPreferences(CONSTANTS.SECTION_ORDER_STORAGE_KEY, []);
+function setView(showGuided) {
+    state.isGuidedMode = showGuided;
 
-        state.currentSectionOrder = orderPrefs.length > 0 ? orderPrefs : CONSTANTS.ALL_TOGGLEABLE_SECTIONS.map(s => s.id);
-        
-        // Ensure all sections are accounted for
-        const validSectionIds = new Set(CONSTANTS.ALL_TOGGLEABLE_SECTIONS.map(s => s.id));
-        state.currentSectionOrder = state.currentSectionOrder.filter(id => validSectionIds.has(id));
-        CONSTANTS.ALL_TOGGLEABLE_SECTIONS.forEach(s => {
-            if (!state.currentSectionOrder.includes(s.id)) {
-                state.currentSectionOrder.push(s.id);
-            }
-        });
+    DOM.calculatorSectionsContainer.classList.toggle('hidden', showGuided);
+    DOM.wizardContainer.classList.toggle('hidden', !showGuided);
 
-        this.savePreferences(CONSTANTS.SECTION_ORDER_STORAGE_KEY, state.currentSectionOrder);
-        this.renderToggles();
-        this.renderSectionsInOrder();
-    },
+    DOM.switchToGuidedBtn.classList.toggle('active', showGuided);
+    DOM.switchToAdvancedBtn.classList.toggle('active', !showGuided);
 
-    /**
-     * Renders the toggle switches and reorder buttons for each section.
-     */
-    renderToggles() {
-        DOM.sectionToggleContainer.innerHTML = '';
-        const visibilityPrefs = this.loadPreferences(CONSTANTS.SECTION_VISIBILITY_STORAGE_KEY);
+    if (showGuided) {
+        // Move shared components into the wizard
+        DOM.wizardStep1.appendChild(DOM.championGuidanceSection);
+        DOM.wizardBudgetInputContainer.appendChild(DOM.anvilBudgetInputGroup);
+        navigateToWizardStep(1, true); // Reset to first step
+    } else {
+        // Move shared components back to the advanced view
+        DOM.calculatorSectionsContainer.insertBefore(DOM.championGuidanceSection, DOM.calculatorSectionsContainer.firstChild);
+        DOM.probabilitySection.insertBefore(DOM.anvilBudgetInputGroup, DOM.probabilityStatusDiv);
+        // Move results back if they were in the wizard
+        DOM.calculatorSectionsContainer.appendChild(DOM.results);
+        DOM.calculatorSectionsContainer.appendChild(DOM.probabilityResultsArea);
+    }
+    logAnalyticEvent('view_switched', { view: showGuided ? 'guided' : 'advanced' });
+}
 
-        state.currentSectionOrder.forEach((sectionId, index) => {
-            const sectionConfig = CONSTANTS.ALL_TOGGLEABLE_SECTIONS.find(s => s.id === sectionId);
-            if (!sectionConfig) return;
-
-            const isVisible = visibilityPrefs[sectionConfig.id] !== false; // Default to visible
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'toggle-item';
-            itemDiv.innerHTML = `
-                <label class="toggle-label text-sm">
-                    <input type="checkbox" data-target-section-id="${sectionConfig.id}" class="form-checkbox h-4 w-4 rounded" ${isVisible ? 'checked' : ''}>
-                    ${sectionConfig.name}
-                </label>
-                <div class="order-buttons">
-                    <button title="Move Up" ${index === 0 ? 'disabled' : ''} data-index="${index}" data-direction="-1">&uarr;</button>
-                    <button title="Move Down" ${index === state.currentSectionOrder.length - 1 ? 'disabled' : ''} data-index="${index}" data-direction="1">&darr;</button>
-                </div>
-            `;
-            DOM.sectionToggleContainer.appendChild(itemDiv);
-            
-            const sectionElement = document.getElementById(sectionConfig.id);
-            if (sectionElement) sectionElement.classList.toggle('hidden', !isVisible);
-        });
-        
-        // Add event listeners after rendering
-        DOM.sectionToggleContainer.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.addEventListener('change', this.handleVisibilityChange.bind(this)));
-        DOM.sectionToggleContainer.querySelectorAll('.order-buttons button').forEach(btn => btn.addEventListener('click', this.handleMoveSection.bind(this)));
-    },
-
-    /**
-     * Re-renders the sections in the main container based on the current order.
-     */
-    renderSectionsInOrder() {
-        if (!DOM.reorderableSectionsContainer) return;
-        const fragment = document.createDocumentFragment();
-        state.currentSectionOrder.forEach(sectionId => {
-            const sectionElement = document.getElementById(sectionId);
-            if (sectionElement) fragment.appendChild(sectionElement);
-        });
-        DOM.reorderableSectionsContainer.innerHTML = '';
-        DOM.reorderableSectionsContainer.appendChild(fragment);
-    },
-
-    /**
-     * Handles the change event for a section visibility toggle.
-     * @param {Event} event - The change event object.
-     */
-    handleVisibilityChange(event) {
-        const checkbox = event.target;
-        const targetId = checkbox.dataset.targetSectionId;
-        const sectionToToggle = document.getElementById(targetId);
-
-        if (sectionToToggle) {
-            sectionToToggle.classList.toggle('hidden', !checkbox.checked);
-            const prefs = this.loadPreferences(CONSTANTS.SECTION_VISIBILITY_STORAGE_KEY);
-            prefs[targetId] = checkbox.checked;
-            this.savePreferences(CONSTANTS.SECTION_VISIBILITY_STORAGE_KEY, prefs);
-            logAnalyticEvent('section_visibility_change', { section_id: targetId, is_visible: checkbox.checked });
+/**
+ * Navigates the user to a specific step in the wizard.
+ * @param {number} stepNumber - The step to navigate to.
+ * @param {boolean} [isReset=false] - If true, resets the wizard to its initial state.
+ */
+function navigateToWizardStep(stepNumber, isReset = false) {
+    if (!isReset) {
+        // --- Input Validation Before Proceeding ---
+        if (state.wizardCurrentStep === 1 && !DOM.lmChampionSelect.value) {
+            UI.displayNotification("Please select a champion to continue.", 'error', 'guidance');
+            return;
         }
-    },
-    
-    /**
-     * Handles a click on a move up/down button.
-     * @param {Event} event - The click event object.
-     */
-    handleMoveSection(event) {
-        const button = event.currentTarget;
-        const currentIndex = parseInt(button.dataset.index, 10);
-        const direction = parseInt(button.dataset.direction, 10);
-        const newIndex = currentIndex + direction;
-
-        if (newIndex < 0 || newIndex >= state.currentSectionOrder.length) return;
-
-        const itemToMove = state.currentSectionOrder.splice(currentIndex, 1)[0];
-        state.currentSectionOrder.splice(newIndex, 0, itemToMove);
-
-        this.savePreferences(CONSTANTS.SECTION_ORDER_STORAGE_KEY, state.currentSectionOrder);
-        this.renderToggles();
-        this.renderSectionsInOrder();
-        logAnalyticEvent('section_order_change', { moved_section_id: itemToMove, direction: direction > 0 ? 'down' : 'up' });
-    },
-
-    /**
-     * Saves a preference object to localStorage.
-     * @param {string} key - The localStorage key.
-     * @param {object | Array} value - The value to save.
-     */
-    savePreferences(key, value) {
-        try {
-            localStorage.setItem(key, JSON.stringify(value));
-        } catch (e) {
-            console.error(`Error saving to localStorage (${key}):`, e);
-        }
-    },
-
-    /**
-     * Loads a preference object from localStorage.
-     * @param {string} key - The localStorage key.
-     * @param {object | Array} [defaultValue={}] - The default value to return on failure.
-     * @returns {object | Array} The loaded preference or the default value.
-     */
-    loadPreferences(key, defaultValue = {}) {
-        try {
-            const saved = localStorage.getItem(key);
-            return saved ? JSON.parse(saved) : defaultValue;
-        } catch (e) {
-            console.error(`Error loading from localStorage (${key}):`, e);
-            return defaultValue;
+        if (state.wizardCurrentStep === 2 && !DOM.anvilBudgetInput.value) {
+            UI.displayNotification("Please enter a budget to see probabilities.", 'error', 'wizard');
+            return;
         }
     }
-};
+    
+    state.wizardCurrentStep = stepNumber;
+    
+    // Show the correct step content
+    [DOM.wizardStep1, DOM.wizardStep2, DOM.wizardStep3].forEach((step, index) => {
+        step.classList.toggle('hidden', (index + 1) !== state.wizardCurrentStep);
+    });
+
+    // Update navigation visibility and text
+    const isFinalStep = state.wizardCurrentStep === 3;
+    DOM.wizardNavigation.classList.toggle('hidden', isFinalStep);
+    DOM.wizardBackBtn.classList.toggle('hidden', state.wizardCurrentStep === 1);
+    DOM.wizardNextBtn.textContent = state.wizardCurrentStep === CONSTANTS.WIZARD_MAX_STEPS ? 'Calculate Results' : 'Next';
+    DOM.wizardStepIndicator.textContent = `Step ${state.wizardCurrentStep} of ${CONSTANTS.WIZARD_MAX_STEPS}`;
+
+    // If moving to the final step, run the calculation
+    if (isFinalStep) {
+        DOM.wizardResultsContainer.appendChild(DOM.results);
+        DOM.wizardResultsContainer.appendChild(DOM.probabilityResultsArea);
+        runAllCalculations('wizard_finish');
+        // Add a "Start Over" button
+        const startOverBtn = document.createElement('button');
+        startOverBtn.id = 'wizardStartOverBtn';
+        startOverBtn.className = 'btn btn-primary mt-4 mx-auto';
+        startOverBtn.textContent = 'Start Over';
+        startOverBtn.onclick = () => navigateToWizardStep(1, true);
+        DOM.wizardStep3.appendChild(startOverBtn);
+    } else {
+         // Clean up start over button if it exists
+        const oldBtn = document.getElementById('wizardStartOverBtn');
+        if (oldBtn) oldBtn.remove();
+    }
+
+    if (isReset) {
+        UI.resetToDefaults();
+    }
+}
 
 // =================================================================================================
 // #region: --- CORE LOGIC & EVENT HANDLERS ---
@@ -1094,7 +733,6 @@ const SectionCustomizer = {
 
 /**
  * Handles applying a star level recommendation from the Champion Guidance section.
- * Reads recommendation data from the selected dropdown option's dataset.
  * @param {Event} event - The event that triggered the handler (e.g., button click).
  */
 function handleChampionGuidance(event) {
@@ -1109,30 +747,22 @@ function handleChampionGuidance(event) {
     const triggerId = event.target.id;
     let targetLevel;
     
-    if (triggerId === 'f2pRecBtn') {
-        targetLevel = selectedOption.dataset.recF2p;
-    } else if (triggerId === 'minRecBtn') {
-        targetLevel = selectedOption.dataset.recMin;
-    } else {
-        return; // Should not happen if only the buttons trigger this
-    }
+    if (triggerId === 'f2pRecBtn') targetLevel = selectedOption.dataset.recF2p;
+    else if (triggerId === 'minRecBtn') targetLevel = selectedOption.dataset.recMin;
+    else return;
 
-    // Handle the case where recommendation is not yet set in the database
     if (targetLevel === 'not set' || !targetLevel) {
         UI.displayNotification(`Recommendation for ${selectedChampionName} is not set yet.`, 'info', 'guidance');
-        // Reset fields to base to avoid confusion
         DOM.startStarLevelSelect.value = '0_shards';
-        DOM.targetStarLevelSelect.value = '0_shards';
-        handleExpectedValueCalculation('guidance_reset'); // Recalculate to show 0 cost
+        DOM.targetStarLevelSelect.value = Object.keys(CONSTANTS.SHARD_REQUIREMENTS)[0];
+        runAllCalculations('guidance_reset');
         return;
     }
     
-    // Set start level to base character
     DOM.startStarLevelSelect.value = '0_shards';
 
-    // Handle special keywords from the guide
     if (targetLevel === 'skip') {
-        DOM.targetStarLevelSelect.value = '0_shards'; // Set target to base to show 0 cost
+        DOM.targetStarLevelSelect.value = '0_shards';
         UI.displayNotification(`${selectedChampionName} is a recommended 'Skip'. Target set to base.`, 'info', 'guidance');
     } else if (targetLevel === 'max') {
         DOM.targetStarLevelSelect.value = 'Red 5-Star';
@@ -1145,41 +775,34 @@ function handleChampionGuidance(event) {
         return;
     }
     
-    // Automatically turn on "Include Initial Unlock" when a recommendation is applied
     state.isUnlockCostIncluded = true;
     UI.updateToggleUnlockButtonAppearance();
     logAnalyticEvent('toggle_unlock_cost_auto', { included: true, source: 'guidance_button' });
+    logAnalyticEvent('guidance_recommendation_applied', { champion: selectedChampionName, recommendation_type: triggerId, target_level: DOM.targetStarLevelSelect.value });
 
-
-    logAnalyticEvent('guidance_recommendation_applied', {
-        champion: selectedChampionName,
-        recommendation_type: triggerId,
-        target_level: DOM.targetStarLevelSelect.value
-    });
-
-    // Automatically trigger the main calculation
-    handleExpectedValueCalculation('guidance_button_click');
+    // If in guided mode, automatically move to the next step
+    if (state.isGuidedMode) {
+        navigateToWizardStep(2);
+    } else {
+        runAllCalculations('guidance_button_click');
+    }
 }
 
 
 /**
- * Gathers and validates all user inputs required for the Expected Value calculation.
+ * Gathers and validates all user inputs required for calculations.
  * @returns {{isValid: boolean, data: object, errors: object}} An object containing a validity flag, the parsed input data, and an error object.
  */
-function validateAndGetEVInputs() {
-    // Reset previous errors
+function validateAndGetInputs() {
     Object.values(DOM).filter(el => el && el.id && el.id.endsWith('Error')).forEach(el => el.classList.add('hidden'));
-
     const errors = {};
     const data = {};
     let isValid = true;
-
     const validate = (value, condition, errorEl, errorMessage) => {
         if (!condition(value)) {
-            errorEl.textContent = errorMessage;
-            errorEl.classList.remove('hidden');
+            if (errorEl) { errorEl.textContent = errorMessage; errorEl.classList.remove('hidden'); }
             isValid = false;
-            errors[errorEl.id] = true;
+            errors[errorEl ? errorEl.id : 'unknown_error'] = true;
             return NaN;
         }
         return value;
@@ -1190,16 +813,13 @@ function validateAndGetEVInputs() {
     data.lmRateUpChance = validate(parseFloat(DOM.lmRateUpChanceInput.value), v => !isNaN(v) && v >= 0 && v <= 1, DOM.lmRateUpChanceError, 'Must be 0 to 1');
     data.currentMythicPity = validate(parseInt(DOM.currentMythicPityInput.value, 10) || 0, v => !isNaN(v) && v >= 0 && v < data.mythicHardPity, DOM.currentMythicPityError, `Must be 0 to ${data.mythicHardPity - 1}`);
     data.currentLMPity = validate(parseInt(DOM.currentLMPityInput.value, 10) || 0, v => !isNaN(v) && v >= 0 && v <= CONSTANTS.NM_GUARANTEE_THRESHOLD, DOM.currentLMPityError, `Must be 0 to ${CONSTANTS.NM_GUARANTEE_THRESHOLD}`);
-    
-    data.lmShardsCurrent = validate(parseInt(DOM.currentLMSInput.value, 10), v => !isNaN(v) && v >= 0, DOM.currentLMSError, 'Invalid');
-    data.nmShardsCurrent = validate(parseInt(DOM.currentNMSInput.value, 10), v => !isNaN(v) && v >= 0, DOM.currentNMSError, 'Invalid');
-    data.lmShardsProposed = validate(parseInt(DOM.proposedLMSInput.value, 10), v => !isNaN(v) && v >= 0, DOM.proposedLMSError, 'Invalid');
-    data.nmShardsProposed = 0; // This is a fixed value in the proposed system logic
+    data.lmShardsYield = validate(parseInt(DOM.lmShardsYieldInput.value, 10), v => !isNaN(v) && v >= 0, DOM.lmShardsYieldError, 'Invalid');
+    data.nmShardsYield = 0;
+    data.anvilBudget = validate(parseInt(DOM.anvilBudgetInput.value, 10), v => !isNaN(v) && v > 0, state.isGuidedMode ? DOM.wizardProbabilityStatus : DOM.probabilityStatusDiv, 'Budget must be > 0');
 
     const startShards = DOM.startStarLevelSelect.value === "0_shards" ? 0 : CONSTANTS.SHARD_REQUIREMENTS[DOM.startStarLevelSelect.value] || 0;
     const targetTotalShards = CONSTANTS.SHARD_REQUIREMENTS[DOM.targetStarLevelSelect.value] || 0;
     data.shardsNeededForUpgrade = targetTotalShards - startShards;
-
     if (data.shardsNeededForUpgrade < 0) {
         DOM.starLevelError.textContent = "Target cannot be lower than start. Cost will be 0.";
         DOM.starLevelError.classList.remove('hidden');
@@ -1207,59 +827,36 @@ function validateAndGetEVInputs() {
         errors.starLevelError = true;
     }
     DOM.shardsNeededForUpgradeSpan.textContent = data.shardsNeededForUpgrade.toString();
-
-    if (!isValid) {
-        logAnalyticEvent('input_validation_error', { failed_fields: Object.keys(errors).join(',') });
-    }
-
+    if (!isValid) { logAnalyticEvent('input_validation_error', { failed_fields: Object.keys(errors).join(',') }); }
     return { isValid, data, errors };
 }
 
 /**
  * Performs all the core Expected Value calculations based on validated inputs.
- * @param {object} inputs - The validated input data from `validateAndGetEVInputs`.
+ * @param {object} inputs - The validated input data from `validateAndGetInputs`.
  * @returns {{isValid: boolean, data: object, errorMessage: string|null}} An object with calculation results or an error message.
  */
 function performExpectedValueCalculations(inputs) {
-    const { mythicProbability, mythicHardPity, lmRateUpChance, shardsNeededForUpgrade, lmShardsCurrent, nmShardsCurrent, lmShardsProposed, nmShardsProposed } = inputs;
+    const { mythicProbability, mythicHardPity, lmRateUpChance, shardsNeededForUpgrade, lmShardsYield, nmShardsYield } = inputs;
     const results = {};
-
     results.drawsPerMythicAverage = calculateExpectedDrawsPerMythic(mythicProbability, mythicHardPity);
     if (isNaN(results.drawsPerMythicAverage)) return { isValid: false, errorMessage: 'Error in base Mythic calculation.' };
-
     results.unlockCycleMetrics = calculateLmCycleMetrics(1, 0, lmRateUpChance, CONSTANTS.NM_GUARANTEE_THRESHOLD);
     if (isNaN(results.unlockCycleMetrics.expectedMythicPullsPerLmCycle)) return { isValid: false, errorMessage: 'Error calculating unlock cycle.' };
-
     results.anvilsUnlockAvg = results.unlockCycleMetrics.expectedMythicPullsPerLmCycle * results.drawsPerMythicAverage;
-    results.anvilsUnlockBest = 1 * 1; // 1 pull, 1 mythic
+    results.anvilsUnlockBest = 1 * 1;
     results.anvilsUnlockWorst = results.unlockCycleMetrics.worstCaseMythicPullsPerLmCycle * mythicHardPity;
-
-    const lmCycleMetricsCurrent = calculateLmCycleMetrics(lmShardsCurrent, nmShardsCurrent, lmRateUpChance, CONSTANTS.NM_GUARANTEE_THRESHOLD);
-    const lmCycleMetricsProposed = calculateLmCycleMetrics(lmShardsProposed, nmShardsProposed, lmRateUpChance, CONSTANTS.NM_GUARANTEE_THRESHOLD);
-    if (isNaN(lmCycleMetricsCurrent.averageShardsPerEffectiveMythic) || isNaN(lmCycleMetricsProposed.averageShardsPerEffectiveMythic)) {
-        return { isValid: false, errorMessage: 'Error in shard per mythic calculation.' };
-    }
-
-    results.avgEffShardsCurr = lmCycleMetricsCurrent.averageShardsPerEffectiveMythic;
-    results.avgEffShardsProp = lmCycleMetricsProposed.averageShardsPerEffectiveMythic;
-    results.bestShardsCurr = lmShardsCurrent;
-    results.bestShardsProp = lmShardsProposed;
-    results.worstShardsCurr = (nmShardsCurrent * CONSTANTS.NM_GUARANTEE_THRESHOLD + lmShardsCurrent) / (CONSTANTS.NM_GUARANTEE_THRESHOLD + 1);
-    results.worstShardsProp = (nmShardsProposed * CONSTANTS.NM_GUARANTEE_THRESHOLD + lmShardsProposed) / (CONSTANTS.NM_GUARANTEE_THRESHOLD + 1);
-
-    results.upgradeAnvilsCurrent = calculateGachaAnvils(shardsNeededForUpgrade, results.avgEffShardsCurr, results.drawsPerMythicAverage);
-    results.upgradeAnvilsProposed = calculateGachaAnvils(shardsNeededForUpgrade, results.avgEffShardsProp, results.drawsPerMythicAverage);
-    results.upgradeAnvilsBestCurrent = calculateGachaAnvils(shardsNeededForUpgrade, results.bestShardsCurr, 1);
-    results.upgradeAnvilsWorstCurrent = calculateGachaAnvils(shardsNeededForUpgrade, results.worstShardsCurr, mythicHardPity);
-    results.upgradeAnvilsBestProposed = calculateGachaAnvils(shardsNeededForUpgrade, results.bestShardsProp, 1);
-    results.upgradeAnvilsWorstProposed = calculateGachaAnvils(shardsNeededForUpgrade, results.worstShardsProp, mythicHardPity);
-    
-    // Pass along some original inputs for UI updates
+    const lmCycleMetrics = calculateLmCycleMetrics(lmShardsYield, nmShardsYield, lmRateUpChance, CONSTANTS.NM_GUARANTEE_THRESHOLD);
+    if (isNaN(lmCycleMetrics.averageShardsPerEffectiveMythic)) return { isValid: false, errorMessage: 'Error in shard per mythic calculation.' };
+    results.avgEffShards = lmCycleMetrics.averageShardsPerEffectiveMythic;
+    results.bestShards = lmShardsYield;
+    results.worstShards = (nmShardsYield * CONSTANTS.NM_GUARANTEE_THRESHOLD + lmShardsYield) / (CONSTANTS.NM_GUARANTEE_THRESHOLD + 1);
+    results.upgradeAnvilsAvg = calculateGachaAnvils(shardsNeededForUpgrade, results.avgEffShards, results.drawsPerMythicAverage);
+    results.upgradeAnvilsBest = calculateGachaAnvils(shardsNeededForUpgrade, results.bestShards, 1);
+    results.upgradeAnvilsWorst = calculateGachaAnvils(shardsNeededForUpgrade, results.worstShards, mythicHardPity);
     results.shardsNeededForUpgrade = shardsNeededForUpgrade;
-    results.lmShardsCurrent = lmShardsCurrent;
-    results.nmShardsCurrent = nmShardsCurrent;
-    results.lmShardsProposed = lmShardsProposed;
-
+    results.lmShardsYield = lmShardsYield;
+    results.nmShardsYield = nmShardsYield;
     return { isValid: true, data: results };
 }
 
@@ -1268,210 +865,71 @@ function performExpectedValueCalculations(inputs) {
  * @param {object} metrics - The calculated metrics from `performExpectedValueCalculations`.
  */
 function updateExpectedValueUI(metrics) {
-    const {
-        drawsPerMythicAverage, unlockCycleMetrics, anvilsUnlockAvg, anvilsUnlockBest, anvilsUnlockWorst,
-        avgEffShardsCurr, avgEffShardsProp, bestShardsCurr, bestShardsProp, worstShardsCurr, worstShardsProp,
-        upgradeAnvilsCurrent, upgradeAnvilsProposed, upgradeAnvilsBestCurrent, upgradeAnvilsWorstCurrent,
-        upgradeAnvilsBestProposed, upgradeAnvilsWorstProposed, shardsNeededForUpgrade,
-        lmShardsCurrent, nmShardsCurrent, lmShardsProposed
-    } = metrics;
-
+    const { drawsPerMythicAverage, unlockCycleMetrics, anvilsUnlockAvg, anvilsUnlockBest, anvilsUnlockWorst, avgEffShards, bestShards, worstShards, upgradeAnvilsAvg, upgradeAnvilsBest, upgradeAnvilsWorst, shardsNeededForUpgrade, lmShardsYield } = metrics;
     const formatNum = (val, dec = 2) => isFinite(val) ? val.toFixed(dec) : (shardsNeededForUpgrade <= 0 ? '0' : 'Inf');
     const formatAnvil = (val) => isFinite(val) ? Math.round(val).toString() : (shardsNeededForUpgrade <= 0 ? '0' : 'Infinity');
     const formatMythicPulls = (shards, effShards) => (effShards > 0 && shards > 0) ? Math.ceil(shards / effShards).toString() : (shards <= 0 ? '0' : 'Inf');
-
-    // Update main calculation details
     DOM.calcDrawsPerMythicSpan.textContent = formatNum(drawsPerMythicAverage);
     DOM.calcWorstCaseMythicsForLMSpan.textContent = unlockCycleMetrics.worstCaseMythicPullsPerLmCycle.toString();
-    DOM.calcAvgShardsCurrentSpan.textContent = formatNum(avgEffShardsCurr);
-    DOM.calcAvgShardsProposedSpan.textContent = formatNum(avgEffShardsProp);
-    
-    // Update system parameter details
-    DOM.detailLMSCurrentSpan.textContent = lmShardsCurrent.toString();
-    DOM.detailNMSCurrentSpan.textContent = nmShardsCurrent.toString();
-    DOM.detailLMSProposedSpan.textContent = lmShardsProposed.toString();
-    DOM.detailNMSProposedSpan.textContent = "0 (after bonus pulls)";
-    
-    // Update main result boxes based on unlock cost inclusion
+    DOM.calcAvgShardsSpan.textContent = formatNum(avgEffShards);
+    DOM.detailLMSSpan.textContent = lmShardsYield.toString();
+    DOM.detailNMSSpan.textContent = "0";
     const isIncluded = state.isUnlockCostIncluded;
     DOM.unlockCostSection.classList.toggle('hidden', !isIncluded);
     DOM.detailUnlockCostSection.classList.toggle('hidden', !isIncluded);
-    DOM.advisoryBox.classList.toggle('advisory-indigo-theme', isIncluded);
-    DOM.advisoryMessage.innerHTML = isIncluded ? `Costs below <strong>INCLUDE</strong> initial unlock.` : `Costs below are for the <strong>selected shard upgrade ONLY</strong>.`;
-    DOM.currentSystemTitle.textContent = isIncluded ? "Current System (Total)" : "Current System (Upgrade Only)";
-    DOM.proposedSystemTitle.textContent = isIncluded ? "Proposed System (Total)" : "Proposed System (Upgrade Only)";
-
+    DOM.systemTitle.textContent = isIncluded ? "Total Anvil Cost" : "Anvil Cost for Upgrade Only";
     if(isIncluded) {
         [DOM.anvilsUnlockAvgSpan, DOM.detailAnvilsUnlockAvgSpan].forEach(el => el.textContent = formatAnvil(anvilsUnlockAvg));
         [DOM.anvilsUnlockBestSpan, DOM.detailAnvilsUnlockBestSpan].forEach(el => el.textContent = formatAnvil(anvilsUnlockBest));
         [DOM.anvilsUnlockWorstSpan, DOM.detailAnvilsUnlockWorstSpan].forEach(el => el.textContent = formatAnvil(anvilsUnlockWorst));
         DOM.detailAvgMythicsForLMSpan.textContent = formatNum(unlockCycleMetrics.expectedMythicPullsPerLmCycle);
     }
-    
-    DOM.anvilsCurrentSpan.textContent = formatAnvil(isIncluded ? anvilsUnlockAvg + upgradeAnvilsCurrent : upgradeAnvilsCurrent);
-    DOM.anvilsProposedSpan.textContent = formatAnvil(isIncluded ? anvilsUnlockAvg + upgradeAnvilsProposed : upgradeAnvilsProposed);
-    DOM.anvilsBestCurrentSpan.textContent = formatAnvil(isIncluded ? anvilsUnlockBest + upgradeAnvilsBestCurrent : upgradeAnvilsBestCurrent);
-    DOM.anvilsWorstCurrentSpan.textContent = formatAnvil(isIncluded ? anvilsUnlockWorst + upgradeAnvilsWorstCurrent : upgradeAnvilsWorstCurrent);
-    DOM.anvilsBestProposedSpan.textContent = formatAnvil(isIncluded ? anvilsUnlockBest + upgradeAnvilsBestProposed : upgradeAnvilsBestProposed);
-    DOM.anvilsWorstProposedSpan.textContent = formatAnvil(isIncluded ? anvilsUnlockWorst + upgradeAnvilsWorstProposed : upgradeAnvilsWorstProposed);
-
-    // Update detailed breakdown tables
-    DOM.detailTargetShardsCurrentSpan.textContent = shardsNeededForUpgrade.toString();
-    DOM.detailAvgShardsCurrentSpan.textContent = formatNum(avgEffShardsCurr);
-    DOM.detailMythicPullsAvgCurrentSpan.textContent = formatMythicPulls(shardsNeededForUpgrade, avgEffShardsCurr);
-    DOM.detailAnvilsAvgCurrentSpan.textContent = formatAnvil(upgradeAnvilsCurrent);
-    DOM.detailBestShardsCurrentSpan.textContent = formatNum(bestShardsCurr);
-    DOM.detailMythicPullsBestCurrentSpan.textContent = formatMythicPulls(shardsNeededForUpgrade, bestShardsCurr);
-    DOM.detailAnvilsBestCurrentSpan.textContent = formatAnvil(upgradeAnvilsBestCurrent);
-    DOM.detailWorstShardsCurrentSpan.textContent = formatNum(worstShardsCurr);
-    DOM.detailMythicPullsWorstCurrentSpan.textContent = formatMythicPulls(shardsNeededForUpgrade, worstShardsCurr);
-    DOM.detailAnvilsWorstCurrentSpan.textContent = formatAnvil(upgradeAnvilsWorstCurrent);
-
-    DOM.detailTargetShardsProposedSpan.textContent = shardsNeededForUpgrade.toString();
-    DOM.detailAvgShardsProposedSpan.textContent = formatNum(avgEffShardsProp);
-    DOM.detailMythicPullsAvgProposedSpan.textContent = formatMythicPulls(shardsNeededForUpgrade, avgEffShardsProp);
-    DOM.detailAnvilsAvgProposedSpan.textContent = formatAnvil(upgradeAnvilsProposed);
-    DOM.detailBestShardsProposedSpan.textContent = formatNum(bestShardsProp);
-    DOM.detailMythicPullsBestProposedSpan.textContent = formatMythicPulls(shardsNeededForUpgrade, bestShardsProp);
-    DOM.detailAnvilsBestProposedSpan.textContent = formatAnvil(upgradeAnvilsBestProposed);
-    DOM.detailWorstShardsProposedSpan.textContent = formatNum(worstShardsProp);
-    DOM.detailMythicPullsWorstProposedSpan.textContent = formatMythicPulls(shardsNeededForUpgrade, worstShardsProp);
-    DOM.detailAnvilsWorstProposedSpan.textContent = formatAnvil(upgradeAnvilsWorstProposed);
-
-    // Update conclusion text
-    const totalCurrent = parseFloat(DOM.anvilsCurrentSpan.textContent);
-    const totalProposed = parseFloat(DOM.anvilsProposedSpan.textContent);
-    if (shardsNeededForUpgrade <= 0 && !isIncluded) {
-        DOM.conclusionParagraph.textContent = "No shards needed for this upgrade range. Cost is 0.";
-    } else if (isFinite(totalCurrent) && isFinite(totalProposed)) {
-        const diff = Math.abs(totalCurrent - totalProposed);
-        if (totalCurrent < totalProposed) DOM.conclusionParagraph.textContent = `The Current System is ~${Math.round(diff)} Anvils more efficient on average.`;
-        else if (totalProposed < totalCurrent) DOM.conclusionParagraph.textContent = `The Proposed System is ~${Math.round(diff)} Anvils more efficient on average.`;
-        else DOM.conclusionParagraph.textContent = 'Both systems require a similar number of Anvils on average.';
-    } else {
-        DOM.conclusionParagraph.textContent = 'Could not determine efficiency due to non-finite Anvil costs.';
-    }
-
-    // Update the main cost chart
+    DOM.anvilsAvgSpan.textContent = formatAnvil(isIncluded ? anvilsUnlockAvg + upgradeAnvilsAvg : upgradeAnvilsAvg);
+    DOM.anvilsBestSpan.textContent = formatAnvil(isIncluded ? anvilsUnlockBest + upgradeAnvilsBest : upgradeAnvilsBest);
+    DOM.anvilsWorstSpan.textContent = formatAnvil(isIncluded ? anvilsUnlockWorst + upgradeAnvilsWorst : upgradeAnvilsWorst);
+    DOM.detailTargetShardsSpan.textContent = shardsNeededForUpgrade.toString();
+    DOM.detailAvgShardsSpan.textContent = formatNum(avgEffShards);
+    DOM.detailMythicPullsAvgSpan.textContent = formatMythicPulls(shardsNeededForUpgrade, avgEffShards);
+    DOM.detailAnvilsAvgSpan.textContent = formatAnvil(upgradeAnvilsAvg);
+    DOM.detailBestShardsSpan.textContent = formatNum(bestShards);
+    DOM.detailMythicPullsBestSpan.textContent = formatMythicPulls(shardsNeededForUpgrade, bestShards);
+    DOM.detailAnvilsBestSpan.textContent = formatAnvil(upgradeAnvilsBest);
+    DOM.detailWorstShardsSpan.textContent = formatNum(worstShards);
+    DOM.detailMythicPullsWorstSpan.textContent = formatMythicPulls(shardsNeededForUpgrade, worstShards);
+    DOM.detailAnvilsWorstSpan.textContent = formatAnvil(upgradeAnvilsWorst);
     const chartLabels = Object.keys(CONSTANTS.SHARD_REQUIREMENTS);
-    const chartCostsCurr = chartLabels.map(lvl => calculateGachaAnvils(CONSTANTS.SHARD_REQUIREMENTS[lvl], avgEffShardsCurr, drawsPerMythicAverage));
-    const chartCostsProp = chartLabels.map(lvl => calculateGachaAnvils(CONSTANTS.SHARD_REQUIREMENTS[lvl], avgEffShardsProp, drawsPerMythicAverage));
-    updateMainAnvilCostChart(chartCostsCurr, chartCostsProp, chartLabels, isIncluded, anvilsUnlockAvg);
+    const chartCosts = chartLabels.map(lvl => calculateGachaAnvils(CONSTANTS.SHARD_REQUIREMENTS[lvl], avgEffShards, drawsPerMythicAverage));
+    updateMainAnvilCostChart(chartCosts, chartLabels, isIncluded, anvilsUnlockAvg);
 }
 
-/**
- * Controller function that orchestrates the Expected Value calculation and UI update.
- * @param {string} [triggerSource='unknown'] - A string identifying what triggered the calculation for analytics.
- */
-function handleExpectedValueCalculation(triggerSource = 'unknown') {
-    logAnalyticEvent('calculation_triggered', { type: 'expected_value', source: triggerSource });
+const runAllCalculations = debounce((triggerSource = 'unknown') => {
+    logAnalyticEvent('calculation_triggered', { type: 'combined', source: triggerSource });
     UI.setButtonLoadingState(DOM.calculateBtn, true);
+    
+    DOM.probabilityResultsArea.classList.add('hidden');
+    UI.displayNotification("Calculating...", 'info', 'general');
 
-    setTimeout(() => { // Use timeout to allow UI to update (show loader)
-        const inputs = validateAndGetEVInputs();
+    setTimeout(() => {
+        const inputs = validateAndGetInputs();
         if (!inputs.isValid) {
             UI.setButtonLoadingState(DOM.calculateBtn, false);
-            DOM.conclusionParagraph.textContent = 'Please correct the highlighted input errors.';
-            logAnalyticEvent('ev_calculation_completed', { status: 'error', reason: 'input_validation' });
+            UI.displayNotification("Please correct the highlighted input errors.", 'error', 'general');
+            logAnalyticEvent('calculation_completed', { status: 'error', reason: 'input_validation' });
             return;
         }
-
         const metrics = performExpectedValueCalculations(inputs.data);
         if (!metrics.isValid) {
-            DOM.conclusionParagraph.textContent = metrics.errorMessage || 'Error in EV calculation.';
             UI.setButtonLoadingState(DOM.calculateBtn, false);
-            logAnalyticEvent('ev_calculation_completed', { status: 'error', reason: 'calculation_error' });
+            UI.displayNotification(metrics.errorMessage || 'Error in EV calculation.', 'error', 'general');
+            logAnalyticEvent('calculation_completed', { status: 'error', reason: 'ev_calculation_error' });
             return;
         }
-
         updateExpectedValueUI(metrics.data);
+        runProbabilitySimulation(inputs.data);
         UI.setButtonLoadingState(DOM.calculateBtn, false);
-        logAnalyticEvent('ev_calculation_completed', { status: 'success' });
-    }, 10); // small delay
-}
-
-/**
- * Exports the current configuration settings to a JSON string and displays it in a modal.
- */
-function exportConfiguration() {
-    const configData = {
-        championName: DOM.championNameInput.value.trim() || "Unnamed Export",
-        mythicProbability: DOM.mythicProbabilityInput.value,
-        mythicHardPity: DOM.mythicHardPityInput.value,
-        lmRateUpChance: DOM.lmRateUpChanceInput.value,
-        currentMythicPity: DOM.currentMythicPityInput.value,
-        currentLMPity: DOM.currentLMPityInput.value,
-        includeUnlockCost: state.isUnlockCostIncluded,
-        startStarLevel: DOM.startStarLevelSelect.value,
-        targetStarLevel: DOM.targetStarLevelSelect.value,
-        currentLMS: DOM.currentLMSInput.value,
-        currentNMS: DOM.currentNMSInput.value,
-        proposedLMS: DOM.proposedLMSInput.value
-    };
-
-    try {
-        const jsonString = JSON.stringify(configData, null, 2);
-        // Using a simple modal via showConfirmationModal structure
-        const modalBackdrop = document.createElement('div');
-        modalBackdrop.className = 'modal-backdrop active';
-        const modalContent = document.createElement('div');
-        modalContent.className = 'modal-content';
-        modalContent.innerHTML = `
-            <h3 class="text-lg font-semibold">Exported Configuration (JSON)</h3>
-            <p class="text-sm text-gray-600 mb-2">Copy the code below to import it later.</p>
-            <textarea readonly rows="10" class="w-full p-2 border rounded bg-gray-50 font-mono text-sm">${jsonString}</textarea>
-            <div class="flex justify-end gap-3 mt-4">
-                <button class="btn btn-primary px-4 py-2" id="copyBtn">Copy Code</button>
-                <button class="btn btn-secondary px-4 py-2" id="closeBtn">Close</button>
-            </div>
-        `;
-        modalBackdrop.appendChild(modalContent);
-        document.body.appendChild(modalBackdrop);
-
-        modalContent.querySelector('#copyBtn').onclick = () => {
-            modalContent.querySelector('textarea').select();
-            document.execCommand('copy');
-            UI.displayNotification('Code copied to clipboard!', 'success', 'local_config');
-        };
-        modalContent.querySelector('#closeBtn').onclick = () => document.body.removeChild(modalBackdrop);
-
-        logAnalyticEvent('export_config_local', { success: true });
-    } catch (e) {
-        UI.displayNotification('Error exporting configuration.', 'error', 'local_config');
-        console.error("Error exporting configuration:", e);
-        logAnalyticEvent('export_config_local', { success: false, error_message: e.message });
-    }
-}
-
-/**
- * Imports a configuration from a JSON string provided by the user.
- */
-function importConfiguration() {
-    const jsonString = DOM.importConfigText.value.trim();
-    if (!jsonString) {
-        UI.displayNotification('Paste configuration text first.', 'error', 'local_config');
-        return;
-    }
-
-    try {
-        const configData = JSON.parse(jsonString);
-        if (typeof configData !== 'object' || configData === null) {
-            throw new Error("Invalid configuration format.");
-        }
-
-        UI.applyConfigToInputs(configData);
-        handleExpectedValueCalculation('import_config_local');
-        
-        UI.displayNotification('Configuration imported successfully!', 'success', 'local_config');
-        logAnalyticEvent('import_config_local', { success: true });
-        DOM.importConfigText.value = '';
-
-    } catch (e) {
-        UI.displayNotification('Import failed. Invalid or corrupted JSON.', 'error', 'local_config');
-        console.error("Error importing configuration:", e);
-        logAnalyticEvent('import_config_local', { success: false, error_message: e.message });
-    }
-}
+        logAnalyticEvent('calculation_completed', { status: 'success' });
+    }, 10);
+}, CONSTANTS.DEBOUNCE_WAIT_MS);
 
 // =================================================================================================
 // #region: --- PROBABILITY SIMULATION ---
@@ -1482,13 +940,13 @@ function importConfiguration() {
  * @param {object} params - The parameters for the simulation.
  * @returns {number} The total anvils spent. Returns budget + 1 if the goal was not met.
  */
-function simulateSingleSuccessAttempt({ budget, mythicProb, hardPity, lmRateUp, nmGuarantee, includeUnlock, targetShardsForUpgrade, systemConfig, initialMythicPity, initialLMPityStreak }) {
+function simulateSingleSuccessAttempt({ budget, mythicProb, hardPity, lmRateUp, nmGuarantee, includeUnlock, targetShardsForUpgrade, lmShardsYield, initialMythicPity, initialLMPityStreak }) {
     let totalAnvilsSpent = 0;
     let currentShards = 0;
     let mythicPityCounter = initialMythicPity;
     let nmFailStreak = initialLMPityStreak;
     let isUnlocked = !includeUnlock;
-    let nmPullCounterForProposedBonus = 0;
+    let nmPullCounterForBonus = 0;
 
     const performPull = () => {
         mythicPityCounter++;
@@ -1498,46 +956,37 @@ function simulateSingleSuccessAttempt({ budget, mythicProb, hardPity, lmRateUp, 
             const isLMPull = nmFailStreak >= nmGuarantee || Math.random() < lmRateUp;
             if (isLMPull) {
                 nmFailStreak = 0;
-                return { isLM: true, shards: systemConfig.lmShardsYield };
+                return { isLM: true, shards: lmShardsYield };
             } else {
                 nmFailStreak++;
+                /*
+                // Original bonus shard logic - currently disabled.
                 let bonusShards = 0;
-                if (systemConfig.type === 'proposed') {
-                    nmPullCounterForProposedBonus++;
-                    if (nmPullCounterForProposedBonus <= 6) {
-                        bonusShards = [2, 3, 5][Math.floor(Math.random() * 3)];
-                    }
+                nmPullCounterForBonus++;
+                if (nmPullCounterForBonus <= 6) {
+                    bonusShards = [2, 3, 5][Math.floor(Math.random() * 3)];
                 }
-                return { isLM: false, shards: (systemConfig.nmShardsYieldCurrent || 0) + bonusShards };
+                return { isLM: false, shards: bonusShards };
+                */
+               
+                // Non-LM pulls currently grant 0 shards.
+                return { isLM: false, shards: 0 };
             }
         }
-        return null; // No mythic this pull
+        return null;
     };
-
-    // 1. Unlock phase (if required)
     if (includeUnlock && !isUnlocked) {
         while (totalAnvilsSpent < budget) {
             const pullResult = performPull();
-            if (pullResult) {
-                currentShards += pullResult.shards;
-                if (pullResult.isLM) {
-                    isUnlocked = true;
-                    break;
-                }
-            }
+            if (pullResult) { currentShards += pullResult.shards; if (pullResult.isLM) { isUnlocked = true; break; } }
         }
-        if (!isUnlocked) return budget + 1; // Failed to unlock within budget
+        if (!isUnlocked) return budget + 1;
     }
-
-    // 2. Shard acquisition phase
     while (currentShards < targetShardsForUpgrade) {
-        if (totalAnvilsSpent >= budget) return budget + 1; // Ran out of budget
+        if (totalAnvilsSpent >= budget) return budget + 1;
         const pullResult = performPull();
-        if (pullResult) {
-            currentShards += pullResult.shards;
-        }
+        if (pullResult) { currentShards += pullResult.shards; }
     }
-
     return totalAnvilsSpent;
 }
 
@@ -1550,13 +999,8 @@ function simulateSingleSuccessAttempt({ budget, mythicProb, hardPity, lmRateUp, 
 function getPercentile(sortedData, percentile) {
     if (!sortedData || sortedData.length === 0) return NaN;
     const index = (percentile / 100) * (sortedData.length - 1);
-    if (index === Math.floor(index)) {
-        return sortedData[index];
-    } else {
-        const lower = Math.floor(index);
-        const upper = Math.ceil(index);
-        return sortedData[lower] * (upper - index) + sortedData[upper] * (index - lower);
-    }
+    if (index === Math.floor(index)) { return sortedData[index]; }
+    else { const lower = Math.floor(index); const upper = Math.ceil(index); return sortedData[lower] * (upper - index) + sortedData[upper] * (index - lower); }
 }
 
 /**
@@ -1568,119 +1012,40 @@ function getPercentile(sortedData, percentile) {
  */
 function createHistogramData(anvilCosts, budget, numBins = 20) {
     const successfulRuns = anvilCosts.filter(cost => cost <= budget);
-    if (successfulRuns.length === 0) {
-        return { labels: [`> ${budget} (Failures)`], data: [anvilCosts.length], successRate: 0, medianCost: NaN, p90Cost: NaN };
-    }
-    
+    if (successfulRuns.length === 0) { return { labels: [`> ${budget} (Failures)`], data: [anvilCosts.length], successRate: 0, medianCost: NaN, p90Cost: NaN }; }
     successfulRuns.sort((a, b) => a - b);
     const minCost = successfulRuns[0];
     const maxCost = successfulRuns[successfulRuns.length - 1];
     const binSize = Math.max(1, Math.ceil((maxCost - minCost + 1) / numBins));
     const bins = [];
-    
-    for (let i = minCost; i <= maxCost; i += binSize) {
-        const binStart = i;
-        const binEnd = i + binSize - 1;
-        bins.push({ start: binStart, end: binEnd, count: 0 });
-    }
-
+    for (let i = minCost; i <= maxCost; i += binSize) { bins.push({ start: i, end: i + binSize - 1, count: 0 }); }
     let failures = 0;
     anvilCosts.forEach(cost => {
-        if (cost <= budget) {
-            const targetBin = bins.find(bin => cost >= bin.start && cost <= bin.end);
-            if (targetBin) targetBin.count++;
-        } else {
-            failures++;
-        }
+        if (cost <= budget) { const targetBin = bins.find(bin => cost >= bin.start && cost <= bin.end); if (targetBin) targetBin.count++; }
+        else { failures++; }
     });
-
     const chartData = bins.map(bin => bin.count);
     const chartLabels = bins.map(bin => `${bin.start}-${bin.end}`);
-    if (failures > 0) {
-        chartLabels.push(`> ${budget} (Failed)`);
-        chartData.push(failures);
-    }
-
-    return {
-        labels: chartLabels,
-        data: chartData,
-        successRate: (successfulRuns.length / anvilCosts.length) * 100,
-        medianCost: getPercentile(successfulRuns, 50),
-        p90Cost: getPercentile(successfulRuns, 90),
-    };
+    if (failures > 0) { chartLabels.push(`> ${budget} (Failed)`); chartData.push(failures); }
+    return { labels: chartLabels, data: chartData, successRate: (successfulRuns.length / anvilCosts.length) * 100, medianCost: getPercentile(successfulRuns, 50), p90Cost: getPercentile(successfulRuns, 90), };
 }
 
 /**
  * Runs the main probability simulation and updates the UI with the results.
+ * @param {object} inputs - The validated input data.
  */
-function runProbabilitySimulation() {
-    logAnalyticEvent('calculation_triggered', { type: 'probability_simulation' });
-    UI.setButtonLoadingState(DOM.calculateProbabilityBtn, true);
-    UI.displayNotification("Running simulation... this may take a moment.", 'info', 'probability_sim');
-
-    // Use a timeout to allow the UI to update before the heavy computation begins.
-    setTimeout(() => {
-        const inputs = validateAndGetEVInputs(); // Use the same validation logic
-        const budget = parseInt(DOM.anvilBudgetInput.value, 10);
-
-        if (!inputs.isValid || isNaN(budget) || budget <= 0) {
-            UI.displayNotification("Invalid inputs for simulation.", 'error', 'probability_sim');
-            UI.setButtonLoadingState(DOM.calculateProbabilityBtn, false);
-            logAnalyticEvent('probability_simulation_completed', { status: 'error', reason: 'invalid_inputs' });
-            return;
-        }
-
-        const simParams = {
-            budget: budget,
-            mythicProb: inputs.data.mythicProbability,
-            hardPity: inputs.data.mythicHardPity,
-            lmRateUp: inputs.data.lmRateUpChance,
-            nmGuarantee: CONSTANTS.NM_GUARANTEE_THRESHOLD,
-            includeUnlock: state.isUnlockCostIncluded,
-            targetShardsForUpgrade: inputs.data.shardsNeededForUpgrade,
-            initialMythicPity: inputs.data.currentMythicPity,
-            initialLMPityStreak: inputs.data.currentLMPity
-        };
-        
-        const currentSystemConfig = { type: 'current', lmShardsYield: inputs.data.lmShardsCurrent, nmShardsYieldCurrent: inputs.data.nmShardsCurrent };
-        const proposedSystemConfig = { type: 'proposed', lmShardsYield: inputs.data.lmShardsProposed };
-
-        const anvilCostsCurrent = Array.from({ length: CONSTANTS.NUM_SIM_RUNS }, () => simulateSingleSuccessAttempt({ ...simParams, systemConfig: currentSystemConfig }));
-        const anvilCostsProposed = Array.from({ length: CONSTANTS.NUM_SIM_RUNS }, () => simulateSingleSuccessAttempt({ ...simParams, systemConfig: proposedSystemConfig }));
-
-        const numBins = Math.min(25, Math.max(8, Math.floor(budget / 25)));
-        const histDataCurrent = createHistogramData(anvilCostsCurrent, budget, numBins);
-        const histDataProposed = createHistogramData(anvilCostsProposed, budget, numBins);
-
-        // Update UI with results
-        DOM.probabilityResultsArea.innerHTML = ` 
-            <p class="mb-2 text-center font-medium">Goal: ${DOM.targetStarLevelSelect.value} from ${DOM.startStarLevelSelect.value} with a ${budget} Anvil budget.</p>
-            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                <div>
-                    <h4 class="font-semibold text-lg text-center mb-1">Current System</h4>
-                    <div class="chart-container prob-chart-container"><canvas id="probChartCurrent"></canvas></div>
-                    <p id="probSummaryCurrent" class="text-sm text-center mt-2"></p>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-lg text-center mb-1">Proposed System</h4>
-                    <div class="chart-container prob-chart-container"><canvas id="probChartProposed"></canvas></div>
-                    <p id="probSummaryProposed" class="text-sm text-center mt-2"></p>
-                </div>
-            </div>
-            <p class="text-xs mt-4 text-center text-gray-500">Based on ${CONSTANTS.NUM_SIM_RUNS.toLocaleString()} simulated attempts for each system.</p>
-        `;
-        DOM.probabilityResultsArea.classList.remove('hidden');
-
-        document.getElementById('probSummaryCurrent').innerHTML = `Success: <strong>${histDataCurrent.successRate.toFixed(1)}%</strong> | Median (Success): <strong>${Math.round(histDataCurrent.medianCost) || 'N/A'}</strong> | P90 (Success): <strong>${Math.round(histDataCurrent.p90Cost) || 'N/A'}</strong>`;
-        document.getElementById('probSummaryProposed').innerHTML = `Success: <strong>${histDataProposed.successRate.toFixed(1)}%</strong> | Median (Success): <strong>${Math.round(histDataProposed.medianCost) || 'N/A'}</strong> | P90 (Success): <strong>${Math.round(histDataProposed.p90Cost) || 'N/A'}</strong>`;
-
-        displayProbabilityDistributionChart('probChartCurrent', histDataCurrent, 'Current System');
-        displayProbabilityDistributionChart('probChartProposed', histDataProposed, 'Proposed System');
-
-        UI.displayNotification("Simulation complete.", 'success', 'probability_sim');
-        UI.setButtonLoadingState(DOM.calculateProbabilityBtn, false);
-        logAnalyticEvent('probability_simulation_completed', { status: 'success' });
-    }, 50);
+function runProbabilitySimulation(inputs) {
+    const simParams = { budget: inputs.anvilBudget, mythicProb: inputs.mythicProbability, hardPity: inputs.mythicHardPity, lmRateUp: inputs.lmRateUpChance, nmGuarantee: CONSTANTS.NM_GUARANTEE_THRESHOLD, includeUnlock: state.isUnlockCostIncluded, targetShardsForUpgrade: inputs.shardsNeededForUpgrade, lmShardsYield: inputs.lmShardsYield, initialMythicPity: inputs.currentMythicPity, initialLMPityStreak: inputs.currentLMPity };
+    const anvilCosts = Array.from({ length: CONSTANTS.NUM_SIM_RUNS }, () => simulateSingleSuccessAttempt(simParams));
+    const numBins = Math.min(25, Math.max(8, Math.floor(inputs.anvilBudget / 25)));
+    const histData = createHistogramData(anvilCosts, inputs.anvilBudget, numBins);
+    DOM.probabilityResultsArea.classList.remove('hidden');
+    DOM.probabilitySummaryText.textContent = `Goal: ${DOM.targetStarLevelSelect.value} from ${DOM.startStarLevelSelect.value} with a ${inputs.anvilBudget} Anvil budget.`;
+    const probSummaryEl = DOM.probabilityResultsArea.querySelector('#probSummary');
+    if (probSummaryEl) { probSummaryEl.innerHTML = `Success: <strong>${histData.successRate.toFixed(1)}%</strong> | Median (Success): <strong>${Math.round(histData.medianCost) || 'N/A'}</strong> | P90 (Success): <strong>${Math.round(histData.p90Cost) || 'N/A'}</strong>`; }
+    const detailsEl = DOM.probabilityResultsArea.querySelector('#probabilitySimulationDetails');
+    if (detailsEl) { detailsEl.textContent = `Based on ${CONSTANTS.NUM_SIM_RUNS.toLocaleString()} simulated attempts.`; }
+    displayProbabilityDistributionChart('probChart', histData);
 }
 
 // =================================================================================================
@@ -1691,61 +1056,39 @@ function runProbabilitySimulation() {
  * Attaches all necessary event listeners to the DOM elements.
  */
 function attachEventListeners() {
-    // --- Champion Guidance ---
-    DOM.lmChampionSelect.addEventListener('change', () => {
-        const selected = DOM.lmChampionSelect.value;
-        // Show/hide recommendation buttons if a valid champion is selected
-        DOM.guidanceButtons.classList.toggle('hidden', !selected);
-
-        // Apply default LM settings when a champion is selected
-        if(selected) {
-            UI.applyConfigToInputs({}); // Resets to default values
-            logAnalyticEvent('guidance_champion_selected', { champion: selected });
-            handleExpectedValueCalculation('guidance_champion_select');
+    // --- View and Wizard ---
+    DOM.switchToGuidedBtn.addEventListener('click', () => setView(true));
+    DOM.switchToAdvancedBtn.addEventListener('click', () => setView(false));
+    DOM.wizardNextBtn.addEventListener('click', () => {
+        if (state.wizardCurrentStep === CONSTANTS.WIZARD_MAX_STEPS) {
+            navigateToWizardStep(3); // Go to results step
+        } else {
+            navigateToWizardStep(state.wizardCurrentStep + 1);
         }
     });
+    DOM.wizardBackBtn.addEventListener('click', () => navigateToWizardStep(state.wizardCurrentStep - 1));
+
+    // --- Champion Guidance ---
     DOM.f2pRecBtn.addEventListener('click', handleChampionGuidance);
     DOM.minRecBtn.addEventListener('click', handleChampionGuidance);
-
-    // --- Firebase Actions ---
-    DOM.saveChampionBtn.addEventListener('click', saveChampionToFirestore);
-    DOM.loadChampionBtn.addEventListener('click', () => loadChampionFromFirestore());
-    DOM.deleteChampionBtn.addEventListener('click', deleteChampionFromFirestore);
-
-    // --- Local Config Actions ---
-    DOM.exportConfigBtn.addEventListener('click', exportConfiguration);
-    DOM.importConfigBtn.addEventListener('click', importConfiguration);
-
-    // --- Calculation Triggers ---
-    DOM.calculateProbabilityBtn.addEventListener('click', runProbabilitySimulation);
-    DOM.calculateBtn.addEventListener('click', () => handleExpectedValueCalculation('ev_button_click'));
-    
-    // --- Auto-recalculate on input change for EV ---
-    const evTriggerInputs = [
-        DOM.mythicProbabilityInput, DOM.mythicHardPityInput, DOM.lmRateUpChanceInput,
-        DOM.currentMythicPityInput, DOM.currentLMPityInput, DOM.currentLMSInput,
-        DOM.currentNMSInput, DOM.proposedLMSInput, DOM.startStarLevelSelect, DOM.targetStarLevelSelect
-    ];
-    evTriggerInputs.forEach(el => {
-        if(el) el.addEventListener('input', (e) => handleExpectedValueCalculation(`input_change_${e.target.id}`));
+    DOM.lmChampionSelect.addEventListener('change', () => {
+        DOM.guidanceButtons.classList.toggle('hidden', !DOM.lmChampionSelect.value);
     });
 
-    // --- Toggle Unlock Cost ---
+    // --- Calculation Triggers ---
+    DOM.calculateBtn.addEventListener('click', () => runAllCalculations('ev_button_click'));
+    const evTriggerInputs = [ DOM.mythicProbabilityInput, DOM.mythicHardPityInput, DOM.lmRateUpChanceInput, DOM.currentMythicPityInput, DOM.currentLMPityInput, DOM.lmShardsYieldInput, DOM.startStarLevelSelect, DOM.targetStarLevelSelect, DOM.anvilBudgetInput ];
+    evTriggerInputs.forEach(el => { if(el) el.addEventListener('input', (e) => { if (!state.isGuidedMode) runAllCalculations(`input_change_${e.target.id}`); }); });
     DOM.toggleUnlockCostBtn.addEventListener('click', () => {
         state.isUnlockCostIncluded = !state.isUnlockCostIncluded;
         UI.updateToggleUnlockButtonAppearance();
         logAnalyticEvent('toggle_unlock_cost', { included: state.isUnlockCostIncluded });
-        handleExpectedValueCalculation('toggle_unlock_cost');
+        if (!state.isGuidedMode) runAllCalculations('toggle_unlock_cost');
     });
 
     // --- Analytics for Details/Summary Toggles ---
     document.querySelectorAll('details').forEach(detailsEl => {
-        detailsEl.addEventListener('toggle', function() {
-            logAnalyticEvent('details_section_toggled', {
-                section_id: this.id || 'anonymous_details',
-                is_open: this.open
-            });
-        });
+        detailsEl.addEventListener('toggle', function() { logAnalyticEvent('details_section_toggled', { section_id: this.id || 'anonymous_details', is_open: this.open }); });
     });
 }
 
@@ -1756,15 +1099,10 @@ function attachEventListeners() {
 async function main() {
     UI.populateStarLevels();
     UI.updateToggleUnlockButtonAppearance();
-    SectionCustomizer.initialize();
-    
-    await initializeFirebaseAndAuth(); // This will trigger populating the dropdowns
-    logAnalyticEvent('page_view', { app_id: CONSTANTS.APP_ID });
-
+    await initializeFirebaseAndAuth();
+    logAnalyticEvent('page_view', { app_id: CONSTANTS.APP_ID, version: '3.2.2' });
     attachEventListeners();
-    
-    // Perform an initial calculation on load
-    handleExpectedValueCalculation('initial_load');
+    runAllCalculations('initial_load');
 }
 
 // --- Start the application ---
