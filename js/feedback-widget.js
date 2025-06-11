@@ -303,6 +303,22 @@ class FeedbackWidget extends HTMLElement {
         e.preventDefault();
         this.hideError();
 
+        const formData = new FormData(this.elements.form);
+        const type = formData.get('type');
+        const message = formData.get('message').trim();
+
+        if (!type || !message) {
+            let errorMessages = [];
+            if (!type) {
+                errorMessages.push("Feedback type is required.");
+            }
+            if (!message) {
+                errorMessages.push("Message is required.");
+            }
+            this.displayError(errorMessages.join(' '));
+            return;
+        }
+
         if (!this.db || !this.auth.currentUser) {
             this.displayError('Feedback service not connected.');
             return;
@@ -311,10 +327,9 @@ class FeedbackWidget extends HTMLElement {
         this.elements.submitButton.disabled = true;
         this.elements.submitButton.textContent = 'Submitting...';
 
-        const formData = new FormData(this.elements.form);
         const feedbackData = {
-            type: formData.get('type'),
-            message: formData.get('message'),
+            type: type,
+            message: message,
             discordName: formData.get('discord') || '',
             url: window.location.href,
             userAgent: navigator.userAgent,
