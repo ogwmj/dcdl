@@ -10,13 +10,13 @@
  * A "Champion Guidance" feature pulls champion data and provides upgrade recommendations.
  *
  * @author Originally by the user, refactored and documented by Google's Gemini.
- * @version 3.0.0 - Commented out bonus NM shard logic.
+ * @version 3.1.0 - Replaced standard champion dropdown with a custom dropdown featuring images.
  */
 
 // --- Firebase SDK Imports ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, collection, doc, getDoc, setDoc, deleteDoc, onSnapshot, query, serverTimestamp, orderBy, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, collection, query, orderBy, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAnalytics, logEvent as fbLogEventInternal } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
 /**
@@ -184,7 +184,12 @@ const DOM = {
     probabilityResultsArea: document.getElementById('probabilityResultsArea'),
 
     // --- Inputs & Controls (shared or advanced) ---
-    lmChampionSelect: document.getElementById('lmChampionSelect'),
+    lmChampionSelect: document.getElementById('lmChampionSelect'), // This is now the hidden input
+    customChampionDropdown: document.getElementById('customChampionDropdown'),
+    customDropdownTrigger: document.getElementById('customDropdownTrigger'),
+    customDropdownOptions: document.getElementById('customDropdownOptions'),
+    selectedChampionImg: document.getElementById('selectedChampionImg'),
+    selectedChampionName: document.getElementById('selectedChampionName'),
     guidanceButtons: document.getElementById('guidanceButtons'),
     f2pRecBtn: document.getElementById('f2pRecBtn'),
     minRecBtn: document.getElementById('minRecBtn'),
@@ -412,50 +417,94 @@ async function handleAuthStateChange(user) {
         state.currentUserId = null;
         DOM.userIdDisplay.textContent = "User ID: Not signed in";
         state.championsColRef = null;
-        DOM.lmChampionSelect.innerHTML = '<option value="">-- Sign in to load champions --</option>';
-        DOM.lmChampionSelect.disabled = true;
+        DOM.selectedChampionName.textContent = '-- Sign in to load champions --';
+        DOM.customDropdownTrigger.disabled = true;
         logAnalyticEvent('firebase_auth_status', { status: 'signed_out' });
     }
 }
 
 /**
- * Fetches the master list of Limited Mythic champions from the public Firestore collection and populates the guidance dropdown.
+ * Fetches the master list of Limited Mythic champions from the public Firestore collection and populates the custom guidance dropdown.
  * Recommendation data is stored on the option elements themselves.
  * @async
  */
 async function populateLMChampionsDropdown() {
     if (!state.fbDb) {
-        DOM.lmChampionSelect.innerHTML = '<option value="">-- DB Error --</option>';
+        DOM.selectedChampionName.textContent = '-- DB Error --';
         return;
     }
-    DOM.lmChampionSelect.disabled = true;
+    DOM.customDropdownTrigger.disabled = true;
+    DOM.selectedChampionName.textContent = '-- Loading Champions... --';
+    DOM.customDropdownOptions.innerHTML = '<li class="text-gray-500 px-4 py-2">Loading...</li>';
 
     try {
         const publicChampionsRef = collection(state.fbDb, `artifacts/${CONSTANTS.APP_ID}/public/data/champions`);
         const q = query(publicChampionsRef, where("baseRarity", "==", "Limited Mythic"), orderBy("name"));
         const querySnapshot = await getDocs(q);
         
-        DOM.lmChampionSelect.innerHTML = '<option value="">-- Select a Champion --</option>';
+        DOM.customDropdownOptions.innerHTML = ''; // Clear loading state
+        
+        // Add a default, non-selectable option
+        const defaultOption = document.createElement('li');
+        defaultOption.className = 'px-4 py-2 text-gray-500';
+        defaultOption.textContent = '-- Select a Champion --';
+        DOM.customDropdownOptions.appendChild(defaultOption);
+
         if (querySnapshot.empty) {
-            DOM.lmChampionSelect.innerHTML = '<option value="">-- No LM Champions Found --</option>';
+            DOM.selectedChampionName.textContent = '-- No LM Champions Found --';
+            defaultOption.textContent = '-- No LM Champions Found --';
         } else {
             querySnapshot.forEach((doc) => {
                 const champData = doc.data();
-                const option = document.createElement('option');
-                option.value = champData.name || doc.id;
-                option.textContent = champData.name || doc.id;
-                
-                option.dataset.recMin = champData.recommendationMin || 'not set';
-                option.dataset.recF2p = champData.recommendationF2P || 'not set';
+                const champName = champData.name || doc.id;
+                const sanitizedName = champName.replace(/[^a-zA-Z0-9-_]/g, "");
+                const imgSrc = `img/champions/avatars/${sanitizedName}.webp`;
 
-                DOM.lmChampionSelect.appendChild(option);
+                const optionEl = document.createElement('li');
+                optionEl.className = 'text-gray-900 cursor-default select-none relative py-2 pl-3 pr-9 hover:bg-indigo-600 hover:text-white';
+                optionEl.setAttribute('role', 'option');
+                optionEl.dataset.value = champName;
+                optionEl.dataset.recMin = champData.recommendationMin || 'not set';
+                optionEl.dataset.recF2p = champData.recommendationF2P || 'not set';
+                optionEl.dataset.imgSrc = imgSrc;
+
+                optionEl.innerHTML = `
+                    <div class="flex items-center">
+                        <img src="${imgSrc}" alt="${champName}" class="h-6 w-6 flex-shrink-0 rounded-full" onerror="this.style.display='none'">
+                        <span class="font-normal ml-3 block truncate">${champName}</span>
+                    </div>
+                `;
+
+                // Event listener for selecting an option
+                optionEl.addEventListener('click', () => {
+                    // Update the hidden input
+                    DOM.lmChampionSelect.value = optionEl.dataset.value;
+                    // Copy dataset for recommendations to the hidden input
+                    DOM.lmChampionSelect.dataset.recMin = optionEl.dataset.recMin;
+                    DOM.lmChampionSelect.dataset.recF2p = optionEl.dataset.recF2p;
+
+                    // Update the trigger button's display
+                    DOM.selectedChampionName.textContent = optionEl.dataset.value;
+                    DOM.selectedChampionImg.src = optionEl.dataset.imgSrc;
+                    DOM.selectedChampionImg.classList.remove('hidden');
+                    
+                    // Hide the dropdown
+                    DOM.customDropdownOptions.classList.add('hidden');
+                    DOM.customDropdownTrigger.setAttribute('aria-expanded', 'false');
+
+                    // Manually trigger a change event so other listeners can pick it up
+                    DOM.lmChampionSelect.dispatchEvent(new Event('change'));
+                });
+
+                DOM.customDropdownOptions.appendChild(optionEl);
             });
-            DOM.lmChampionSelect.disabled = false;
+            DOM.customDropdownTrigger.disabled = false;
+            DOM.selectedChampionName.textContent = '-- Select a Champion --';
         }
-        logAnalyticEvent('firestore_dropdown_populated', { type: 'lm_champions', count: querySnapshot.size });
+        logAnalyticEvent('firestore_dropdown_populated', { type: 'lm_champions_custom', count: querySnapshot.size });
     } catch(error) {
         console.error("Error fetching LM champions:", error);
-        DOM.lmChampionSelect.innerHTML = '<option value="">-- Error Loading Champions --</option>';
+        DOM.selectedChampionName.textContent = '-- Error Loading Champions --';
         UI.displayNotification("Could not load champion list.", 'error', 'guidance');
         logAnalyticEvent('firestore_public_read_error', { collection: 'champions', error_message: error.message });
     }
@@ -736,8 +785,7 @@ function navigateToWizardStep(stepNumber, isReset = false) {
  * @param {Event} event - The event that triggered the handler (e.g., button click).
  */
 function handleChampionGuidance(event) {
-    const selectedOption = DOM.lmChampionSelect.options[DOM.lmChampionSelect.selectedIndex];
-    const selectedChampionName = selectedOption.value;
+    const selectedChampionName = DOM.lmChampionSelect.value;
 
     if (!selectedChampionName) {
         UI.displayNotification("Please select a champion first.", 'info', 'guidance');
@@ -747,8 +795,8 @@ function handleChampionGuidance(event) {
     const triggerId = event.target.id;
     let targetLevel;
     
-    if (triggerId === 'f2pRecBtn') targetLevel = selectedOption.dataset.recF2p;
-    else if (triggerId === 'minRecBtn') targetLevel = selectedOption.dataset.recMin;
+    if (triggerId === 'f2pRecBtn') targetLevel = DOM.lmChampionSelect.dataset.recF2p;
+    else if (triggerId === 'minRecBtn') targetLevel = DOM.lmChampionSelect.dataset.recMin;
     else return;
 
     if (targetLevel === 'not set' || !targetLevel) {
@@ -907,7 +955,6 @@ const runAllCalculations = debounce((triggerSource = 'unknown') => {
     UI.setButtonLoadingState(DOM.calculateBtn, true);
     
     DOM.probabilityResultsArea.classList.add('hidden');
-    UI.displayNotification("Calculating...", 'info', 'general');
 
     setTimeout(() => {
         const inputs = validateAndGetInputs();
@@ -1068,9 +1115,26 @@ function attachEventListeners() {
     });
     DOM.wizardBackBtn.addEventListener('click', () => navigateToWizardStep(state.wizardCurrentStep - 1));
 
+    // --- Custom Dropdown Logic ---
+    DOM.customDropdownTrigger.addEventListener('click', () => {
+        const isExpanded = DOM.customDropdownTrigger.getAttribute('aria-expanded') === 'true';
+        DOM.customDropdownOptions.classList.toggle('hidden', isExpanded);
+        DOM.customDropdownTrigger.setAttribute('aria-expanded', !isExpanded);
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (event) => {
+        if (!DOM.customChampionDropdown.contains(event.target)) {
+            DOM.customDropdownOptions.classList.add('hidden');
+            DOM.customDropdownTrigger.setAttribute('aria-expanded', 'false');
+        }
+    });
+
     // --- Champion Guidance ---
     DOM.f2pRecBtn.addEventListener('click', handleChampionGuidance);
     DOM.minRecBtn.addEventListener('click', handleChampionGuidance);
+    
+    // Listen for the change event on the hidden input, which is fired by the custom dropdown logic.
     DOM.lmChampionSelect.addEventListener('change', () => {
         DOM.guidanceButtons.classList.toggle('hidden', !DOM.lmChampionSelect.value);
     });
