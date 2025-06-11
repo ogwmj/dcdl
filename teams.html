@@ -720,7 +720,6 @@
                     </div>
                 </div>
                 <div class="-mr-2 flex md:hidden">
-                    <!-- Mobile menu button -->
                     <button type="button" id="mobile-menu-button" class="bg-slate-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
                         <span class="sr-only">Open main menu</span>
                         <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
@@ -765,7 +764,6 @@
             <p id="error-message-details" class="text-xs mt-1"></p>
         </div>
 
-        <!-- Section for displaying a shared team (initially hidden) -->
         <section id="shared-team-view-section" class="card hidden">
             <div class="calc-section">
                 <h2 id="shared-team-name" class="text-2xl font-bold text-indigo-700 mb-4">Shared Team</h2>
@@ -776,7 +774,6 @@
             <a class="btn btn-success" href="teams.html" title="Your Teams"><span class="btn-icon">↩️</span> Manage Your Teams</a>
         </section>
 
-        <!-- Main application sections (will be hidden if a shared team is displayed) -->
         <div id="main-app-content">
             <section id="champions-section" class="card">
                 <div class="calc-section bg-gray-50">
@@ -784,10 +781,23 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
                             <div class="input-group">
-                                <label for="champ-select-db" class="input-label block text-sm">Select Base Champion:</label>
-                                <select id="champ-select-db" class="input-field">
-                                    <option value="">-- Select Champion --</option>
-                                    </select>
+                                <label for="custom-champ-dropdown-trigger" class="input-label block text-sm">Select Base Champion:</label>
+                                <div id="custom-champ-dropdown" class="relative mt-1">
+                                    <input type="hidden" id="champ-select-db">
+                                    <button type="button" id="custom-champ-dropdown-trigger" class="relative w-full bg-white border border-border-input rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-border-focus focus:border-border-focus sm:text-sm">
+                                        <span class="flex items-center">
+                                            <img src="" alt="" class="h-6 w-6 flex-shrink-0 rounded-full hidden" id="selected-champ-img">
+                                            <span class="ml-3 block truncate" id="selected-champ-name">-- Select Champion --</span>
+                                        </span>
+                                        <span class="ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                                            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                <path fill-rule="evenodd" d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </span>
+                                    </button>
+                                    <ul id="custom-champ-dropdown-options" class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm hidden" tabindex="-1" role="listbox">
+                                    </ul>
+                                </div>
                             </div>
                             <div class="input-group mt-4">
                                 <label for="champ-base-rarity-display" class="input-label block text-sm">Base Rarity (auto):</label>
@@ -880,8 +890,7 @@
                     </div>
                     <div id="champions-roster-container" class="overflow-x-auto">
                         <div id="champions-roster-table-wrapper" class="mt-4">
-                            <!-- Roster table will be generated here by JavaScript -->
-                             <p class="text-sm text-gray-500">No champions added to your roster yet.</p>
+                            <p class="text-sm text-gray-500">No champions added to your roster yet.</p>
                         </div>
                         <div id="roster-management-buttons" class="mt-4 flex flex-wrap gap-2">
                             <button id="prefill-roster-btn" class="btn btn-info btn-sm hidden">
@@ -919,8 +928,7 @@
                                 <div class="input-group">
                                     <label for="select-exclusion-team-dropdown" class="input-label block text-sm sr-only">Select Teams to Exclude Champions From:</label>
                                     <select id="select-exclusion-team-dropdown" class="input-field" multiple disabled>
-                                        <!-- Options will be populated by JavaScript -->
-                                    </select>
+                                        </select>
                                     <p class="text-xs text-gray-500 mt-1">Hold Ctrl (or Cmd on Mac) to select multiple teams.</p>
                                 </div>
                             </div>
