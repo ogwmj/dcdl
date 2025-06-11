@@ -443,7 +443,6 @@
                     </div>
                 </div>
                 <div class="-mr-2 flex md:hidden">
-                    <!-- Mobile menu button -->
                     <button type="button" id="mobile-menu-button" class="bg-slate-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
                         <span class="sr-only">Open main menu</span>
                         <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
@@ -469,7 +468,6 @@
         <p class="text-center text-gray-600 mb-6">Estimate the average Anvils needed for any Limited Mythic character upgrade.
         </p>
 
-        <!-- NEW: View Switcher -->
         <div class="flex justify-center mb-6">
             <div class="inline-flex rounded-md shadow-sm" role="group">
                 <button type="button" id="switchToAdvancedBtn" class="view-switcher-btn active px-4 py-2 text-sm font-medium rounded-l-lg">
@@ -481,32 +479,24 @@
             </div>
         </div>
         
-        <!-- NEW: Wizard Container -->
         <div id="wizard-container" class="hidden">
-            <!-- Step 1: Champion & Goal -->
             <div id="wizard-step-1" class="wizard-step calc-section">
-                <!-- Content will be moved here by JS -->
-            </div>
+                </div>
         
-            <!-- Step 2: Budget -->
             <div id="wizard-step-2" class="wizard-step calc-section hidden">
                 <h2 class="text-xl font-semibold mb-4 text-blue-800">Step 2: Your Anvil Budget</h2>
                 <p class="text-sm text-gray-600 mb-4">How many Anvils are you prepared to spend? This helps calculate the probability of your success.</p>
                 <div id="wizard-budget-input-container">
-                    <!-- The anvilBudget input group will be moved here by JS -->
-                </div>
+                    </div>
                  <div id="wizard-probability-status" class="status-message mt-3"></div>
             </div>
         
-            <!-- Step 3: Simplified Results -->
             <div id="wizard-step-3" class="wizard-step hidden">
                  <h2 class="text-2xl font-semibold mb-4 text-center">Your Guided Results</h2>
                 <div id="wizard-results-container">
-                    <!-- The #results and #probabilityResultsArea divs will be appended here by the script -->
-                </div>
+                    </div>
             </div>
         
-            <!-- Wizard Navigation -->
             <div id="wizard-navigation" class="wizard-nav-container">
                 <button id="wizardBackBtn" class="btn btn-secondary hidden">Back</button>
                 <div>
@@ -516,17 +506,33 @@
             </div>
         </div>
 
-        <!-- This container now holds all the original calculator sections -->
         <div id="calculator-sections-container">
 
             <div id="championGuidanceSection" class="calc-section bg-blue-50 border-blue-200">
                 <h2 class="text-xl font-semibold mb-4 text-blue-800">Champion Guidance</h2>
                 <div class="input-group">
-                    <label for="lmChampionSelect" class="block text-sm">Select a Limited Mythic Champion:</label>
-                    <select id="lmChampionSelect" class="block w-full" disabled>
-                        <option value="">-- Loading Champions... --</option>
-                    </select>
-                </div>
+                    <label for="customDropdownTrigger" class="block text-sm">Select a Limited Mythic Champion:</label>
+                    
+                    <div id="customChampionDropdown" class="relative mt-1">
+                        <input type="hidden" id="lmChampionSelect" name="lm-champion">
+            
+                        <button type="button" id="customDropdownTrigger" class="relative w-full bg-white border border-border-input rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-border-focus focus:border-border-focus sm:text-sm" aria-haspopup="listbox" aria-expanded="false" disabled>
+                            <span class="flex items-center">
+                                <img src="" alt="" class="h-6 w-6 flex-shrink-0 rounded-full hidden" id="selectedChampionImg">
+                                <span class="ml-3 block truncate" id="selectedChampionName">-- Loading Champions... --</span>
+                            </span>
+                            <span class="ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </span>
+                        </button>
+                        
+                        <ul id="customDropdownOptions" class="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm hidden" tabindex="-1" role="listbox">
+                            <li class="text-gray-500 px-4 py-2">Loading...</li>
+                        </ul>
+                    </div>
+                    </div>
                 <div id="guidanceButtons" class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 hidden">
                     <button id="f2pRecBtn" class="btn btn-secondary py-2.5">Apply F2P Recommendation</button>
                     <button id="minRecBtn" class="btn btn-secondary py-2.5">Apply Minimum Recommendation</button>
@@ -764,7 +770,6 @@
             <details id="explanationSection" class="calc-section alt-bg">
                 <summary class="text-2xl font-bold text-slate-800">Anvil Calculator Guide</summary>
                  <div class="mt-6">
-                    <!-- Introduction Section -->
                     <section class="mb-10 bg-white p-6 rounded-lg shadow">
                         <h3 class="text-2xl font-semibold text-slate-700 mb-4 pb-2 border-b border-slate-200">Introduction</h3>
                         <div class="mt-3">
@@ -772,7 +777,6 @@
                         </div>
                     </section>
 
-                    <!-- Core Concepts & Terminology Section -->
                     <section class="mb-10 bg-white p-6 rounded-lg shadow">
                         <h3 class="text-2xl font-semibold text-slate-700 mb-4 pb-2 border-b border-slate-200">Core Concepts & Terminology</h3>
                         <div class="mt-3">
@@ -799,7 +803,6 @@
                         </div>
                     </section>
 
-                    <!-- Calculator Features Explained Section -->
                     <section class="mb-10 bg-white p-6 rounded-lg shadow">
                         <h3 class="text-2xl font-semibold text-slate-700 mb-6 pb-2 border-b border-slate-200">Calculator Features Explained</h3>
                         <div class="space-y-8">
@@ -888,7 +891,6 @@
                         </div>
                     </section>
 
-                    <!-- Understanding the Math Section -->
                     <section class="mb-10 bg-white p-6 rounded-lg shadow">
                         <h3 class="text-2xl font-semibold text-slate-700 mb-4 pb-2 border-b border-slate-200">Understanding the Math (Conceptual)</h3>
                         <div class="mt-3">
@@ -899,9 +901,7 @@
                         </div>
                     </section>
 
-                    <!-- Tips for Using the Calculator Section -->
-                    <section class="mb-6 bg-white p-6 rounded-lg shadow"> <!-- mb-6 to match others, or remove if it's the last element -->
-                        <h3 class="text-2xl font-semibold text-slate-700 mb-4 pb-2 border-b border-slate-200">Tips for Using the Calculator</h3>
+                    <section class="mb-6 bg-white p-6 rounded-lg shadow"> <h3 class="text-2xl font-semibold text-slate-700 mb-4 pb-2 border-b border-slate-200">Tips for Using the Calculator</h3>
                         <div class="mt-3">
                             <ul class="list-disc space-y-2.5 pl-6 text-slate-600 leading-relaxed">
                                 <li>Use this tool for planning your resource allocation and understanding potential costs.</li>
