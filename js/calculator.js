@@ -14,7 +14,7 @@
  */
 
 // --- Firebase SDK Imports ---
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { initializeApp, getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, collection, query, orderBy, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAnalytics, logEvent as fbLogEventInternal } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
@@ -362,43 +362,38 @@ function calculateGachaAnvils(targetShards, avgShardsPerMythic, drawsPerMythic) 
     return Math.ceil(targetShards / avgShardsPerMythic) * drawsPerMythic;
 }
 
-// ## Firebase Service ##
-
 /**
  * Initializes the Firebase app, authentication, and Firestore. Also sets up the auth state listener.
+ * This version assumes the <auth-ui> component has already run initializeApp.
  * @async
- * @returns {Promise<boolean>} A promise that resolves to true if initialization and sign-in were successful, false otherwise.
+ * @returns {Promise<boolean>} A promise that resolves to true if initialization was successful, false otherwise.
  */
 async function initializeFirebaseAndAuth() {
-    if (!CONSTANTS.FIREBASE_CONFIG.projectId || CONSTANTS.FIREBASE_CONFIG.projectId.includes("YOUR_FALLBACK")) {
-        console.warn("Firebase config is incomplete. Firestore features will be disabled.");
-        DOM.userIdDisplay.textContent = "User ID: Firebase not configured";
-        logAnalyticEvent('firebase_auth_status', { status: 'config_issue' });
-        return false;
-    }
+    return new Promise((resolve, reject) => {
+        document.addEventListener('firebase-ready', () => {
+            if (!CONSTANTS.FIREBASE_CONFIG.projectId || CONSTANTS.FIREBASE_CONFIG.projectId.includes("YOUR_FALLBACK")) {
+                console.warn("Firebase config is incomplete. Firestore features will be disabled.");
+                DOM.userIdDisplay.textContent = "User ID: Firebase not configured";
+                return resolve(false);
+            }
 
-    try {
-        state.fbApp = initializeApp(CONSTANTS.FIREBASE_CONFIG);
-        state.fbAuth = getAuth(state.fbApp);
-        state.fbDb = getFirestore(state.fbApp);
-        state.fbAnalytics = getAnalytics(state.fbApp);
-        logAnalyticEvent('firebase_sdk_initialized');
+            try {
+                state.fbApp = getApp();
+                state.fbAuth = getAuth(state.fbApp);
+                state.fbDb = getFirestore(state.fbApp);
+                state.fbAnalytics = getAnalytics(state.fbApp);
 
-        onAuthStateChanged(state.fbAuth, handleAuthStateChange);
-
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-            await signInWithCustomToken(state.fbAuth, __initial_auth_token);
-        } else {
-            await signInAnonymously(state.fbAuth);
-        }
-        return true;
-    } catch (error) {
-        console.error("Firebase Initialization or Authentication Error:", error);
-        UI.displayNotification("Authentication failed. Cloud features disabled.", 'error', 'guidance');
-        DOM.userIdDisplay.textContent = `User ID: Auth Error`;
-        logAnalyticEvent('firebase_auth_status', { status: 'failure', error_code: error.code, error_message: error.message });
-        return false;
-    }
+                onAuthStateChanged(state.fbAuth, handleAuthStateChange);
+                
+                resolve(true);
+            } catch (error) {
+                console.error("Firebase Connection Error in calculator.js:", error);
+                UI.displayNotification("Failed to connect to Firebase services.", 'error', 'guidance');
+                DOM.userIdDisplay.textContent = `User ID: Connection Error`;
+                reject(error);
+            }
+        }, { once: true });
+    });
 }
 
 /**
