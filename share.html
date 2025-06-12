@@ -27,6 +27,65 @@
         /* Custom font for Inter */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
+        /* CSS Variables for Theming (Single Theme - Light) */
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f0f4f8;
+            --bg-section: #ffffff;
+            --bg-section-alt: #f8fafc; 
+            --bg-input: #ffffff;
+            --text-primary: #1e293b;   /* Slate 800 */
+            --text-secondary: #334155; /* Slate 700 */
+            --text-muted: #64748b;     /* Slate 500 */
+            --text-button: #ffffff;
+            --border-primary: #e2e8f0; /* Slate 200 */
+            --border-input: #cbd5e1;   /* Slate 300 */
+            --border-focus: #3b82f6;   /* Blue 500 */
+            --border-focus-shadow: rgba(59, 130, 246, 0.2);
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --shadow-section-color: rgba(0, 0, 0, 0.08);
+            --btn-primary-bg: #3b82f6;
+            --btn-primary-hover-bg: #2563eb;
+            --btn-primary-disabled-bg: #93c5fd;
+            --btn-secondary-bg: #64748b;
+            --btn-secondary-hover-bg: #475569;
+            --btn-success-bg: #10b981;
+            --btn-success-hover-bg: #059669;
+            --btn-danger-bg: #ef4444;
+            --btn-danger-hover-bg: #dc2626;
+            --result-box-bg: #e0f2fe;
+            --result-box-border: #3b82f6;
+            --result-box-text-strong: #1e40af;
+            --probability-box-bg: #f0fdfa;
+            --probability-box-border: #06b6d4;
+            --probability-box-text-strong: #0e7490;
+            --advisory-box-bg: #fffbeb;
+            --advisory-box-border: #f59e0b;
+            --advisory-box-text: #78350f;
+            --toggle-on-bg: #10b981;
+            --toggle-on-border: #059669;
+            --toggle-off-bg: #d1d5db;
+            --toggle-off-border: #9ca3af;
+            --toggle-off-text: #4b5563;
+            --chart-bg: #ffffff;
+            --chart-grid-color: rgba(0, 0, 0, 0.1);
+            --chart-font-color: #6b7280; /* slate-500 */
+            --chart-title-color: #1e293b; /* slate-800 */
+        }
+
+        .container {
+            max-width: 90%; 
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background-color: var(--bg-primary);
+            border-radius: 1rem; 
+            box-shadow: 0 10px 20px var(--shadow-color);
+        }
+
+        @media (min-width: 640px) { .container { max-width: 600px; } }
+        @media (min-width: 1024px) { .container { max-width: 768px; } }
+        @media (min-width: 1280px) { .container { max-width: 1024px; } }
+
     </style>
 </head>
 <body>
@@ -41,15 +100,17 @@
                     </a>
                 </div>
                 <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-4">
+                    <div class="ml-10 flex items-center space-x-4">
                         <a href="index.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
                         <a href="calculator.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Anvil Calculator</a>
                         <a href="teams.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Team Builder</a>
                         <a href="changemap.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Changemap</a>
+                        
+                        <div id="auth-status-desktop" class="ml-4"></div>
+
                     </div>
                 </div>
                 <div class="-mr-2 flex md:hidden">
-                    <!-- Mobile menu button -->
                     <button type="button" id="mobile-menu-button" class="bg-slate-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
                         <span class="sr-only">Open main menu</span>
                         <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
@@ -65,6 +126,9 @@
                 <a href="calculator.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Anvil Calculator</a>
                 <a href="teams.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Team Builder</a>
                 <a href="changemap.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">ChangeMap</a>
+                
+                <div id="auth-status-mobile" class="pt-4 mt-2 border-t border-slate-700"></div>
+
             </div>
         </div>
     </nav>
@@ -98,7 +162,8 @@
     </div>
 
 
-    <div class="main-content-container">
+    <div class="container">
+
         <div id="loading-indicator" class="text-center card hidden">
             <div class="loading-spinner"></div>
             <p class="text-indigo-600">Loading ...</p>
@@ -121,13 +186,94 @@
         </section>
         
         <div id="main-app-content" class="hidden"></div>
+
+        <section id="comics-display-section" class="card mt-8 hidden">
+            <h2 class="text-2xl font-bold text-indigo-700 mb-4 text-center">First Featured in Comics</h2>
+            <div id="comics-output" class="grid gap-4">
+                <div id="comics-loading-spinner" class="col-span-full text-center">
+                    <div class="loading-spinner"></div>
+                    <p class="text-indigo-600">Loading comics...</p>
+                </div>
+            </div>
+        </section>
     </div>
 
     <div id="toast-container"></div>
     <feedback-widget></feedback-widget>
+
+    <script type="module" src="js/auth-ui.js"></script>
     <script type="module" src="js/feedback-widget.js"></script>
     <script type="module" src="js/teams.js"></script>
     <script type="module" src="js/share.js"></script>
     <script type="text/javascript" src="js/navigation.js"></script>
+
+    <auth-ui status-container-id="auth-status-desktop"></auth-ui>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Mobile Menu Toggle Logic (unchanged) ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenuButton && mobileMenu) {
+                const openIcon = mobileMenuButton.querySelector('svg:first-child');
+                const closeIcon = mobileMenuButton.querySelector('svg:last-child');
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                    openIcon.classList.toggle('hidden');
+                    closeIcon.classList.toggle('hidden');
+                });
+            }
+            
+            // --- Auth Button Synchronization Logic (Updated) ---
+            const desktopAuthContainer = document.getElementById('auth-status-desktop');
+            const mobileAuthContainer = document.getElementById('auth-status-mobile');
+
+            if (desktopAuthContainer && mobileAuthContainer) {
+                
+                const syncAuthStatus = () => {
+                    // Check if the user is logged in by looking for the logout button
+                    const logoutButton = desktopAuthContainer.querySelector('#logout-btn');
+
+                    if (logoutButton) {
+                        // LOGGED-IN STATE: Create a mobile-specific layout
+                        const emailSpan = desktopAuthContainer.querySelector('span');
+                        const userEmail = emailSpan ? emailSpan.textContent : '';
+
+                        // Use block-level elements for a vertical layout on mobile
+                        mobileAuthContainer.innerHTML = `
+                            <div class="space-y-1">
+                                <button id="logout-btn-mobile" class="text-gray-300 hover:bg-slate-700 hover:text-white block w-full text-left px-3 py-2 rounded-md text-base font-medium">Logout</button>
+                            </div>
+                        `;
+                        
+                        // Add event listener for the new mobile logout button
+                        mobileAuthContainer.querySelector('#logout-btn-mobile').addEventListener('click', () => {
+                            // We can just trigger a click on the main logout button
+                            logoutButton.click();
+                        });
+
+                    } else {
+                        // LOGGED-OUT STATE: Simply copy the desktop button
+                        mobileAuthContainer.innerHTML = desktopAuthContainer.innerHTML;
+                        
+                        // The main component handles the login click, but we must ensure
+                        // the mobile version has the right classes.
+                        const loginBtn = mobileAuthContainer.querySelector('#login-btn');
+                        if(loginBtn) {
+                            loginBtn.classList.add('block', 'w-full', 'text-left');
+                            loginBtn.classList.remove('text-sm');
+                            loginBtn.classList.add('text-base');
+                        }
+                    }
+                };
+
+                // This observer now calls our smart sync function
+                const observer = new MutationObserver(syncAuthStatus);
+                observer.observe(desktopAuthContainer, { childList: true });
+
+                // Run the sync function once on page load
+                syncAuthStatus();
+            }
+        });
+    </script>
 </body>
 </html>
