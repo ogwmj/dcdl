@@ -1,8 +1,6 @@
-// --- Hero Banner Module ---
-// Encapsulated logic for creating a dynamic hero banner.
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 function _createOrUpdateMetaTag(attributeName, attributeValue, content) {
-    // Helper function to manage meta tags
     let metaTag = document.querySelector(`meta[${attributeName}="${attributeValue}"]`);
     if (!metaTag) {
         metaTag = document.createElement('meta');
@@ -13,11 +11,9 @@ function _createOrUpdateMetaTag(attributeName, attributeValue, content) {
 }
 
 function _setSocialMediaMetaTags(imageUrl, imageWidth, imageHeight, pageTitle, pageDescription) {
-    // Helper function to update social media meta tags
-    if (!document.head) return; // Ensure head exists
+    if (!document.head) return;
     const pageUrl = window.location.href;
 
-    // Update basic meta tags if provided
     if (pageTitle) document.title = pageTitle;
     const descriptionTag = document.querySelector('meta[name="description"]');
     if (descriptionTag && pageDescription) {
@@ -37,22 +33,17 @@ function _setSocialMediaMetaTags(imageUrl, imageWidth, imageHeight, pageTitle, p
     _createOrUpdateMetaTag('name', 'twitter:title', pageTitle || document.title);
     _createOrUpdateMetaTag('name', 'twitter:description', pageDescription || 'Check out this shared team!');
     _createOrUpdateMetaTag('name', 'twitter:image', imageUrl);
-    console.log('Social media meta tags updated with generated image.');
 }
 
-// MODIFIED: Export the function
 export async function createDynamicHeroBanner(dynamicConfig = {}) {
-    // Main function to generate the hero banner based on configuration.
-
-    // --- Configuration Defaults and Destructuring ---
     const defaultConfig = {
         sourceContainerId: 'heroSourceData',
         heroPanelSelector: '.hero-panel',
         heroImageSrcAttribute: 'src',
         outputImageId: 'staticHeroBannerImage',
         loadingMessageId: 'loadingMessage',
-        backgroundImageUrl: 'img/bg/cityscape_1.jpg', // Default background
-        bannerTitle: "Shared Team", // Default title
+        backgroundImageUrl: 'img/bg/cityscape_1.jpg',
+        bannerTitle: "Shared Team",
         titleOptions: {
             height: 60,
             textXOffset: 15,
@@ -71,234 +62,341 @@ export async function createDynamicHeroBanner(dynamicConfig = {}) {
             totalHeight: 300,
         },
         enableSocialMediaTags: true,
-        pageDescription: "Check out this amazing hero team!" // Default description for meta tags
+        pageDescription: "Check out this amazing hero team!"
     };
-
-    // Merge dynamicConfig with defaultConfig. dynamicConfig takes precedence.
-    const currentConfig = {
-        ...defaultConfig,
-        ...dynamicConfig, // User-provided config from teams.js
-        titleOptions: { ...defaultConfig.titleOptions, ...(dynamicConfig.titleOptions || {}) },
-        panelLayout: { ...defaultConfig.panelLayout, ...(dynamicConfig.panelLayout || {}) },
-    };
-    
-    // --- DOM Element Retrieval ---
+    const currentConfig = { ...defaultConfig, ...dynamicConfig, titleOptions: { ...defaultConfig.titleOptions, ...(dynamicConfig.titleOptions || {}) }, panelLayout: { ...defaultConfig.panelLayout, ...(dynamicConfig.panelLayout || {}) }, };
     const heroSourceDataContainer = document.getElementById(currentConfig.sourceContainerId);
     const staticImageElement = document.getElementById(currentConfig.outputImageId);
     const loadingMessageElement = document.getElementById(currentConfig.loadingMessageId);
-
     if (!heroSourceDataContainer || !staticImageElement || !loadingMessageElement) {
         console.error('Hero Banner Module: Required DOM elements not found. Check your config IDs.');
-        if(loadingMessageElement) loadingMessageElement.textContent = 'Error: Banner elements missing.';
+        if (loadingMessageElement) loadingMessageElement.textContent = 'Error: Banner elements missing.';
         return;
     }
-    
     const sourcePanels = heroSourceDataContainer.querySelectorAll(currentConfig.heroPanelSelector);
     if (!sourcePanels.length) {
         if (loadingMessageElement) loadingMessageElement.textContent = 'No hero images available for banner.';
-        // Do not return immediately, allow background and title to draw if desired,
-        // or if the user wants an empty banner with just a title.
-        // Consider adding a config option if an empty banner is acceptable.
-        console.warn('Hero Banner Module: No source image data found in specified container. Banner might be empty or just title/background.');
     } else {
-        if (loadingMessageElement) loadingMessageElement.textContent = 'Generating hero banner...'; // Reset message
+        if (loadingMessageElement) loadingMessageElement.textContent = 'Generating hero banner...';
     }
-
-
-    // --- Canvas Setup ---
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-
     const { nominalWidth: panelNominalWidth, totalHeight: panelTotalHeight } = currentConfig.panelLayout;
     const { height: titleHeight } = currentConfig.titleOptions;
     const avatarDrawingHeight = panelTotalHeight - titleHeight;
-
     let totalCanvasWidth = 0;
-    // Calculate width based on actual panels found, or a minimum if none (e.g., for title only)
     if (sourcePanels.length > 0) {
-        sourcePanels.forEach(() => { 
-            totalCanvasWidth += panelNominalWidth;
-        });
+        sourcePanels.forEach(() => { totalCanvasWidth += panelNominalWidth; });
     } else {
-        // Fallback width if no panels, e.g., enough for a title
-        // This could be made configurable. For now, let's assume a decent width.
         totalCanvasWidth = currentConfig.bannerTitle ? Math.max(600, panelNominalWidth * 2) : panelNominalWidth;
         if (loadingMessageElement) loadingMessageElement.textContent = 'Generating banner (no heroes)...';
     }
-
     const totalCanvasHeight = panelTotalHeight;
-
     if (totalCanvasWidth === 0 || totalCanvasHeight === 0) {
         if (loadingMessageElement) loadingMessageElement.textContent = 'Error: Could not determine canvas dimensions.';
         return;
     }
     canvas.width = totalCanvasWidth;
     canvas.height = totalCanvasHeight;
-
-    // --- 1. Draw Background Image ---
     if (currentConfig.backgroundImageUrl) {
         try {
             const bgImg = new Image();
-            bgImg.crossOrigin = 'anonymous'; 
-            const bgLoadPromise = new Promise((resolve, reject) => { // Added reject
+            bgImg.crossOrigin = 'anonymous';
+            const bgLoadPromise = new Promise((resolve, reject) => {
                 bgImg.onload = () => {
                     const canvasAspectRatio = canvas.width / canvas.height;
                     const bgImgAspectRatio = bgImg.naturalWidth / bgImg.naturalHeight;
                     let sx = 0, sy = 0, sWidth = bgImg.naturalWidth, sHeight = bgImg.naturalHeight;
-                    if (bgImgAspectRatio > canvasAspectRatio) { 
+                    if (bgImgAspectRatio > canvasAspectRatio) {
                         sWidth = bgImg.naturalHeight * canvasAspectRatio;
                         sx = (bgImg.naturalWidth - sWidth) / 2;
-                    } else if (bgImgAspectRatio < canvasAspectRatio) { 
+                    } else if (bgImgAspectRatio < canvasAspectRatio) {
                         sHeight = bgImg.naturalWidth / canvasAspectRatio;
                         sy = (bgImg.naturalHeight - sHeight) / 2;
                     }
                     ctx.drawImage(bgImg, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
                     resolve();
                 };
-                bgImg.onerror = () => { 
-                    console.error("Error loading background image:", currentConfig.backgroundImageUrl);
-                    // Optionally draw a default background on error too
-                    ctx.fillStyle = '#DDDDDD'; 
-                    ctx.fillRect(0,0, canvas.width, canvas.height);
-                    resolve(); // Resolve so rest of banner can draw
+                bgImg.onerror = () => {
+                    ctx.fillStyle = '#DDDDDD';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    resolve();
                 };
                 bgImg.src = currentConfig.backgroundImageUrl;
             });
-            await bgLoadPromise; 
+            await bgLoadPromise;
         } catch (bgError) {
-            console.error("Exception during background image loading:", bgError);
-             ctx.fillStyle = '#DDDDDD'; // Default background on error
-             ctx.fillRect(0,0, canvas.width, canvas.height);
+            ctx.fillStyle = '#DDDDDD';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
     } else {
-        ctx.fillStyle = '#DDDDDD'; // Light gray default background
-        ctx.fillRect(0,0, canvas.width, canvas.height);
+        ctx.fillStyle = '#DDDDDD';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
-
-
-    // --- 2. Draw the Title (if any) ---
-    // Use the title from currentConfig, which might have been overridden by dynamicConfig
-    const actualBannerTitle = currentConfig.bannerTitle || "Shared Team"; 
+    const actualBannerTitle = currentConfig.bannerTitle || "Shared Team";
     if (actualBannerTitle && currentConfig.titleOptions.height > 0) {
         const { font, textXOffset, fillColor1, fillColor2, strokeColor, strokeLineWidth, shadowColor, shadowBlur, shadowOffsetX, shadowOffsetY } = currentConfig.titleOptions;
         const titleTextYOffset = titleHeight / 2;
-
         ctx.font = font;
-        ctx.textAlign = 'left'; 
+        ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
-
-        const gradient = ctx.createLinearGradient(textXOffset, titleTextYOffset - 18, textXOffset, titleTextYOffset + 18); 
+        const gradient = ctx.createLinearGradient(textXOffset, titleTextYOffset - 18, textXOffset, titleTextYOffset + 18);
         gradient.addColorStop(0, fillColor1);
         gradient.addColorStop(1, fillColor2);
-        
         ctx.shadowColor = shadowColor;
         ctx.shadowBlur = shadowBlur;
         ctx.shadowOffsetX = shadowOffsetX;
         ctx.shadowOffsetY = shadowOffsetY;
-
         ctx.fillStyle = gradient;
-        ctx.fillText(actualBannerTitle, textXOffset, titleTextYOffset); 
-
-        ctx.shadowColor = 'transparent'; 
+        ctx.fillText(actualBannerTitle, textXOffset, titleTextYOffset);
+        ctx.shadowColor = 'transparent';
         ctx.shadowBlur = 0; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
-
         ctx.strokeStyle = strokeColor;
         ctx.lineWidth = strokeLineWidth;
-        ctx.strokeText(actualBannerTitle, textXOffset, titleTextYOffset); 
+        ctx.strokeText(actualBannerTitle, textXOffset, titleTextYOffset);
     }
-
-    // --- 3. Draw Hero Avatars ---
     let currentX = 0;
     const heroImagePromises = [];
     if (sourcePanels.length > 0) {
         sourcePanels.forEach((panel) => {
             const imgElement = panel.querySelector('img');
             const heroImgSrc = imgElement ? imgElement.getAttribute(currentConfig.heroImageSrcAttribute) : null;
-
             if (heroImgSrc && !imgElement.dataset.error) {
                 const promise = new Promise((resolve) => {
                     const heroImg = new Image();
                     heroImg.crossOrigin = 'anonymous';
                     heroImg.onload = () => {
-                        const destinationAvatarHeight = avatarDrawingHeight; 
+                        const destinationAvatarHeight = avatarDrawingHeight;
                         const imgAspectRatio = heroImg.naturalWidth / heroImg.naturalHeight;
-                        const avatarSlotAspectRatio = panelNominalWidth / destinationAvatarHeight; 
-                        
-                        let sx, sy, sWidth, sHeight; 
-                        if (imgAspectRatio > avatarSlotAspectRatio) { 
-                            sHeight = heroImg.naturalHeight; 
-                            sWidth = sHeight * avatarSlotAspectRatio; 
-                            sx = (heroImg.naturalWidth - sWidth) / 2; 
-                            sy = 0; 
-                        } else { 
-                            sWidth = heroImg.naturalWidth; 
-                            sHeight = sWidth / avatarSlotAspectRatio; 
-                            sx = 0; 
-                            // Adjust sy to crop from the bottom (take the top part of the image)
-                            // If the image is taller than what we need for the aspect ratio,
-                            // we start sy from 0 to take the top.
-                            // If it's shorter, this logic should still work as sHeight would be larger.
-                            sy = 0; // Crop from top
-                            // This was the previous logic, which might crop from bottom or middle:
-                            // if (sHeightCalculated < heroImg.naturalHeight) { 
-                            //     sy = heroImg.naturalHeight - sHeightCalculated; 
-                            // } else { sy = 0; }
+                        const avatarSlotAspectRatio = panelNominalWidth / destinationAvatarHeight;
+                        let sx, sy, sWidth, sHeight;
+                        if (imgAspectRatio > avatarSlotAspectRatio) {
+                            sHeight = heroImg.naturalHeight;
+                            sWidth = sHeight * avatarSlotAspectRatio;
+                            sx = (heroImg.naturalWidth - sWidth) / 2;
+                            sy = 0;
+                        } else {
+                            sWidth = heroImg.naturalWidth;
+                            sHeight = sWidth / avatarSlotAspectRatio;
+                            sx = 0;
+                            sy = 0;
                         }
                         sx = Math.max(0, sx); sy = Math.max(0, sy);
-                        sWidth = Math.min(heroImg.naturalWidth - sx, sWidth); 
-                        sHeight = Math.min(heroImg.naturalHeight - sy, sHeight); 
-                        
+                        sWidth = Math.min(heroImg.naturalWidth - sx, sWidth);
+                        sHeight = Math.min(heroImg.naturalHeight - sy, sHeight);
                         if (sWidth > 0 && sHeight > 0) {
                             ctx.filter = 'drop-shadow(3px 3px 5px rgba(0,0,0,0.7))';
                             ctx.drawImage(heroImg, sx, sy, sWidth, sHeight, currentX, titleHeight, panelNominalWidth, destinationAvatarHeight);
-                            ctx.filter = 'none'; 
+                            ctx.filter = 'none';
                         }
                         currentX += panelNominalWidth;
                         resolve();
                     };
-                    heroImg.onerror = () => { 
-                        console.warn("Error loading hero image:", heroImgSrc);
-                        // Optionally draw a placeholder directly on the canvas for this slot
-                        ctx.fillStyle = '#A0AEC0'; // gray-500
+                    heroImg.onerror = () => {
+                        ctx.fillStyle = '#A0AEC0';
                         ctx.fillRect(currentX, titleHeight, panelNominalWidth, destinationAvatarHeight);
                         ctx.fillStyle = '#FFFFFF';
                         ctx.textAlign = 'center';
-                        ctx.fillText("N/A", currentX + panelNominalWidth/2, titleHeight + destinationAvatarHeight/2);
-                        currentX += panelNominalWidth; 
-                        resolve(); 
+                        ctx.fillText("N/A", currentX + panelNominalWidth / 2, titleHeight + destinationAvatarHeight / 2);
+                        currentX += panelNominalWidth;
+                        resolve();
                     };
-                    heroImg.src = heroImgSrc; 
+                    heroImg.src = heroImgSrc;
                 });
                 heroImagePromises.push(promise);
             } else {
-                 // If image source is missing or marked as error, draw placeholder
-                ctx.fillStyle = '#A0AEC0'; // gray-500
+                ctx.fillStyle = '#A0AEC0';
                 ctx.fillRect(currentX, titleHeight, panelNominalWidth, avatarDrawingHeight);
                 ctx.fillStyle = '#FFFFFF';
                 ctx.textAlign = 'center';
-                ctx.fillText("Error", currentX + panelNominalWidth/2, titleHeight + avatarDrawingHeight/2);
-                currentX += panelNominalWidth; 
-                heroImagePromises.push(Promise.resolve()); // Still resolve for Promise.all
+                ctx.fillText("Error", currentX + panelNominalWidth / 2, titleHeight + avatarDrawingHeight / 2);
+                currentX += panelNominalWidth;
+                heroImagePromises.push(Promise.resolve());
             }
         });
     }
-
-
     try {
-        await Promise.all(heroImagePromises); 
+        await Promise.all(heroImagePromises);
         const dataURL = canvas.toDataURL('image/png');
         if (staticImageElement) {
             staticImageElement.src = dataURL;
-            staticImageElement.style.display = 'block'; 
+            staticImageElement.style.display = 'block';
         }
         if (loadingMessageElement) loadingMessageElement.style.display = 'none';
-
-        if(currentConfig.enableSocialMediaTags) {
+        if (currentConfig.enableSocialMediaTags) {
             _setSocialMediaMetaTags(dataURL, canvas.width, canvas.height, actualBannerTitle, currentConfig.pageDescription);
         }
-    } catch (error) { 
+    } catch (error) {
         console.error('Error during final image processing:', error);
         if (loadingMessageElement) loadingMessageElement.textContent = 'Error generating final image. See console.';
         if (staticImageElement) staticImageElement.style.display = 'none';
     }
+}
+
+const PROXY_BASE_URL = "https://us-central1-dc-dark-legion-tools.cloudfunctions.net/comicVineProxy";
+
+/**
+ * [HELPER] Checks Firestore for a cached comic for a specific character.
+ * This is a READ-ONLY operation from the client.
+ * @param {object} db - The Firestore database instance.
+ * @param {string} characterName - The name of the character (e.g., "Batman").
+ * @returns {Promise<object|null>} The comic data if found, otherwise null.
+ */
+async function _checkFirestoreForComic(db, characterName) {
+    if (!db || !characterName) return null;
+    const characterId = characterName.replace(/\s+/g, '_').toLowerCase();
+    try {
+        const docRef = doc(db, `artifacts/dc-dark-legion-builder/public/data/characterComics`, characterId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            return docSnap.data();
+        } else {
+            return null;
+        }
+    } catch (error) {
+        console.error(`Error checking Firestore for ${characterName}:`, error);
+    }
+    return null;
+}
+
+/**
+ * [HELPER] Fetches the featured comic for a character from our proxy.
+ * This function is called on a cache miss. The proxy handles fetching from the
+ * external API and writing the result to the Firestore cache.
+ * @param {string} characterName - The name of the character.
+ * @returns {Promise<object|null>} The formatted comic data or null.
+ */
+async function _fetchComicFromProxy(characterName) {
+    try {
+        const proxyUrl = `${PROXY_BASE_URL}?character=${encodeURIComponent(characterName)}`;
+        const response = await fetch(proxyUrl);
+
+        if (!response.ok) {
+            console.error(`Proxy error for ${characterName}: ${response.statusText}`);
+            return null;
+        }
+
+        const data = await response.json();
+        if (data && data.imageUrl) {
+            return data;
+        } else {
+            console.warn(`No valid comic data returned from proxy for ${characterName}.`);
+            return null;
+        }
+    } catch (error) {
+        console.error(`Error fetching comic from proxy for ${characterName}:`, error);
+        return null;
+    }
+}
+
+
+/**
+ * Renders the fetched comics into the display area, avoiding duplicates.
+ * @param {Array<object>} comics - An array of comic data objects.
+ */
+function _renderComics(comics) {
+    const outputEl = document.getElementById('comics-output');
+    const loadingEl = document.getElementById('comics-loading-spinner');
+    const sectionEl = document.getElementById('comics-display-section');
+
+    if (!outputEl || !sectionEl) return;
+    
+    if (loadingEl) loadingEl.style.display = 'none';
+    outputEl.innerHTML = '';
+    
+    // --- Centering & Grid setup ---
+    if (outputEl.parentElement) {
+        outputEl.parentElement.classList.add('text-center');
+    }
+    
+    outputEl.classList.remove('grid', 'grid-cols-2', 'sm:grid-cols-3', 'md:grid-cols-4', 'lg:grid-cols-5');
+    outputEl.classList.add('inline-grid');
+
+
+    const uniqueComics = [];
+    const seenImageUrls = new Set();
+    comics.forEach(comic => {
+        if (comic && comic.imageUrl && !seenImageUrls.has(comic.imageUrl)) {
+            uniqueComics.push(comic);
+            seenImageUrls.add(comic.imageUrl);
+        }
+    });
+
+    if (uniqueComics.length === 0) {
+        outputEl.classList.add('grid-cols-1');
+        outputEl.innerHTML = '<p class="col-span-full text-center text-gray-500">Could not find any featured comics for this team.</p>';
+        return;
+    }
+    
+    // --- Dynamic Column Logic ---
+    const count = uniqueComics.length;
+    const baseCols = Math.min(count, 2);
+    const smCols = Math.min(count, 3);
+    const mdCols = Math.min(count, 4);
+    const lgCols = Math.min(count, 5);
+
+    outputEl.classList.add(`grid-cols-${baseCols}`);
+    outputEl.classList.add(`sm:grid-cols-${smCols}`);
+    outputEl.classList.add(`md:grid-cols-${mdCols}`);
+    outputEl.classList.add(`lg:grid-cols-${lgCols}`);
+    // --- End Dynamic Column Logic ---
+
+    uniqueComics.forEach(comic => {
+        const coverDate = comic.coverDate ? new Date(comic.coverDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) : 'N/A';
+        const title = comic.title || `${comic.character} #${comic.issueNumber}`;
+
+        const cardInnerHtml = `
+            <div class="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+            <div class="relative w-full text-left">
+                 <img src="${comic.imageUrl}" alt="Cover of ${title}" 
+                     class="w-full rounded-lg shadow-lg object-cover aspect-[2/3]" 
+                     onerror="this.src='https://placehold.co/200x300/1a202c/e2e8f0?text=Cover+N/A';">
+                <div class="absolute bottom-0 left-0 right-0 p-2 bg-black bg-opacity-60 rounded-b-lg">
+                     <h3 class="font-bold text-sm text-white truncate">${title}</h3>
+                     <p class="text-xs text-slate-300">${coverDate}</p>
+                </div>
+            </div>
+        `;
+
+        let cardContainer;
+        if (comic.siteUrl && comic.siteUrl.trim() !== '') {
+            cardContainer = document.createElement('a');
+            cardContainer.href = comic.siteUrl;
+            cardContainer.target = '_blank';
+            cardContainer.rel = 'noopener noreferrer';
+            cardContainer.className = "comic-card group relative flex flex-col items-center text-center transform transition-transform duration-300 hover:scale-105 hover:z-10 no-underline";
+        } else {
+            cardContainer = document.createElement('div');
+            cardContainer.className = "comic-card group relative flex flex-col items-center text-center transform transition-transform duration-300 hover:scale-105 hover:z-10";
+        }
+
+        cardContainer.innerHTML = cardInnerHtml;
+        outputEl.appendChild(cardContainer);
+    });
+}
+
+/**
+ * Main function to orchestrate fetching and displaying comics for heroes.
+ * Implements a "read-through cache" strategy on the client.
+ * 1. Checks Firestore for a cached comic.
+ * 2. If it's a miss, calls the proxy to fetch/cache the data.
+ * @param {object} db - The Firestore instance (for reading the cache).
+ * @param {Array<string>} heroNames - An array of hero names.
+ */
+export async function loadComicsForHeroes(db, heroNames) {
+    const comicsDisplaySection = document.getElementById('comics-display-section');
+    if (comicsDisplaySection) comicsDisplaySection.classList.remove('hidden');
+
+    const comicPromises = heroNames.map(async (name) => {
+        let comic = await _checkFirestoreForComic(db, name);
+        if (comic) {
+            return comic;
+        }
+
+        comic = await _fetchComicFromProxy(name);
+        return comic;
+    });
+
+    const comics = (await Promise.all(comicPromises)).filter(c => c !== null);
+    _renderComics(comics);
 }
