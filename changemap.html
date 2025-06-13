@@ -19,7 +19,7 @@
 
         /* Full-screen background image */
         .background-hero {
-            background-image: url('img/bg/landscape_1.png'); /* Ensure this path is correct */
+            background-image: url('img/bg/landscape_1.png');
             background-size: cover;
             background-position: center;
             position: fixed; /* Use fixed to keep it in place on scroll */
@@ -135,6 +135,23 @@
         </header>
 
         <main class="max-w-6xl mx-auto space-y-12">
+            <!-- Global Changes Section -->
+            <section id="calculator-changelog" class="content-card p-6 md:p-8 rounded-xl">
+                <h2 class="text-3xl font-bold text-blue-300 mb-6 border-b border-blue-400 border-opacity-30 pb-3">Site/Global Updates</h2>
+                <div class="space-y-8">
+                    <!-- Changelog Entry -->
+                    <article>
+                        <h3 class="text-2xl font-semibold text-gray-100">June 10, 2024</h3>
+                         <div class="mt-3">
+                            <span class="change-tag change-tag-new">New</span>
+                        </div>
+                        <ul class="list-disc list-inside mt-2 space-y-2 text-gray-300 pl-2">
+                            <li>Added user persistenc across devices. Registeration and Login features!</li>
+                        </ul>
+                    </article>
+                </div>
+            </section>
+
             <!-- Calculator Changelog Section -->
             <section id="calculator-changelog" class="content-card p-6 md:p-8 rounded-xl">
                 <h2 class="text-3xl font-bold text-blue-300 mb-6 border-b border-blue-400 border-opacity-30 pb-3">Calculator Updates</h2>
@@ -183,6 +200,19 @@
             <section id="teams-changelog" class="content-card p-6 md:p-8 rounded-xl">
                 <h2 class="text-3xl font-bold text-blue-300 mb-6 border-b border-blue-400 border-opacity-30 pb-3">Team Builder Updates</h2>
                 <div class="space-y-8">
+                    <!-- Changelog Entry -->
+                    <article>
+                        <h3 class="text-2xl font-semibold text-gray-100">Version 3.4.0 <span class="text-base font-normal text-gray-400 ml-2">- June 13, 2024</span></h3>
+                        <div class="mt-3">
+                            <span class="change-tag change-tag-new">New</span>
+                            <span class="change-tag change-tag-improvement">Improvement</span>
+                        </div>
+                        <ul class="list-disc list-inside mt-2 space-y-2 text-gray-300 pl-2">
+                            <li><strong>Champion Upgrades:</strong> You can now upgrade champions! Right now, just Wonder Woman.</li>
+                            <li><strong>Team Roster:</strong> Changed "Actions" column to a dropdown menu to account for more actions.</li>
+                        </ul>
+                    </article>
+
                     <!-- Changelog Entry -->
                     <article>
                         <h3 class="text-2xl font-semibold text-gray-100">Version 3.3.3 <span class="text-base font-normal text-gray-400 ml-2">- June 9, 2024</span></h3>
@@ -239,6 +269,7 @@
                             <h3 class="text-2xl font-semibold text-gray-100 mb-3">💡 Considering</h3>
                              <ul class="list-disc list-inside space-y-2 text-gray-300">
                                 <li>Villain-specific team building guides.</li>
+                                <li>Integration with user accounts to sync rosters across devices.</li>
                                 <li>Light/Dark theme toggle.</li>
                             </ul>
                         </div>
@@ -247,7 +278,7 @@
                     <div>
                         <h3 class="text-2xl font-semibold text-gray-100 mb-3">✅ Recently Completed</h3>
                         <ul class="list-disc list-inside space-y-2 text-gray-300">
-                            <li>User Accounts</li>
+                            <li>Champion Upgrades</li>
                             <li>Streamlined Anvil Calculator</li>
                             <li>Team Sharing Links</li>
                             <li>Roster Import/Export</li>
