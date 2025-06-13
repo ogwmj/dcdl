@@ -505,6 +505,50 @@ async function populateLMChampionsDropdown() {
     }
 }
 
+/**
+ * Calculates the actual (base) probability rate from a known effective rate by inverting
+ * the pity mechanism calculation. It uses an iterative binary search for precision.
+ * @param {number} effectiveRate - The effective probability of an LM pull (0 to 1), including pity.
+ * @param {number} nmGuaranteeThreshold - The number of non-LM pulls before a guarantee.
+ * @returns {number} The calculated actual base rate.
+ */
+function calculateActualRateFromEffectiveRate(effectiveRate, nmGuaranteeThreshold) {
+    if (effectiveRate <= 0) return 0;
+    if (effectiveRate >= 1) return 1;
+
+    // The target expected number of pulls is the reciprocal of the effective rate.
+    const targetExpectedPulls = 1 / effectiveRate;
+    const n = nmGuaranteeThreshold + 1; // Max number of pulls in a cycle (e.g., 4)
+
+    // This is the function we are trying to solve. It calculates the expected pulls for a given base rate 'r'.
+    // E(P) = 4 - 6r + 4r^2 - r^3 (for a guarantee at 4)
+    // This is a generalized version for any nmGuaranteeThreshold.
+    const calculateExpectedPulls = (rate) => {
+        let expectedPulls = 0;
+        for (let i = 1; i < n; i++) {
+            expectedPulls += i * Math.pow(1 - rate, i - 1) * rate;
+        }
+        expectedPulls += n * Math.pow(1 - rate, n - 1);
+        return expectedPulls;
+    };
+
+    // Use a binary search to find the rate 'r' that produces the targetExpectedPulls.
+    let low = 0, high = effectiveRate; // The actual rate must be lower than the effective rate.
+    let mid, calculatedPulls;
+
+    // Iterate 100 times for high precision, which is more than enough.
+    for(let i=0; i < 100; i++) {
+        mid = (low + high) / 2;
+        calculatedPulls = calculateExpectedPulls(mid);
+
+        if (calculatedPulls > targetExpectedPulls) {
+            low = mid;
+        } else {
+            high = mid;
+        }
+    }
+    return (low + high) / 2;
+}
 
 // =================================================================================================
 // #region: --- UI CONTROLLERS & DOM MANIPULATION ---
@@ -882,15 +926,22 @@ function validateAndGetInputs() {
 function performExpectedValueCalculations(inputs) {
     const { mythicProbability, mythicHardPity, lmRateUpChance, shardsNeededForUpgrade, lmShardsYield, nmShardsYield } = inputs;
     const results = {};
+    
+    const actualLmRateUpChance = calculateActualRateFromEffectiveRate(lmRateUpChance, CONSTANTS.NM_GUARANTEE_THRESHOLD);
+
     results.drawsPerMythicAverage = calculateExpectedDrawsPerMythic(mythicProbability, mythicHardPity);
     if (isNaN(results.drawsPerMythicAverage)) return { isValid: false, errorMessage: 'Error in base Mythic calculation.' };
-    results.unlockCycleMetrics = calculateLmCycleMetrics(1, 0, lmRateUpChance, CONSTANTS.NM_GUARANTEE_THRESHOLD);
+
+    results.unlockCycleMetrics = calculateLmCycleMetrics(1, 0, actualLmRateUpChance, CONSTANTS.NM_GUARANTEE_THRESHOLD);
     if (isNaN(results.unlockCycleMetrics.expectedMythicPullsPerLmCycle)) return { isValid: false, errorMessage: 'Error calculating unlock cycle.' };
+
     results.anvilsUnlockAvg = results.unlockCycleMetrics.expectedMythicPullsPerLmCycle * results.drawsPerMythicAverage;
     results.anvilsUnlockBest = 1 * 1;
     results.anvilsUnlockWorst = results.unlockCycleMetrics.worstCaseMythicPullsPerLmCycle * mythicHardPity;
-    const lmCycleMetrics = calculateLmCycleMetrics(lmShardsYield, nmShardsYield, lmRateUpChance, CONSTANTS.NM_GUARANTEE_THRESHOLD);
+
+    const lmCycleMetrics = calculateLmCycleMetrics(lmShardsYield, nmShardsYield, actualLmRateUpChance, CONSTANTS.NM_GUARANTEE_THRESHOLD);
     if (isNaN(lmCycleMetrics.averageShardsPerEffectiveMythic)) return { isValid: false, errorMessage: 'Error in shard per mythic calculation.' };
+
     results.avgEffShards = lmCycleMetrics.averageShardsPerEffectiveMythic;
     results.bestShards = lmShardsYield;
     results.worstShards = (nmShardsYield * CONSTANTS.NM_GUARANTEE_THRESHOLD + lmShardsYield) / (CONSTANTS.NM_GUARANTEE_THRESHOLD + 1);
@@ -900,6 +951,7 @@ function performExpectedValueCalculations(inputs) {
     results.shardsNeededForUpgrade = shardsNeededForUpgrade;
     results.lmShardsYield = lmShardsYield;
     results.nmShardsYield = nmShardsYield;
+
     return { isValid: true, data: results };
 }
 
