@@ -698,6 +698,55 @@
                         0 0 12px rgba(59, 130, 246, 0.3);
         }
 
+        .actions-cell {
+            position: relative;
+            text-align: right; /* Aligns the ... button to the right */
+        }
+
+        .actions-dropdown-trigger {
+            background-color: #f1f5f9; /* bg-slate-100 */
+            border: 1px solid #e2e8f0; /* border-slate-200 */
+            border-radius: 0.375rem; /* rounded-md */
+            padding: 0.25rem 0.5rem; /* px-2 py-1 */
+            line-height: 1;
+            cursor: pointer;
+        }
+        .actions-dropdown-trigger:hover {
+            background-color: #e2e8f0; /* bg-slate-200 */
+        }
+
+        .actions-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            z-index: 10;
+            background-color: white;
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            border: 1px solid #e2e8f0; /* border-slate-200 */
+            min-width: 120px;
+            padding: 0.5rem 0; /* py-2 */
+        }
+
+        .actions-dropdown-menu button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 0.5rem 1rem; /* px-4 py-2 */
+            font-size: 0.875rem; /* text-sm */
+            color: #334155; /* text-slate-700 */
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+        
+        .actions-dropdown-menu button:hover {
+            background-color: #f1f5f9; /* bg-slate-100 */
+        }
+
     </style>
 </head>
 <body>
@@ -1047,7 +1096,6 @@
     <auth-ui status-container-id="auth-status-desktop"></auth-ui>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Mobile Menu Toggle Logic (unchanged) ---
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
             if (mobileMenuButton && mobileMenu) {
@@ -1060,40 +1108,31 @@
                 });
             }
             
-            // --- Auth Button Synchronization Logic (Updated) ---
             const desktopAuthContainer = document.getElementById('auth-status-desktop');
             const mobileAuthContainer = document.getElementById('auth-status-mobile');
 
             if (desktopAuthContainer && mobileAuthContainer) {
                 
                 const syncAuthStatus = () => {
-                    // Check if the user is logged in by looking for the logout button
                     const logoutButton = desktopAuthContainer.querySelector('#logout-btn');
 
                     if (logoutButton) {
-                        // LOGGED-IN STATE: Create a mobile-specific layout
                         const emailSpan = desktopAuthContainer.querySelector('span');
                         const userEmail = emailSpan ? emailSpan.textContent : '';
 
-                        // Use block-level elements for a vertical layout on mobile
                         mobileAuthContainer.innerHTML = `
                             <div class="space-y-1">
                                 <button id="logout-btn-mobile" class="text-gray-300 hover:bg-slate-700 hover:text-white block w-full text-left px-3 py-2 rounded-md text-base font-medium">Logout</button>
                             </div>
                         `;
                         
-                        // Add event listener for the new mobile logout button
                         mobileAuthContainer.querySelector('#logout-btn-mobile').addEventListener('click', () => {
-                            // We can just trigger a click on the main logout button
                             logoutButton.click();
                         });
 
                     } else {
-                        // LOGGED-OUT STATE: Simply copy the desktop button
                         mobileAuthContainer.innerHTML = desktopAuthContainer.innerHTML;
                         
-                        // The main component handles the login click, but we must ensure
-                        // the mobile version has the right classes.
                         const loginBtn = mobileAuthContainer.querySelector('#login-btn');
                         if(loginBtn) {
                             loginBtn.classList.add('block', 'w-full', 'text-left');
@@ -1103,11 +1142,9 @@
                     }
                 };
 
-                // This observer now calls our smart sync function
                 const observer = new MutationObserver(syncAuthStatus);
                 observer.observe(desktopAuthContainer, { childList: true });
 
-                // Run the sync function once on page load
                 syncAuthStatus();
             }
         });
