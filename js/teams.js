@@ -29,7 +29,7 @@ import { createDynamicHeroBanner, loadComicsForHeroes } from './share.js';
 // =================================================================================================
 
 // --- Icons ---
-const ICON_ADD = '➕', ICON_UPDATE = '🔄', ICON_EDIT = '✏️', ICON_DELETE = '🗑️', ICON_CALCULATE = '⚙️', ICON_SAVE = '💾', ICON_CANCEL = '❌', ICON_SWAP = '🔁', ICON_RESET = '↩️', ICON_PREFILL = '✨', ICON_EXPORT = '📤', ICON_IMPORT = '📥', ICON_CONFIRM = '✔️', ICON_SHARE = '🔗', ICON_UNSHARE = '🚫', ICON_COPY = '📋';
+const ICON_ADD = '➕', ICON_UPDATE = '🔄', ICON_EDIT = '✏️', ICON_DELETE = '🗑️', ICON_CALCULATE = '⚙️', ICON_SAVE = '💾', ICON_CANCEL = '❌', ICON_SWAP = '🔁', ICON_RESET = '↩️', ICON_PREFILL = '✨', ICON_EXPORT = '📤', ICON_IMPORT = '📥', ICON_CONFIRM = '✔️', ICON_SHARE = '🔗', ICON_UNSHARE = '🚫', ICON_COPY = '📋', ICON_UPGRADE = '⬆️';
 
 // --- App & Firebase Config ---
 const appId = typeof __app_id !== 'undefined' ? __app_id : 'dc-dark-legion-builder';
@@ -371,7 +371,47 @@ async function initializeFirebase() {
 async function fetchSynergiesAndRender() { if (!db) { showError("Firestore is not initialized."); return; } try { const querySnapshot = await getDocs(collection(db, `artifacts/${appId}/public/data/synergies`)); dbSynergies = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (a.name || "").localeCompare(b.name || "")); renderAvailableSynergies(); } catch (error) { console.error("Error fetching synergies:", error); showError("Error fetching synergies.", error.message); dbSynergies = []; renderAvailableSynergies(); } }
 async function fetchChampions() { if (!db) { showError("Firestore is not initialized."); return; } try { const querySnapshot = await getDocs(collection(db, `artifacts/${appId}/public/data/champions`)); dbChampions = querySnapshot.docs.map(doc => { const data = doc.data(); return { id: doc.id, ...data, isHealer: data.isHealer === true }; }); } catch (error) { console.error("Error fetching champions:", error); showError("Error fetching champions.", error.message); dbChampions = []; } }
 async function fetchLegacyPieces() { if (!db) { showError("Firestore is not initialized."); return; } try { const querySnapshot = await getDocs(collection(db, `artifacts/${appId}/public/data/legacyPieces`)); dbLegacyPieces = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); if (legacyPieceSelectEl) populateLegacyPieceSelect(); } catch (error) { console.error("Error fetching legacy pieces:", error); showError("Error fetching legacy pieces.", error.message); dbLegacyPieces = []; if (legacyPieceSelectEl) populateLegacyPieceSelect(); } }
-async function loadPlayerRosterFromFirestore(){if(!userId||!db){playerChampionRoster=[],renderPlayerChampionRoster(),renderAvailableSynergies();return}try{let e=await getDoc(doc(db,`artifacts/${appId}/users/${userId}/roster/myRoster`));if(e.exists()){let r=e.data();r&&Array.isArray(r.champions)?(playerChampionRoster=r.champions.map(e=>{let r=dbChampions.find(r=>r.id===e.dbChampionId),a=e.legacyPiece||{id:null,name:"None",rarity:"None",starColorTier:"Unlocked"};return{...e,id:e.id||Date.now()+Math.random(),name:r?r.name:e.name,baseRarity:r?r.baseRarity:e.baseRarity,class:r?r.class||"N/A":e.class||"N/A",isHealer:!!r&&!0===r.isHealer,inherentSynergies:r?r.inherentSynergies||[]:e.inherentSynergies||[],forceLevel:e.forceLevel||0,legacyPiece:{...a,starColorTier:a.starColorTier||"Unlocked"}}}),analytics&&logEvent(analytics,"roster_loaded",{roster_size:playerChampionRoster.length})):playerChampionRoster=[]}else playerChampionRoster=[]}catch(a){console.error("Error loading player roster:",a),showError("Error loading your saved roster.",a.message),playerChampionRoster=[]}finally{renderPlayerChampionRoster(),renderAvailableSynergies()}}
+async function loadPlayerRosterFromFirestore() {
+    if (!userId || !db) {
+        playerChampionRoster = [], renderPlayerChampionRoster(), renderAvailableSynergies();
+        return
+    }
+    try {
+        let e = await getDoc(doc(db, `artifacts/${appId}/users/${userId}/roster/myRoster`));
+        if (e.exists()) {
+            let r = e.data();
+            r && Array.isArray(r.champions) ? (playerChampionRoster = r.champions.map(e => {
+                let r = dbChampions.find(r => r.id === e.dbChampionId),
+                    a = e.legacyPiece || {
+                        id: null,
+                        name: "None",
+                        rarity: "None",
+                        starColorTier: "Unlocked"
+                    };
+                return {
+                    ...e,
+                    id: e.id || Date.now() + Math.random(),
+                    name: r ? r.name : e.name,
+                    class: r ? r.class || "N/A" : e.class || "N/A",
+                    isHealer: !!r && !0 === r.isHealer,
+                    canUpgrade: r ? !!r.canUpgrade : false,
+                    upgradeSynergy: r ? r.upgradeSynergy || null : null,
+                    forceLevel: e.forceLevel || 0,
+                    legacyPiece: {
+                        ...a,
+                        starColorTier: a.starColorTier || "Unlocked"
+                    }
+                }
+            }), analytics && logEvent(analytics, "roster_loaded", {
+                roster_size: playerChampionRoster.length
+            })) : playerChampionRoster = []
+        } else playerChampionRoster = []
+    } catch (a) {
+        console.error("Error loading player roster:", a), showError("Error loading your saved roster.", a.message), playerChampionRoster = []
+    } finally {
+        renderPlayerChampionRoster(), renderAvailableSynergies()
+    }
+}
 async function loadSavedTeams(){if(userId&&db)try{let e=query(collection(db,`artifacts/${appId}/users/${userId}/savedTeams`),orderBy("createdAt","desc")),a=await getDocs(e);savedTeams=a.docs.map(e=>{let a=e.data(),r=(a.members||[]).map(e=>({...e,forceLevel:e.forceLevel||0,legacyPiece:{...e.legacyPiece||{},starColorTier:e.legacyPiece&&e.legacyPiece.starColorTier?e.legacyPiece.starColorTier:"Unlocked"}}));return{id:e.id,...a,members:r}}),renderSavedTeams()}catch(r){console.error("Error loading saved teams:",r),savedTeamsListEl&&(savedTeamsListEl.innerHTML='<p class="text-red-500">Error loading saved teams.</p>')}}
 
 // =================================================================================================
@@ -384,7 +424,79 @@ function populateForceLevelOptions() { if (!champForceLevelEl) return; champForc
 function renderAvailableSynergies() { if (!synergiesListEl) return; synergiesListEl.innerHTML = ''; if (dbSynergies.length === 0) { synergiesListEl.innerHTML = '<p class="text-sm text-gray-500 col-span-full">No synergies defined.</p>'; return; } dbSynergies.forEach(synergyDef => { const synergyItemContainer = document.createElement('div'); synergyItemContainer.className = 'synergy-item-container border rounded-lg p-3 bg-slate-50 mb-3 shadow-sm'; const count = playerChampionRoster.filter(champ => (champ.inherentSynergies || []).includes(synergyDef.name)).length; const synergyItemHeader = document.createElement('div'); synergyItemHeader.className = 'synergy-item-header flex items-center justify-between hover:bg-slate-100 p-2 rounded-md -m-2 mb-1 cursor-pointer'; synergyItemHeader.dataset.synergyName = synergyDef.name; const factionNameForIcon = synergyDef.name.trim().replace(/\s+/g, '_'); const fallbackSpan = `<span class="icon-placeholder" style="display:none;">[${synergyDef.name}]</span>`; const collapseIndicator = document.createElement('span'); collapseIndicator.className = 'collapse-indicator text-lg font-bold ml-auto mr-2'; collapseIndicator.textContent = '+'; synergyItemHeader.innerHTML = `<div class="flex items-center flex-grow"><span class="icon-wrapper mr-2"><img src="img/factions/${factionNameForIcon}.png" alt="${synergyDef.name}" title="${synergyDef.name}" class="w-6 h-6 object-contain" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';">${fallbackSpan}</span><span class="synergy-name">${synergyDef.name}</span></div><span class="synergy-progress">${count}/${(synergyDef.tiers && synergyDef.tiers.length > 0) ? synergyDef.tiers[0].countRequired : GAME_CONSTANTS.SYNERGY_ACTIVATION_COUNT}</span>`; const progressSpan = synergyItemHeader.querySelector('.synergy-progress'); if (progressSpan) { synergyItemHeader.insertBefore(collapseIndicator, progressSpan); } else { synergyItemHeader.appendChild(collapseIndicator); } synergyItemContainer.appendChild(synergyItemHeader); const contributingChampions = playerChampionRoster.filter(champ => (champ.inherentSynergies || []).includes(synergyDef.name)); const synergyContentDiv = document.createElement('div'); synergyContentDiv.className = 'synergy-content hidden'; if (contributingChampions.length > 0) { const championsListDiv = document.createElement('div'); championsListDiv.className = 'mt-2 pl-4 border-l-2 border-slate-200 space-y-1 synergy-champions-list'; contributingChampions.forEach(champ => { const champDiv = document.createElement('div'); champDiv.className = 'synergy-champion-entry flex items-center text-xs text-slate-600 py-1'; const classIconHtml = getClassPlaceholder(champ.class).replace('icon-class-table', 'result-icon w-4 h-4 mr-1'); const starRatingHTML = getStarRatingHTML(champ.starColorTier); let champSynergiesHtml = ''; if (champ.inherentSynergies && champ.inherentSynergies.length > 0) { champSynergiesHtml += `<div class="champion-synergies flex gap-0.5 ml-auto">`; champ.inherentSynergies.forEach(syn => { if (syn !== synergyDef.name) { const synNameForIcon = syn.trim().replace(/\s+/g, '_'); champSynergiesHtml += `<span class="icon-wrapper"><img src="img/factions/${synNameForIcon}.png" alt="${syn}" title="${syn}" class="result-icon w-3 h-3" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';"><span class="icon-placeholder text-xs" style="display:none;">[${syn}]</span></span>`; } }); champSynergiesHtml += `</div>`; } champDiv.innerHTML = `${classIconHtml}<span class="font-medium text-slate-700">${champ.name}</span><span class="star-rating star-rating-sm ml-2">${starRatingHTML.replace(/font-size: 1.2em;/g, 'font-size: 0.9em;')}</span>${champSynergiesHtml}`; championsListDiv.appendChild(champDiv); }); synergyContentDiv.appendChild(championsListDiv); } else { const noChampsP = document.createElement('p'); noChampsP.className = 'text-xs text-slate-500 mt-1 pl-4 no-champs-text'; noChampsP.textContent = 'No champions in roster have this synergy.'; synergyContentDiv.appendChild(noChampsP); } synergyItemContainer.appendChild(synergyContentDiv); synergyItemHeader.addEventListener('click', () => { const content = synergyItemContainer.querySelector('.synergy-content'); const indicator = synergyItemHeader.querySelector('.collapse-indicator'); if (content) { content.classList.toggle('hidden'); if (indicator) { indicator.textContent = content.classList.contains('hidden') ? '+' : '−'; } } if (analytics) logEvent(analytics, 'toggle_synergy_details', { synergy_name: synergyDef.name, is_collapsed: content ? content.classList.contains('hidden') : true }); }); synergiesListEl.appendChild(synergyItemContainer); }); }
 function populateChampionSelect() {    if (!customChampDropdownOptions) return;    const currentSelectedValue = editingChampionId ? playerChampionRoster.find(c => c.id === editingChampionId)?.dbChampionId : champSelectDbEl.value;        customChampDropdownOptions.innerHTML = '';    customChampDropdownTrigger.disabled = true;    if (dbChampions.length === 0) {        selectedChampName.textContent = '-- No Champions Loaded --';        return;    }    const rosteredDbChampionIds = playerChampionRoster.map(rc => rc.dbChampionId);    const availableChampions = dbChampions.filter(dbChamp =>         !rosteredDbChampionIds.includes(dbChamp.id) || (editingChampionId && playerChampionRoster.find(c => c.id === editingChampionId)?.dbChampionId === dbChamp.id)    );    const sortedAvailableChampions = [...availableChampions].sort((a, b) => (a.name || "").localeCompare(b.name || ""));    const defaultOption = document.createElement('li');    defaultOption.className = 'px-4 py-2 text-gray-500';    defaultOption.textContent = '-- Select Champion --';    customChampDropdownOptions.appendChild(defaultOption);    sortedAvailableChampions.forEach(champ => {        if (!champ.id || !champ.name) return;                const optionEl = document.createElement('li');        optionEl.className = 'text-gray-900 cursor-default select-none relative py-2 pl-3 pr-9 hover:bg-indigo-600 hover:text-white';        optionEl.setAttribute('role', 'option');        optionEl.dataset.value = champ.id;                const sanitizedName = (champ.name || "").replace(/[^a-zA-Z0-9-_]/g, "");        const imgSrc = `img/champions/avatars/${sanitizedName}.webp`;        optionEl.dataset.imgSrc = imgSrc;                optionEl.innerHTML = `            <div class="flex items-center">                <img src="${imgSrc}" alt="${champ.name}" class="h-6 w-6 flex-shrink-0 rounded-full" onerror="this.style.display='none'">                <span class="font-normal ml-3 block truncate">${champ.name}</span>            </div>        `;        optionEl.addEventListener('click', () => {            champSelectDbEl.value = optionEl.dataset.value;            selectedChampName.textContent = champ.name;            selectedChampImg.src = optionEl.dataset.imgSrc;            selectedChampImg.classList.remove('hidden');            customChampDropdownOptions.classList.add('hidden');            customChampDropdownTrigger.setAttribute('aria-expanded', 'false');            champSelectDbEl.dispatchEvent(new Event('change'));        });                customChampDropdownOptions.appendChild(optionEl);    });    customChampDropdownTrigger.disabled = false;    const currentChampionInList = sortedAvailableChampions.find(c => c.id === currentSelectedValue);    if (currentChampionInList) {        selectedChampName.textContent = currentChampionInList.name;        const sanitizedName = (currentChampionInList.name || "").replace(/[^a-zA-Z0-9-_]/g, "");        selectedChampImg.src = `img/champions/avatars/${sanitizedName}.webp`;        selectedChampImg.classList.remove('hidden');    } else if (!editingChampionId) {        resetChampionForm();    }}
 function populateLegacyPieceSelect(championClass = null) { if (!legacyPieceSelectEl) return; const currentSelectedLegacyId = legacyPieceSelectEl.value; legacyPieceSelectEl.innerHTML = '<option value="">-- None --</option>'; if (dbLegacyPieces.length === 0) return; let filteredLegacyPieces = dbLegacyPieces; if (championClass && championClass !== "N/A") { const lowerChampionClass = championClass.toLowerCase(); filteredLegacyPieces = dbLegacyPieces.filter(lp => { const description = (lp.description || "").toLowerCase(); return description === "" || description.includes(lowerChampionClass); }); } else { filteredLegacyPieces = dbLegacyPieces.filter(lp => (lp.description || "") === ""); } const sortedLegacyPieces = [...filteredLegacyPieces].sort((a,b) => (a.name || "").localeCompare(b.name || "")); sortedLegacyPieces.forEach(lp => { if (!lp.id || !lp.name || !lp.baseRarity) return; const option = document.createElement('option'); option.value = lp.id; option.textContent = `${lp.name} (${lp.baseRarity})`; legacyPieceSelectEl.appendChild(option); }); if (sortedLegacyPieces.some(lp => lp.id === currentSelectedLegacyId)) { legacyPieceSelectEl.value = currentSelectedLegacyId; } }
-function renderPlayerChampionRoster() { if (!championsRosterTableWrapperEl) return; if (rosterDataTable) { rosterDataTable.clear().destroy(); rosterDataTable = null; } championsRosterTableWrapperEl.innerHTML = ''; if (playerChampionRoster.length === 0) { championsRosterTableWrapperEl.innerHTML = '<p class="text-sm text-gray-500">No champions added to your roster yet.</p>'; if(prefillRosterBtn) prefillRosterBtn.classList.remove('hidden'); } else { if(prefillRosterBtn) prefillRosterBtn.classList.add('hidden'); const table = document.createElement('table'); table.id = 'rosterTable'; table.className = 'display min-w-full'; const thead = document.createElement('thead'); thead.innerHTML = `<tr><th>Name</th><th>Rarity</th><th>Class</th><th class="dt-column-score">Score</th><th>Star/Color</th><th>Force</th><th>Legacy Piece</th><th>Actions</th></tr>`; table.appendChild(thead); const tbody = document.createElement('tbody'); playerChampionRoster.forEach(champ => { const tr = document.createElement('tr'); let legacyDisplay = "None"; let legacySortValue = 0; if (champ.legacyPiece && champ.legacyPiece.id && champ.legacyPiece.rarity !== "None") { legacyDisplay = `${champ.legacyPiece.name} (${champ.legacyPiece.rarity})`; const lpStarTier = champ.legacyPiece.starColorTier || "Unlocked"; if (lpStarTier !== "Unlocked") legacyDisplay += ` <span class="text-xs whitespace-nowrap">${getStarRatingHTML(lpStarTier)}</span>`; legacySortValue = GAME_CONSTANTS.LEGACY_PIECE_BASE_RARITY_MODIFIER[champ.legacyPiece.rarity] || 0; } const displayHealerIcon = champ.isHealer ? getHealerPlaceholder() : ''; const displayClassIcon = getClassPlaceholder(champ.class); const individualScore = Math.round(TeamCalculator.calculateIndividualChampionScore(champ, GAME_CONSTANTS)); const starRatingHTML = getStarRatingHTML(champ.starColorTier); const forceLevelDisplay = `${champ.forceLevel || 0} / 5`; tr.innerHTML = `<td data-sort="${champ.name}"><div class="flex items-center">${displayHealerIcon}<span class="ml-1">${champ.name}</span></div></td><td data-sort="${GAME_CONSTANTS.CHAMPION_BASE_RARITY_SCORE[champ.baseRarity] || 0}">${champ.baseRarity}</td><td data-sort="${champ.class || 'N/A'}">${displayClassIcon}</td><td class="dt-column-score" data-sort="${individualScore}">${individualScore}</td><td data-sort="${GAME_CONSTANTS.STAR_COLOR_TIERS[champ.starColorTier] || 0}">${starRatingHTML}</td><td data-sort="${champ.forceLevel || 0}">${forceLevelDisplay}</td><td data-sort="${legacySortValue}">${legacyDisplay}</td><td><button class="btn btn-sm btn-warning text-xs mr-1" onclick="editChampion(${champ.id})"><span class="btn-icon">${ICON_EDIT}</span> Edit</button><button class="btn btn-sm btn-danger text-xs" onclick="removePlayerChampion(${champ.id})"><span class="btn-icon">${ICON_DELETE}</span> Remove</button></td>`; tbody.appendChild(tr); }); table.appendChild(tbody); championsRosterTableWrapperEl.appendChild(table); if (typeof $!== 'undefined' &&$.fn.DataTable) { rosterDataTable = new $('#rosterTable').DataTable({ responsive: true, "columnDefs": [{ "targets": [0, 1, 2, 4, 5, 6, 7], "type": "string" }, { "targets": 3, "type": "num", "className": "dt-column-score text-right" }], "order": [[3, "desc"]] }); rosterDataTable.column('.dt-column-score').visible(scoreColumnVisible); if (toggleScoreColumnCheckbox) toggleScoreColumnCheckbox.checked = scoreColumnVisible; } } renderAvailableSynergies(); }
+function renderPlayerChampionRoster() {
+    if (!championsRosterTableWrapperEl) return;
+    if (rosterDataTable) {
+        rosterDataTable.clear().destroy();
+        rosterDataTable = null;
+    }
+    championsRosterTableWrapperEl.innerHTML = '';
+    if (playerChampionRoster.length === 0) {
+        championsRosterTableWrapperEl.innerHTML = '<p class="text-sm text-gray-500">No champions added to your roster yet.</p>';
+        if (prefillRosterBtn) prefillRosterBtn.classList.remove('hidden');
+    } else {
+        if (prefillRosterBtn) prefillRosterBtn.classList.add('hidden');
+        const table = document.createElement('table');
+        table.id = 'rosterTable';
+        table.className = 'display min-w-full';
+        const thead = document.createElement('thead');
+        thead.innerHTML = `<tr><th>Name</th><th>Rarity</th><th>Class</th><th class="dt-column-score">Score</th><th>Star/Color</th><th>Force</th><th>Legacy Piece</th><th>Actions</th></tr>`;
+        table.appendChild(thead);
+        const tbody = document.createElement('tbody');
+        playerChampionRoster.forEach(champ => {
+            const tr = document.createElement('tr');
+            let legacyDisplay = "None";
+            let legacySortValue = 0;
+            if (champ.legacyPiece && champ.legacyPiece.id && champ.legacyPiece.rarity !== "None") {
+                legacyDisplay = `${champ.legacyPiece.name} (${champ.legacyPiece.rarity})`;
+                const lpStarTier = champ.legacyPiece.starColorTier || "Unlocked";
+                if (lpStarTier !== "Unlocked") legacyDisplay += ` <span class="text-xs whitespace-nowrap">${getStarRatingHTML(lpStarTier)}</span>`;
+                legacySortValue = GAME_CONSTANTS.LEGACY_PIECE_BASE_RARITY_MODIFIER[champ.legacyPiece.rarity] || 0;
+            }
+
+            let upgradeButtonHtml = '';
+            if (champ.baseRarity === 'Legendary' && champ.canUpgrade === true) {
+                upgradeButtonHtml = `<button onclick="upgradeChampion(${champ.id})"><span class="btn-icon mr-2">${ICON_UPGRADE}</span> Upgrade</button>`;
+            }
+
+            const displayHealerIcon = champ.isHealer ? getHealerPlaceholder() : '';
+            const displayClassIcon = getClassPlaceholder(champ.class);
+            const individualScore = Math.round(TeamCalculator.calculateIndividualChampionScore(champ, GAME_CONSTANTS));
+            const starRatingHTML = getStarRatingHTML(champ.starColorTier);
+            const forceLevelDisplay = `${champ.forceLevel || 0} / 5`;
+            tr.innerHTML = `<td data-sort="${champ.name}"><div class="flex items-center">${displayHealerIcon}<span class="ml-1">${champ.name}</span></div></td><td data-sort="${GAME_CONSTANTS.CHAMPION_BASE_RARITY_SCORE[champ.baseRarity] || 0}">${champ.baseRarity}</td><td data-sort="${champ.class || 'N/A'}">${displayClassIcon}</td><td class="dt-column-score" data-sort="${individualScore}">${individualScore}</td><td data-sort="${GAME_CONSTANTS.STAR_COLOR_TIERS[champ.starColorTier] || 0}">${starRatingHTML}</td><td data-sort="${champ.forceLevel || 0}">${forceLevelDisplay}</td><td data-sort="${legacySortValue}">${legacyDisplay}</td><td class="actions-cell">
+                        <button class="actions-dropdown-trigger" data-action="toggle-dropdown">Actions...</button>
+                        <div class="actions-dropdown-menu hidden">
+                            ${upgradeButtonHtml}
+                            <button onclick="editChampion(${champ.id})"><span class="btn-icon mr-2">${ICON_EDIT}</span> Edit</button>
+                            <button onclick="removePlayerChampion(${champ.id})"><span class="btn-icon mr-2">${ICON_DELETE}</span> Remove</button>
+                        </div>
+                    </td>`;
+            tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        championsRosterTableWrapperEl.appendChild(table);
+        if (typeof $ !== 'undefined' && $.fn.DataTable) {
+            rosterDataTable = new $('#rosterTable').DataTable({
+                responsive: true,
+                "columnDefs": [{
+                    "targets": [0, 1, 2, 4, 5, 6, 7],
+                    "type": "string"
+                }, {
+                    "targets": 3,
+                    "type": "num",
+                    "className": "dt-column-score text-right"
+                }],
+                "order": [
+                    [3, "desc"]
+                ]
+            });
+            rosterDataTable.column('.dt-column-score').visible(scoreColumnVisible);
+            if (toggleScoreColumnCheckbox) toggleScoreColumnCheckbox.checked = scoreColumnVisible;
+        }
+    }
+    renderAvailableSynergies();
+}
 function renderSavedTeams() { if (!savedTeamsListEl || !selectExclusionTeamDropdownEl) return; savedTeamsListEl.innerHTML = ''; selectExclusionTeamDropdownEl.innerHTML = ''; if (savedTeams.length === 0) { savedTeamsListEl.innerHTML = '<p class="text-sm text-gray-500">No teams saved yet.</p>'; return; } const calculator = new TeamCalculator(dbSynergies, GAME_CONSTANTS); savedTeams.forEach(team => { const membersWithScores = ensureIndividualScores(team.members); const reEvaluatedTeam = calculator.evaluateTeam(membersWithScores); const teamContainerDiv = document.createElement('div'); teamContainerDiv.className = 'p-4 border rounded-lg bg-white shadow-lg mb-6'; let shareButtonHtml = team.publicShareId ? `<button class="btn btn-sm btn-info text-xs" onclick="unshareTeam('${team.id}', '${team.publicShareId}')"><span class="btn-icon">${ICON_UNSHARE}</span> Unshare</button>` : `<button class="btn btn-sm btn-success text-xs" onclick="shareTeam('${team.id}')"><span class="btn-icon">${ICON_SHARE}</span> Share</button>`; let publicLinkHtml = ''; if (team.publicShareId) { const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/')); const shareUrl = `${window.location.origin}${basePath}/share.html?sharedTeamId=${team.publicShareId}`; publicLinkHtml = `<a href="${shareUrl}" target="_blank" class="text-xs text-blue-600 hover:underline mt-1 block">View Shared Team (ID: ${team.publicShareId.substring(0,6)}...)</a>`; } let teamHeaderHtml = `<div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-200"><div><h4 class="font-semibold text-lg text-indigo-700">${team.name}</h4><p class="text-sm text-gray-600">Total Score: <strong class="text-pink-600">${Math.round(reEvaluatedTeam.totalScore)}</strong></p>${publicLinkHtml}</div><div class="flex-shrink-0 space-x-1">${shareButtonHtml}<button class="btn btn-sm btn-warning text-xs" onclick="renameSavedTeam('${team.id}', '${team.name.replace(/'/g, "\\'")}')"><span class="btn-icon">${ICON_EDIT}</span> Rename</button><button class="btn btn-sm btn-danger text-xs" onclick="deleteSavedTeam('${team.id}')"><span class="btn-icon">${ICON_DELETE}</span> Delete</button></div></div>`; teamContainerDiv.innerHTML = teamHeaderHtml; const membersGridDiv = document.createElement('div'); membersGridDiv.className = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3'; if (reEvaluatedTeam.members && Array.isArray(reEvaluatedTeam.members)) { reEvaluatedTeam.members.forEach(member => { const healerIconHtml = member.isHealer ? getHealerPlaceholder() : ''; const starRatingHTML = getStarRatingHTML(member.starColorTier); let individualScore = member.individualScore; let memberCardHtml = `<div class="p-3 border rounded-lg shadow-md bg-slate-50 flex flex-col justify-between champion-card"><div><div class="flex items-center mb-2">${getClassPlaceholder(member.class, 'result-icon class-icon mr-2')}<strong class="text-sm text-slate-800 leading-tight">${member.name}</strong>${healerIconHtml}</div><div class="text-xs text-slate-600 mb-2"><p>Tier: ${starRatingHTML}</p>`; if (member.forceLevel && member.forceLevel > 0) { memberCardHtml += `<p>Force: ${member.forceLevel} / 5</p>`; } memberCardHtml += `<p>Score: ${Math.round(individualScore)}</p>`; if (member.legacyPiece && member.legacyPiece.id) { memberCardHtml += `<p>Legacy: ${member.legacyPiece.name} (${member.legacyPiece.rarity})`; if (member.legacyPiece.starColorTier && member.legacyPiece.starColorTier !== "Unlocked") { memberCardHtml += ` <span class="whitespace-nowrap">${getStarRatingHTML(member.legacyPiece.starColorTier)}</span>`; } memberCardHtml += `</p>`; } memberCardHtml += `</div>`; if (member.inherentSynergies && member.inherentSynergies.length > 0) { memberCardHtml += `<div class="mt-1"><p class="text-xs font-semibold text-slate-500 mb-1">Synergies:</p><div class="flex flex-wrap gap-1">`; member.inherentSynergies.forEach(synergy => { const synergyNameForIcon = synergy.trim().replace(/\s+/g, '_'); memberCardHtml += `<span class="icon-wrapper"><img src="img/factions/${synergyNameForIcon}.png" alt="${synergy}" title="${synergy}" class="result-icon w-5 h-5" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';"><span class="icon-placeholder text-xs" style="display:none;">[${synergy}]</span></span>`; }); memberCardHtml += `</div></div>`; } memberCardHtml += `</div></div>`; membersGridDiv.innerHTML += memberCardHtml; }); } teamContainerDiv.appendChild(membersGridDiv); savedTeamsListEl.appendChild(teamContainerDiv); const option = document.createElement('option'); option.value = team.id; option.textContent = team.name; selectExclusionTeamDropdownEl.appendChild(option); }); }
 function getTeamScoreCalculationHtml(t){if(!t||!t.scoreBreakdown)return"";let r=t.scoreBreakdown,o=`<h4 class="text-md font-semibold text-indigo-700 mb-2">Score Calculation:</h4><p>Base Individual Scores Sum: <strong class="float-right">${Math.round(r.base)}</strong></p>`;return t.activeSynergies.forEach(t=>{o+=`<p>${t.name} (${t.appliedAtMemberCount}): <strong class="text-green-600 float-right">+${Math.round(t.calculatedBonus)}</strong></p>`}),r.synergyDepthBonus>0&&(o+=`<p>Synergy Depth Bonus: <strong class="text-green-600 float-right">+${Math.round(r.synergyDepthBonus)}</strong></p>`),o+=`<p class="border-t border-indigo-200 pt-1 mt-1">Subtotal After Synergies: <strong class="float-right">${Math.round(r.subtotalAfterSynergies)}</strong></p>`,t.classDiversityBonusApplied&&(o+=`<p>Class Diversity Bonus (x${GAME_CONSTANTS.CLASS_DIVERSITY_MULTIPLIER}): <strong class="text-green-600 float-right">+${Math.round(r.classDiversityBonus)}</strong></p>`),`<div class="mb-4 p-3 bg-indigo-100 border border-indigo-300 rounded-lg text-sm">${o+=`<p class="border-t border-indigo-200 pt-1 mt-1 font-bold text-indigo-700">Final Team Score: <strong class="float-right">${Math.round(t.totalScore)}</strong></p>`}</div>`}
 async function renderSharedTeam(e) {
@@ -480,6 +592,98 @@ window.deleteSavedTeam = async (teamId) => { if (!userId || !db) { showToast("No
 window.shareTeam = async (teamId) => { if (!userId || !db) { showToast("Not signed in.", "error"); return; } const teamToShare = savedTeams.find(t => t.id === teamId); if (!teamToShare) { showToast("Team not found.", "error"); return; } openConfirmModal(`Generate a public share link for "${teamToShare.name}"?`, async () => { try { const publicTeamData = { name: teamToShare.name, members: teamToShare.members, totalScore: teamToShare.totalScore, activeSynergies: teamToShare.activeSynergies, scoreBreakdown: teamToShare.scoreBreakdown, uniqueClassesCount: teamToShare.uniqueClassesCount, classDiversityBonusApplied: teamToShare.classDiversityBonusApplied, createdAt: serverTimestamp(), originalOwnerId: userId }; const docRef = await addDoc(collection(db, `artifacts/${appId}/public/data/sharedTeams`), publicTeamData); await updateDoc(doc(db, `artifacts/${appId}/users/${userId}/savedTeams`, teamId), { publicShareId: docRef.id }); const shareLink = `${window.location.origin}${window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'))}/share.html?sharedTeamId=${docRef.id}`; openShareTeamModal(shareLink); showToast("Share link generated!", "success"); loadSavedTeams(); if (analytics) logEvent(analytics, 'share_team', { team_name: teamToShare.name }); } catch (error) { console.error("Error sharing team:", error); showToast("Failed to share team: " + error.message, "error"); } }, null, "Confirm Public Share" ); };
 window.unshareTeam = async (savedTeamId, publicShareId) => { if (!userId || !db || !publicShareId || !savedTeamId) { showToast("Missing info to unshare.", "error"); return; } const teamToUnshare = savedTeams.find(t => t.id === savedTeamId); if (!teamToUnshare) { showToast("Team not found.", "error"); return; } openConfirmModal(`Remove public link for "${teamToUnshare.name}"?`, async () => { try { await deleteDoc(doc(db, `artifacts/${appId}/public/data/sharedTeams`, publicShareId)); await updateDoc(doc(db, `artifacts/${appId}/users/${userId}/savedTeams`, savedTeamId), { publicShareId: deleteField() }); showToast(`"${teamToUnshare.name}" is no longer shared.`, "success"); loadSavedTeams(); if (analytics) logEvent(analytics, 'unshare_team'); } catch (error) { console.error("Error unsharing team:", error); showToast("Failed to unshare team: " + error.message, "error"); } }, null, "Confirm Unshare" ); };
 async function handleSharedTeamLink() { const urlParams = new URLSearchParams(window.location.search); const sharedTeamId = urlParams.get('sharedTeamId'); const currentPagePath = window.location.pathname; if (sharedTeamId) { let basePath = currentPagePath.substring(0, currentPagePath.lastIndexOf('/')); if (basePath === "") basePath = "."; const sharePageUrl = `${window.location.origin}${basePath}/share.html?sharedTeamId=${sharedTeamId}`; if (!currentPagePath.includes('share.html')) { window.location.href = sharePageUrl; return true; } if (loadingIndicatorEl) loadingIndicatorEl.classList.remove('hidden'); if (mainAppContentEl) mainAppContentEl.classList.add('hidden'); if (sharedTeamViewSectionEl) { sharedTeamViewSectionEl.classList.remove('hidden'); if(sharedTeamOutputEl) sharedTeamOutputEl.innerHTML = '<div class="loading-spinner"></div><p class="text-center">Loading shared team...</p>'; } try { await fetchChampions(); await fetchSynergiesAndRender(); await fetchLegacyPieces(); const docSnap = await getDoc(doc(db, `artifacts/${appId}/public/data/sharedTeams`, sharedTeamId)); if (docSnap.exists()) { const sharedTeamData = docSnap.data(); await renderSharedTeam(sharedTeamData); if (analytics) logEvent(analytics, 'view_shared_team', { shared_team_id: sharedTeamId }); } else { if (sharedTeamOutputEl) sharedTeamOutputEl.innerHTML = '<p class="text-red-500 text-center">Shared team not found.</p>'; } } catch (error) { console.error("Error fetching shared team:", error); if (sharedTeamOutputEl) sharedTeamOutputEl.innerHTML = '<p class="text-red-500 text-center">Error loading data.</p>'; } finally { if (loadingIndicatorEl) loadingIndicatorEl.classList.add('hidden'); } return true; } else { if (currentPagePath.includes('share.html')) { if (sharedTeamOutputEl) sharedTeamOutputEl.innerHTML = '<p class="text-red-500 text-center">No team ID provided. <a href="teams.html" class="text-blue-600 hover:underline">Go to Team Builder</a></p>'; if (mainAppContentEl) mainAppContentEl.classList.add('hidden'); if (sharedTeamViewSectionEl) sharedTeamViewSectionEl.classList.remove('hidden'); return true; } } if (mainAppContentEl) mainAppContentEl.classList.remove('hidden'); if (sharedTeamViewSectionEl) sharedTeamViewSectionEl.classList.add('hidden'); return false; }
+window.upgradeChampion = async (championIdParam) => {
+    const championId = parseFloat(championIdParam);
+    const championIndex = playerChampionRoster.findIndex(c => c.id === championId);
+    
+    if (championIndex === -1) {
+        showToast("Error: Champion not found for upgrade.", "error");
+        return;
+    }
+
+    const championToUpgrade = playerChampionRoster[championIndex];
+
+    const confirmMessage = `Are you sure you want to upgrade ${championToUpgrade.name} from Legendary to Mythic? This will permanently update their base rarity.`;
+
+    openConfirmModal(confirmMessage, async () => {
+        if (championToUpgrade.upgradeSynergy && !championToUpgrade.inherentSynergies.includes(championToUpgrade.upgradeSynergy)) {
+            playerChampionRoster[championIndex].inherentSynergies.push(championToUpgrade.upgradeSynergy);
+        }
+
+        playerChampionRoster[championIndex].baseRarity = "Mythic";
+        playerChampionRoster[championIndex].canUpgrade = false;
+        playerChampionRoster[championIndex].starColorTier = "Blue 5-Star";
+        playerChampionRoster[championIndex].individualScore = TeamCalculator.calculateIndividualChampionScore(playerChampionRoster[championIndex], GAME_CONSTANTS);
+
+        const finalUpgradedChampion = playerChampionRoster[championIndex];
+        await recalculateAndUpdateSavedTeams(finalUpgradedChampion);
+
+        renderPlayerChampionRoster();
+        await savePlayerRosterToFirestore();
+
+        showToast(`${championToUpgrade.name} has been upgraded to Mythic!`, "success");
+        if (analytics) {
+            logEvent(analytics, 'upgrade_champion', {
+                champion_name: championToUpgrade.name 
+            });
+        }
+    }, null, "Confirm Rarity Upgrade");
+};
+async function recalculateAndUpdateSavedTeams(upgradedChampion) {
+    if (!savedTeams || savedTeams.length === 0 || !upgradedChampion) {
+        return;
+    }
+
+    const teamsToUpdate = savedTeams.filter(team =>
+        team.members.some(member => member.dbChampionId === upgradedChampion.dbChampionId)
+    );
+
+    if (teamsToUpdate.length === 0) {
+        return;
+    }
+
+    showToast(`Found ${teamsToUpdate.length} saved team(s) to update...`, 'info');
+    const calculator = new TeamCalculator(dbSynergies, GAME_CONSTANTS);
+
+    await Promise.all(teamsToUpdate.map(async (team) => {
+        const updatedMembers = team.members.map(member => {
+            if (member.dbChampionId === upgradedChampion.dbChampionId) {
+                return { ...upgradedChampion };
+            }
+            return member;
+        });
+
+        const membersWithScores = ensureIndividualScores(updatedMembers);
+        const reEvaluatedTeam = calculator.evaluateTeam(membersWithScores);
+
+        const dataToUpdate = {
+            members: reEvaluatedTeam.members,
+            totalScore: reEvaluatedTeam.totalScore,
+            activeSynergies: reEvaluatedTeam.activeSynergies,
+            scoreBreakdown: reEvaluatedTeam.scoreBreakdown,
+            baseScoreSum: reEvaluatedTeam.baseScoreSum,
+            uniqueClassesCount: reEvaluatedTeam.uniqueClassesCount,
+            classDiversityBonusApplied: reEvaluatedTeam.classDiversityBonusApplied
+        };
+
+        const privateTeamDocRef = doc(db, `artifacts/${appId}/users/${userId}/savedTeams`, team.id);
+        await updateDoc(privateTeamDocRef, dataToUpdate);
+
+        if (team.publicShareId) {
+            console.log(`Updating public share document: ${team.publicShareId}`);
+            const publicTeamDocRef = doc(db, `artifacts/${appId}/public/data/sharedTeams`, team.publicShareId);
+            await updateDoc(publicTeamDocRef, dataToUpdate);
+        }
+
+        const localTeamIndex = savedTeams.findIndex(t => t.id === team.id);
+        if (localTeamIndex !== -1) {
+            savedTeams[localTeamIndex] = { ...savedTeams[localTeamIndex], ...dataToUpdate };
+        }
+    }));
+
+    renderSavedTeams();
+    showToast(`${teamsToUpdate.length} saved team(s) and their share links successfully updated!`, 'success');
+}
 
 // =================================================================================================
 // #region: Modal Management & Event Handlers
@@ -517,6 +721,24 @@ if (shareTeamModalEl) { shareTeamModalEl.addEventListener('click', (event) => { 
 if (copyShareLinkBtn) { copyShareLinkBtn.addEventListener('click', () => { if (!shareTeamLinkInputEl) return; try { shareTeamLinkInputEl.select(); document.execCommand('copy'); showToast("Link copied!", "success"); if (analytics) logEvent(analytics, 'share_link_copied'); } catch (err) { showToast("Failed to copy.", "warning"); } }); }
 window.handleChampionSwap = async (selectedRosterChampIdParam, indexToReplace) => { const selectedRosterChampId = parseFloat(selectedRosterChampIdParam); const newChampion = playerChampionRoster.find(rc => rc.id === selectedRosterChampId); if (!newChampion || !currentDisplayedTeam || indexToReplace < 0 || indexToReplace >= currentDisplayedTeam.members.length) { showToast("Error during swap.", "error"); return; } const newTeamMembers = [...currentDisplayedTeam.members]; newTeamMembers[indexToReplace] = { ...newChampion, individualScore: TeamCalculator.calculateIndividualChampionScore(newChampion, GAME_CONSTANTS) }; openProcessingModal(); updateProcessingStatus("Recalculating score...", 10); setTimeout(() => { const calculator = new TeamCalculator(dbSynergies, GAME_CONSTANTS); const recalculatedTeam = calculator.evaluateTeam(newTeamMembers); currentDisplayedTeam = recalculatedTeam; currentBestTeamForSaving = JSON.parse(JSON.stringify(recalculatedTeam)); updateProcessingStatus("Updating display...", 90); renderTeamDisplay(currentDisplayedTeam, true); updateProcessingStatus("Complete!", 100); setTimeout(closeProcessingModal, 500); if (analytics) logEvent(analytics, 'execute_champion_swap', { swapped_in_champion_name: newChampion.name }); }, 50); }
 window.handleResetTeam = () => { if (originalBestTeam) { currentDisplayedTeam = JSON.parse(JSON.stringify(originalBestTeam)); currentBestTeamForSaving = JSON.parse(JSON.stringify(originalBestTeam)); renderTeamDisplay(currentDisplayedTeam, true); showToast("Team reset.", "info"); if (analytics) logEvent(analytics, 'reset_displayed_team'); } }
+document.addEventListener('click', function(event) {
+    const target = event.target;
+    const isDropdownTrigger = target.matches('[data-action="toggle-dropdown"]');
+    
+    const openDropdown = document.querySelector('.actions-dropdown-menu:not(.hidden)');
+
+    if (isDropdownTrigger) {
+        const dropdownMenu = target.nextElementSibling;
+        
+        if (openDropdown && openDropdown !== dropdownMenu) {
+            openDropdown.classList.add('hidden');
+        }
+        
+        dropdownMenu.classList.toggle('hidden');
+    } else if (openDropdown && !openDropdown.contains(target) && !openDropdown.previousElementSibling.contains(target)) {
+        openDropdown.classList.add('hidden');
+    }
+});
 
 // =================================================================================================
 // #region: Main Execution Block
