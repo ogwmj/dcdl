@@ -80,6 +80,8 @@ let rosterDataTable = null;
 let editingChampionId = null;
 let teamModalCallback = null;
 let originalBestTeam = null, currentDisplayedTeam = null;
+let champStarSelectorControl = null;
+let legacyStarSelectorControl = null;
 
 
 // =================================================================================================
@@ -109,6 +111,8 @@ async function initializePage() {
         ]);
         
         populateStaticDropdowns();
+        champStarSelectorControl = createStarSelector('champ-star-selector-container', 'champ-star-color');
+        legacyStarSelectorControl = createStarSelector('legacy-piece-selector-container', 'legacy-piece-star-color');
         attachEventListeners();
 
         // Now that all game data is loaded, we can safely listen for auth changes and load user data.
@@ -218,8 +222,6 @@ async function loadUserData() {
  * @description Populates all static dropdown menus with options from GAME_CONSTANTS.
  */
 function populateStaticDropdowns() {
-    populateDropdown(DOM.champStarColor, Object.keys(GAME_CONSTANTS.STAR_COLOR_TIERS), "Unlocked");
-    populateDropdown(DOM.legacyPieceStarColor, Object.keys(GAME_CONSTANTS.LEGACY_PIECE_STAR_TIER_MODIFIER), "Unlocked");
     const forceLevels = Object.keys(GAME_CONSTANTS.FORCE_LEVEL_MODIFIER).map(i => ({ value: i, text: `${i} / 5` }));
     populateDropdown(DOM.champForceLevel, forceLevels, '0');
     document.querySelectorAll('.gear-rarity-select').forEach(sel => {
@@ -487,6 +489,9 @@ function cancelEditMode() {
         DOM.legacyPieceSelect.value = '';
         DOM.legacyPieceStarColor.value = 'Unlocked';
     }
+
+    if (champStarSelectorControl) champStarSelectorControl.setValue('Unlocked');
+    if (legacyStarSelectorControl) legacyStarSelectorControl.setValue('Unlocked');
     populateChampionSelect();
     updateChampionFormDisplay(null);
 }
@@ -504,7 +509,10 @@ function handleEditChampion(id) {
     if (btnText) btnText.nodeValue = "Update Champion ";
     DOM.cancelEditBtn.classList.remove('hidden');
     DOM.champSelectDb.value = champ.dbChampionId;
-    DOM.champStarColor.value = champ.starColorTier;
+    
+    if (champStarSelectorControl) {
+        champStarSelectorControl.setValue(champ.starColorTier);
+    }
     DOM.champForceLevel.value = champ.forceLevel;
     Object.keys(DOM.gear).forEach(key => {
         const gearValue = champ.gear?.[key];
@@ -512,11 +520,14 @@ function handleEditChampion(id) {
     });
     populateLegacyPieceSelect(champ.class);
     DOM.legacyPieceSelect.value = champ.legacyPiece?.id || '';
-    DOM.legacyPieceStarColor.value = champ.legacyPiece?.starColorTier || 'Unlocked';
+    
+    if (legacyStarSelectorControl) {
+        legacyStarSelectorControl.setValue(champ.legacyPiece?.starColorTier || 'Unlocked');
+    }
     updateChampionFormDisplay(champ.dbChampionId, true);
     DOM.customChampDropdownTrigger.disabled = true;
     if (DOM.rosterFormContainer) {
-        window.scrollTo({ top: DOM.rosterFormContainer.offsetTop - 20, behavior: 'smooth' });
+        window.scrollTo({ top: DOM.rosterFormContainer.offsetTop - 125, behavior: 'smooth' });
     }
 }
 
@@ -722,7 +733,9 @@ async function saveRosterToFirestore() {
     DOM.saveRosterIndicator.classList.remove('hidden');
     try {
         const rosterToSave = playerRoster.map(champ => {
-            const { individualScore, ...rest } = champ;
+            // By adding canUpgrade and upgradeSynergy to the destructuring,
+            // we effectively remove them from the '...rest' object that gets saved.
+            const { individualScore, canUpgrade, upgradeSynergy, ...rest } = champ;
             return rest;
         });
         await setDoc(doc(db, `artifacts/${appId}/users/${userId}/roster/myRoster`), { champions: rosterToSave });
@@ -1050,6 +1063,122 @@ async function loadSavedTeamsFromFirestore() {
 // =================================================================================================
 // #region UI Helpers & Modals
 // =================================================================================================
+/**
+ * @description Creates an interactive star rating component.
+ * @param {string} containerId - The ID of the container element for the component.
+ * @param {string} hiddenInputId - The ID of the hidden input that stores the component's value.
+ * @returns {object} An object with a `setValue` method to programmatically update the component.
+ */
+function createStarSelector(containerId, hiddenInputId) {
+    const container = document.getElementById(containerId);
+    const hiddenInput = document.getElementById(hiddenInputId);
+    if (!container || !hiddenInput) return;
+
+    const tiers = ["Unlocked", "White", "Blue", "Purple", "Gold", "Red"];
+    let selectedTier = "Unlocked";
+    let selectedStars = 0;
+
+    // Build the component's HTML
+    container.innerHTML = `
+        <div class="star-selector-tiers"></div>
+        <div class="star-selector-stars"></div>
+    `;
+
+    const tiersContainer = container.querySelector('.star-selector-tiers');
+    const starsContainer = container.querySelector('.star-selector-stars');
+
+    // Create tier buttons
+    tiers.forEach(tier => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'star-selector-tier-btn';
+        btn.dataset.tier = tier;
+        btn.textContent = tier;
+        tiersContainer.appendChild(btn);
+    });
+
+    // Create star icons
+    for (let i = 1; i <= 5; i++) {
+        const star = document.createElement('span');
+        star.className = 'star-selector-star';
+        star.dataset.value = i;
+        star.innerHTML = '&#9733;'; // Star character
+        starsContainer.appendChild(star);
+    }
+
+    const updateVisuals = () => {
+        // --- NEW LOGIC START ---
+        // First, remove any existing tier classes from the stars container
+        tiers.forEach(t => {
+            starsContainer.classList.remove(`tier-${t.toLowerCase()}`);
+        });
+        // Then, add the class for the currently selected tier
+        starsContainer.classList.add(`tier-${selectedTier.toLowerCase()}`);
+        // --- NEW LOGIC END ---
+
+        // Update tier buttons
+        tiersContainer.querySelectorAll('.star-selector-tier-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.tier === selectedTier);
+        });
+        // Update stars
+        starsContainer.querySelectorAll('.star-selector-star').forEach(star => {
+            star.classList.toggle('active', parseInt(star.dataset.value, 10) <= selectedStars);
+        });
+            // Hide stars if "Unlocked" is selected
+        starsContainer.style.display = selectedTier === 'Unlocked' ? 'none' : 'flex';
+    };
+
+    const updateValue = () => {
+        if (selectedTier === 'Unlocked') {
+            hiddenInput.value = 'Unlocked';
+        } else {
+            hiddenInput.value = `${selectedTier} ${selectedStars}-Star`;
+        }
+        updateVisuals();
+    };
+
+    // Event listener for tier buttons
+    tiersContainer.addEventListener('click', e => {
+        if (e.target.matches('.star-selector-tier-btn')) {
+            selectedTier = e.target.dataset.tier;
+            if (selectedTier === 'Unlocked') {
+                selectedStars = 0;
+            } else if (selectedStars === 0) {
+                selectedStars = 1; // Default to 1 star when a color is chosen
+            }
+            updateValue();
+        }
+    });
+
+    // Event listener for stars
+    starsContainer.addEventListener('click', e => {
+        if (e.target.matches('.star-selector-star')) {
+            selectedStars = parseInt(e.target.dataset.value, 10);
+            if (selectedTier === 'Unlocked') {
+                selectedTier = 'White'; // Default to White if a star is clicked from Unlocked state
+            }
+            updateValue();
+        }
+    });
+
+    // Method to programmatically set the component's value (for editing)
+    const setValue = (valueString) => {
+        if (!valueString || valueString === "Unlocked") {
+            selectedTier = "Unlocked";
+            selectedStars = 0;
+        } else {
+            const parts = valueString.split(' ');
+            selectedTier = parts[0];
+            selectedStars = parseInt(parts[1], 10) || 0;
+        }
+        updateValue();
+    };
+
+    setValue('Unlocked'); // Initialize
+
+    return { setValue };
+}
+
 /**
  * @description Applies the correct background image (comic or avatar) to rendered champion cards.
  * @param {Map<string, Object>} comicData - The map of comic data for backgrounds.
