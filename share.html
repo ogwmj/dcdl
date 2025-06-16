@@ -1,228 +1,122 @@
 <!DOCTYPE html>
-<html lang="en" class="">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Shared Team - DC: Dark Legion Tools</title>
-
-    <!-- Basic Social Media Meta Tags (will be updated by JS) -->
-    <meta property="og:title" content="View Shared Team - DC: Dark Legion Tools">
-    <meta property="og:description" content="Check out this shared team!">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="https://ogwmj.github.io/dcdl/img/bg/promo_1.jpg"> <!-- To be filled by share.js -->
-    <meta property="og:image:width" content="1920"> <!-- To be filled by share.js -->
-    <meta property="og:image:height" content="1080"> <!-- To be filled by share.js -->
-    <meta property="og:url" content="https://ogwmj.github.io/dcdl/share.html"> <!-- To be filled by share.js -->
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="View Shared Team - DC: Dark Legion Tools">
-    <meta name="twitter:description" content="Check out this shared team!">
-    <meta name="twitter:image" content="img/bg/promo_1.jpg"> <!-- To be filled by share.js -->
+    <title>Shared Team - DC: Dark Legion Tools</title>
     
+    <!-- Social Media Meta Tags -->
+    <meta property="og:title" content="DC: Dark Legion Shared Team">
+    <meta property="og:description" content="Check out this team composition created with the DC: Dark Legion Team Builder.">
+    <!-- Using a static, generic fallback image for direct link sharing -->
+    <meta property="og:image" content="https://storage.googleapis.com/assets.burbank.app/games/dcdl/dcdl-social-share-default.png">
+    <meta property="og:url" content="https://your-domain.com/share.html"> <!-- Replace with your actual domain -->
+    <meta name="twitter:card" content="summary_large_image">
+
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Adding a font that fits the gamer aesthetic for the banner -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Russo+One&display=swap" rel="stylesheet">
+    <link href="css/teams/ui.css" rel="stylesheet">
     <link href="css/theme.css" rel="stylesheet">
-    <link href="css/share.css" rel="stylesheet"> <!-- Styles for the hero banner -->
-
-    <style>
-        /* Custom font for Inter */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-
-        /* CSS Variables for Theming (Single Theme - Light) */
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f0f4f8;
-            --bg-section: #ffffff;
-            --bg-section-alt: #f8fafc; 
-            --bg-input: #ffffff;
-            --text-primary: #1e293b;   /* Slate 800 */
-            --text-secondary: #334155; /* Slate 700 */
-            --text-muted: #64748b;     /* Slate 500 */
-            --text-button: #ffffff;
-            --border-primary: #e2e8f0; /* Slate 200 */
-            --border-input: #cbd5e1;   /* Slate 300 */
-            --border-focus: #3b82f6;   /* Blue 500 */
-            --border-focus-shadow: rgba(59, 130, 246, 0.2);
-            --shadow-color: rgba(0, 0, 0, 0.1);
-            --shadow-section-color: rgba(0, 0, 0, 0.08);
-            --btn-primary-bg: #3b82f6;
-            --btn-primary-hover-bg: #2563eb;
-            --btn-primary-disabled-bg: #93c5fd;
-            --btn-secondary-bg: #64748b;
-            --btn-secondary-hover-bg: #475569;
-            --btn-success-bg: #10b981;
-            --btn-success-hover-bg: #059669;
-            --btn-danger-bg: #ef4444;
-            --btn-danger-hover-bg: #dc2626;
-            --result-box-bg: #e0f2fe;
-            --result-box-border: #3b82f6;
-            --result-box-text-strong: #1e40af;
-            --probability-box-bg: #f0fdfa;
-            --probability-box-border: #06b6d4;
-            --probability-box-text-strong: #0e7490;
-            --advisory-box-bg: #fffbeb;
-            --advisory-box-border: #f59e0b;
-            --advisory-box-text: #78350f;
-            --toggle-on-bg: #10b981;
-            --toggle-on-border: #059669;
-            --toggle-off-bg: #d1d5db;
-            --toggle-off-border: #9ca3af;
-            --toggle-off-text: #4b5563;
-            --chart-bg: #ffffff;
-            --chart-grid-color: rgba(0, 0, 0, 0.1);
-            --chart-font-color: #6b7280; /* slate-500 */
-            --chart-title-color: #1e293b; /* slate-800 */
-        }
-
-        .container {
-            max-width: 90%; 
-            margin: 2rem auto;
-            padding: 1.5rem;
-            background-color: var(--bg-primary);
-            border-radius: 1rem; 
-            box-shadow: 0 10px 20px var(--shadow-color);
-        }
-
-        @media (min-width: 640px) { .container { max-width: 600px; } }
-        @media (min-width: 1024px) { .container { max-width: 768px; } }
-        @media (min-width: 1280px) { .container { max-width: 1024px; } }
-
-    </style>
 </head>
 <body>
+    <!-- Full Page Loader -->
+    <div id="page-loader">
+        <div class="loader-spinner"></div>
+        <p>Assembling the Legion...</p>
+    </div>
+
     <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="ogwmj" data-description="Support me on Buy me a coffee!" data-message="No pressure." data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
 
+    <div class="background-hero"></div>
+    <!-- Navigation Bar -->
     <nav class="bg-slate-900 bg-opacity-80 backdrop-filter backdrop-blur-md shadow-lg sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <a href="index.html" class="flex-shrink-0 text-white text-2xl font-bold glowing-text-nav">
-                    DC:DL Tools
-                    </a>
-                </div>
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-center space-x-4">
-                        <a href="index.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
-                        <a href="calculator.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Anvil Calculator</a>
-                        <a href="teams.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Team Builder</a>
-                        <a href="changemap.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Changemap</a>
-                        
-                        <div id="auth-status-desktop" class="ml-4"></div>
-
-                    </div>
+                <a href="index.html" class="text-white text-2xl font-bold">DC:DL Tools</a>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="index.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                    <a href="calculator.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Anvil Calculator</a>
+                    <a href="teams.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Team Builder</a>
+                    <a href="changemap.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Changemap</a>
+                    <div id="auth-status-desktop"><span class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Loading</span></div>
                 </div>
                 <div class="-mr-2 flex md:hidden">
                     <button type="button" id="mobile-menu-button" class="bg-slate-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
                         <span class="sr-only">Open main menu</span>
-                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
-                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
                     </button>
                 </div>
             </div>
         </div>
-
         <div class="md:hidden hidden" id="mobile-menu">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="index.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
                 <a href="calculator.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Anvil Calculator</a>
                 <a href="teams.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Team Builder</a>
-                <a href="changemap.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">ChangeMap</a>
-                
+                <a href="changemap.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Changemap</a>
                 <div id="auth-status-mobile" class="pt-4 mt-2 border-t border-slate-700"></div>
-
             </div>
         </div>
     </nav>
 
-    <div class="combined-image-display-area">
-        <p id="loadingMessage">Generating Champion banner...</p>
-        <img id="staticHeroBannerImage" src="" alt="Combined Champion Banner" style="display: none;">
-    </div>
-    
-    <div class="source-image-data-container" id="heroSourceData" aria-hidden="true">
-        <div class="hero-panel">
-            <img src="img/champions/avatars/Batman.webp" alt="Batman" crossorigin="anonymous"
-                    onerror="this.dataset.error='true'; this.src='https://placehold.co/200x240/1a202c/e2e8f0?text=Batman+Err';">
-        </div>
-        <div class="hero-panel">
-            <img src="img/champions/avatars/GreenLantern.webp" alt="Green Lantern" crossorigin="anonymous"
-                    onerror="this.dataset.error='true'; this.src='https://placehold.co/200x240/1a202c/e2e8f0?text=GL+Err';">
-        </div>
-        <div class="hero-panel">
-            <img src="img/champions/avatars/Cyborg.webp" alt="Cyborg" crossorigin="anonymous"
-                    onerror="this.dataset.error='true'; this.src='https://placehold.co/200x240/1a202c/e2e8f0?text=Cyborg+Err';">
-        </div>
-        <div class="hero-panel">
-            <img src="img/champions/avatars/Robin.webp" alt="Robin" crossorigin="anonymous"
-                    onerror="this.dataset.error='true'; this.src='https://placehold.co/200x240/1a202c/e2e8f0?text=Robin+Err';">
-        </div>
-        <div class="hero-panel">
-            <img src="img/champions/avatars/RedRobin.webp" alt="Red Robin" crossorigin="anonymous"
-                    onerror="this.dataset.error='true'; this.src='https://placehold.co/200x240/1a202c/e2e8f0?text=RR+Err';">
-        </div>
-    </div>
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-3 glowing-text hi-white">Shared Team View</h1>
+            <p class="text-lg md:text-xl text-blue-200">Viewing a team shared by another user.</p>
+        </header>
 
-
-    <div class="container">
-
-        <div id="loading-indicator" class="text-center card hidden">
-            <div class="loading-spinner"></div>
-            <p class="text-indigo-600">Loading ...</p>
-        </div>
-        <div id="error-indicator" class="text-center card hidden p-4 bg-red-100 border border-red-300 text-red-700">
-            <p>Error loading data.</p>
-            <p id="error-message-details" class="text-xs mt-1"></p>
+        <!-- Dynamic Social Share Banner Section -->
+        <div id="social-banner-container" class="mb-8 hidden">
+            <div class="bg-white rounded-lg p-4 shadow-lg border border-slate-200">
+                <img id="generated-banner-img" src="" alt="Dynamically generated team banner" class="w-full rounded-md border border-slate-300">
+            </div>
         </div>
 
-        <section id="shared-team-view-section" class="card hidden">
-            <div class="calc-section">
-                <h2 id="shared-team-name" class="text-2xl font-bold text-indigo-700 mb-4 text-center">Shared Team</h2>
-                <div id="shared-team-output" class="mt-6 p-4 border-t border-gray-200">
-                    <p class="text-gray-500 text-center">Loading shared team details...</p>
-                </div>
-                <div class="mt-6 text-center">
-                    <a class="btn btn-success" href="teams.html" title="Go to Team Builder"><span class="btn-icon">↩️</span> Go to Team Builder</a>
-                </div>
+        <!-- Main content area where the team will be rendered -->
+        <main id="shared-team-container" class="bg-white p-6 rounded-lg shadow-lg hidden">
+            <div id="loading-indicator" class="text-center">
+                <div class="loading-spinner"></div>
+                <p class="text-indigo-600 mt-2 font-semibold">Loading Shared Team...</p>
+            </div>
+
+            <div id="error-indicator" class="text-center hidden">
+                <h2 class="text-2xl font-bold text-red-600">Could Not Load Team</h2>
+                <p id="error-message-details" class="text-slate-500 mt-2">The requested team could not be found. The link may be expired or incorrect.</p>
+            </div>
+        </main>
+
+
+        <div class="text-center mt-8">
+            <a href="teams.html" class="inline-block bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                &larr; Back to the Team Builder
+            </a>
+        </div>
+        
+        <!-- Comic Books Section -->
+        <section id="comics-display-section" class="hidden mt-12">
+            <h2 class="text-2xl font-bold text-accent text-center mb-6 glowing-text hi-white">First Comic Appearances</h2>
+            <div id="comics-display-grid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                <!-- Comic cards will be injected here -->
             </div>
         </section>
         
-        <div id="main-app-content" class="hidden"></div>
-
-        <section id="comics-display-section" class="card mt-8 hidden">
-            <h2 class="text-2xl font-bold text-indigo-700 mb-4 text-center">First Featured in Comics</h2>
-            <div id="comics-output" class="grid gap-4">
-                <div id="comics-loading-spinner" class="col-span-full text-center">
-                    <div class="loading-spinner"></div>
-                    <p class="text-indigo-600">Loading comics...</p>
-                </div>
-            </div>
-        </section>
     </div>
+    
+    <!-- Hidden canvas for generating the banner -->
+    <canvas id="social-banner-canvas" width="1200" height="473" class="hidden"></canvas>
 
-    <div id="toast-container"></div>
-    <feedback-widget></feedback-widget>
-
-    <script type="module" src="js/auth-ui.js"></script>
-    <script type="module" src="js/feedback-widget.js"></script>
-    <script type="module" src="js/teams.js"></script>
-    <script type="module" src="js/share.js"></script>
-    <script type="text/javascript" src="js/navigation.js"></script>
-
+    <!-- Web Components -->
     <auth-ui status-container-id="auth-status-desktop"></auth-ui>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Mobile Menu Toggle Logic (unchanged) ---
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-            if (mobileMenuButton && mobileMenu) {
-                const openIcon = mobileMenuButton.querySelector('svg:first-child');
-                const closeIcon = mobileMenuButton.querySelector('svg:last-child');
-                mobileMenuButton.addEventListener('click', () => {
-                    mobileMenu.classList.toggle('hidden');
-                    openIcon.classList.toggle('hidden');
-                    closeIcon.classList.toggle('hidden');
-                });
-            }
-            
             // --- Auth Button Synchronization Logic (Updated) ---
             const desktopAuthContainer = document.getElementById('auth-status-desktop');
             const mobileAuthContainer = document.getElementById('auth-status-mobile');
@@ -275,5 +169,13 @@
             }
         });
     </script>
+    <feedback-widget></feedback-widget>
+
+    <!-- Scripts -->
+    <script type="module" src="js/auth-ui.js"></script>
+    <script type="module" src="js/feedback-widget.js"></script>
+    <script type="module" src="js/share/ui.js"></script>
+    <script type="text/javascript" src="js/navigation.js"></script>
+
 </body>
 </html>

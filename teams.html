@@ -1,1140 +1,288 @@
 <!DOCTYPE html>
-<html lang="en" class="">
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DC: Dark Legion - Optimal Team Builder</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.1/css/dataTables.dataTables.min.css">
-    <script src="https://cdn.datatables.net/2.3.1/js/dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="css/teams/ui.css" rel="stylesheet">
     <link href="css/theme.css" rel="stylesheet">
-
-    <style>
-        /* Custom font for Inter */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-
-        /* CSS Variables for Theming (Single Theme - Light) */
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f0f4f8;
-            --bg-section: #ffffff;
-            --bg-section-alt: #f8fafc; 
-            --bg-input: #ffffff;
-            --text-primary: #1e293b;   /* Slate 800 */
-            --text-secondary: #334155; /* Slate 700 */
-            --text-muted: #64748b;     /* Slate 500 */
-            --text-button: #ffffff;
-            --border-primary: #e2e8f0; /* Slate 200 */
-            --border-input: #cbd5e1;   /* Slate 300 */
-            --border-focus: #3b82f6;   /* Blue 500 */
-            --border-focus-shadow: rgba(59, 130, 246, 0.2);
-            --shadow-color: rgba(0, 0, 0, 0.1);
-            --shadow-section-color: rgba(0, 0, 0, 0.08);
-            --btn-primary-bg: #3b82f6;
-            --btn-primary-hover-bg: #2563eb;
-            --btn-primary-disabled-bg: #93c5fd;
-            --btn-secondary-bg: #64748b;
-            --btn-secondary-hover-bg: #475569;
-            --btn-success-bg: #10b981;
-            --btn-success-hover-bg: #059669;
-            --btn-danger-bg: #ef4444;
-            --btn-danger-hover-bg: #dc2626;
-            --btn-warning-bg: #ffc107;
-            --btn-warning-hover-bg: #ffc107; 
-            --btn-info-bg: #0dcaf0;
-            --btn-info-hover-bg: #0BAECB; /* Slightly darker for hover */
-            --result-box-bg: #e0f2fe;
-            --result-box-border: #3b82f6;
-            --result-box-text-strong: #1e40af;
-            --probability-box-bg: #f0fdfa;
-            --probability-box-border: #06b6d4;
-            --probability-box-text-strong: #0e7490;
-            --advisory-box-bg: #fffbeb;
-            --advisory-box-border: #f59e0b;
-            --advisory-box-text: #78350f;
-            --toggle-on-bg: #10b981;
-            --toggle-on-border: #059669;
-            --toggle-off-bg: #d1d5db;
-            --toggle-off-border: #9ca3af;
-            --toggle-off-text: #4b5563;
-            --chart-bg: #ffffff;
-            --chart-grid-color: rgba(0, 0, 0, 0.1);
-            --chart-font-color: #6b7280; 
-            --chart-title-color: #1e293b; 
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            color: var(--text-primary);
-        }
-        .container {
-            max-width: 90%; 
-            margin: 2rem auto;
-            padding: 1.5rem;
-            background-color: var(--bg-primary);
-            border-radius: 1rem; 
-            box-shadow: 0 10px 20px var(--shadow-color);
-        }
-        .input-group label {
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-        .input-group input, .input-group select, .input-group textarea {
-            border: 1px solid var(--border-input);
-            background-color: var(--bg-input);
-            color: var(--text-primary);
-            border-radius: 0.5rem; 
-            padding: 0.6rem 0.8rem;
-            margin-top: 0.3rem;
-            width: 100%;
-            transition: border-color 0.2s;
-        }
-        /* Style for multi-select to make it more usable */
-        .input-group select[multiple] {
-            padding: 0.6rem; /* Adjust padding if necessary */
-            min-height: 100px; /* Give it some default height */
-        }
-        .input-group input::placeholder, .input-group textarea::placeholder {
-            color: var(--text-muted); 
-        }
-        .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
-             border-color: var(--border-focus);
-             box-shadow: 0 0 0 2px var(--border-focus-shadow); 
-        }
-        
-        .btn { 
-            padding: 0.8rem 1.5rem;
-            border-radius: 0.75rem; 
-            font-weight: 700;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem; /* Default gap for icon and text */
-            color: var(--text-button);
-        }
-        .btn-sm { /* Smaller padding for smaller buttons */
-            padding: 0.4rem 0.8rem;
-            font-size: 0.875rem; /* text-sm */
-        }
-         .btn-lg { /* Larger padding for larger buttons */
-            padding: 1rem 2rem;
-            font-size: 1.125rem; /* text-lg */
-        }
-
-
-        .btn-primary {
-            background-color: var(--btn-primary-bg);
-            box-shadow: 0 4px 6px var(--shadow-color);
-        }
-        .btn-primary:hover:not(:disabled) {
-            background-color: var(--btn-primary-hover-bg);
-            transform: translateY(-1px);
-        }
-        .btn-primary:disabled {
-            background-color: var(--btn-primary-disabled-bg);
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-        .btn-info {
-            background-color: var(--btn-info-bg);
-            box-shadow: 0 4px 6px var(--shadow-color);
-        }
-        .btn-info:hover:not(:disabled) {
-            background-color: var(--btn-info-hover-bg); 
-            transform: translateY(-1px);
-        }
-        .btn-info:disabled {
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-        .btn-warning {
-            background-color: var(--btn-warning-bg);
-            box-shadow: 0 4px 6px var(--shadow-color);
-        }
-        .btn-warning:hover:not(:disabled) {
-            background-color: var(--btn-warning-hover-bg); 
-            transform: translateY(-1px);
-        }
-        .btn-warning:disabled {
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-        .btn-secondary {
-            background-color: var(--btn-secondary-bg);
-            box-shadow: 0 4px 6px var(--shadow-color);
-        }
-        .btn-secondary:hover:not(:disabled) {
-            background-color: var(--btn-secondary-hover-bg);
-            transform: translateY(-1px);
-        }
-         .btn-success { 
-            background-color: var(--btn-success-bg);
-            box-shadow: 0 4px 6px var(--shadow-color);
-        }
-        .btn-success:hover:not(:disabled) {
-            background-color: var(--btn-success-hover-bg);
-            transform: translateY(-1px);
-        }
-        .btn-danger {
-            background-color: var(--btn-danger-bg);
-            box-shadow: 0 4px 6px var(--shadow-color);
-        }
-        .btn-danger:hover:not(:disabled) {
-            background-color: var(--btn-danger-hover-bg);
-            transform: translateY(-1px);
-        }
-        .result-box {
-            background-color: var(--result-box-bg);
-            border-left: 4px solid var(--result-box-border);
-            padding: 1rem;
-            border-radius: 0.75rem;
-            margin-top: 1rem;
-        }
-        .result-box strong {
-            color: var(--result-box-text-strong);
-        }
-        #unlockCostSection .result-box { 
-            background-color: #eef2ff; 
-            border-left-color: #6366f1; 
-        }
-         #unlockCostSection .result-box strong {
-            color: #3730a3; 
-        }
-
-        .status-success {
-            color: #047857; 
-            background-color: #d1fae5; 
-        }
-        .status-error {
-            color: #b91c1c; 
-            background-color: #fee2e2; 
-        }
-        .status-info { 
-            color: #0369a1; 
-            background-color: #e0f2fe; 
-        }
-        .status-message {
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            min-height: 2rem; 
-        }
-      
-        h1 { color: var(--text-primary); }
-        h2 { color: var(--text-secondary); border-bottom: 1px solid var(--border-primary); padding-bottom: 0.5rem; margin-bottom: 1rem; }
-        h3, h4 { color: var(--text-secondary); }
-        #currentSystemTitle, #proposedSystemTitle { color: var(--result-box-border); }
-        #unlockCostSection h3 { color: var(--result-box-border); } 
-        .calculation-detail h3, .calculation-detail h4 { color: var(--text-primary); }
-        .calculation-detail p { color: var(--text-muted); }
-        .calculation-detail strong { color: var(--text-primary); }
-
-        details {
-            background-color: var(--bg-section-alt);
-            border: 1px solid var(--border-primary);
-            border-radius: 0.75rem;
-            padding: 1rem;
-            margin-top: 1.5rem;
-            box-shadow: inset 0 1px 3px var(--shadow-section-color);
-        }
-        details summary {
-            color: var(--text-secondary);
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        details summary::-webkit-details-marker { display: none; }
-        details summary::after { content: '+'; font-size: 1.5rem; transition: transform 0.2s; }
-        details[open] summary::after { content: '-'; }
-        
-        #customizeViewDetails {
-            background-color: var(--bg-section-alt); 
-            border-color: var(--border-primary);
-        }
-        #customizeViewDetails summary {
-            color: var(--btn-primary-bg); 
-        }
-        #sectionToggleContainer {
-            background-color: var(--bg-primary); 
-        }
-        .toggle-item {
-            border-bottom: 1px solid var(--border-primary);
-            display: flex;
-            align-items: center;
-            justify-content: space-between; 
-            padding: 0.3rem 0;
-        }
-        .toggle-item:last-child { border-bottom: none; }
-        .toggle-label {
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            flex-grow: 1;
-        }
-        .toggle-label input[type="checkbox"] {
-            accent-color: var(--btn-primary-bg);
-            margin-right: 0.5rem;
-        }
-        .order-buttons button {
-            background-color: var(--bg-input); 
-            color: var(--text-muted); 
-            border: 1px solid var(--border-input); 
-            padding: 0.25rem 0.5rem; 
-            font-size: 0.8rem;
-            line-height: 1;
-            margin-left: 0.25rem;
-        }
-        .order-buttons button:hover:not(:disabled) {
-            background-color: var(--bg-secondary); 
-        }
-        .order-buttons button:disabled {
-            background-color: var(--bg-section-alt); 
-            color: var(--text-muted); 
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .advisory-box { 
-            background-color: var(--advisory-box-bg);
-            border-left: 4px solid var(--advisory-box-border);
-            color: var(--advisory-box-text);
-            padding: 1rem;
-            border-radius: 0.75rem;
-            margin-top: 1.5rem;
-            font-size: 0.95rem;
-        }
-        .advisory-box.advisory-indigo-theme { 
-            background-color: #eef2ff; 
-            border-left-color: #6366f1; 
-            color: #3730a3; 
-        }
-       
-        .chart-container { 
-            background-color: var(--chart-bg);
-            position: relative;
-            width: 100%;
-            margin-top: 1rem; 
-            padding: 1rem;
-            border-radius: 1rem;
-            box-shadow: 0 5px 15px var(--shadow-section-color);
-        }
-        .main-chart-container { height: 400px; margin-top: 2rem; }
-        .prob-chart-container { height: 300px; }
-        .main-chart-container h3, .prob-chart-container h4 { color: var(--text-primary); }
-        .prob-chart-container h4 { color: var(--btn-primary-bg); }
-        #probSummaryCurrent, #probSummaryProposed, #probabilitySimulationDetails { color: var(--text-muted); }
-        
-        .calc-section { 
-            padding: 1.5rem; border-radius: 0.75rem; 
-            box-shadow: 0 4px 12px var(--shadow-section-color); 
-            margin-bottom: 2rem; border: 1px solid var(--border-primary); 
-            background-color: var(--bg-section); 
-        }
-        .calc-section.alt-bg { background-color: var(--bg-section-alt); } 
-        .btn-loading .btn-text { display: none; }
-        .btn-loading .spinner { display: inline-block; width: 1.25rem; height: 1.25rem; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: var(--text-button); animation: spin 1s ease-in-out infinite; }
-        .spinner { display: none; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
-        .toggle-btn {
-            cursor: pointer;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            width: 100%; 
-            text-align: center;
-        }
-        .toggle-btn-on { 
-            background-color: var(--toggle-on-bg);
-            color: var(--text-button); 
-            border: 1px solid var(--toggle-on-border);
-        }
-        .toggle-btn-off { 
-            background-color: var(--toggle-off-bg);
-            color: var(--toggle-off-text);
-            border: 1px solid var(--toggle-off-border);
-        }
-
-        /* Explanation Section Styles */
-        .help-section { 
-            background-color: var(--bg-section-alt);
-            border: 1px solid var(--border-primary);
-        }
-        .help-section summary {
-            color: var(--text-secondary);
-            font-size: 1.125rem; /* text-lg */
-        }
-        .help-section div p {
-            margin-bottom: 0.75rem; /* mb-3 */
-            line-height: 1.6;
-            color: var(--text-muted);
-        }
-        .help-section div h3 { /* Main topics in help */
-            font-size: 1.25rem; /* text-xl */
-            font-weight: 700; /* font-bold */
-            color: var(--text-primary);
-            margin-top: 1.5rem; /* mt-6 */
-            margin-bottom: 0.75rem; /* mb-3 */
-            padding-bottom: 0.5rem; /* pb-2 */
-            border-bottom: 1px solid var(--border-primary);
-        }
-         .help-section div h3:first-child {
-            margin-top: 0.5rem; 
-        }
-        .help-section div h4 { /* Sub-topics in help */
-            font-size: 1.125rem; 
-            font-weight: 600; 
-            color: var(--text-secondary);
-            margin-top: 1.25rem; 
-            margin-bottom: 0.5rem; 
-        }
-        .help-section ul {
-            list-style-type: disc;
-            margin-left: 1.5rem; 
-            color: var(--text-muted);
-            padding-left: 0.5rem; 
-        }
-        .help-section ul ul { 
-            margin-top: 0.5rem; 
-            margin-bottom: 0.5rem; 
-        }
-        .help-section li {
-            margin-bottom: 0.5rem; 
-        }
-        .help-section strong { 
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        .help-section code {
-            background-color: var(--border-primary); 
-            color: var(--btn-danger-bg); 
-            padding: 0.125rem 0.375rem; 
-            border-radius: 0.25rem; 
-            font-size: 0.875em;
-        }
-
-
-        /* Responsive adjustments */
-        @media (min-width: 640px) { .container { max-width: 600px; } }
-        @media (min-width: 1024px) { .container { max-width: 768px; } }
-        @media (min-width: 1280px) { .container { max-width: 1024px; } }
-
-        /* Modal Styles */
-        .modal-backdrop {
-            position: fixed;
-            inset: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        .modal-backdrop.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        .modal-content {
-            background-color: #ffffff; 
-            color: #1e293b; 
-            padding: 1.5rem; 
-            border-radius: 0.5rem; 
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); 
-            max-width: 90vw; 
-            width: 500px; 
-        }
-        .modal-content h3 {
-            font-size: 1.25rem; 
-            font-weight: 600; 
-            color: #1e293b; 
-            margin-bottom: 1rem;
-        }
-        .modal-content input[type="text"], .modal-content textarea { /* Apply to input in modal */
-            width: 100%;
-            border: 1px solid #cbd5e1; /* var(--border-input); */
-            background-color: #ffffff; /* var(--bg-input); */
-            color: #1e293b; /* var(--text-primary); */
-            padding: 0.5rem;
-            border-radius: 0.375rem; /* rounded-md */
-            margin-bottom: 1rem;
-            font-family: inherit; /* Use body font */
-            font-size: 1rem; /* Standard input font size */
-        }
-        .modal-content textarea {
-             min-height: 100px; 
-             font-family: monospace;
-             font-size: 0.875rem;
-        }
-        .modal-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.75rem; 
-        }
-        
-        .loading-spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1); 
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border-left-color: #4f46e5; 
-            animation: spin 1s ease infinite;
-            margin: 20px auto;
-        }
-        .saving-indicator {
-            display: inline-block;
-            border: 2px solid rgba(0,0,0,0.1);
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            border-left-color: #4f46e5; 
-            animation: spin 0.8s ease infinite;
-            margin-left: 8px;
-        }
-        
-        h1 { color: var(--text-primary); @apply text-3xl md:text-4xl font-bold; }
-        h2 { color: var(--text-primary); border-bottom: 1px solid var(--border-primary); @apply text-xl md:text-2xl font-semibold pb-2 mb-4; }
-        h3 { color: var(--text-secondary); @apply text-lg font-medium mb-2; }
-        h4 { color: var(--text-secondary); @apply text-md font-semibold mb-2; }
-        #results-output p, #saved-teams-list p { color: var(--text-muted); }
-        #error-indicator p { color: var(--btn-danger-bg); }
-        #loading-indicator p { color: var(--btn-primary-bg);}
-
-        /* Scrollbar styling for light theme */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Styles for text placeholders in table */
-        .icon-placeholder {
-            @apply inline-block align-middle text-xs font-semibold mr-1 px-1 py-0.5 rounded bg-gray-200 text-gray-700 border border-gray-300;
-        }
-        img.icon-class-table { /* For roster table images - target img directly */
-            max-width: 28px; 
-            max-height: 28px; 
-            vertical-align: middle;
-            margin-right: 4px;
-        }
-        .result-icon { /* For results display cards */
-             width: 24px; /* Default size for icons in results */
-             height: 24px;
-             object-fit: contain;
-             margin-right: 2px; /* Add a little space between synergy icons */
-        }
-        .result-icon.class-icon { /* Specific size for class icon in results */
-            width: 32px;
-            height: 32px;
-        }
-        .champion-card .icon-placeholder { /* Fallback for results cards */
-            @apply inline-block align-middle text-xs font-semibold px-1 py-0.5 rounded bg-gray-200 text-gray-700 border border-gray-300;
-        }
-        .star-rating {
-            display: inline-block; 
-            line-height: 1; 
-        }
-        .star-rating span {
-            font-size: 1.2em; 
-            margin-right: 1px; 
-        }
-        .synergy-item-container { /* New container for synergy and its champs */
-            @apply border rounded-lg p-3 bg-slate-50 mb-3 shadow-sm;
-        }
-        .synergy-item-header { /* Clickable header part of synergy item */
-            @apply flex items-center justify-between cursor-pointer hover:bg-slate-100 p-2 rounded-md -m-2 mb-1; /* Negative margin to make it fill padding */
-        }
-        .synergy-item-header img { /* Icon for the main synergy */
-            @apply w-8 h-8 mr-3 object-contain;
-        }
-        .synergy-name {
-            @apply font-semibold text-slate-700 flex-grow text-sm; 
-        }
-        .synergy-progress {
-            @apply text-xs text-slate-500 ml-2 px-2 py-0.5 bg-slate-200 rounded-full; 
-        }
-        .synergy-champions-list { /* List of champions under a synergy */
-            @apply mt-2 pl-4 border-l-2 border-slate-200 space-y-1;
-        }
-        .synergy-champion-entry { /* Individual champion entry in the sub-list */
-            @apply flex items-center text-xs text-slate-600 py-1;
-        }
-        .synergy-champion-entry .icon-wrapper img { /* Class icon for champ in synergy list */
-            @apply w-4 h-4 mr-1;
-        }
-        .synergy-champion-entry .star-rating {
-            @apply ml-2;
-        }
-        .synergy-champion-entry .star-rating span {
-            font-size: 0.9em; /* Smaller stars for this list */
-            margin-right: 0px;
-        }
-        .synergy-champion-entry .champion-synergies {
-            @apply flex gap-0.5 ml-auto; /* Tighter gap for many icons */
-        }
-        .synergy-champion-entry .champion-synergies img {
-            @apply w-3 h-3; /* Very small synergy icons for champs in this list */
-        }
-
-
-        /* Toast Notification Styles */
-        #toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            width: 300px;
-        }
-        .toast { 
-            opacity: 0;
-            transition: opacity 0.5s, transform 0.5s;
-            transform: translateX(100%);
-        }
-        .toast.show { 
-            opacity: 1;
-            transform: translateX(0);
-        }
-        /* Score Breakdown Chart Styles */
-        .score-chart-container {
-            @apply w-full bg-gray-200 rounded-full h-6 mb-4 flex overflow-hidden border border-gray-300;
-        }
-        .score-chart-segment {
-            @apply h-full flex items-center justify-center text-xs font-medium text-white text-center p-1 leading-none;
-            transition: width 0.5s ease-in-out;
-        }
-        .score-chart-segment-label {
-            @apply text-xs text-gray-700 mt-1;
-        }
-        .icon-wrapper { /* Added for robust onerror */
-             display: inline-flex; /* Or inline-block if preferred */
-             align-items: center;
-        }
-        .btn-icon { 
-            margin-right: 0.35rem; /* Space between icon and text */
-            font-size: 1em; /* Adjust size of unicode icon if needed */
-            line-height: 1; /* Ensure proper vertical alignment */
-        }
-        /* Processing Modal Styles */
-        #processing-modal .modal-content {
-            width: 400px; /* Adjust width as needed */
-        }
-        .progress-bar-container {
-            @apply w-full bg-gray-200 rounded-full h-4 mb-2 border border-gray-300 overflow-hidden;
-        }
-        #progress-bar-inner {
-            @apply bg-blue-500 h-full rounded-full;
-            width: 0%; /* Initial width */
-            transition: width 0.3s ease-in-out;
-        }
-        #processing-status-text {
-            @apply text-sm text-gray-600 mb-3 text-center;
-        }
-        /* Swap Champion Modal List Item Styles */
-        #swap-modal-body li {
-            @apply flex justify-between items-center;
-        }
-        #swap-modal-body .champion-details {
-            @apply flex-grow flex items-center; /* Ensure class icon and name are aligned */
-        }
-        #swap-modal-body .champion-synergies {
-            @apply flex gap-1 ml-2; /* Synergies to the right */
-        }
-        #swap-modal-body .champion-synergies img, #swap-modal-body .class-icon-swap { /* Size for both synergy and class icons in swap modal */
-            @apply w-4 h-4 object-contain; 
-        }
-        #swap-modal-body .star-rating {
-            @apply ml-2; /* Space before star rating */
-        }
-        /* Style for "Unlocked" tier text */
-        .unlocked-tier-text {
-            @apply text-slate-500 font-normal text-sm; /* Adjust styling as needed */
-        }
-        /* Shared Team View Styles */
-        #shared-team-view-section {
-            @apply border-2 border-dashed border-indigo-300 bg-indigo-50;
-        }
-        #shared-team-view-section .champion-card {
-            @apply bg-white; /* Ensure cards within shared view have a distinct background */
-        }
-        #shared-team-view-section .champion-card .text-xs { /* Ensure text is readable */
-            color: var(--text-muted);
-        }
-         #shared-team-view-section .champion-card strong {
-            color: var(--text-secondary);
-        }
-
-        #shared-team-view-section .champion-card > img {
-            height: 220px;
-            object-position: top; /* Aligns the image to the top, cropping bottom if necessary */
-            display: block;
-            margin: auto;
-        }
-
-        /* Style for the active navigation link, matching the index.html theme */
-        .nav-link.active {
-            background-color: #3b82f6; /* Tailwind Blue 500 */
-            color: white;
-            text-shadow: 0 0 5px rgba(59, 130, 246, 0.7);
-        }
-        .glowing-text-nav {
-            text-shadow: 0 0 6px rgba(59, 130, 246, 0.5),
-                        0 0 12px rgba(59, 130, 246, 0.3);
-        }
-
-        .actions-cell {
-            position: relative;
-            text-align: right; /* Aligns the ... button to the right */
-        }
-
-        .actions-dropdown-trigger {
-            background-color: #f1f5f9; /* bg-slate-100 */
-            border: 1px solid #e2e8f0; /* border-slate-200 */
-            border-radius: 0.375rem; /* rounded-md */
-            padding: 0.25rem 0.5rem; /* px-2 py-1 */
-            line-height: 1;
-            cursor: pointer;
-        }
-        .actions-dropdown-trigger:hover {
-            background-color: #e2e8f0; /* bg-slate-200 */
-        }
-
-        .actions-dropdown-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            z-index: 10;
-            background-color: white;
-            border-radius: 0.5rem; /* rounded-lg */
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            border: 1px solid #e2e8f0; /* border-slate-200 */
-            min-width: 120px;
-            padding: 0.5rem 0; /* py-2 */
-        }
-
-        .actions-dropdown-menu button {
-            display: block;
-            width: 100%;
-            text-align: left;
-            padding: 0.5rem 1rem; /* px-4 py-2 */
-            font-size: 0.875rem; /* text-sm */
-            color: #334155; /* text-slate-700 */
-            background-color: transparent;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            white-space: nowrap;
-        }
-        
-        .actions-dropdown-menu button:hover {
-            background-color: #f1f5f9; /* bg-slate-100 */
-        }
-
-    </style>
 </head>
+
 <body>
     <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="ogwmj" data-description="Support me on Buy me a coffee!" data-message="No pressure." data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
-    
+
+    <div class="background-hero"></div>
+
+    <!-- Navigation Bar -->
     <nav class="bg-slate-900 bg-opacity-80 backdrop-filter backdrop-blur-md shadow-lg sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <a href="index.html" class="flex-shrink-0 text-white text-2xl font-bold glowing-text-nav">
-                    DC:DL Tools
-                    </a>
-                </div>
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-center space-x-4">
-                        <a href="index.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
-                        <a href="calculator.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Anvil Calculator</a>
-                        <a href="teams.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Team Builder</a>
-                        <a href="changemap.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Changemap</a>
-                        
-                        <div id="auth-status-desktop" class="ml-4"></div>
-
-                    </div>
+                <a href="index.html" class="text-white text-2xl font-bold">DC:DL Tools</a>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="index.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                    <a href="calculator.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Anvil Calculator</a>
+                    <a href="teams.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Team Builder</a>
+                    <a href="changemap.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Changemap</a>
+                    <div id="auth-status-desktop"><span class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Loading</span></div>
                 </div>
                 <div class="-mr-2 flex md:hidden">
                     <button type="button" id="mobile-menu-button" class="bg-slate-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
                         <span class="sr-only">Open main menu</span>
-                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
-                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
                     </button>
                 </div>
             </div>
         </div>
-
         <div class="md:hidden hidden" id="mobile-menu">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="index.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
                 <a href="calculator.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Anvil Calculator</a>
                 <a href="teams.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Team Builder</a>
-                <a href="changemap.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">ChangeMap</a>
-                
+                <a href="changemap.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Changemap</a>
                 <div id="auth-status-mobile" class="pt-4 mt-2 border-t border-slate-700"></div>
-
             </div>
         </div>
     </nav>
 
     <div class="container">
-        <h1 class="text-3xl font-bold text-center mb-2">DC: Dark Legion - Optimal Team Builder</h1>
-        <p id="userIdDisplay" class="text-xs text-center text-gray-500 mb-1">User ID: Initializing...</p>
-        <p class="text-center text-gray-600 mb-6">Select your champions and their progression to find your highest scoring team! Your roster is saved automatically.</p>
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-3 glowing-text">Optimal Team Builder</h1>
+            <p class="text-lg md:text-xl text-blue-200">Build your roster and find your highest-scoring team composition.</p>
+        </header>
 
-        <p class="text-center text-sm text-gray-500 mb-6">
-            Inspired by:
-            <a href="https://docs.google.com/spreadsheets/d/1G4PpKxiuPPOS7-pMaQR34NyehFsASKutRDs6F2pJDH8/edit#gid=2025896663" target="_blank" rel="noopener noreferrer" class="inline-flex items-center font-semibold text-blue-600 hover:underline">
-                Tyvokka's DC Dark Legion Spreadsheet
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
-                    <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
-                </svg>
-            </a>
-        </p>
-
-        <div id="loading-indicator" class="text-center card hidden">
+        <!-- Loading and Error Indicators -->
+        <div id="loading-indicator" class="text-center card">
             <div class="loading-spinner"></div>
-            <p class="text-indigo-600">Loading game data & your roster...</p>
+            <p class="text-indigo-600 mt-2">Loading game data & your roster...</p>
         </div>
         <div id="error-indicator" class="text-center card hidden p-4 bg-red-100 border border-red-300 text-red-700">
             <p>Error loading data. Please ensure Firestore is set up and populated.</p>
             <p id="error-message-details" class="text-xs mt-1"></p>
         </div>
 
-        <section id="shared-team-view-section" class="card hidden">
-            <div class="calc-section">
-                <h2 id="shared-team-name" class="text-2xl font-bold text-indigo-700 mb-4">Shared Team</h2>
-                <div id="shared-team-output" class="mt-6 p-4 border-t border-gray-200">
-                    <p class="text-gray-500">Loading shared team details...</p>
+        <!-- Main Wizard Container -->
+        <main id="main-app-content" class="card hidden">
+            <!-- Step Navigation -->
+            <div id="stepper" class="stepper">
+                <div id="step-btn-1" class="step active" data-step="1">Manage Roster</div>
+                <div id="step-btn-2" class="step" data-step="2">Create Teams</div>
+            </div>
+
+            <!-- Step 1: Manage Roster -->
+            <div id="step-1-content" class="wizard-step">
+                <h2 id="form-mode-title" class="text-xl font-bold text-accent mb-6">Add Champion to Roster</h2>
+                <div
+                    class="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 bg-slate-50 rounded-lg border border-slate-200 mb-8">
+                    <!-- Column 1: Champion Selection -->
+                    <div class="input-group">
+                        <label for="custom-champ-dropdown-trigger">Select Champion</label>
+                        <div id="custom-champ-dropdown" class="relative mt-2">
+                            <input type="hidden" id="champ-select-db" name="champ-select-db">
+                            <button type="button" id="custom-champ-dropdown-trigger" aria-haspopup="listbox"
+                                aria-expanded="false" disabled>
+                                <span class="flex items-center">
+                                    <img src="" alt="Selected Champion" class="hidden" id="selected-champ-img">
+                                    <span class="ml-2 block truncate" id="selected-champ-name">-- Loading... --</span>
+                                </span>
+                                <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                    <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fill-rule="evenodd"
+                                            d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </span>
+                            </button>
+                            <ul id="custom-champ-dropdown-options" class="hidden" role="listbox"></ul>
+                        </div>
+                        <div class="input-group mt-4">
+                            <label for="champ-star-color">Star & Color Tier</label>
+                            <select id="champ-star-color"></select>
+                        </div>
+                        <div class="input-group mt-4">
+                            <label for="champ-force-level">Force Level</label>
+                            <select id="champ-force-level"></select>
+                        </div>
+                    </div>
+                    <!-- Column 2: Gear -->
+                    <div class="space-y-4">
+                        <div class="input-group">
+                            <label for="gear-head">Head Gear</label>
+                            <select id="gear-head" class="gear-rarity-select"></select>
+                        </div>
+                        <div class="input-group">
+                            <label for="gear-arms">Arms Gear</label>
+                            <select id="gear-arms" class="gear-rarity-select"></select>
+                        </div>
+                        <div class="input-group">
+                            <label for="gear-legs">Legs Gear</label>
+                            <select id="gear-legs" class="gear-rarity-select"></select>
+                        </div>
+                        <div class="input-group">
+                            <label for="gear-chest">Chest Gear</label>
+                            <select id="gear-chest" class="gear-rarity-select"></select>
+                        </div>
+                        <div class="input-group">
+                            <label for="gear-waist">Waist Gear</label>
+                            <select id="gear-waist" class="gear-rarity-select"></select>
+                        </div>
+                    </div>
+                    <!-- Column 3: Legacy & Actions -->
+                    <div>
+                        <div class="input-group">
+                            <label for="legacy-piece-select">Legacy Piece</label>
+                            <select id="legacy-piece-select"></select>
+                        </div>
+                        <div class="input-group mt-4">
+                            <label for="legacy-piece-star-color">Legacy Piece Tier</label>
+                            <select id="legacy-piece-star-color"></select>
+                        </div>
+                        <div class="mt-8 space-y-2">
+                            <button id="add-update-champion-btn" class="btn btn-primary w-full">
+                                Add Champion
+                                <span id="save-roster-indicator" class="spinner hidden"></span>
+                            </button>
+                            <button id="cancel-edit-btn" class="btn btn-secondary w-full hidden">Cancel Edit</button>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="text-xl font-bold text-accent mb-4">Your Roster</h2>
+                <div id="roster-table-container" class="w-full">
+                    <table id="roster-table" class="display w-full">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Class</th>
+                                <th>Rarity</th>
+                                <th>Tier</th>
+                                <th>Score</th>
+                                <th>Legacy Piece</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <p id="roster-empty-message" class="text-slate-500 text-center py-4 hidden">Your roster is empty. Add a
+                    champion to get started.</p>
+                <div id="roster-management-buttons" class="mt-4 flex flex-wrap gap-2">
+                    <button id="prefill-roster-btn" class="btn btn-secondary btn-sm hidden">Pre-fill Roster</button>
+                    <button id="export-roster-btn" class="btn btn-secondary btn-sm">Export Roster</button>
+                    <button id="import-roster-btn" class="btn btn-secondary btn-sm">Import Roster</button>
+                    <input type="file" id="import-roster-file" class="hidden" accept=".json">
                 </div>
             </div>
-            <a class="btn btn-success" href="teams.html" title="Your Teams"><span class="btn-icon">↩️</span> Manage Your Teams</a>
-        </section>
 
-        <div id="main-app-content">
-            <section id="champions-section" class="card">
-                <div class="calc-section bg-gray-50">
-                    <h2 id="form-mode-title" class="text-xl font-semibold mb-4">Add Your Champions to Roster</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div>
-                            <div class="input-group">
-                                <label for="custom-champ-dropdown-trigger" class="input-label block text-sm">Select Base Champion:</label>
-                                <div id="custom-champ-dropdown" class="relative mt-1">
-                                    <input type="hidden" id="champ-select-db">
-                                    <button type="button" id="custom-champ-dropdown-trigger" class="relative w-full bg-white border border-border-input rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-border-focus focus:border-border-focus sm:text-sm">
-                                        <span class="flex items-center">
-                                            <img src="" alt="" class="h-6 w-6 flex-shrink-0 rounded-full hidden" id="selected-champ-img">
-                                            <span class="ml-3 block truncate" id="selected-champ-name">-- Select Champion --</span>
-                                        </span>
-                                        <span class="ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                                            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                                <path fill-rule="evenodd" d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                                            </svg>
-                                        </span>
-                                    </button>
-                                    <ul id="custom-champ-dropdown-options" class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm hidden" tabindex="-1" role="listbox">
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="input-group mt-4">
-                                <label for="champ-base-rarity-display" class="input-label block text-sm">Base Rarity (auto):</label>
-                                <input type="text" id="champ-base-rarity-display" class="display-field" readonly>
-                            </div>
-                            <div class="input-group mt-4">
-                                <label for="champ-class-display" class="input-label block text-sm">Class (auto):</label>
-                                <input type="text" id="champ-class-display" class="display-field" readonly>
-                            </div>
-                            <div class="input-group mt-4">
-                                <label for="champ-healer-status-display" class="input-label block text-sm">Healer Status (auto):</label>
-                                <input type="text" id="champ-healer-status-display" class="display-field" readonly>
-                            </div>
-                            <div class="input-group mt-4">
-                                <label for="champ-star-color" class="input-label block text-sm">Your Star & Color Tier:</label>
-                                <select id="champ-star-color" class="input-field">
-                                    </select>
-                            </div>
-                            <div class="input-group mt-4">
-                                <label class="input-label">Inherent Synergies (auto):</label>
-                                <div id="champ-inherent-synergies-display" class="p-2 border border-gray-300 rounded-md bg-gray-100 min-h-[40px] text-sm text-gray-600">
-                                    Select a base champion to see synergies.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="input-group">
-                                <label for="gear-head" class="input-label block text-sm">Head Gear Rarity Equipped:</label>
-                                <select id="gear-head" class="input-field gear-rarity-select"> </select>
-                            </div>
-                            <div class="input-group mt-4">
-                                <label for="gear-arms" class="input-label block text-sm">Arms Gear Rarity Equipped:</label>
-                                <select id="gear-arms" class="input-field gear-rarity-select"> </select>
-                            </div>
-                            <div class="input-group mt-4">
-                                <label for="gear-legs" class="input-label block text-sm">Legs Gear Rarity Equipped:</label>
-                                <select id="gear-legs" class="input-field gear-rarity-select"> </select>
-                            </div>
-                            <div class="input-group mt-4">
-                                <label for="gear-chest" class="input-label block text-sm">Chest Gear Rarity Equipped:</label>
-                                <select id="gear-chest" class="input-field gear-rarity-select"> </select>
-                            </div>
-                            <div class="input-group mt-4">
-                                <label for="gear-waist" class="input-label block text-sm">Waist Gear Rarity Equipped:</label>
-                                <select id="gear-waist" class="input-field gear-rarity-select"> </select>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <div class="input-group">
-                                <label for="legacy-piece-select" class="input-label block text-sm">Select Legacy Piece:</label>
-                                <select id="legacy-piece-select" class="input-field"> 
-                                    <option value="">-- None --</option>
-                                    </select>
-                            </div>
-                            <div class="input-group mt-4"> <label for="legacy-piece-star-color" class="input-label block text-sm">Legacy Piece Star & Color Tier:</label>
-                                <select id="legacy-piece-star-color" class="input-field">
-                                    </select>
-                            </div>
-
-                            <div class="input-group mt-4" id="force-level-container">
-                                <label for="champ-force-level" class="input-label block text-sm">Force Level Completed:</label>
-                                <select id="champ-force-level" class="input-field">
-                                    </select>
-                            </div>
-
-                            <div class="mt-8 space-y-2">
-                                <button id="add-update-champion-btn" class="btn btn-primary w-full">
-                                    <span class="btn-text">Add Champion to Roster</span> 
-                                    <span id="save-roster-indicator" class="saving-indicator hidden"></span>
-                                </button>
-                                <button id="cancel-edit-btn" class="btn btn-warning w-full hidden">
-                                    <span class="btn-text">Cancel Edit</span>
-                                </button>
-                            </div>
-
-
-                        </div>
-                    </div>
-                </div>
-
-                <div class="calc-section bg-gray-50">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-semibold">Your Champion Roster</h2>
-                        <div class="flex items-center">
-                            <input type="checkbox" id="toggle-score-column" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" checked>
-                            <label for="toggle-score-column" class="ml-2 text-sm text-gray-700">Show Ind. Score</label>
-                        </div>
-                    </div>
-                    <div id="champions-roster-container" class="overflow-x-auto">
-                        <div id="champions-roster-table-wrapper" class="mt-4">
-                            <p class="text-sm text-gray-500">No champions added to your roster yet.</p>
-                        </div>
-                        <div id="roster-management-buttons" class="mt-4 flex flex-wrap gap-2">
-                            <button id="prefill-roster-btn" class="btn btn-info btn-sm hidden">
-                                <span class="btn-icon">✨</span>
-                                <span class="btn-text">Pre-fill Roster</span>
-                            </button>
-                            <button id="export-roster-btn" class="btn btn-secondary btn-sm">
-                                <span class="btn-icon">📤</span>
-                                <span class="btn-text">Export Roster</span>
-                            </button>
-                            <button id="import-roster-btn" class="btn btn-secondary btn-sm">
-                                <span class="btn-icon">📥</span>
-                                <span class="btn-text">Import Roster</span>
-                            </button>
-                            <input type="file" id="import-roster-file" class="hidden" accept=".json">
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="results-section" class="card">
-                <div class="calc-section bg-gray-50">
-                    <h2 class="text-xl font-semibold mb-4">Find Optimal Team</h2>
-                    <div class="flex flex-wrap md:flex-nowrap justify-between items-start gap-6 mb-6">
-                        <div class="w-full md:w-2/3 space-y-4">
+            <!-- Step 2: Find & View Teams -->
+            <div id="step-2-content" class="wizard-step hidden-step">
+                <!-- Find Optimal Team Section -->
+                <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 mb-8">
+                    <h2 class="text-xl font-bold text-accent mb-4">Find Optimal Team</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                        <div class="md:col-span-2 space-y-4">
                             <div class="flex items-center">
-                                <input id="require-healer-checkbox" type="checkbox" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                                <label for="require-healer-checkbox" class="ml-2 block text-sm text-gray-700">Require Healer in Team?</label>
+                                <input id="require-healer-checkbox" type="checkbox"
+                                    class="h-5 w-5 rounded text-indigo-600 focus:ring-indigo-500 border-gray-300">
+                                <label for="require-healer-checkbox"
+                                    class="ml-3 text-sm font-medium text-gray-700">Require Healer in Team?</label>
                             </div>
-                            <div>
-                                <div class="flex items-center mb-1">
-                                    <input id="exclude-saved-team-checkbox" type="checkbox" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                                    <label for="exclude-saved-team-checkbox" class="ml-2 block text-sm text-gray-700">Exclude Champions from Saved Team(s)?</label>
-                                </div>
-                                <div class="input-group">
-                                    <label for="select-exclusion-team-dropdown" class="input-label block text-sm sr-only">Select Teams to Exclude Champions From:</label>
-                                    <select id="select-exclusion-team-dropdown" class="input-field" multiple disabled>
-                                        </select>
-                                    <p class="text-xs text-gray-500 mt-1">Hold Ctrl (or Cmd on Mac) to select multiple teams.</p>
-                                </div>
+                            <div class="flex items-center">
+                                <input id="exclude-saved-team-checkbox" type="checkbox"
+                                    class="h-5 w-5 rounded text-indigo-600 focus:ring-indigo-500 border-gray-300">
+                                <label for="exclude-saved-team-checkbox"
+                                    class="ml-3 text-sm font-medium text-gray-700">Exclude Champions from Saved
+                                    Teams?</label>
+                            </div>
+                            <div class="input-group">
+                                <label for="select-exclusion-team-dropdown" class="sr-only">Select Teams to
+                                    Exclude</label>
+                                <select id="select-exclusion-team-dropdown" multiple disabled></select>
+                                <p class="text-xs text-slate-500 mt-1">Hold Ctrl/Cmd to select multiple teams.</p>
                             </div>
                         </div>
-                        <div class="w-full md:w-1/3 flex flex-col md:items-end items-start mt-4 md:mt-0">
-                            <button id="calculate-btn" class="btn btn-secondary btn-lg w-full md:w-auto">
-                                <span class="btn-icon">⚙️</span>
-                                <span class="btn-text">Calculate Best Team</span>
-                            </button>
-                            <p class="text-xs text-gray-500 mt-2 text-left md:text-right w-full">Note: More champions & synergies may increase calculation time.</p>
+                        <div class="text-center">
+                            <button id="calculate-btn" class="btn btn-primary text-lg w-full">Calculate</button>
                         </div>
                     </div>
-                    <div id="results-output" class="mt-6 p-4 border border-dashed border-gray-300 rounded-md min-h-[100px] bg-gray-50">
-                        <p class="text-gray-500">Results will be displayed here...</p>
+                </div>
+
+                <!-- Results Display Section -->
+                <div id="results-output" class="min-h-[200px]">
+                    <p class="text-center text-slate-500 pt-8">Calculate a team to see results here.</p>
+                </div>
+
+                <!-- Saved Teams Section -->
+                <div class="mt-10">
+                    <h2 class="text-xl font-bold text-accent mb-4">Saved Teams</h2>
+                    <div id="saved-teams-list" class="space-y-6">
+                        <p class="text-center text-slate-500">No teams saved yet.</p>
                     </div>
                 </div>
-            </section>
-
-            <section id="saved-teams-section" class="card">
-                <div class="calc-section bg-gray-50">
-                    <h2 class="text-xl font-semibold mb-4">Saved Teams</h2>
-                    <div id="saved-teams-list" class="space-y-4"> 
-                        <p class="text-sm text-gray-500">No teams saved yet.</p>
-                    </div>
-                </div>
-            </section>
-
-            <section id="synergies-section" class="card hidden">
-                <div class="calc-section bg-gray-50">
-                    <h2 class="text-xl font-semibold mb-4">Available Synergies</h2>
-                    <div id="synergies-list" class="mt-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-3 gap-y-2">
-                        <p class="text-sm text-gray-500 col-span-full">Loading synergies...</p> 
-                    </div>
-                </div>
-            </section>
-        </div>
+            </div>
+        </main>
     </div>
 
-    <div id="team-name-modal" class="modal-backdrop hidden">
-        <div class="modal-content">
-            <h3 id="team-name-modal-title" class="text-xl font-semibold mb-4">Enter Team Name</h3>
-            <div class="input-group mb-4">
-                <label for="team-name-input" class="input-label block text-sm mb-1">Team Name:</label>
-                <input type="text" id="team-name-input" class="input-field">
-            </div>
-            <div class="modal-buttons">
-                <button id="cancel-team-name-btn" class="btn btn-secondary">
-                    <span class="btn-text">Cancel</span>
-                </button>
-                <button id="save-team-name-btn" class="btn btn-primary">
-                    <span class="btn-text">Save Name</span>
-                </button>
-            </div>
-        </div>
-    </div>
+    <!-- Modals -->
+    <div id="team-name-modal" class="modal-backdrop hidden"></div>
+    <div id="processing-modal" class="modal-backdrop hidden"></div>
+    <div id="confirm-modal" class="modal-backdrop hidden"></div>
+    <div id="share-team-modal" class="modal-backdrop hidden"></div>
+    <div id="swap-champion-modal" class="modal-backdrop hidden"></div>
 
-    <div id="processing-modal" class="modal-backdrop hidden">
-        <div class="modal-content">
-            <h3 class="text-xl font-semibold mb-4 text-center">Calculating Optimal Team...</h3>
-            <div id="processing-status-text" class="text-sm text-gray-600 mb-3 text-center">Initializing...</div>
-            <div class="progress-bar-container">
-                <div id="progress-bar-inner"></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="confirm-modal" class="modal-backdrop hidden">
-        <div class="modal-content">
-            <h3 id="confirm-modal-title" class="text-xl font-semibold mb-4">Confirm Action</h3>
-            <p id="confirm-modal-message" class="mb-6 text-gray-700">Are you sure?</p>
-            <div class="modal-buttons">
-                <button id="confirm-modal-cancel-btn" class="btn btn-secondary">
-                    <span class="btn-text">Cancel</span>
-                </button>
-                <button id="confirm-modal-confirm-btn" class="btn btn-danger">
-                    <span class="btn-text">Confirm</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div id="share-team-modal" class="modal-backdrop hidden">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="share-team-modal-title" class="text-xl font-semibold">Share Team Link</h3>
-                <button id="close-share-team-modal-btn" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
-            </div>
-            <p class="text-sm text-gray-600 mb-2">Anyone with this link can view this team composition (read-only).</p>
-            <div class="input-group mb-4">
-                <label for="share-team-link-input" class="input-label block text-sm mb-1">Shareable Link:</label>
-                <input type="text" id="share-team-link-input" class="input-field" readonly>
-            </div>
-            <div class="modal-buttons">
-                <button id="copy-share-link-btn" class="btn btn-primary">
-                    <span class="btn-icon">📋</span>
-                    <span class="btn-text">Copy Link</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
+    <!-- Toast Notifications Container -->
     <div id="toast-container"></div>
-    <feedback-widget></feedback-widget>
-    
-    <script type="module" src="js/auth-ui.js"></script>
-    <script type="module" src="js/feedback-widget.js"></script>
-    <script type="module" src="js/teams.js"></script>
-    <script type="text/javascript" src="js/navigation.js"></script>
-    
+
+    <!-- Web Components -->
     <auth-ui status-container-id="auth-status-desktop"></auth-ui>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-            if (mobileMenuButton && mobileMenu) {
-                const openIcon = mobileMenuButton.querySelector('svg:first-child');
-                const closeIcon = mobileMenuButton.querySelector('svg:last-child');
-                mobileMenuButton.addEventListener('click', () => {
-                    mobileMenu.classList.toggle('hidden');
-                    openIcon.classList.toggle('hidden');
-                    closeIcon.classList.toggle('hidden');
-                });
-            }
-            
+            // --- Auth Button Synchronization Logic (Updated) ---
             const desktopAuthContainer = document.getElementById('auth-status-desktop');
             const mobileAuthContainer = document.getElementById('auth-status-mobile');
 
             if (desktopAuthContainer && mobileAuthContainer) {
-                
+
                 const syncAuthStatus = () => {
+                    // Check if the user is logged in by looking for the logout button
                     const logoutButton = desktopAuthContainer.querySelector('#logout-btn');
 
                     if (logoutButton) {
+                        // LOGGED-IN STATE: Create a mobile-specific layout
                         const emailSpan = desktopAuthContainer.querySelector('span');
                         const userEmail = emailSpan ? emailSpan.textContent : '';
 
+                        // Use block-level elements for a vertical layout on mobile
                         mobileAuthContainer.innerHTML = `
                             <div class="space-y-1">
                                 <button id="logout-btn-mobile" class="text-gray-300 hover:bg-slate-700 hover:text-white block w-full text-left px-3 py-2 rounded-md text-base font-medium">Logout</button>
                             </div>
                         `;
-                        
+
+                        // Add event listener for the new mobile logout button
                         mobileAuthContainer.querySelector('#logout-btn-mobile').addEventListener('click', () => {
+                            // We can just trigger a click on the main logout button
                             logoutButton.click();
                         });
 
                     } else {
+                        // LOGGED-OUT STATE: Simply copy the desktop button
                         mobileAuthContainer.innerHTML = desktopAuthContainer.innerHTML;
-                        
+
+                        // The main component handles the login click, but we must ensure
+                        // the mobile version has the right classes.
                         const loginBtn = mobileAuthContainer.querySelector('#login-btn');
-                        if(loginBtn) {
+                        if (loginBtn) {
                             loginBtn.classList.add('block', 'w-full', 'text-left');
                             loginBtn.classList.remove('text-sm');
                             loginBtn.classList.add('text-base');
@@ -1142,12 +290,26 @@
                     }
                 };
 
+                // This observer now calls our smart sync function
                 const observer = new MutationObserver(syncAuthStatus);
                 observer.observe(desktopAuthContainer, { childList: true });
 
+                // Run the sync function once on page load
                 syncAuthStatus();
             }
         });
     </script>
+    <feedback-widget></feedback-widget>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/2.3.1/js/dataTables.min.js"></script>
+    <script type="module" src="js/auth-ui.js"></script>
+    <script type="module" src="js/feedback-widget.js"></script>
+    <script type="module" src="js/teams/core.js"></script>
+    <script type="module" src="js/teams/ui.js"></script>
+    <script type="text/javascript" src="js/navigation.js"></script>
+
 </body>
+
 </html>
