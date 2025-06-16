@@ -89,3 +89,84 @@ body main, body section {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+/* --- Custom Star Selector --- */
+.star-selector-container {
+    background-color: #f8fafc;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    border: 1px solid var(--border-primary);
+}
+
+.star-selector-tiers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.star-selector-tier-btn {
+    border: 1px solid var(--border-primary);
+    background-color: #fff;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    color: var(--text-secondary);
+}
+
+.star-selector-tier-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.star-selector-tier-btn.active {
+    color: white;
+    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--border-accent);
+}
+
+.star-selector-tier-btn[data-tier="Unlocked"] { background-color: #e2e8f0; color: #475569; }
+.star-selector-tier-btn[data-tier="White"] { background-color: #f1f5f9; color: #475569; }
+.star-selector-tier-btn[data-tier="Blue"].active { background-color: #3b82f6; border-color: #3b82f6; }
+.star-selector-tier-btn[data-tier="Purple"].active { background-color: #8b5cf6; border-color: #8b5cf6; }
+.star-selector-tier-btn[data-tier="Gold"].active { background-color: #f59e0b; border-color: #f59e0b; }
+.star-selector-tier-btn[data-tier="Red"].active { background-color: #ef4444; border-color: #ef4444; }
+
+
+.star-selector-stars {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 1.75rem;
+    color: #cbd5e1;
+}
+
+.star-selector-star {
+    cursor: pointer;
+    transition: transform 0.1s ease-in-out;
+}
+
+.star-selector-star:hover {
+    transform: scale(1.15);
+}
+
+.star-selector-stars.tier-white .star-selector-star.active {
+    color: #a8a29e;
+}
+.star-selector-stars.tier-blue .star-selector-star.active {
+    color: #3b82f6;
+}
+.star-selector-stars.tier-purple .star-selector-star.active {
+    color: #8b5cf6;
+}
+.star-selector-stars.tier-gold .star-selector-star.active {
+    color: #f59e0b;
+}
+.star-selector-stars.tier-red .star-selector-star.active {
+    color: #ef4444;
+}
+.star-selector-stars.tier-unlocked .star-selector-star.active {
+    color: #cbd5e1;
+}

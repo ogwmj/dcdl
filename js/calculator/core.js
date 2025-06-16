@@ -1,5 +1,5 @@
 /**
- * @file calculator-core.js
+ * @file js/calculator/core.js
  * @fileoverview Core calculation logic for the Anvil Calculator.
  * This module is completely decoupled from the DOM and UI. It takes
  * parameters and returns structured data, making it pure and testable.

@@ -1,5 +1,5 @@
 /**
- * @file core.js
+ * @file js/teams/core.js
  * @description Core logic for the Team Builder, including the TeamCalculator class
  * and data management functions. Decoupled from the DOM.
  */

@@ -105,8 +105,8 @@
                             <ul id="custom-champ-dropdown-options" class="hidden" role="listbox"></ul>
                         </div>
                         <div class="input-group mt-4">
-                            <label for="champ-star-color">Star & Color Tier</label>
-                            <select id="champ-star-color"></select>
+                            <div id="champ-star-selector-container" class="star-selector-container"></div>
+                            <input type="hidden" id="champ-star-color">
                         </div>
                         <div class="input-group mt-4">
                             <label for="champ-force-level">Force Level</label>
@@ -144,7 +144,8 @@
                         </div>
                         <div class="input-group mt-4">
                             <label for="legacy-piece-star-color">Legacy Piece Tier</label>
-                            <select id="legacy-piece-star-color"></select>
+                            <div id="legacy-piece-selector-container" class="star-selector-container"></div>
+                            <input type="hidden" id="legacy-piece-star-color">
                         </div>
                         <div class="mt-8 space-y-2">
                             <button id="add-update-champion-btn" class="btn btn-primary w-full">
