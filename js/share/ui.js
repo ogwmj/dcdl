@@ -1,11 +1,12 @@
 /**
  * @file js/share/ui.js
  * @description Handles fetching and displaying a shared team, generating a dynamic share banner, and loading related comic data.
- * @version 2.0.0
+ * @version 2.1.0
  */
 
 import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getFirestore, doc, getDoc, collection, getDocs, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 import { TeamCalculator, GAME_CONSTANTS, ensureIndividualScores } from '../teams/core.js';
 
 /**
@@ -38,6 +39,8 @@ const DOM = {
 
 /** @type {import("firebase/firestore").Firestore} */
 let db;
+/** @type {import("firebase/analytics").Analytics} */
+let analytics;
 
 /** @type {string} */
 const appId = typeof __app_id !== 'undefined' ? __app_id : 'dc-dark-legion-builder';
@@ -73,14 +76,18 @@ async function initializePage() {
         
         const app = getApp();
         db = getFirestore(app);
-        
+        analytics = getAnalytics(app); // Initialize Analytics
+
         const params = new URLSearchParams(window.location.search);
         const sharedTeamId = params.get('sharedTeamId');
 
         if (!sharedTeamId) {
             showError("No team ID provided.", "The URL is missing the required 'sharedTeamId' parameter.");
+            logEvent(analytics, 'exception', { description: 'share_page_error_no_team_id', fatal: true });
             return;
         }
+
+        logEvent(analytics, 'page_view', { page_title: document.title, page_path: '/share.html', team_id: sharedTeamId });
 
         await Promise.all([
             fetchData('champions', (data) => dbChampions = data),
@@ -94,6 +101,7 @@ async function initializePage() {
     } catch (error) {
         showError("Initialization failed.", error.message);
         console.error("Initialization Error:", error);
+        if (analytics) logEvent(analytics, 'exception', { description: `share_page_init_error: ${error.message}`, fatal: true });
     } finally {
         // This will now hide the main page loader once everything is done.
         if (DOM.pageLoader) {
@@ -151,6 +159,8 @@ async function loadAndDisplaySharedTeam(teamId) {
 
     if (docSnap.exists()) {
         const teamData = docSnap.data();
+        logEvent(analytics, 'view_shared_team', { team_id: teamId, team_name: teamData.name });
+
         const membersWithFullDetails = (teamData.members || []).map(member => ({
             ...(dbChampions.find(c => c.id === member.dbChampionId) || {}),
             ...member
@@ -168,6 +178,7 @@ async function loadAndDisplaySharedTeam(teamId) {
 
     } else {
         showError("Team not found.", `No team exists with the ID: ${teamId}. It may have been deleted.`);
+        logEvent(analytics, 'exception', { description: `share_page_team_not_found: ${teamId}`, fatal: false });
     }
 }
 
@@ -557,6 +568,8 @@ async function _fetchComicFromProxy(characterName) {
             console.error(`Proxy error for ${characterName}: ${response.statusText}`);
             return null;
         }
+
+        logEvent(analytics, 'comic_proxy', { description: 'requested_comic', character: characterName });
 
         const data = await response.json();
         if (data && data.imageUrl) {
