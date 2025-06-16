@@ -229,52 +229,50 @@
     <auth-ui status-container-id="auth-status-desktop"></auth-ui>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Auth Button Synchronization Logic (Updated) ---
+            // --- Auth Button Synchronization Logic (Updated & Fixed) ---
             const desktopAuthContainer = document.getElementById('auth-status-desktop');
             const mobileAuthContainer = document.getElementById('auth-status-mobile');
 
             if (desktopAuthContainer && mobileAuthContainer) {
                 
                 const syncAuthStatus = () => {
-                    // Check if the user is logged in by looking for the logout button
                     const logoutButton = desktopAuthContainer.querySelector('#logout-btn');
 
                     if (logoutButton) {
-                        // LOGGED-IN STATE: Create a mobile-specific layout
-                        const emailSpan = desktopAuthContainer.querySelector('span');
-                        const userEmail = emailSpan ? emailSpan.textContent : '';
-
-                        // Use block-level elements for a vertical layout on mobile
+                        // LOGGED-IN STATE: This logic is correct.
                         mobileAuthContainer.innerHTML = `
                             <div class="space-y-1">
                                 <button id="logout-btn-mobile" class="text-gray-300 hover:bg-slate-700 hover:text-white block w-full text-left px-3 py-2 rounded-md text-base font-medium">Logout</button>
                             </div>
                         `;
-                        
-                        // Add event listener for the new mobile logout button
                         mobileAuthContainer.querySelector('#logout-btn-mobile').addEventListener('click', () => {
-                            // We can just trigger a click on the main logout button
                             logoutButton.click();
                         });
 
                     } else {
-                        // LOGGED-OUT STATE: Simply copy the desktop button
+                        // LOGGED-OUT STATE: This is the corrected logic.
                         mobileAuthContainer.innerHTML = desktopAuthContainer.innerHTML;
+                        const loginBtnMobile = mobileAuthContainer.querySelector('#login-btn');
+                        const loginBtnDesktop = desktopAuthContainer.querySelector('#login-btn');
                         
-                        // The main component handles the login click, but we must ensure
-                        // the mobile version has the right classes.
-                        const loginBtn = mobileAuthContainer.querySelector('#login-btn');
-                        if(loginBtn) {
-                            loginBtn.classList.add('block', 'w-full', 'text-left');
-                            loginBtn.classList.remove('text-sm');
-                            loginBtn.classList.add('text-base');
+                        if (loginBtnMobile && loginBtnDesktop) {
+                            // Manually add a click listener to the new mobile button that
+                            // triggers a click on the original, functional desktop button.
+                            loginBtnMobile.addEventListener('click', () => {
+                                loginBtnDesktop.click();
+                            });
+                            
+                            // Apply mobile-specific styling
+                            loginBtnMobile.classList.add('block', 'w-full', 'text-left');
+                            loginBtnMobile.classList.remove('text-sm');
+                            loginBtnMobile.classList.add('text-base');
                         }
                     }
                 };
 
                 // This observer now calls our smart sync function
                 const observer = new MutationObserver(syncAuthStatus);
-                observer.observe(desktopAuthContainer, { childList: true });
+                observer.observe(desktopAuthContainer, { childList: true, subtree: true });
 
                 // Run the sync function once on page load
                 syncAuthStatus();
