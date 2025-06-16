@@ -592,7 +592,19 @@ async function recalculateAndUpdateSavedTeams(upgradedChampion) {
         updatedMembers = ensureIndividualScores(updatedMembers, dbChampions);
         const reEvaluatedTeam = calculator.evaluateTeam(updatedMembers);
         const dataToUpdate = {
-            members: reEvaluatedTeam.members.map(m => ({ dbChampionId: m.dbChampionId, starColorTier: m.starColorTier, forceLevel: m.forceLevel, gear: m.gear, legacyPiece: m.legacyPiece })),
+            members: reEvaluatedTeam.members.map(m => ({
+                dbChampionId: m.dbChampionId,
+                name: m.name,
+                baseRarity: m.baseRarity,
+                class: m.class,
+                isHealer: m.isHealer === true,
+                starColorTier: m.starColorTier,
+                forceLevel: m.forceLevel || 0,
+                gear: m.gear,
+                legacyPiece: m.legacyPiece,
+                inherentSynergies: m.inherentSynergies || [],
+                individualScore: m.individualScore
+            })),
             totalScore: reEvaluatedTeam.totalScore,
             activeSynergies: reEvaluatedTeam.activeSynergies,
             scoreBreakdown: reEvaluatedTeam.scoreBreakdown,
