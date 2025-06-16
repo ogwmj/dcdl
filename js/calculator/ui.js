@@ -1,8 +1,8 @@
 /**
- * @file calculator-ui.js
+ * @file js/calculator/ui.js
  * @fileoverview Handles UI interactions, event listeners, and data flow
  * for the redesigned Anvil Calculator.
- * @version 1.6.0 - Added Monte Carlo chart rendering.
+ * @version 2.0.0
  */
 
 import { calculateExpectedValue, runProbabilitySimulation } from './core.js';
@@ -64,7 +64,9 @@ const SHARD_REQUIREMENTS = {
     "Red 1-Star": 680, "Red 2-Star": 760, "Red 3-Star": 840, "Red 4-Star": 920, "Red 5-Star": 1000
 };
 
-let db; // Firestore database instance
+let db;
+let startStarSelectorControl = null;
+let targetStarSelectorControl = null;
 
 // --- UI INITIALIZATION & EVENT LISTENERS ---
 
@@ -140,21 +142,120 @@ async function fetchAndPopulateChampions() {
 }
 
 /**
+ * @description Creates an interactive star rating component.
+ * @param {string} containerId - The ID of the container element for the component.
+ * @param {string} hiddenInputId - The ID of the hidden input that stores the component's value.
+ * @param {boolean} allowBase - Whether to include the "Base Character" option.
+ * @returns {object} An object with a `setValue` method to programmatically update the component.
+ */
+function createStarSelector(containerId, hiddenInputId, allowBase = true) {
+    const container = document.getElementById(containerId);
+    const hiddenInput = document.getElementById(hiddenInputId);
+    if (!container || !hiddenInput) return;
+
+    let tiers = ["White", "Blue", "Purple", "Gold", "Red"];
+    if (allowBase) {
+        tiers.unshift("Base");
+    }
+
+    let selectedTier = allowBase ? "Base" : "White";
+    let selectedStars = 0;
+
+    container.innerHTML = `
+        <div class="star-selector-tiers"></div>
+        <div class="star-selector-stars"></div>
+    `;
+
+    const tiersContainer = container.querySelector('.star-selector-tiers');
+    const starsContainer = container.querySelector('.star-selector-stars');
+
+    tiers.forEach(tier => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'star-selector-tier-btn';
+        btn.dataset.tier = tier;
+        // Use a more descriptive name for the Base tier button
+        btn.textContent = tier === 'Base' ? 'Base (0*)' : tier;
+        tiersContainer.appendChild(btn);
+    });
+
+    for (let i = 1; i <= 5; i++) {
+        const star = document.createElement('span');
+        star.className = 'star-selector-star';
+        star.dataset.value = i;
+        star.innerHTML = '&#9733;';
+        starsContainer.appendChild(star);
+    }
+
+    const updateVisuals = () => {
+        tiers.forEach(t => starsContainer.classList.remove(`tier-${t.toLowerCase()}`));
+        starsContainer.classList.add(`tier-${selectedTier.toLowerCase()}`);
+
+        tiersContainer.querySelectorAll('.star-selector-tier-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.tier === selectedTier);
+        });
+
+        starsContainer.querySelectorAll('.star-selector-star').forEach(star => {
+            star.classList.toggle('active', parseInt(star.dataset.value, 10) <= selectedStars);
+        });
+
+        starsContainer.style.display = selectedTier === 'Base' ? 'none' : 'flex';
+    };
+
+    const updateValue = () => {
+        if (selectedTier === 'Base') {
+            hiddenInput.value = '0_shards';
+        } else {
+            hiddenInput.value = `${selectedTier} ${selectedStars}-Star`;
+        }
+        updateVisuals();
+    };
+
+    tiersContainer.addEventListener('click', e => {
+        if (e.target.matches('.star-selector-tier-btn')) {
+            selectedTier = e.target.dataset.tier;
+            if (selectedTier === 'Base') {
+                selectedStars = 0;
+            } else if (selectedStars === 0) {
+                selectedStars = 1;
+            }
+            updateValue();
+        }
+    });
+
+    starsContainer.addEventListener('click', e => {
+        if (e.target.matches('.star-selector-star')) {
+            selectedStars = parseInt(e.target.dataset.value, 10);
+            if (selectedTier === 'Base') {
+                selectedTier = 'White';
+            }
+            updateValue();
+        }
+    });
+
+    const setValue = (valueString) => {
+        if (!valueString || valueString === '0_shards' || valueString.startsWith('Base')) {
+            selectedTier = "Base";
+            selectedStars = 0;
+        } else {
+            const parts = valueString.split(' ');
+            selectedTier = parts[0];
+            selectedStars = parseInt(parts[1], 10) || 0;
+        }
+        updateValue();
+    };
+
+    setValue(allowBase ? '0_shards' : 'White 1-Star');
+
+    return { setValue };
+}
+
+/**
  * Populates select dropdowns with options.
  */
 function initializeDropdowns() {
-    // Star levels
-    Object.keys(SHARD_REQUIREMENTS).forEach(level => {
-        if (level.startsWith('Base')) {
-            DOM.startStarLevel.add(new Option(level, "0_shards"));
-        } else {
-            const option = new Option(level, level);
-            DOM.startStarLevel.add(option.cloneNode(true));
-            DOM.targetStarLevel.add(option);
-        }
-    });
-    DOM.startStarLevel.value = "0_shards";
-    DOM.targetStarLevel.selectedIndex = 0;
+    startStarSelectorControl = createStarSelector('start-star-selector-container', 'startStarLevel', true);
+    targetStarSelectorControl = createStarSelector('target-star-selector-container', 'targetStarLevel', false);
 }
 
 /**
@@ -203,10 +304,12 @@ function handleChampionGuidance(event) {
     }
 
     if (targetLevel && targetLevel !== 'not set') {
-        DOM.startStarLevel.value = '0_shards';
-        DOM.targetStarLevel.value = targetLevel;
+        // Use the new controls to set the values
+        if (startStarSelectorControl) startStarSelectorControl.setValue('0_shards');
+        if (targetStarSelectorControl) targetStarSelectorControl.setValue(targetLevel);
+
         DOM.toggleUnlockCost.checked = true; // Recommendations assume starting from scratch
-        
+
         handleCalculation();
     } else {
         alert(`Recommendation for the selected champion is not set.`);
