@@ -1,39 +1,68 @@
 /**
  * @file js/share/ui.js
- * @description Handles fetching and displaying a shared team, and generating a dynamic share banner.
+ * @description Handles fetching and displaying a shared team, generating a dynamic share banner, and loading related comic data.
+ * @version 2.0.0
  */
 
-// --- Firebase and Core Logic Imports ---
 import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getFirestore, doc, getDoc, collection, getDocs, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { TeamCalculator, GAME_CONSTANTS, ensureIndividualScores } from '../teams/core.js';
 
-// --- DOM ELEMENT REFERENCES ---
+/**
+ * @typedef {Object} DOM_ELEMENTS
+ * @property {HTMLElement} pageLoader - The full page loading overlay.
+ * @property {HTMLElement} loadingIndicator - The loading indicator element within the main content area.
+ * @property {HTMLElement} errorIndicator - The error indicator element.
+ * @property {HTMLElement} errorMessageDetails - The element to display error message details.
+ * @property {HTMLElement} sharedTeamContainer - The container for the shared team display.
+ * @property {HTMLElement} socialBannerContainer - The container for the social media banner.
+ * @property {HTMLImageElement} generatedBannerImg - The image element for the generated banner.
+ * @property {HTMLCanvasElement} canvas - The canvas used to generate the banner.
+ * @property {HTMLElement} comicsDisplaySection - The section for displaying comics.
+ * @property {HTMLElement} comicsDisplayGrid - The grid for displaying comics.
+ */
+
+/** @type {DOM_ELEMENTS} */
 const DOM = {
+    pageLoader: document.getElementById('page-loader'),
     loadingIndicator: document.getElementById('loading-indicator'),
     errorIndicator: document.getElementById('error-indicator'),
     errorMessageDetails: document.getElementById('error-message-details'),
     sharedTeamContainer: document.getElementById('shared-team-container'),
-    // Banner elements
     socialBannerContainer: document.getElementById('social-banner-container'),
     generatedBannerImg: document.getElementById('generated-banner-img'),
     canvas: document.getElementById('social-banner-canvas'),
-    // Comics section
     comicsDisplaySection: document.getElementById('comics-display-section'),
     comicsDisplayGrid: document.getElementById('comics-display-grid'),
 };
 
-// --- GLOBAL STATE ---
+/** @type {import("firebase/firestore").Firestore} */
 let db;
+
+/** @type {string} */
 const appId = typeof __app_id !== 'undefined' ? __app_id : 'dc-dark-legion-builder';
-let dbChampions = [], dbSynergies = [], dbLegacyPieces = [];
+
+/** @type {string} */
+const PROXY_BASE_URL = 'https://us-central1-dc-dark-legion-tools.cloudfunctions.net/comicVineProxy';
+
+/** @type {Array<Object>} */
+let dbChampions = [];
+/** @type {Array<Object>} */
+let dbSynergies = [];
+/** @type {Array<Object>} */
+let dbLegacyPieces = [];
+
+/** @type {Map<string, Object>} */
 let characterComicsData = new Map();
 
-// =================================================================================================
-// #region INITIALIZATION & DATA FETCHING
-// =================================================================================================
 document.addEventListener('DOMContentLoaded', initializePage);
 
+/**
+ * @async
+ * @function initializePage
+ * @description Initializes the page, fetches necessary data, and displays the shared team.
+ * @returns {Promise<void>}
+ */
 async function initializePage() {
     showLoading(true);
     try {
@@ -57,7 +86,7 @@ async function initializePage() {
             fetchData('champions', (data) => dbChampions = data),
             fetchData('synergies', (data) => dbSynergies = data.sort((a,b) => a.name.localeCompare(b.name))),
             fetchData('legacyPieces', (data) => dbLegacyPieces = data.sort((a,b) => a.name.localeCompare(b.name))),
-            fetchCharacterComics()
+            fetchCharacterComics(),
         ]);
         
         await loadAndDisplaySharedTeam(sharedTeamId);
@@ -66,10 +95,26 @@ async function initializePage() {
         showError("Initialization failed.", error.message);
         console.error("Initialization Error:", error);
     } finally {
-        showLoading(false);
+        // This will now hide the main page loader once everything is done.
+        if (DOM.pageLoader) {
+            DOM.pageLoader.style.opacity = '0';
+            setTimeout(() => {
+                DOM.pageLoader.style.display = 'none';
+            }, 500); // Corresponds to the transition duration in CSS
+        }
+        showLoading(false); // Hides the internal loader within the card
     }
 }
 
+/**
+ * @async
+ * @function fetchData
+ * @description Fetches data from a specified Firestore collection.
+ * @param {string} collectionName - The name of the collection to fetch.
+ * @param {function(Array<Object>): void} stateUpdater - The function to update the state with the fetched data.
+ * @returns {Promise<void>}
+ * @throws {Error} If Firestore is not initialized.
+ */
 async function fetchData(collectionName, stateUpdater) {
     if (!db) throw new Error("Firestore not initialized");
     const q = query(collection(db, `artifacts/${appId}/public/data/${collectionName}`));
@@ -78,6 +123,12 @@ async function fetchData(collectionName, stateUpdater) {
     stateUpdater(data);
 }
 
+/**
+ * @async
+ * @function fetchCharacterComics
+ * @description Fetches character comics data from Firestore.
+ * @returns {Promise<void>}
+ */
 async function fetchCharacterComics() {
     if (!db) return;
     try {
@@ -86,15 +137,14 @@ async function fetchCharacterComics() {
         snapshot.forEach(doc => { characterComicsData.set(doc.id, doc.data()); });
     } catch (error) { console.warn("Could not load character comics data:", error.message); }
 }
-// =================================================================================================
-// #endregion INITIALIZATION & DATA FETCHING
-// =================================================================================================
 
-
-// =================================================================================================
-// #region MAIN LOGIC
-// =================================================================================================
-
+/**
+ * @async
+ * @function loadAndDisplaySharedTeam
+ * @description Loads and displays a shared team from Firestore.
+ * @param {string} teamId - The ID of the team to load.
+ * @returns {Promise<void>}
+ */
 async function loadAndDisplaySharedTeam(teamId) {
     const docRef = doc(db, `artifacts/${appId}/public/data/sharedTeams`, teamId);
     const docSnap = await getDoc(docRef);
@@ -113,24 +163,21 @@ async function loadAndDisplaySharedTeam(teamId) {
         displayTeamResults(evaluatedTeam);
         await generateShareBanner(evaluatedTeam);
         
-        // After displaying the team, load the comics for the members
         const heroNames = evaluatedTeam.members.map(m => m.name);
-        loadComicsForHeroes(heroNames);
+        await loadComicsForHeroes(db, heroNames);
 
     } else {
         showError("Team not found.", `No team exists with the ID: ${teamId}. It may have been deleted.`);
     }
 }
 
-// =================================================================================================
-// #endregion MAIN LOGIC
-// =================================================================================================
-
-
-// =================================================================================================
-// #region BANNER GENERATION
-// =================================================================================================
-
+/**
+ * @async
+ * @function generateShareBanner
+ * @description Generates a shareable banner for the team.
+ * @param {Object} team - The team data.
+ * @returns {Promise<void>}
+ */
 async function generateShareBanner(team) {
     const ctx = DOM.canvas.getContext('2d');
     const w = DOM.canvas.width;
@@ -241,21 +288,27 @@ async function generateShareBanner(team) {
     updateMetaTag('name', 'twitter:image', dataUrl);
 }
 
+/**
+ * @function updateMetaTag
+ * @description Updates a meta tag in the document's head.
+ * @param {string} attribute - The attribute to select the meta tag (e.g., 'name', 'property').
+ * @param {string} value - The value of the attribute to select the meta tag.
+ * @param {string} content - The new content for the meta tag.
+ * @returns {void}
+ */
 function updateMetaTag(attribute, value, content) {
     let element = document.querySelector(`meta[${attribute}='${value}']`);
     if (element) {
         element.setAttribute('content', content);
     }
 }
-// =================================================================================================
-// #endregion BANNER GENERATION
-// =================================================================================================
 
-
-// =================================================================================================
-// #region DISPLAY LOGIC (Team & Comics)
-// =================================================================================================
-
+/**
+ * @function displayTeamResults
+ * @description Displays the results of the team evaluation.
+ * @param {Object} team - The evaluated team data.
+ * @returns {void}
+ */
 function displayTeamResults(team) {
     if (!team) {
         showError("Could not display team.", "The provided team data is invalid.");
@@ -305,6 +358,12 @@ function displayTeamResults(team) {
     applyChampionCardBackgrounds();
 }
 
+/**
+ * @function getScoreBreakdownHtml
+ * @description Generates the HTML for the score breakdown.
+ * @param {Object} team - The evaluated team data.
+ * @returns {string} The HTML string for the score breakdown.
+ */
 function getScoreBreakdownHtml(team) {
     if (!team || !team.scoreBreakdown) return '';
     const { base, synergyDepthBonus, classDiversityBonus, subtotalAfterSynergies } = team.scoreBreakdown;
@@ -327,6 +386,12 @@ function getScoreBreakdownHtml(team) {
     return breakdownHtml;
 }
 
+/**
+ * @function getStarRatingHTML
+ * @description Generates the HTML for the star rating.
+ * @param {string} tier - The star color tier (e.g., "Red 3").
+ * @returns {string} The HTML string for the star rating.
+ */
 function getStarRatingHTML(tier) {
     if (!tier || tier === "Unlocked") return `<span class="text-slate-400">Unlocked</span>`;
     const tierParts = tier.split(' ');
@@ -342,6 +407,12 @@ function getStarRatingHTML(tier) {
     return `<div class="star-rating inline-block" title="${tier}"><span class="${colorClass}">${'★'.repeat(starCount)}</span><span class="text-slate-300">${'★'.repeat(5-starCount)}</span></div>`;
 }
 
+/**
+ * @function getSynergyIcon
+ * @description Generates the HTML for a synergy icon.
+ * @param {string} synergyName - The name of the synergy.
+ * @returns {string} The HTML string for the synergy icon.
+ */
 function getSynergyIcon(synergyName) {
     if (!synergyName) return '';
     const nameForIcon = synergyName.trim().replace(/\s+/g, '_');
@@ -349,6 +420,12 @@ function getSynergyIcon(synergyName) {
     return `<span class="icon-wrapper" title="${synergyName}"><img src="img/factions/${nameForIcon}.png" alt="${synergyName}" class="synergy-icon" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';">${fallbackSpan}</span>`;
 }
 
+/**
+ * @function getClassPlaceholder
+ * @description Generates the HTML for a class icon.
+ * @param {string} className - The name of the class.
+ * @returns {string} The HTML string for the class icon.
+ */
 function getClassPlaceholder(className) {
     const cn = (className || "N/A").trim().replace(/\s+/g, '_');
     if (cn === "N/A" || cn === "") return `<span class="icon-placeholder">[Class N/A]</span>`;
@@ -357,6 +434,11 @@ function getClassPlaceholder(className) {
     return `<span class="icon-wrapper"><img src="${imgSrc}" alt="${cn.replace(/_/g, ' ')}" title="${cn.replace(/_/g, ' ')}" class="icon-class-table" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';"/>${fallbackSpan}</span>`;
 }
 
+/**
+ * @function applyChampionCardBackgrounds
+ * @description Applies background images to champion cards based on available comic data.
+ * @returns {void}
+ */
 function applyChampionCardBackgrounds() {
     document.querySelectorAll('.champion-card-enhanced').forEach(card => {
         const bgElement = card.querySelector('.card-background-image');
@@ -364,6 +446,7 @@ function applyChampionCardBackgrounds() {
         if (!bgElement || !championName) return;
         const championId = championName.replace(/([A-Z])/g, '_$1').toLowerCase().substring(1);
         const comicData = characterComicsData.get(championId);
+        console.log()
         if (comicData && comicData.imageUrl) {
             bgElement.style.backgroundImage = `url('${comicData.imageUrl}')`;
             card.classList.remove('is-fallback-avatar');
@@ -373,23 +456,16 @@ function applyChampionCardBackgrounds() {
         }
     });
 }
-// =================================================================================================
-// #endregion DISPLAY LOGIC
-// =================================================================================================
-
-// =================================================================================================
-// #region Comic Book Load and Display
-// =================================================================================================
 
 /**
- * Formats a date string into a more readable "Month Year" format.
- * @param {string} dateString - The date string to format (e.g., "1940-11-30").
+ * @function formatDate
+ * @description Formats a date string.
+ * @param {string} dateString - The date string to format.
  * @returns {string} The formatted date string.
  */
 function formatDate(dateString) {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
-    // Add timezone offset to prevent off-by-one day errors
     const userTimezoneOffset = date.getTimezoneOffset() * 60000;
     const correctedDate = new Date(date.getTime() + userTimezoneOffset);
     return correctedDate.toLocaleDateString('en-US', {
@@ -398,6 +474,13 @@ function formatDate(dateString) {
     });
 }
 
+/**
+ * @function _renderComics
+ * @description Renders the comics in the display grid.
+ * @param {Array<Object>} comics - The list of comics to render.
+ * @returns {void}
+ * @private
+ */
 function _renderComics(comics) {
     if (!comics || comics.length === 0) {
         DOM.comicsDisplayGrid.innerHTML = '<p class="text-slate-500 col-span-full text-center">No featured comics found for these characters.</p>';
@@ -431,44 +514,117 @@ function _renderComics(comics) {
     }).join('');
 }
 
+/**
+ * @async
+ * @function _checkFirestoreForComic
+ * @description Checks Firestore for cached comic data for a character.
+ * @param {import("firebase/firestore").Firestore} db - The Firestore instance.
+ * @param {string} characterName - The name of the character.
+ * @returns {Promise<Object|null>} The comic data or null if not found.
+ * @private
+ */
+async function _checkFirestoreForComic(db, characterName) {
+    if (!db || !characterName) return null;
+    const characterId = characterName.replace(/\s+/g, '_').toLowerCase();
+    try {
+        const docRef = doc(db, `artifacts/${appId}/public/data/characterComics`, characterId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            return docSnap.data();
+        } else {
+            return null;
+        }
+    } catch (error) {
+        console.error(`Error checking Firestore for ${characterName}:`, error);
+    }
+    return null;
+}
 
 /**
- * Main function to display comics for heroes from the pre-loaded data.
- * @param {Array<string>} heroNames - An array of hero names.
+ * @async
+ * @function _fetchComicFromProxy
+ * @description Fetches comic data from the proxy server.
+ * @param {string} characterName - The name of the character.
+ * @returns {Promise<Object|null>} The comic data or null if an error occurs.
+ * @private
  */
-function loadComicsForHeroes(heroNames) {
+async function _fetchComicFromProxy(characterName) {
+    try {
+        const proxyUrl = `${PROXY_BASE_URL}?character=${encodeURIComponent(characterName)}`;
+        const response = await fetch(proxyUrl);
+
+        if (!response.ok) {
+            console.error(`Proxy error for ${characterName}: ${response.statusText}`);
+            return null;
+        }
+
+        const data = await response.json();
+        if (data && data.imageUrl) {
+            return data;
+        } else {
+            console.warn(`No valid comic data returned from proxy for ${characterName}.`);
+            return null;
+        }
+    } catch (error) {
+        console.error(`Error fetching comic from proxy for ${characterName}:`, error);
+        return null;
+    }
+}
+
+/**
+ * @async
+ * @function loadComicsForHeroes
+ * @description Loads comic data for a list of heroes.
+ * @param {import("firebase/firestore").Firestore} db - The Firestore instance.
+ * @param {Array<string>} heroNames - The names of the heroes.
+ * @returns {Promise<void>}
+ */
+async function loadComicsForHeroes(db, heroNames) {
     if (DOM.comicsDisplaySection) DOM.comicsDisplaySection.classList.remove('hidden');
 
-    const uniqueHeroNames = [...new Set(heroNames)]; // Ensure we only process each hero once
-    
-    const comics = uniqueHeroNames.map(name => {
-        const characterId = name.replace(/\s+/g, '_').toLowerCase();
-        return characterComicsData.get(characterId);
-    }).filter(comic => comic !== undefined); // Filter out any heroes that didn't have a comic
+    const uniqueHeroNames = [...new Set(heroNames)]; 
 
+    const comicPromises = uniqueHeroNames.map(async (name) => {
+        let comic = await _checkFirestoreForComic(db, name);
+        if (comic) {
+            return comic; 
+        }
+
+        comic = await _fetchComicFromProxy(name);
+        return comic;
+    });
+
+    const comics = (await Promise.all(comicPromises)).filter(c => c !== null && c !== undefined);
     _renderComics(comics);
 }
 
-// =================================================================================================
-// #endregion Comic Book Load and Display
-// =================================================================================================
-
-
-// =================================================================================================
-// #region UI State Management
-// =================================================================================================
+/**
+ * @function showLoading
+ * @description Shows or hides the loading indicator within the main content area.
+ * @param {boolean} isLoading - Whether to show the loading indicator.
+ * @returns {void}
+ */
 function showLoading(isLoading) {
-    DOM.loadingIndicator.classList.toggle('hidden', !isLoading);
-    DOM.sharedTeamContainer.classList.toggle('hidden', isLoading);
+    if (isLoading) {
+        DOM.loadingIndicator.classList.remove('hidden');
+    } else {
+        DOM.sharedTeamContainer.classList.remove('hidden');
+        DOM.loadingIndicator.classList.add('hidden');
+    }
 }
 
+/**
+ * @function showError
+ * @description Displays an error message.
+ * @param {string} message - The main error message.
+ * @param {string} [details=''] - Additional details about the error.
+ * @returns {void}
+ */
 function showError(message, details = '') {
     showLoading(false);
     DOM.sharedTeamContainer.innerHTML = '';
+    DOM.sharedTeamContainer.classList.remove('hidden');
     DOM.errorIndicator.classList.remove('hidden');
     DOM.errorIndicator.querySelector('h2').textContent = message;
     DOM.errorMessageDetails.textContent = details;
 }
-// =================================================================================================
-// #endregion UI State Management
-// =================================================================================================
