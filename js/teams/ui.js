@@ -529,7 +529,7 @@ function handleEditChampion(id) {
     DOM.customChampDropdownTrigger.disabled = true;
 
     if (DOM.rosterFormContainer) {
-        window.scrollTo({ top: DOM.rosterFormContainer.offsetTop - 20, behavior: 'smooth' });
+        window.scrollTo({ top: DOM.rosterFormContainer.offsetTop - 125, behavior: 'smooth' });
     }
 }
 
