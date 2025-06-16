@@ -1,12 +1,18 @@
+/**
+ * @file ui.css
+ * @description Styles for the redesigned Team Builder page.
+ * Adapted from the Anvil Calculator styles for consistency.
+ */
+
 :root {
-    --bg-primary: #f0f4f8;
+    --bg-primary: #f0f4f8; /* Light grey-blue */
     --bg-secondary: #ffffff;
-    --bg-interactive: #eef2ff;
-    --text-primary: #1e293b;
-    --text-secondary: #475569;
-    --text-accent: #4f46e5;
-    --border-primary: #cbd5e1;
-    --border-accent: #6366f1;
+    --bg-interactive: #eef2ff; /* Lighter indigo for hover */
+    --text-primary: #1e293b; /* Slate 800 */
+    --text-secondary: #475569; /* Slate 600 */
+    --text-accent: #4f46e5; /* Indigo 600 */
+    --border-primary: #cbd5e1; /* Slate 300 */
+    --border-accent: #6366f1; /* Indigo 500 */
     --shadow-color: rgba(0, 0, 0, 0.1);
     --font-main: 'Inter', sans-serif;
 }
@@ -23,6 +29,7 @@ body {
     padding: 2rem;
 }
 
+/* Wizard Stepper Styles */
 .stepper {
     display: flex;
     justify-content: space-around;
@@ -58,6 +65,7 @@ body {
     color: var(--text-accent);
 }
 
+/* Card styles */
 .card {
     background-color: var(--bg-secondary);
     border-radius: 1rem;
@@ -100,6 +108,8 @@ select[multiple]:disabled {
     cursor: not-allowed;
 }
 
+
+/* Custom Dropdown Styles */
 #custom-champ-dropdown-trigger {
     background-color: #f8fafc;
     text-align: left;
@@ -145,6 +155,8 @@ select[multiple]:disabled {
     flex-shrink: 0;
 }
 
+
+/* Button Styles */
 .btn {
     padding: 0.8rem 1.5rem;
     border-radius: 0.75rem;
@@ -180,6 +192,7 @@ select[multiple]:disabled {
     box-shadow: none;
 }
 
+/* Table Styles */
 #roster-table-container {
     width: 100%;
 }
@@ -211,6 +224,7 @@ table.dataTable tbody tr:hover {
     font-size: 0.8rem;
 }
 
+/* Results & Saved Teams */
 .champion-card {
     background: #fff;
     border: 1px solid var(--border-primary);
@@ -244,6 +258,7 @@ table.dataTable tbody tr:hover {
     padding: 1.5rem;
 }
 
+/* Modal Styles */
 .modal-backdrop {
     position: fixed;
     top: 0;
@@ -302,6 +317,7 @@ table.dataTable tbody tr:hover {
     text-align: center;
 }
 
+/* Spinner */
 .spinner {
     display: inline-block;
     width: 1rem;
@@ -325,6 +341,7 @@ table.dataTable tbody tr:hover {
     to { transform: rotate(360deg); }
 }
 
+/* Toast Notification Styles */
 #toast-container {
     position: fixed;
     top: 20px;
@@ -380,6 +397,9 @@ img.icon-class-table {
     object-fit: contain;
 }
 
+/* --- DataTables: Definitive Layout & Theme (Corrected Selectors) --- */
+
+/* 1. This layout structure fixed the width issue. */
 .dt-container {
     width: 100%;
 }
@@ -391,6 +411,9 @@ img.icon-class-table {
     padding: 0.75rem 0;
 }
 
+/* 2. These rules apply the custom theme using the MODERN selectors. */
+
+/* Style the "Show X entries" dropdown */
 .dt-length select {
     width: auto;
     display: inline-block;
@@ -407,6 +430,7 @@ img.icon-class-table {
     box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 
+/* Style the search input box */
 .dt-search input {
     display: inline-block;
     width: auto;
@@ -424,17 +448,20 @@ img.icon-class-table {
     box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 
+/* Style the labels for length and search */
 div.dt-length,
 div.dt-search {
     color: var(--text-secondary);
     font-weight: 600;
 }
 
+/* Style the "Showing X of Y" info text */
 div.dt-info {
     color: var(--text-secondary);
     font-size: 0.9rem;
 }
 
+/* Style the pagination buttons using MODERN selectors */
 .dt-paging .dt-paging-button {
     color: var(--text-accent) !important;
     background-color: var(--bg-interactive);
@@ -470,6 +497,7 @@ div.dt-info {
     border-color: transparent;
 }
 
+/* --- Enhanced Champion Card Styles --- */
 .champion-avatar-center {
     position: absolute;
     top: 50%;
@@ -506,8 +534,9 @@ div.dt-info {
     background-size: cover;
     background-position: center 20%;
     transition: transform 0.3s ease;
-    background-color: #e2e8f0;
-    opacity: 0.5;
+    /* The actual background image will be set by JS later */
+    background-color: #e2e8f0; /* Fallback color */
+    opacity: 0.5; /* Add this line to fade the image */
 }
 .champion-card-enhanced:hover .card-background-image {
     transform: scale(1.1);
@@ -565,7 +594,7 @@ div.dt-info {
 }
 .force-level {
     font-weight: 600;
-    color: #a7f3d0;
+    color: #a7f3d0; /* Light green */
 }
 
 .synergy-icons {
@@ -582,6 +611,7 @@ div.dt-info {
     padding: 2px;
 }
 
+/* Swap button is positioned at the bottom */
 .swap-button {
     position: absolute;
     bottom: 0.75rem;
@@ -597,11 +627,12 @@ div.dt-info {
     transform: translateY(0);
 }
 
+/* Smaller version for Saved Teams */
 .champion-card-enhanced.is-small {
     min-height: 220px;
 }
 .champion-card-enhanced.is-small .card-header .champion-name {
-    font-size: 0.75rem;
+    font-size: 0.75rem; /* text-xs */
 }
 .champion-card-enhanced.is-small .champion-details {
     font-size: 0.7rem;
@@ -611,11 +642,15 @@ div.dt-info {
     height: 16px;
 }
 
+/* --- Enhanced Champion Card Styles --- */
+/* Add this new rule for the fallback state */
 .is-fallback-avatar .card-background-image {
     filter: blur(3px) brightness(0.6);
     transform: scale(1.2);
 }
+/* ... rest of your existing card styles ... */
 
+/* --- Score Breakdown Styles --- */
 .score-breakdown-details {
     background-color: #f8fafc;
     border: 1px solid var(--border-primary);
@@ -627,7 +662,7 @@ div.dt-info {
     font-weight: 600;
     color: var(--text-accent);
     cursor: pointer;
-    list-style: none;
+    list-style: none; /* Hide the default triangle */
     display: flex;
     align-items: center;
 }
@@ -664,10 +699,10 @@ div.dt-info {
     color: var(--text-primary);
 }
 .breakdown-row.is-bonus {
-    color: #15803d;
+    color: #15803d; /* green-700 */
 }
 .breakdown-row.is-bonus strong {
-    color: #166534;
+    color: #166534; /* green-800 */
 }
 .breakdown-row.is-subtotal, .breakdown-row.is-total {
     font-weight: 700;
@@ -680,15 +715,17 @@ div.dt-info {
     padding-top: 0.5rem;
 }
 
+/* --- Swap Modal Enhancements --- */
 #swap-modal-body .star-rating span {
-    font-size: 0.9em;
+    font-size: 0.9em; /* Makes stars slightly smaller in the list */
 }
 
 #swap-modal-body .synergy-icon {
-    width: 18px;
+    width: 18px;      /* Makes synergy icons smaller */
     height: 18px;
 }
 
+/* --- DataTables Responsive Theming --- */
 table.dataTable > tbody > tr.child {
     padding: 0.5rem 1rem;
     background-color: var(--bg-interactive);
@@ -709,5 +746,143 @@ table.dataTable > tbody > tr > td.dtr-control::before {
     margin-top: -8px;
 }
 table.dataTable > tbody > tr.dtr-expanded > td.dtr-control::before {
-    background-color: #ef4444;
+    background-color: #ef4444; /* Red color for the 'minus' icon */
 }
+
+/* --- Interactive Gear Grid --- */
+#interactive-gear-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.gear-grid-row {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    align-items: center;
+    gap: 1rem;
+}
+
+.gear-grid-label {
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-align: right;
+    color: var(--text-secondary);
+}
+
+.gear-grid-pips {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.gear-pip {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    position: relative;
+    font-size: 0.7rem;
+    color: white;
+    text-align: center;
+    line-height: 1.5rem;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+}
+
+.gear-pip:hover {
+    transform: scale(1.1);
+}
+
+.gear-pip.selected {
+    border-color: white;
+    box-shadow: 0 0 0 3px var(--border-accent);
+}
+
+/* Rarity Colors for Pips */
+.gear-pip[data-rarity="None"] { background-color: #94a3b8; }
+.gear-pip[data-rarity="Uncommon"] { background-color: #22c55e; }
+.gear-pip[data-rarity="Rare"] { background-color: #3b82f6; }
+.gear-pip[data-rarity="Epic"] { background-color: #a855f7; }
+.gear-pip[data-rarity="Legendary"] { background-color: #eab308; }
+.gear-pip[data-rarity="Mythic"] { background-color: #e84848; }
+.gear-pip[data-rarity="Mythic Enhanced"] { background-color: #b50202; }
+
+/* Master row styling */
+.gear-grid-master .gear-grid-label {
+    font-weight: 700;
+    color: var(--text-accent);
+}
+
+#custom-tooltip {
+    position: absolute;
+    background-color: #1e293b; /* Slate 800 */
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    z-index: 10000;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(5px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+#custom-tooltip.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#force-level-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.force-level-pip {
+    /* Larger, circular shape */
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%; 
+    
+    /* Center the number inside */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 700;
+    
+    /* Base styling */
+    color: var(--text-secondary);
+    background-color: #e2e8f0;
+    border: 2px solid #cbd5e1;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.force-level-pip:hover {
+    border-color: var(--border-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px var(--shadow-color);
+}
+
+/* Special style for the '0' pip */
+.force-level-pip[data-level="0"] {
+    background-color: #f8fafc;
+    color: #94a3b8;
+}
+
+/* Style for any active/selected pip */
+.force-level-pip.active {
+    color: #1e293b; /* Darker text for contrast */
+    border-color: var(--border-accent);
+    box-shadow: 0 4px 10px -2px rgba(79, 70, 229, 0.4);
+}
+.force-level-pip.active[data-level="1"] { background-color: #e3d5d5; }
+.force-level-pip.active[data-level="2"] { background-color: #e39d9d; }
+.force-level-pip.active[data-level="3"] { background-color: #e35f5f; }
+.force-level-pip.active[data-level="4"] { background-color: #e84848; }
+.force-level-pip.active[data-level="5"] { background-color: #b50202; }
