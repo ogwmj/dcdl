@@ -1,5 +1,5 @@
 /**
- * @file ui.js
+ * @file js/teams/ui.js
  * @description Handles all UI interactions, event listeners, and data flow for the Team Builder.
  * This script manages the user interface for building a champion roster, calculating optimal teams based on synergies and scores, and managing saved teams.
  * @version 2.0.0
