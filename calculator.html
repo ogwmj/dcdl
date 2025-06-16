@@ -1,947 +1,232 @@
 <!DOCTYPE html>
-<html lang="en"> <head>
+<html lang="en">
+
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DC: Dark Legion - Anvil Calculator</title>
+    <title>DC: Dark Legion - Anvil Calculator (Redesigned)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="css/calculator/ui.css" rel="stylesheet">
     <link href="css/theme.css" rel="stylesheet">
-
-    <style>
-        /* Custom font for Inter */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-
-        /* CSS Variables for Theming (Single Theme - Light) */
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f0f4f8;
-            --bg-section: #ffffff;
-            --bg-section-alt: #f8fafc; 
-            --bg-input: #ffffff;
-            --text-primary: #1e293b;   /* Slate 800 */
-            --text-secondary: #334155; /* Slate 700 */
-            --text-muted: #64748b;     /* Slate 500 */
-            --text-button: #ffffff;
-            --border-primary: #e2e8f0; /* Slate 200 */
-            --border-input: #cbd5e1;   /* Slate 300 */
-            --border-focus: #3b82f6;   /* Blue 500 */
-            --border-focus-shadow: rgba(59, 130, 246, 0.2);
-            --shadow-color: rgba(0, 0, 0, 0.1);
-            --shadow-section-color: rgba(0, 0, 0, 0.08);
-            --btn-primary-bg: #3b82f6;
-            --btn-primary-hover-bg: #2563eb;
-            --btn-primary-disabled-bg: #93c5fd;
-            --btn-secondary-bg: #64748b;
-            --btn-secondary-hover-bg: #475569;
-            --btn-success-bg: #10b981;
-            --btn-success-hover-bg: #059669;
-            --btn-danger-bg: #ef4444;
-            --btn-danger-hover-bg: #dc2626;
-            --result-box-bg: #e0f2fe;
-            --result-box-border: #3b82f6;
-            --result-box-text-strong: #1e40af;
-            --probability-box-bg: #f0fdfa;
-            --probability-box-border: #06b6d4;
-            --probability-box-text-strong: #0e7490;
-            --advisory-box-bg: #fffbeb;
-            --advisory-box-border: #f59e0b;
-            --advisory-box-text: #78350f;
-            --toggle-on-bg: #10b981;
-            --toggle-on-border: #059669;
-            --toggle-off-bg: #d1d5db;
-            --toggle-off-border: #9ca3af;
-            --toggle-off-text: #4b5563;
-            --chart-bg: #ffffff;
-            --chart-grid-color: rgba(0, 0, 0, 0.1);
-            --chart-font-color: #6b7280; /* slate-500 */
-            --chart-title-color: #1e293b; /* slate-800 */
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            color: var(--text-primary);
-        }
-        .container {
-            max-width: 90%; 
-            margin: 2rem auto;
-            padding: 1.5rem;
-            background-color: var(--bg-primary);
-            border-radius: 1rem; 
-            box-shadow: 0 10px 20px var(--shadow-color);
-        }
-        .input-group label {
-            font-weight: 600;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-        }
-        .input-group input, .input-group select, .input-group textarea {
-            border: 1px solid var(--border-input);
-            background-color: var(--bg-input);
-            color: var(--text-primary);
-            border-radius: 0.5rem; 
-            padding: 0.6rem 0.8rem;
-            margin-top: 0.3rem;
-            width: 100%;
-            transition: border-color 0.2s;
-        }
-         .input-group input::placeholder, .input-group textarea::placeholder {
-            color: var(--text-muted); 
-        }
-        .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
-             border-color: var(--border-focus);
-             box-shadow: 0 0 0 2px var(--border-focus-shadow); 
-        }
-        
-        .btn { 
-            padding: 0.8rem 1.5rem;
-            border-radius: 0.75rem; 
-            font-weight: 700;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            color: var(--text-button);
-        }
-        .btn-primary {
-            background-color: var(--btn-primary-bg);
-            box-shadow: 0 4px 6px var(--shadow-color);
-        }
-        .btn-primary:hover:not(:disabled) {
-            background-color: var(--btn-primary-hover-bg);
-            transform: translateY(-1px);
-        }
-        .btn-primary:disabled {
-            background-color: var(--btn-primary-disabled-bg);
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-        .btn-secondary {
-            background-color: var(--btn-secondary-bg);
-            padding: 0.6rem 1.2rem; 
-            box-shadow: 0 4px 6px var(--shadow-color);
-        }
-        .btn-secondary:hover:not(:disabled) {
-            background-color: var(--btn-secondary-hover-bg);
-            transform: translateY(-1px);
-        }
-         .btn-success { 
-            background-color: var(--btn-success-bg);
-            box-shadow: 0 4px 6px var(--shadow-color);
-        }
-        .btn-success:hover:not(:disabled) {
-            background-color: var(--btn-success-hover-bg);
-            transform: translateY(-1px);
-        }
-        .btn-danger {
-            background-color: var(--btn-danger-bg);
-            padding: 0.6rem 1.2rem; 
-            box-shadow: 0 4px 6px var(--shadow-color);
-        }
-        .btn-danger:hover:not(:disabled) {
-            background-color: var(--btn-danger-hover-bg);
-            transform: translateY(-1px);
-        }
-        .result-box {
-            background-color: var(--result-box-bg);
-            border-left: 4px solid var(--result-box-border);
-            padding: 1rem;
-            border-radius: 0.75rem;
-            margin-top: 1rem;
-        }
-        .result-box strong {
-            color: var(--result-box-text-strong);
-        }
-        #unlockCostSection .result-box { 
-            background-color: #eef2ff; /* indigo-50 */
-            border-left-color: #6366f1; /* indigo-500 */
-        }
-         #unlockCostSection .result-box strong {
-            color: #3730a3; /* indigo-800 */
-        }
-
-        .status-success {
-            color: #047857; 
-            background-color: #d1fae5; 
-        }
-        .status-error {
-            color: #b91c1c; 
-            background-color: #fee2e2; 
-        }
-        .status-info { 
-            color: #0369a1; 
-            background-color: #e0f2fe; 
-        }
-        .status-message {
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            min-height: 2rem; 
-        }
-      
-        h1 { color: var(--text-primary); }
-        h2 { color: var(--text-secondary); border-bottom: 1px solid var(--border-primary); padding-bottom: 0.5rem; margin-bottom: 1rem; }
-        h3, h4 { color: var(--text-secondary); }
-        #systemTitle { color: var(--result-box-border); }
-        #unlockCostSection h3 { color: var(--result-box-border); } 
-        .calculation-detail h3, .calculation-detail h4 { color: var(--text-primary); }
-        .calculation-detail p { color: var(--text-muted); }
-        .calculation-detail strong { color: var(--text-primary); }
-
-        details {
-            background-color: var(--bg-section-alt);
-            border: 1px solid var(--border-primary);
-            border-radius: 0.75rem;
-            padding: 1rem;
-            margin-top: 1.5rem;
-            box-shadow: inset 0 1px 3px var(--shadow-section-color);
-        }
-        details summary {
-            color: var(--text-secondary);
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        details summary::-webkit-details-marker { display: none; }
-        details summary::after { content: '+'; font-size: 1.5rem; transition: transform 0.2s; }
-        details[open] summary::after { content: '-'; }
-        
-        .advisory-box { 
-            background-color: var(--advisory-box-bg);
-            border-left: 4px solid var(--advisory-box-border);
-            color: var(--advisory-box-text);
-            padding: 1rem;
-            border-radius: 0.75rem;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-        }
-        .advisory-box.advisory-indigo-theme { 
-            background-color: #eef2ff; 
-            border-left-color: #6366f1; 
-            color: #3730a3; 
-        }
-       
-        .chart-container { 
-            background-color: var(--chart-bg);
-            position: relative;
-            width: 100%;
-            margin-top: 1rem; 
-            padding: 1rem;
-            border-radius: 1rem;
-            box-shadow: 0 5px 15px var(--shadow-section-color);
-        }
-        .main-chart-container { height: 400px; margin-top: 2rem; }
-        .prob-chart-container { height: 300px; }
-        .main-chart-container h3, .prob-chart-container h4 { color: var(--text-primary); }
-        .prob-chart-container h4 { color: var(--btn-primary-bg); }
-        #probSummary, #probabilitySimulationDetails { color: var(--text-muted); }
-        
-        .calc-section { 
-            padding: 1.5rem; border-radius: 0.75rem; 
-            box-shadow: 0 4px 12px var(--shadow-section-color); 
-            margin-bottom: 2rem; border: 1px solid var(--border-primary); 
-            background-color: var(--bg-section); 
-        }
-        .calc-section.alt-bg { background-color: var(--bg-section-alt); } 
-        .btn-loading .btn-text { display: none; }
-        .btn-loading .spinner { display: inline-block; width: 1.25rem; height: 1.25rem; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: var(--text-button); animation: spin 1s ease-in-out infinite; }
-        .spinner { display: none; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
-        .toggle-btn {
-            cursor: pointer;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            width: 100%; 
-            text-align: center;
-        }
-        .toggle-btn-on { 
-            background-color: var(--toggle-on-bg);
-            color: var(--text-button); 
-            border: 1px solid var(--toggle-on-border);
-        }
-        .toggle-btn-off { 
-            background-color: var(--toggle-off-bg);
-            color: var(--toggle-off-text);
-            border: 1px solid var(--toggle-off-border);
-        }
-
-        /* Responsive adjustments */
-        @media (min-width: 640px) { .container { max-width: 600px; } }
-        @media (min-width: 1024px) { .container { max-width: 768px; } }
-        @media (min-width: 1280px) { .container { max-width: 1024px; } }
-
-        /* Modal Styles */
-        .modal-backdrop {
-            position: fixed;
-            inset: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        .modal-backdrop.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        .modal-content {
-            background-color: #ffffff;
-            color: #1e293b;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
-            max-width: 90vw;
-            width: 500px;
-        }
-        .modal-content h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 1rem;
-        }
-        .modal-content textarea {
-            width: 100%;
-            min-height: 100px;
-            border: 1px solid #cbd5e1;
-            background-color: #ffffff;
-            color: #1e293b;
-            padding: 0.5rem;
-            border-radius: 0.375rem;
-            margin-bottom: 1rem;
-            font-family: monospace;
-            font-size: 0.875rem;
-        }
-        .modal-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.75rem;
-        }
-
-        /* Style for the active navigation link */
-        .nav-link.active {
-            background-color: #3b82f6; /* Tailwind Blue 500 */
-            color: white;
-            text-shadow: 0 0 5px rgba(59, 130, 246, 0.7);
-        }
-        .glowing-text-nav {
-            text-shadow: 0 0 6px rgba(59, 130, 246, 0.5),
-                        0 0 12px rgba(59, 130, 246, 0.3);
-        }
-        
-        /* Tooltip Styles */
-        .tooltip-container {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            margin-left: 8px;
-        }
-        .tooltip-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background-color: var(--text-muted);
-            color: var(--bg-primary);
-            font-size: 12px;
-            font-weight: bold;
-            cursor: help;
-        }
-        .tooltip-text {
-            visibility: hidden;
-            opacity: 0;
-            width: 250px;
-            background-color: var(--text-primary);
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 8px;
-            position: absolute;
-            z-index: 10;
-            bottom: 135%;
-            left: 50%;
-            transform: translateX(-50%);
-            transition: opacity 0.2s ease-in-out;
-            font-weight: normal;
-            font-size: 0.8rem;
-            line-height: 1.4;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        .tooltip-text::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: var(--text-primary) transparent transparent transparent;
-        }
-        .tooltip-container:hover .tooltip-text {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .view-switcher-btn {
-            background-color: #e2e8f0;
-            color: #475569;
-            transition: all 0.2s ease-in-out;
-            border: 1px solid var(--border-primary);
-        }
-        .view-switcher-btn.active {
-            background-color: var(--btn-primary-bg);
-            color: var(--text-button);
-            border-color: var(--btn-primary-hover-bg);
-            z-index: 10;
-        }
-        .wizard-nav-container {
-             display: flex; 
-             justify-content: space-between; 
-             align-items: center; 
-             margin-top: 1.5rem;
-        }
-
-
-    </style>
 </head>
 
-<body> 
+<body>
     <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="ogwmj" data-description="Support me on Buy me a coffee!" data-message="No pressure." data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+    
     <div class="background-hero"></div>
 
+    <!-- Navigation Bar -->
     <nav class="bg-slate-900 bg-opacity-80 backdrop-filter backdrop-blur-md shadow-lg sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <a href="index.html" class="flex-shrink-0 text-white text-2xl font-bold glowing-text-nav">
-                    DC:DL Tools
-                    </a>
-                </div>
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-center space-x-4">
-                        <a href="index.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
-                        <a href="calculator.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Anvil Calculator</a>
-                        <a href="teams.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Team Builder</a>
-                        <a href="changemap.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Changemap</a>
-                        
-                        <div id="auth-status-desktop" class="ml-4"></div>
-
-                    </div>
+                <a href="index.html" class="text-white text-2xl font-bold">DC:DL Tools</a>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="index.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                    <a href="calculator.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Anvil Calculator</a>
+                    <a href="teams.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Team Builder</a>
+                    <a href="changemap.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Changemap</a>
+                    <div id="auth-status-desktop"></div>
                 </div>
                 <div class="-mr-2 flex md:hidden">
                     <button type="button" id="mobile-menu-button" class="bg-slate-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
                         <span class="sr-only">Open main menu</span>
-                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
-                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
                     </button>
                 </div>
             </div>
         </div>
-
         <div class="md:hidden hidden" id="mobile-menu">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="index.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
                 <a href="calculator.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Anvil Calculator</a>
                 <a href="teams.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Team Builder</a>
-                <a href="changemap.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">ChangeMap</a>
-                
+                <a href="changemap.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Changemap</a>
                 <div id="auth-status-mobile" class="pt-4 mt-2 border-t border-slate-700"></div>
-
             </div>
         </div>
     </nav>
 
     <div class="container">
-        <h1 class="text-3xl font-bold text-center mb-2">DC: Dark Legion - Anvil Calculator</h1>
-        <p id="userIdDisplay" class="text-xs text-center text-gray-500 mb-1">User ID: Initializing...</p>
-        <p class="text-center text-gray-600 mb-6">Estimate the average Anvils needed for any Limited Mythic character upgrade.
-        </p>
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-3 glowing-text">Anvil Calculator</h1>
+            <p class="text-lg md:text-xl text-blue-200">Estimate the cost to upgrade your Limited Mythic heroes.</p>
+        </header>
 
-        <div class="flex justify-center mb-6">
-            <div class="inline-flex rounded-md shadow-sm" role="group">
-                <button type="button" id="switchToAdvancedBtn" class="view-switcher-btn active px-4 py-2 text-sm font-medium rounded-l-lg">
-                    Advanced View
-                </button>
-                <button type="button" id="switchToGuidedBtn" class="view-switcher-btn px-4 py-2 text-sm font-medium rounded-r-lg">
-                    Guided View
-                </button>
-            </div>
-        </div>
-        
-        <div id="wizard-container" class="hidden">
-            <div id="wizard-step-1" class="wizard-step calc-section">
-                </div>
-        
-            <div id="wizard-step-2" class="wizard-step calc-section hidden">
-                <h2 class="text-xl font-semibold mb-4 text-blue-800">Step 2: Your Anvil Budget</h2>
-                <p class="text-sm text-gray-600 mb-4">How many Anvils are you prepared to spend? This helps calculate the probability of your success.</p>
-                <div id="wizard-budget-input-container">
-                    </div>
-                 <div id="wizard-probability-status" class="status-message mt-3"></div>
-            </div>
-        
-            <div id="wizard-step-3" class="wizard-step hidden">
-                 <h2 class="text-2xl font-semibold mb-4 text-center">Your Guided Results</h2>
-                <div id="wizard-results-container">
-                    </div>
-            </div>
-        
-            <div id="wizard-navigation" class="wizard-nav-container">
-                <button id="wizardBackBtn" class="btn btn-secondary hidden">Back</button>
-                <div>
-                    <span id="wizard-step-indicator" class="text-sm text-gray-500 mr-4">Step 1 of 2</span>
-                    <button id="wizardNextBtn" class="btn btn-primary">Next</button>
-                </div>
-            </div>
-        </div>
+        <!-- Main Wizard Container -->
+        <main id="wizard-container" class="card">
 
-        <div id="calculator-sections-container">
-
-            <div id="championGuidanceSection" class="calc-section bg-blue-50 border-blue-200">
-                <h2 class="text-xl font-semibold mb-4 text-blue-800">Champion Guidance</h2>
-                <div class="input-group">
-                    <label for="customDropdownTrigger" class="block text-sm">Select a Limited Mythic Champion:</label>
-                    
-                    <div id="customChampionDropdown" class="relative mt-1">
-                        <input type="hidden" id="lmChampionSelect" name="lm-champion">
-            
-                        <button type="button" id="customDropdownTrigger" class="relative w-full bg-white border border-border-input rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-border-focus focus:border-border-focus sm:text-sm" aria-haspopup="listbox" aria-expanded="false" disabled>
-                            <span class="flex items-center">
-                                <img src="" alt="" class="h-6 w-6 flex-shrink-0 rounded-full hidden" id="selectedChampionImg">
-                                <span class="ml-3 block truncate" id="selectedChampionName">-- Loading Champions... --</span>
-                            </span>
-                            <span class="ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path fill-rule="evenodd" d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </span>
-                        </button>
-                        
-                        <ul id="customDropdownOptions" class="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm hidden" tabindex="-1" role="listbox">
-                            <li class="text-gray-500 px-4 py-2">Loading...</li>
-                        </ul>
-                    </div>
-                    </div>
-                <div id="guidanceButtons" class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 hidden">
-                    <button id="f2pRecBtn" class="btn btn-secondary py-2.5">Apply F2P Recommendation</button>
-                    <button id="minRecBtn" class="btn btn-secondary py-2.5">Apply Minimum Recommendation</button>
-                </div>
-                 <div id="guidanceStatus" class="status-message mt-3"></div>
+            <!-- Step Navigation -->
+            <div id="stepper" class="stepper">
+                <div id="step-btn-1" class="step active" data-step="1">Define Goal</div>
+                <div id="step-btn-2" class="step" data-step="2">Set Parameters</div>
             </div>
 
-            <div id="upgradeRangeSection" class="calc-section">
-                <h2 class="text-xl font-semibold mb-4">Select Upgrade Range</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+            <!-- Step 1: Define Goal -->
+            <div id="step-1-content" class="wizard-step">
+                <h2 class="text-xl font-bold text-accent mb-6">What is your upgrade objective?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="input-group">
-                        <label for="startStarLevel" class="block text-sm">Starting Star Level:</label>
-                        <select id="startStarLevel" class="block w-full">
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="targetStarLevel" class="block text-sm">Target Star Level:</label>
-                        <select id="targetStarLevel" class="block w-full">
-                        </select>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Initial Unlock Cost:</label>
-                    <button id="toggleUnlockCostBtn" type="button" class="toggle-btn toggle-btn-off w-full">
-                        Include Initial Unlock: OFF
-                    </button>
-                </div>
-                <p id="starLevelError" class="error-message hidden text-center mt-2"></p>
-            </div>
-            
-            <div id="probabilitySection" class="calc-section">
-                <h2 class="text-xl font-semibold mb-4">Pity & Budget</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4"> <div class="input-group">
-                        <label for="currentMythicPity" class="block text-sm">
-                            Current Mythic Pity Count:
-                             <span class="tooltip-container">
-                                <span class="tooltip-icon">?</span>
-                                <span class="tooltip-text">How many pulls you've made since your last Mythic character. If you just got a Mythic, this is 0.</span>
-                            </span>
-                        </label>
-                        <input type="number" id="currentMythicPity" value="0" step="1" min="0">
-                        <p id="currentMythicPityError" class="error-message hidden"></p>
-                    </div>
-                    <div class="input-group">
-                        <label for="currentLMPity" class="block text-sm">
-                            Non-LM Mythics Pulled (for LM Guarantee):
-                            <span class="tooltip-container">
-                                <span class="tooltip-icon">?</span>
-                                <span class="tooltip-text">How many Non-LM Mythics you've pulled since your last LM. Max is 3 if the guarantee triggers after the 3rd Non-LM.</span>
-                            </span>
-                        </label>
-                        <input type="number" id="currentLMPity" value="0" step="1" min="0" max="3"> <p id="currentLMPityError" class="error-message hidden"></p>
-                    </div>
-                     <div class="input-group md:col-span-2" id="anvilBudgetInputGroup">
-                        <label for="anvilBudget" class="block text-sm">Your Anvil Budget (for Probability):</label>
-                        <input type="number" id="anvilBudget" value="100" step="10" min="1" class="w-full">
-                    </div>
-                </div>
-                 <div id="probabilityStatus" class="status-message mt-3"></div>
-            </div>
-
-            <details id="advancedParametersSection" class="calc-section alt-bg">
-                <summary>Advanced Bleed System Parameters</summary>
-                <div class="mt-4">
-                    <div id="basePullRatesSection" class="mb-6">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Base Pull Rates</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="input-group">
-                                <label for="mythicProbability" class="block text-sm">
-                                    Mythic Base Probability:
-                                    <span class="tooltip-container">
-                                        <span class="tooltip-icon">?</span>
-                                        <span class="tooltip-text">The base chance of pulling any Mythic character (e.g., 0.0384 for 3.84%).</span>
-                                    </span>
-                                </label>
-                                <input type="number" id="mythicProbability" value="0.0384" step="0.0001" min="0" max="1">
-                                <p id="mythicProbabilityError" class="error-message hidden"></p>
-                            </div>
-                            <div class="input-group">
-                                <label for="mythicHardPity" class="block text-sm">
-                                    Mythic Hard Pity:
-                                    <span class="tooltip-container">
-                                        <span class="tooltip-icon">?</span>
-                                        <span class="tooltip-text">The maximum number of pulls after which a Mythic character is guaranteed.</span>
-                                    </span>
-                                </label>
-                                <input type="number" id="mythicHardPity" value="50" step="1" min="1">
-                                <p id="mythicHardPityError" class="error-message hidden"></p>
-                            </div>
-                        </div>
-                        <div class="input-group mt-4">
-                            <label for="lmRateUpChance" class="block text-sm">
-                                Limited Mythic Rate-Up Chance:
-                                <span class="tooltip-container">
-                                    <span class="tooltip-icon">?</span>
-                                    <span class="tooltip-text">When you pull a Mythic, this is the chance it's the featured Limited Mythic (e.g., 0.269 for 26.9%).</span>
+                        <label for="custom-champion-dropdown-trigger">Select a Limited Mythic Champion</label>
+                        <!-- UPDATED: Custom Dropdown Structure -->
+                        <div id="custom-champion-dropdown" class="relative mt-2">
+                            <input type="hidden" id="lmChampionSelect" name="lm-champion">
+                            <button type="button" id="custom-champion-dropdown-trigger" aria-haspopup="listbox" aria-expanded="false" disabled>
+                                <span class="flex items-center">
+                                    <img src="" alt="Selected Champion" class="hidden" id="selected-champion-img">
+                                    <span class="ml-2 block truncate" id="selected-champion-name">-- Loading... --</span>
                                 </span>
+                                <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                    <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    </svg>
+                                </span>
+                            </button>
+                            <ul id="custom-champion-dropdown-options" class="hidden" role="listbox">
+                                <!-- Options will be populated by JS -->
+                            </ul>
+                        </div>
+                        <div id="guidanceButtons" class="mt-2 space-x-2 hidden">
+                           <button id="f2pRecBtn" class="btn btn-secondary text-xs">Apply F2P Rec</button>
+                           <button id="minRecBtn" class="btn btn-secondary text-xs">Apply Min Rec</button>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="input-group">
+                                <label for="startStarLevel">Starting From</label>
+                                <select id="startStarLevel"></select>
+                            </div>
+                            <div class="input-group">
+                                <label for="targetStarLevel">Upgrading To</label>
+                                <select id="targetStarLevel"></select>
+                            </div>
+                        </div>
+                         <p id="starLevelError" class="text-red-500 text-xs mt-2 hidden"></p>
+                    </div>
+                </div>
+                 <div class="mt-6 flex items-center justify-center bg-slate-100 p-4 rounded-lg">
+                    <input type="checkbox" id="toggleUnlockCost" class="h-5 w-5 rounded text-indigo-600 focus:ring-indigo-500 border-gray-300">
+                    <label for="toggleUnlockCost" class="ml-3 text-sm font-medium text-gray-700">Include the Anvil cost to unlock the character initially?</label>
+                </div>
+            </div>
+
+            <!-- Step 2: Set Parameters (Unchanged) -->
+            <div id="step-2-content" class="wizard-step hidden-step">
+                <h2 class="text-xl font-bold text-accent mb-6">Fine-tune your calculation parameters.</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Pity & Budget -->
+                    <div class="space-y-6">
+                         <div class="input-group">
+                            <label for="currentMythicPity">Current Mythic Pity
+                                <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Pulls made since your last Mythic character.</span></span>
                             </label>
-                            <input type="number" id="lmRateUpChance" value="0.269" step="0.001" min="0" max="1">
-                            <p id="lmRateUpChanceError" class="error-message hidden"></p>
+                            <input type="number" id="currentMythicPity" value="0" min="0">
+                             <p id="currentMythicPityError" class="text-red-500 text-xs mt-1 hidden"></p>
                         </div>
-                        <p class="text-sm text-gray-500 mt-2">Note: "Fail three times" guarantee for Limited Mythic is hardcoded (3 Non-LM before guaranteed LM).</p>
-                    </div>
-
-                    <div id="shardBleedSystemsSection">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Shard Bleed System</h3>
-                        <p class="text-xs text-gray-500 mb-2">Configure the shards you get when pulling a duplicate Mythic.</p>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="input-group">
-                                <label for="lmShardsYield" class="block text-xs">Limited Mythic (LM) Shards:</label>
-                                <input type="number" id="lmShardsYield" value="40" min="0" step="1">
-                                <p id="lmShardsYieldError" class="error-message hidden"></p>
-                            </div>
-                            <div class="input-group">
-                                <label class="block text-xs">Non-Limited Mythic (NM) Shards:</label>
-                                <p class="text-sm text-gray-600 pt-1">The logic for bonus shards from Non-Limited Mythic pulls is currently disabled. They grant 0 shards.</p>
-                            </div>
+                        <div class="input-group">
+                            <label for="currentLMPity">Non-LM Mythics Pulled
+                                <span class="tooltip-container"><span class="tooltip-icon">?</span><span class="tooltip-text">Non-LM Mythics pulled since your last LM. Max is 3.</span></span>
+                            </label>
+                            <input type="number" id="currentLMPity" value="0" min="0" max="3">
+                             <p id="currentLMPityError" class="text-red-500 text-xs mt-1 hidden"></p>
+                        </div>
+                        <div class="input-group">
+                            <label for="anvilBudget">Your Anvil Budget (for Probability)</label>
+                            <input type="number" id="anvilBudget" value="100" min="1">
                         </div>
                     </div>
+                    <!-- Advanced Parameters -->
+                    <details class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                        <summary class="font-semibold cursor-pointer text-sm">Advanced Pull Rates & Shards</summary>
+                        <div class="mt-4 space-y-4">
+                            <div class="input-group">
+                                <label class="text-xs" for="mythicProbability">Mythic Base Probability</label>
+                                <input type="number" id="mythicProbability" value="0.0384" step="0.0001">
+                                <p id="mythicProbabilityError" class="text-red-500 text-xs mt-1 hidden"></p>
+                            </div>
+                             <div class="input-group">
+                                <label class="text-xs" for="mythicHardPity">Mythic Hard Pity</label>
+                                <input type="number" id="mythicHardPity" value="50" step="1">
+                                <p id="mythicHardPityError" class="text-red-500 text-xs mt-1 hidden"></p>
+                            </div>
+                            <div class="input-group">
+                                <label class="text-xs" for="lmRateUpChance">LM Rate-Up Chance</label>
+                                <input type="number" id="lmRateUpChance" value="0.269" step="0.001">
+                                <p id="lmRateUpChanceError" class="text-red-500 text-xs mt-1 hidden"></p>
+                            </div>
+                            <div class="input-group">
+                                <label class="text-xs" for="lmShardsYield">LM Shard Yield</label>
+                                <input type="number" id="lmShardsYield" value="40" step="1">
+                                 <p id="lmShardsYieldError" class="text-red-500 text-xs mt-1 hidden"></p>
+                            </div>
+                        </div>
+                    </details>
                 </div>
-            </details>
+            </div>
             
-             <button id="calculateBtn" class="btn btn-primary w-full text-lg py-3 mb-8"> <span class="spinner"></span>
-                <span class="btn-text">Calculate Cost & Probability</span>
-            </button>
+            <!-- Calculation Button -->
+            <div class="text-center mt-10">
+                <button id="calculateBtn" class="btn btn-primary text-lg">
+                    <span class="btn-text">Calculate Cost & Probability</span>
+                </button>
+            </div>
+        </main>
 
-            <div id="results" class="calc-section">
-                <h2 class="text-xl font-semibold mb-4">Expected Value Results</h2>
-                <div id="unlockCostSection" class="hidden">
-                    <h3 class="font-medium text-lg mb-2">Initial Unlock Cost (for one copy of LM)</h3>
-                    <div class="result-box mb-2">
-                        <p><strong>Average:</strong> <span id="anvilsUnlockAvg">--</span> Anvils</p>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="result-box mb-2">
-                            <p><strong>Best Case:</strong> <span id="anvilsUnlockBest">--</span> Anvils</p>
-                        </div>
-                        <div class="result-box">
-                            <p><strong>Worst Case:</strong> <span id="anvilsUnlockWorst">--</span> Anvils</p>
-                        </div>
-                    </div>
+        <!-- Dynamic Results Container (Unchanged) -->
+        <section id="results-container">
+            <h2 class="text-2xl font-bold text-center mb-6 font-extrabold mb-3 glowing-text hi-white">Calculation Results</h2>
+            <!-- Canvas-powered result cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="result-card-canvas">
+                    <h4>Worst Case</h4>
+                    <canvas id="worst-case-canvas" width="200" height="120"></canvas>
+                    <p class="text-xs text-slate-400 mt-2" aria-hidden="true">Statistically Unlikely</p>
                 </div>
-
-                <div class="result-box mb-4">
-                    <p><strong>Shards Needed for This Upgrade:</strong> <span id="shardsNeededForUpgrade">--</span></p>
+                 <div class="result-card-canvas border-2 border-indigo-300">
+                    <h4>Average Cost</h4>
+                    <canvas id="average-case-canvas" width="200" height="120"></canvas>
+                     <p class="text-xs text-slate-400 mt-2" aria-hidden="true">Expected Value</p>
                 </div>
-                <div>
-                    <h3 id="systemTitle" class="font-medium text-lg mb-2">Anvil Cost</h3>
-                    <div class="result-box mb-2">
-                        <p><strong>Average:</strong> <span id="anvilsAvg">--</span> Anvils</p>
-                    </div>
-                    <div class="result-box mb-2">
-                        <p><strong>Best Case:</strong> <span id="anvilsBest">--</span> Anvils</p>
-                    </div>
-                    <div class="result-box">
-                        <p><strong>Worst Case:</strong> <span id="anvilsWorst">--</span> Anvils</p>
-                    </div>
+                 <div class="result-card-canvas">
+                    <h4>Best Case</h4>
+                    <canvas id="best-case-canvas" width="200" height="120"></canvas>
+                     <p class="text-xs text-slate-400 mt-2" aria-hidden="true">Statistically Lucky</p>
                 </div>
-                
-                <details id="detailedCalculationsDetails">
-                    <summary>Detailed Calculations (Expected Value)</summary>
-                    <div class="calculation-detail mt-4">
-                        <h3 class="font-semibold text-md mb-2">Core Pull Mechanics:</h3>
-                        <p><strong
-                                title="The average number of Anvils (draws) you need to spend to obtain any Mythic character, considering base probability and hard pity.">Average
-                                Draws per Mythic Character:</strong> <span id="calcDrawsPerMythic">--</span> Anvils</p>
-                        <p><strong
-                                title="The maximum number of Mythic characters you might have to pull to trigger the guarantee for one Limited Mythic (e.g., 3 Non-LMs + 1 LM = 4 Mythics).">Worst-Case
-                                Mythic Pulls to Guarantee one LM:</strong> <span id="calcWorstCaseMythicsForLM">--</span>
-                        </p>
-                        <div id="detailUnlockCostSection" class="hidden">
-                            <h4 class="font-medium text-sm mt-2 mb-1">Initial Unlock Cost:</h4>
-                            <p><strong
-                                    title="On average, how many Mythic characters (LM or Non-LM) you'll pull before getting your first copy of the featured Limited Mythic.">Avg
-                                    Mythics for 1st LM:</strong> <span id="detailAvgMythicsForLM">--</span></p>
-                            <p>Anvils for Unlock (Avg): <span id="detailAnvilsUnlockAvg">--</span> | (Best): <span
-                                    id="detailAnvilsUnlockBest">--</span> | (Worst): <span
-                                    id="detailAnvilsUnlockWorst">--</span></p>
-                        </div>
-
-                        <h3 class="font-semibold text-md mt-4 mb-2">Shard Gain per Mythic Pull (for
-                            progression after unlock):</h3>
-                        <p>Shard System (LM=<span id="detailLMS"></span>, NM=<span
-                                id="detailNMS"></span>): <strong
-                                title="Considering the LM rate-up and guarantee, this is the average number of shards for the *featured LM* you effectively gain each time you pull *any* Mythic character during the LM's banner.">Avg
-                                Effective Shards per Mythic:</strong> <span id="calcAvgShards">--</span></p>
-
-                        <h3 class="font-semibold text-md mt-4 mb-2">Anvil Cost Breakdown (for Selected Shard
-                            Upgrade):</h3>
-                        <p id="anvilCostBreakdownNote">(Costs below are for the selected shard upgrade. Total costs may
-                            include initial unlock if selected above.)</p>
-                        <div>
-                            <p>Shards for This Upgrade: <strong id="detailTargetShards">--</strong></p>
-                            <p>Effective Shards/Mythic (Avg): <strong id="detailAvgShards">--</strong></p>
-                            <p>Calculated Mythic Pulls (Avg): <strong id="detailMythicPullsAvg">--</strong></p>
-                            <p>Total Anvils for Upgrade (Avg): <strong id="detailAnvilsAvg">--</strong></p>
-
-                            <p class="mt-2">Effective Shards/Mythic (Best): <strong
-                                    id="detailBestShards">--</strong></p>
-                            <p>Calculated Mythic Pulls (Best): <strong id="detailMythicPullsBest">--</strong></p>
-                            <p>Total Anvils for Upgrade (Best): <strong id="detailAnvilsBest">--</strong></p>
-
-                            <p class="mt-2">Effective Shards/Mythic (Worst): <strong
-                                    id="detailWorstShards">--</strong></p>
-                            <p>Calculated Mythic Pulls (Worst): <strong id="detailMythicPullsWorst">--</strong>
-                            </p>
-                            <p>Total Anvils for Upgrade (Worst): <strong id="detailAnvilsWorst">--</strong></p>
-                        </div>
-                    </div>
-                </details>
             </div>
 
-             <div id="probabilityResultsArea" class="calc-section hidden">
-                <h2 class="text-xl font-semibold mb-4">Probability of Success Results</h2>
-                <p id="probabilitySummaryText" class="mb-2 text-center font-medium"></p>
-                <div class="w-full lg:w-3/4 mx-auto">
-                    <h4 class="font-semibold text-lg text-center mb-1">Anvil Cost Distribution</h4>
-                    <div class="chart-container prob-chart-container"> 
-                        <canvas id="probChart"></canvas>
-                    </div>
-                    <p id="probSummary" class="text-sm text-center mt-2"></p>
+            <!-- Probability Distribution Chart -->
+            <div class="card">
+                <h3 class="text-lg font-bold mb-1 text-center">Probability of Success</h3>
+                <p id="probability-summary" class="text-sm text-slate-500 text-center mb-4">Results for your budget of <span id="budget-display">100</span> Anvils.</p>
+                <div class="h-72 w-full">
+                    <canvas id="probability-chart-canvas"></canvas>
                 </div>
-                <p id="probabilitySimulationDetails" class="text-xs mt-4 text-center"></p>
+            </div>
+            
+            <!-- Monte Carlo Simulation Chart -->
+            <div class="card mt-8">
+                <h3 class="text-lg font-bold mb-1 text-center">Monte Carlo Simulation</h3>
+                <p class="text-sm text-slate-500 text-center mb-4">Visualizing 10,000 simulated attempts.</p>
+                <div class="h-72 w-full">
+                    <canvas id="monte-carlo-chart-canvas"></canvas>
+                </div>
             </div>
 
-
-            <div id="mainAnvilCostChartContainer" class="calc-section">
-                <h3 class="font-semibold text-xl mb-4 text-center">Average Anvil Costs by Star Level
-                    (Total from Base)</h3>
-                    <div style="min-height: 400px;">
-                        <canvas id="anvilCostChart"></canvas>
-                    </div>
-            </div>
-
-            <details id="explanationSection" class="calc-section alt-bg">
-                <summary class="text-2xl font-bold text-slate-800">Anvil Calculator Guide</summary>
-                 <div class="mt-6">
-                    <section class="mb-10 bg-white p-6 rounded-lg shadow">
-                        <h3 class="text-2xl font-semibold text-slate-700 mb-4 pb-2 border-b border-slate-200">Introduction</h3>
-                        <div class="mt-3">
-                            <p class="text-slate-600 leading-relaxed">This calculator is designed to help you estimate the resources (primarily "Anvils") needed to unlock and upgrade Limited Mythic (LM) characters in gacha games that use a similar pull and pity system. It provides both long-term average costs (Expected Value) and short-term probability distributions based on your current progress and budget.</p>
-                        </div>
-                    </section>
-
-                    <section class="mb-10 bg-white p-6 rounded-lg shadow">
-                        <h3 class="text-2xl font-semibold text-slate-700 mb-4 pb-2 border-b border-slate-200">Core Concepts & Terminology</h3>
-                        <div class="mt-3">
-                            <p class="text-slate-600 leading-relaxed mb-4">Understanding these terms will help you use the calculator effectively:</p>
-                            <ul class="space-y-4 pl-5">
-                                <li><strong class="text-slate-700 block mb-1">Anvils:</strong> The in-game currency or item used to perform a "pull" or "summon" on a character banner.</li>
-                                <li><strong class="text-slate-700 block mb-1">Mythic Character:</strong> A high-rarity character type. This calculator focuses on "Limited Mythic" characters.</li>
-                                <li><strong class="text-slate-700 block mb-1">Limited Mythic (LM):</strong> A specific, featured Mythic character available on a banner for a limited time. This is usually the primary target for players.</li>
-                                <li><strong class="text-slate-700 block mb-1">Mythic Base Probability:</strong> The fundamental chance (e.g., 3.84% or <code class="bg-slate-100 text-red-600 px-1.5 py-1 rounded text-sm">0.0384</code>) of pulling *any* Mythic character on a single Anvil pull, before any pity systems are considered.</li>
-                                <li><strong class="text-slate-700 block mb-1">Mythic Hard Pity:</strong> The maximum number of Anvil pulls after which you are guaranteed to receive *any* Mythic character if you haven't pulled one already. For example, if hard pity is 50, your 50th pull will be a Mythic if the previous 49 were not.</li>
-                                <li><strong class="text-slate-700 block mb-1">Limited Mythic Rate-Up Chance:</strong> When you do pull a Mythic character, this is the probability that the Mythic you pulled is the featured Limited Mythic (LM) character. For example, a 26.9% (or <code class="bg-slate-100 text-red-600 px-1.5 py-1 rounded text-sm">0.269</code>) rate-up means if you pull a Mythic, there's a 26.9% chance it's the LM.</li>
-                                <li><strong class="text-slate-700 block mb-1">LM Guarantee (Non-LM Pity / "Fail Three Times"):</strong> Many games have a system to ensure you eventually get the featured LM. This calculator hardcodes a common version: if you pull a certain number of Mythic characters that are *not* the featured LM (e.g., 3 Non-LM Mythics in a row), your *next* Mythic pull is guaranteed to be the featured LM. The "Non-LM Mythics Pulled (for LM Guarantee)" input lets you track this.</li>
-                                <li><strong class="text-slate-700 block mb-1">Star Levels & Shards:</strong> Characters often have star levels (e.g., 1-Star White to 5-Star Red). Upgrading to the next star level requires a specific number of "shards" (or character-specific fragments/duplicates).</li>
-                                <li class="bg-slate-50 p-4 rounded-md border border-slate-200">
-                                    <strong class="text-slate-700 block mb-2">Shard Bleed System:</strong> When you pull a duplicate of a Mythic character you already own (or sometimes any Mythic during an LM banner), you often receive shards for the *featured LM* instead of (or in addition to) shards for the character you actually pulled. 
-                                    <ul class="list-disc space-y-1.5 pl-6 mt-2 text-sm text-slate-600">
-                                        <li>For LM pulls, it uses the configured LM shard value.</li>
-                                        <li>For Non-LM pulls, the logic for bonus shards is present in the code but currently disabled, so they grant 0 shards toward the featured LM.</li>
-                                    </ul>
-                                </li>
-                                <li><strong class="text-slate-700 block mb-1">Expected Value (EV):</strong> In this context, the average number of Anvils you would expect to spend to achieve a goal (like unlocking an LM or getting enough shards for an upgrade) if you repeated the process many, many times. It's a long-term average and doesn't guarantee your individual experience will match it.</li>
-                                <li><strong class="text-slate-700 block mb-1">Probability Distribution:</strong> Shows the likelihood of different Anvil cost outcomes for achieving your goal within a specific budget, based on many simulated attempts. This gives a better sense of risk and potential cost variation than EV alone.</li>
-                            </ul>
-                        </div>
-                    </section>
-
-                    <section class="mb-10 bg-white p-6 rounded-lg shadow">
-                        <h3 class="text-2xl font-semibold text-slate-700 mb-6 pb-2 border-b border-slate-200">Calculator Features Explained</h3>
-                        <div class="space-y-8">
-                            
-                            <section>
-                                <h4 class="text-xl font-semibold text-slate-700 mb-3">1. Champion Configurations</h4>
-                                <p class="text-slate-600 leading-relaxed mb-3">This section allows you to save and load your calculator settings.</p>
-                                <ul class="list-disc space-y-1.5 pl-6 text-slate-600">
-                                    <li><strong>Configuration Name:</strong> Give your current set of inputs a unique name.</li>
-                                    <li><strong>Save Current Settings:</strong> Saves all your current inputs (probabilities, pity, star levels, etc.) to your browser's local storage (or cloud if Firebase is active) under the entered name.</li>
-                                    <li><strong>Load Configuration:</strong> Select a previously saved configuration from the dropdown.</li>
-                                    <li><strong>Load Selected:</strong> Populates all calculator fields with the values from the selected configuration.</li>
-                                    <li><strong>Delete Selected:</strong> Removes the selected configuration from your saved list.</li>
-                                </ul>
-                            </section>
-
-                            <section>
-                                <h4 class="text-xl font-semibold text-slate-700 mb-3">2. Base Pull Rates</h4>
-                                <p class="text-slate-600 leading-relaxed mb-3">Configure the fundamental probabilities of your pulls.</p>
-                                <ul class="list-disc space-y-1.5 pl-6 text-slate-600">
-                                    <li><strong>Mythic Base Probability:</strong> Enter the game's stated base chance of pulling any Mythic character (e.g., for 3.84%, enter <code class="bg-slate-100 text-red-600 px-1.5 py-1 rounded text-sm">0.0384</code>).</li>
-                                    <li><strong>Mythic Hard Pity:</strong> Enter the number of pulls at which a Mythic is guaranteed (e.g., <code class="bg-slate-100 text-red-600 px-1.5 py-1 rounded text-sm">50</code>).</li>
-                                    <li><strong>Limited Mythic Rate-Up Chance:</strong> When a Mythic is pulled, what's the chance it's the featured LM? (e.g., for 26.9%, enter <code class="bg-slate-100 text-red-600 px-1.5 py-1 rounded text-sm">0.269</code>).</li>
-                                </ul>
-                            </section>
-
-                            <section>
-                                <h4 class="text-xl font-semibold text-slate-700 mb-3">3. Select Upgrade Range</h4>
-                                <p class="text-slate-600 leading-relaxed mb-3">Define your character upgrade goal.</p>
-                                <ul class="list-disc space-y-1.5 pl-6 text-slate-600">
-                                    <li><strong>Starting Star Level:</strong> The current star level of your character. "Base Character (0 Shards)" means you haven't unlocked them or have no progression shards.</li>
-                                    <li><strong>Target Star Level:</strong> The desired star level you want to reach.</li>
-                                    <li class="bg-slate-50 p-3 rounded-md border border-slate-200 mt-2"><strong>Initial Unlock Cost (Toggle):</strong>
-                                        <ul class="list-circle space-y-1 pl-6 mt-1.5 text-sm">
-                                            <li><strong>OFF:</strong> Calculations assume you have *already unlocked* the LM character. Costs shown are only for accumulating shards for the selected star upgrade.</li>
-                                            <li><strong>ON:</strong> Calculations will *include* the estimated cost to pull your first copy of the LM character, *in addition* to the shards needed for the selected upgrade.</li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </section>
-                            
-                            <section>
-                                <h4 class="text-xl font-semibold text-slate-700 mb-3">4. Shard Bleed System</h4>
-                                <p class="text-slate-600 leading-relaxed mb-3">This section allows you to configure shard yields for duplicate pulls.</p>
-                                <ul class="list-disc space-y-1.5 pl-6 text-slate-600">
-                                    <li>Input the number of shards gained when pulling a duplicate of the featured LM.</li>
-                                    <li>It is assumed Non-Limited Mythic pulls grant 0 shards.</li>
-                                </ul>
-                            </section>
-
-                            <section>
-                                <h4 class="text-xl font-semibold text-slate-700 mb-3">5. Pity & Budget</h4>
-                                 <p class="text-slate-600 leading-relaxed mb-3">This section allows you to input your current progress and budget for the probability simulation.</p>
-                                <ul class="list-disc space-y-1.5 pl-6 text-slate-600">
-                                    <li><strong>Current Mythic Pity Count:</strong> How many pulls have you made since your *last* Mythic character? If you just got a Mythic, this is 0. This value should be less than your "Mythic Hard Pity".</li>
-                                    <li><strong>Non-LM Mythics Pulled (for LM Guarantee):</strong> How many *non-featured* Mythics have you pulled in a row since your last *featured LM*? If the LM guarantee is "after 3 non-LMs", this value can be 0, 1, or 2.</li>
-                                    <li><strong>Your Anvil Budget:</strong> How many Anvils are you willing to spend for this attempt? This is used for the probability simulation.</li>
-                                </ul>
-                            </section>
-
-                            <section>
-                                <h4 class="text-xl font-semibold text-slate-700 mb-3">6. Calculate Cost & Probability Button</h4>
-                                <p class="text-slate-600 leading-relaxed">This is the main calculation button. It uses all inputs to compute both the average (Expected Value) Anvils needed and run the probability simulation. Results are shown in their respective sections.</p>
-                            </section>
-
-                            <section>
-                                <h4 class="text-xl font-semibold text-slate-700 mb-3">7. Results Sections</h4>
-                                <h5 class="text-lg font-medium text-slate-600 mt-4 mb-2">Expected Value Results:</h5>
-                                <ul class="list-disc space-y-1.5 pl-6 text-slate-600">
-                                    <li><strong>Initial Unlock Cost (if toggled ON):</strong> Average, Best, and Worst-case Anvils to get the *first copy* of the LM.</li>
-                                    <li><strong>Shards Needed for This Upgrade:</strong> Calculated based on your Start/Target Star Levels.</li>
-                                    <li><strong>Anvil Cost:</strong> Shows Average, Best, and Worst-case Anvils for the selected shard upgrade (or total including unlock if toggled ON).</li>
-                                </ul>
-                                 <h5 class="text-lg font-medium text-slate-600 mt-4 mb-2">Probability Simulation Results:</h5>
-                                 <ul class="list-disc space-y-1.5 pl-6 text-slate-600">
-                                    <li>A summary of your success rate (the chance to achieve your goal within your budget).</li>
-                                    <li>Median and 90th percentile (P90) Anvil costs for *successful* simulated attempts.</li>
-                                    <li>A histogram chart showing the distribution of Anvil costs across all simulations.</li>
-                                </ul>
-                                <h5 class="text-lg font-medium text-slate-600 mt-4 mb-2">Detailed Calculations (Expected Value) (Expandable):</h5>
-                                <p class="text-slate-600 leading-relaxed pl-6">Provides a breakdown of intermediate values used in the EV calculations, such as average draws per Mythic, effective shards per Mythic, etc.</p>
-                                <h5 class="text-lg font-medium text-slate-600 mt-4 mb-2">Anvil Cost Chart (EV):</h5>
-                                <p class="text-slate-600 leading-relaxed pl-6">Visualizes the *total average* Anvils needed to reach each star level from a base character (0 shards). If "Include Initial Unlock" is ON, this chart also includes the unlock cost.</p>
-                            </section>
-                            
-                        </div>
-                    </section>
-
-                    <section class="mb-10 bg-white p-6 rounded-lg shadow">
-                        <h3 class="text-2xl font-semibold text-slate-700 mb-4 pb-2 border-b border-slate-200">Understanding the Math (Conceptual)</h3>
-                        <div class="mt-3">
-                            <ul class="space-y-4 pl-5 text-slate-600 leading-relaxed">
-                                <li><strong class="text-slate-700 block mb-1">Expected Value (EV):</strong> The EV calculations are based on statistical averages. For example, "Average Draws per Mythic" considers the base probability and the hard pity to determine, on average, how many pulls it takes to get one Mythic. Similarly, "Avg Effective Shards per Mythic" considers the LM rate-up, LM guarantee, and shard yields to find the average number of LM-specific shards gained per Mythic pulled. These averages are then used to estimate the total Anvils. The EV calculation assumes 0 shards from Non-Limited Mythic pulls for long-term progression.</li>
-                                <li><strong class="text-slate-700 block mb-1">Probability Simulation:</strong> This feature runs many (e.g., 10,000) simulated "pulling sessions" using random number generation according to the probabilities you've set. It starts each simulated session from your specified "Current Pity" values. By observing how many Anvils each simulated session takes to reach your goal (or if it fails within the budget), it can build a distribution of outcomes and calculate success rates.</li>
-                            </ul>
-                        </div>
-                    </section>
-
-                    <section class="mb-6 bg-white p-6 rounded-lg shadow"> <h3 class="text-2xl font-semibold text-slate-700 mb-4 pb-2 border-b border-slate-200">Tips for Using the Calculator</h3>
-                        <div class="mt-3">
-                            <ul class="list-disc space-y-2.5 pl-6 text-slate-600 leading-relaxed">
-                                <li>Use this tool for planning your resource allocation and understanding potential costs.</li>
-                                <li>Remember that gacha games are based on randomness. The "Expected Value" is an average over many trials; your personal experience in a single attempt can vary significantly.</li>
-                                <li>The "Probability Distribution" gives a better sense of this variance and the risk involved for a specific budget.</li>
-                                <li>Keep your "Current Pity" inputs updated for the most accurate personal probability simulations.</li>
-                            </ul>
-                        </div>
-                    </section>
-                </div>
-            </details>
-        </div>
+        </section>
 
     </div>
 
-    <feedback-widget></feedback-widget>
-
-    <script type="module" src="js/auth-ui.js"></script>
-    <script type="module" src="js/feedback-widget.js"></script>
-    <script type="module" src="js/calculator.js"></script>
-    <script type="text/javascript" src="js/navigation.js"></script>
-    
+    <div id="canvas-accessibility" class="sr-only" aria-live="polite"></div>
     <auth-ui status-container-id="auth-status-desktop"></auth-ui>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Mobile Menu Toggle Logic (unchanged) ---
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-            if (mobileMenuButton && mobileMenu) {
-                const openIcon = mobileMenuButton.querySelector('svg:first-child');
-                const closeIcon = mobileMenuButton.querySelector('svg:last-child');
-                mobileMenuButton.addEventListener('click', () => {
-                    mobileMenu.classList.toggle('hidden');
-                    openIcon.classList.toggle('hidden');
-                    closeIcon.classList.toggle('hidden');
-                });
-            }
-            
             // --- Auth Button Synchronization Logic (Updated) ---
             const desktopAuthContainer = document.getElementById('auth-status-desktop');
             const mobileAuthContainer = document.getElementById('auth-status-mobile');
@@ -994,5 +279,14 @@
             }
         });
     </script>
+    <feedback-widget></feedback-widget>
+
+    <script type="module" src="js/auth-ui.js"></script>
+    <script type="module" src="js/feedback-widget.js"></script>
+    <script type="module" src="js/calculator/core.js"></script>
+    <script type="module" src="js/calculator/canvas.js"></script>
+    <script type="module" src="js/calculator/ui.js"></script>
+    <script type="text/javascript" src="js/navigation.js"></script>
+
 </body>
 </html>
