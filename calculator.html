@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DC: Dark Legion - Anvil Calculator (Redesigned)</title>
+    <title>DC: Dark Legion - Anvil Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -71,10 +71,11 @@
             <!-- Step 1: Define Goal -->
             <div id="step-1-content" class="wizard-step">
                 <h2 class="text-xl font-bold text-accent mb-6">What is your upgrade objective?</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
                     <div class="input-group">
                         <label for="custom-champion-dropdown-trigger">Select a Limited Mythic Champion</label>
-                        <!-- UPDATED: Custom Dropdown Structure -->
                         <div id="custom-champion-dropdown" class="relative mt-2">
                             <input type="hidden" id="lmChampionSelect" name="lm-champion">
                             <button type="button" id="custom-champion-dropdown-trigger" aria-haspopup="listbox" aria-expanded="false" disabled>
@@ -89,29 +90,30 @@
                                 </span>
                             </button>
                             <ul id="custom-champion-dropdown-options" class="hidden" role="listbox">
-                                <!-- Options will be populated by JS -->
-                            </ul>
+                                </ul>
                         </div>
                         <div id="guidanceButtons" class="mt-2 space-x-2 hidden">
-                           <button id="f2pRecBtn" class="btn btn-secondary text-xs">Apply F2P Rec</button>
-                           <button id="minRecBtn" class="btn btn-secondary text-xs">Apply Min Rec</button>
+                        <button id="f2pRecBtn" class="btn btn-secondary text-xs">Apply F2P Rec</button>
+                        <button id="minRecBtn" class="btn btn-secondary text-xs">Apply Min Rec</button>
                         </div>
                     </div>
-                    <div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="input-group">
-                                <label for="startStarLevel">Starting From</label>
-                                <select id="startStarLevel"></select>
-                            </div>
-                            <div class="input-group">
-                                <label for="targetStarLevel">Upgrading To</label>
-                                <select id="targetStarLevel"></select>
-                            </div>
-                        </div>
-                         <p id="starLevelError" class="text-red-500 text-xs mt-2 hidden"></p>
+
+                    <div class="input-group">
+                        <label>Starting From</label>
+                        <div id="start-star-selector-container" class="star-selector-container mt-2"></div>
+                        <input type="hidden" id="startStarLevel">
                     </div>
+
+                    <div class="input-group">
+                        <label>Upgrading To</label>
+                        <div id="target-star-selector-container" class="star-selector-container mt-2"></div>
+                        <input type="hidden" id="targetStarLevel">
+                    </div>
+
                 </div>
-                 <div class="mt-6 flex items-center justify-center bg-slate-100 p-4 rounded-lg">
+
+                <p id="starLevelError" class="text-red-500 text-xs mt-2 hidden"></p>
+                <div class="mt-6 flex items-center justify-center bg-slate-100 p-4 rounded-lg">
                     <input type="checkbox" id="toggleUnlockCost" class="h-5 w-5 rounded text-indigo-600 focus:ring-indigo-500 border-gray-300">
                     <label for="toggleUnlockCost" class="ml-3 text-sm font-medium text-gray-700">Include the Anvil cost to unlock the character initially?</label>
                 </div>
