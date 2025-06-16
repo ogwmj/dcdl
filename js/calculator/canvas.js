@@ -1,8 +1,8 @@
 /**
- * @file calculator-canvas.js
+ * @file js/calculator/canvas.js
  * @fileoverview Handles all drawing and animation on canvas elements
  * for the redesigned Anvil Calculator.
- * @version 1.1.0 - Added Monte Carlo simulation chart.
+ * @version 2.0.0
  */
 
 // --- CHART INSTANCES ---
