@@ -1,5 +1,5 @@
 /**
- * @file ui.css
+ * @file css/teams/ui.css
  * @description Styles for the redesigned Team Builder page.
  * Adapted from the Anvil Calculator styles for consistency.
  */
@@ -397,13 +397,10 @@ img.icon-class-table {
     object-fit: contain;
 }
 
-/* --- DataTables: Definitive Layout & Theme (Corrected Selectors) --- */
-
-/* 1. This layout structure fixed the width issue. */
-.dt-container {
+#roster-table-container .dt-container {
     width: 100%;
 }
-.dt-container .dt-layout-row:not(.dt-layout-table) {
+#roster-table-container .dt-container .dt-layout-row:not(.dt-layout-table) {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -411,10 +408,7 @@ img.icon-class-table {
     padding: 0.75rem 0;
 }
 
-/* 2. These rules apply the custom theme using the MODERN selectors. */
-
-/* Style the "Show X entries" dropdown */
-.dt-length select {
+#roster-table-container .dt-length select {
     width: auto;
     display: inline-block;
     margin: 0 0.5rem;
@@ -424,14 +418,13 @@ img.icon-class-table {
     background-color: #f8fafc;
     color: var(--text-primary);
 }
-.dt-length select:focus {
+#roster-table-container .dt-length select:focus {
     outline: none;
     border-color: var(--border-accent);
     box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 
-/* Style the search input box */
-.dt-search input {
+#roster-table-container .dt-search input {
     display: inline-block;
     width: auto;
     min-width: 200px;
@@ -442,27 +435,24 @@ img.icon-class-table {
     background-color: #f8fafc;
     color: var(--text-primary);
 }
-.dt-search input:focus {
+#roster-table-container .dt-search input:focus {
     outline: none;
     border-color: var(--border-accent);
     box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 
-/* Style the labels for length and search */
-div.dt-length,
-div.dt-search {
+#roster-table-container div.dt-length,
+#roster-table-container div.dt-search {
     color: var(--text-secondary);
     font-weight: 600;
 }
 
-/* Style the "Showing X of Y" info text */
-div.dt-info {
+#roster-table-container div.dt-info {
     color: var(--text-secondary);
     font-size: 0.9rem;
 }
 
-/* Style the pagination buttons using MODERN selectors */
-.dt-paging .dt-paging-button {
+#roster-table-container .dt-paging .dt-paging-button {
     color: var(--text-accent) !important;
     background-color: var(--bg-interactive);
     border: 1px solid transparent;
@@ -476,20 +466,20 @@ div.dt-info {
     line-height: 1;
 }
 
-.dt-paging .dt-paging-button:hover:not(.disabled) {
+#roster-table-container .dt-paging .dt-paging-button:hover:not(.disabled) {
     background-color: #c7d2fe;
     border-color: var(--border-accent);
 }
 
-.dt-paging .dt-paging-button.current,
-.dt-paging .dt-paging-button.current:hover {
+#roster-table-container .dt-paging .dt-paging-button.current,
+#roster-table-container .dt-paging .dt-paging-button.current:hover {
     color: white !important;
     background-color: var(--text-accent);
     border-color: var(--text-accent);
 }
 
-.dt-paging .dt-paging-button.disabled,
-.dt-paging .dt-paging-button.disabled:hover {
+#roster-table-container .dt-paging .dt-paging-button.disabled,
+#roster-table-container .dt-paging .dt-paging-button.disabled:hover {
     background-color: #e2e8f0;
     color: var(--text-secondary) !important;
     opacity: 0.6;
@@ -497,7 +487,6 @@ div.dt-info {
     border-color: transparent;
 }
 
-/* --- Enhanced Champion Card Styles --- */
 .champion-avatar-center {
     position: absolute;
     top: 50%;
