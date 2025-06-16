@@ -608,6 +608,7 @@ function showLoading(isLoading) {
     if (isLoading) {
         DOM.loadingIndicator.classList.remove('hidden');
     } else {
+        // When loading is finished, the main container will be shown, hiding this.
         DOM.sharedTeamContainer.classList.remove('hidden');
         DOM.loadingIndicator.classList.add('hidden');
     }
@@ -622,8 +623,8 @@ function showLoading(isLoading) {
  */
 function showError(message, details = '') {
     showLoading(false);
-    DOM.sharedTeamContainer.innerHTML = '';
-    DOM.sharedTeamContainer.classList.remove('hidden');
+    DOM.sharedTeamContainer.innerHTML = ''; // Clear any partial content
+    DOM.sharedTeamContainer.classList.remove('hidden'); // Ensure the container is visible to show the error
     DOM.errorIndicator.classList.remove('hidden');
     DOM.errorIndicator.querySelector('h2').textContent = message;
     DOM.errorMessageDetails.textContent = details;
