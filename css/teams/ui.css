@@ -773,6 +773,7 @@ table.dataTable > tbody > tr.dtr-expanded > td.dtr-control::before {
 .gear-grid-pips {
     display: flex;
     gap: 0.5rem;
+    flex-wrap: wrap;
 }
 
 .gear-pip {
