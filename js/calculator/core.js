@@ -1,3 +1,11 @@
+/**
+ * @file calculator-core.js
+ * @fileoverview Core calculation logic for the Anvil Calculator.
+ * This module is completely decoupled from the DOM and UI. It takes
+ * parameters and returns structured data, making it pure and testable.
+ * @version 1.1.0 - Re-introduced actual vs. effective rate logic.
+ */
+
 // --- CONSTANTS ---
 
 const CONSTANTS = {
