@@ -22,6 +22,12 @@
     <link href="css/theme.css" rel="stylesheet">
 </head>
 <body>
+    <!-- Full Page Loader -->
+    <div id="page-loader">
+        <div class="loader-spinner"></div>
+        <p>Assembling the Legion...</p>
+    </div>
+
     <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="ogwmj" data-description="Support me on Buy me a coffee!" data-message="No pressure." data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
 
     <div class="background-hero"></div>
@@ -61,9 +67,9 @@
         </div>
     </nav>
 
-    <div class="container">
+    <div class="container mx-auto p-4 md:p-8">
         <header class="text-center mb-12">
-            <h1 class="text-4xl md:text-6xl font-extrabold mb-3 glowing-text">Shared Team View</h1>
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-3 glowing-text hi-white">Shared Team View</h1>
             <p class="text-lg md:text-xl text-blue-200">Viewing a team shared by another user.</p>
         </header>
 
@@ -75,7 +81,7 @@
         </div>
 
         <!-- Main content area where the team will be rendered -->
-        <main id="shared-team-container" class="card">
+        <main id="shared-team-container" class="bg-white p-6 rounded-lg shadow-lg hidden">
             <div id="loading-indicator" class="text-center">
                 <div class="loading-spinner"></div>
                 <p class="text-indigo-600 mt-2 font-semibold">Loading Shared Team...</p>
@@ -89,7 +95,7 @@
 
 
         <div class="text-center mt-8">
-            <a href="teams.html" class="btn btn-primary">
+            <a href="teams.html" class="inline-block bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
                 &larr; Back to the Team Builder
             </a>
         </div>
