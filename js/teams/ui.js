@@ -65,6 +65,7 @@ const DOM = {
     shareTeamModal: document.getElementById('share-team-modal'),
     swapChampionModal: document.getElementById('swap-champion-modal'),
     toastContainer: document.getElementById('toast-container'),
+    customTooltip: document.getElementById('custom-tooltip'),
 };
 
 /**
@@ -82,7 +83,9 @@ let teamModalCallback = null;
 let originalBestTeam = null, currentDisplayedTeam = null;
 let champStarSelectorControl = null;
 let legacyStarSelectorControl = null;
-
+let currentGearState = {};
+let gearGridControl = null;
+let forceLevelControl = null;
 
 // =================================================================================================
 // #region INITIALIZATION
@@ -111,8 +114,10 @@ async function initializePage() {
         ]);
         
         populateStaticDropdowns();
+        gearGridControl = createInteractiveGearGrid('interactive-gear-grid');
         champStarSelectorControl = createStarSelector('champ-star-selector-container', 'champ-star-color');
         legacyStarSelectorControl = createStarSelector('legacy-piece-selector-container', 'legacy-piece-star-color');
+        forceLevelControl = createForceLevelSelector('force-level-selector', 'champ-force-level');
         attachEventListeners();
 
         // Now that all game data is loaded, we can safely listen for auth changes and load user data.
@@ -219,14 +224,118 @@ async function loadUserData() {
 }
 
 /**
+ * @description Creates and manages the interactive gear grid component with custom tooltips.
+ * @param {string} containerId - The ID of the element to host the grid.
+ * @returns {object} A controller object with an `update` method.
+ */
+function createInteractiveGearGrid(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return null;
+
+    const rarities = GAME_CONSTANTS.STANDARD_GEAR_RARITIES;
+    const slots = ['Head', 'Arms', 'Chest', 'Legs', 'Waist'];
+    const rarityColors = { "None": "#94a3b8", "Uncommon": "#22c55e", "Rare": "#3b82f6", "Epic": "#a855f7", "Legendary": "#eab308", "Mythic": "#e84848", "Mythic Enhanced": "#b50202" };
+
+    const render = () => {
+        // Build the HTML in a more robust, multi-step way to prevent rendering glitches.
+        const masterPipsHtml = rarities.map(r =>
+            `<div class="gear-pip" data-rarity="${r}" style="background-color: ${rarityColors[r]}">${r.charAt(0)}</div>`
+        ).join('');
+
+        const slotsHtml = slots.map(slot => {
+            const individualPipsHtml = rarities.map(r =>
+                `<div class="gear-pip" data-rarity="${r}" title="${r}" style="background-color: ${rarityColors[r]}">&nbsp;</div>`
+            ).join('');
+            
+            return `
+                <div class="gear-grid-row" data-slot="${slot.toLowerCase()}">
+                    <div class="gear-grid-label">${slot}</div>
+                    <div class="gear-grid-pips">${individualPipsHtml}</div>
+                </div>
+            `;
+        }).join('');
+
+        container.innerHTML = `
+            <div class="gear-grid-row gear-grid-master" data-slot="master">
+                <div class="gear-grid-label">Set All</div>
+                <div class="gear-grid-pips">${masterPipsHtml}</div>
+            </div>
+            <hr class="my-2 border-slate-200">
+            ${slotsHtml}
+        `;
+
+        updateVisuals();
+    };
+
+    const updateVisuals = () => {
+        slots.forEach(slotKey => {
+            const lowerSlot = slotKey.toLowerCase();
+            const selectedRarity = currentGearState[lowerSlot] || 'None';
+            container.querySelectorAll(`[data-slot="${lowerSlot}"] .gear-pip`).forEach(pip => {
+                pip.classList.toggle('selected', pip.dataset.rarity === selectedRarity);
+            });
+        });
+    };
+
+    // --- EVENT LISTENERS (No changes here) ---
+    container.addEventListener('click', (e) => {
+        if (!e.target.matches('.gear-pip')) return;
+        const target = e.target;
+        const slot = target.closest('.gear-grid-row').dataset.slot;
+        const rarity = target.dataset.rarity;
+
+        if (slot === 'master') {
+            slots.forEach(s => currentGearState[s.toLowerCase()] = rarity);
+        } else {
+            currentGearState[slot] = rarity;
+        }
+        updateVisuals();
+    });
+
+    container.addEventListener('mouseover', (e) => {
+        if (!e.target.matches('.gear-grid-master .gear-pip')) return;
+        const pip = e.target;
+        DOM.customTooltip.textContent = pip.dataset.rarity;
+        DOM.customTooltip.classList.remove('hidden');
+
+        const pipRect = pip.getBoundingClientRect();
+        const top = pipRect.top + window.scrollY - DOM.customTooltip.offsetHeight - 8;
+        const left = pipRect.left + window.scrollX + (pipRect.width / 2) - (DOM.customTooltip.offsetWidth / 2);
+        
+        DOM.customTooltip.style.top = `${top}px`;
+        DOM.customTooltip.style.left = `${left}px`;
+        DOM.customTooltip.classList.add('visible');
+    });
+
+    container.addEventListener('mouseout', (e) => {
+        if (!e.target.matches('.gear-grid-master .gear-pip')) return;
+        DOM.customTooltip.classList.remove('visible');
+    });
+    // --- END EVENT LISTENERS ---
+
+    const update = (newState) => {
+        if (!newState) {
+             currentGearState = { head: 'None', arms: 'None', chest: 'None', legs: 'None', waist: 'None' };
+        } else {
+             currentGearState = {
+                 head: newState.head?.rarity || 'None',
+                 arms: newState.arms?.rarity || 'None',
+                 chest: newState.chest?.rarity || 'None',
+                 legs: newState.legs?.rarity || 'None',
+                 waist: newState.waist?.rarity || 'None',
+             };
+        }
+        updateVisuals();
+    };
+
+    render();
+    return { update };
+}
+
+/**
  * @description Populates all static dropdown menus with options from GAME_CONSTANTS.
  */
 function populateStaticDropdowns() {
-    const forceLevels = Object.keys(GAME_CONSTANTS.FORCE_LEVEL_MODIFIER).map(i => ({ value: i, text: `${i} / 5` }));
-    populateDropdown(DOM.champForceLevel, forceLevels, '0');
-    document.querySelectorAll('.gear-rarity-select').forEach(sel => {
-        populateDropdown(sel, GAME_CONSTANTS.STANDARD_GEAR_RARITIES.map(r => ({value: r, text: r})));
-    });
     populateLegacyPieceSelect();
 }
 
@@ -251,6 +360,61 @@ function populateDropdown(selectElement, options, defaultValue) {
         selectElement.appendChild(optionEl);
     });
     if (defaultValue) selectElement.value = defaultValue;
+}
+
+/**
+ * @description Creates an interactive Force Level selector component.
+ * @param {string} containerId - The ID of the element to host the pips.
+ * @param {string} hiddenInputId - The ID of the hidden input that stores the value.
+ * @returns {object} A controller object with a `setValue` method.
+ */
+function createForceLevelSelector(containerId, hiddenInputId) {
+    const container = document.getElementById(containerId);
+    const hiddenInput = document.getElementById(hiddenInputId);
+
+    if (!container) {
+        console.warn(`Force Level Selector init failed: Container element with ID '${containerId}' not found.`);
+        return null;
+    }
+    if (!hiddenInput) {
+        console.warn(`Force Level Selector init failed: Hidden input with ID '${hiddenInputId}' not found.`);
+        return null;
+    }
+
+    const levels = [0, 1, 2, 3, 4, 5];
+
+    const render = () => {
+        container.innerHTML = levels.map(level =>
+            `<div class="force-level-pip" data-level="${level}" title="Force Level ${level}">${level}</div>`
+        ).join('');
+    };
+
+    const updateVisuals = (currentLevel) => {
+        container.querySelectorAll('.force-level-pip').forEach(pip => {
+            const pipLevel = parseInt(pip.dataset.level, 10);
+            pip.classList.toggle('active', pipLevel > 0 && pipLevel <= currentLevel);
+        });
+    };
+
+    container.addEventListener('click', (e) => {
+        if (e.target.matches('.force-level-pip')) {
+            const level = e.target.dataset.level;
+            hiddenInput.value = level;
+            updateVisuals(level);
+        }
+    });
+
+    const setValue = (level) => {
+        const newLevel = level !== undefined && level !== null ? level : 0;
+        hiddenInput.value = newLevel;
+        updateVisuals(newLevel);
+    };
+    
+    render();
+
+    setValue(0);
+
+    return { setValue };
 }
 
 // =================================================================================================
@@ -360,11 +524,11 @@ async function handleAddUpdateChampion() {
             starColorTier: DOM.champStarColor.value,
             forceLevel: selectedForceLevel,
             gear: {
-                head: { rarity: DOM.gear.head.value },
-                arms: { rarity: DOM.gear.arms.value },
-                legs: { rarity: DOM.gear.legs.value },
-                chest: { rarity: DOM.gear.chest.value },
-                waist: { rarity: DOM.gear.waist.value },
+                head: { rarity: currentGearState.head || 'None' },
+                arms: { rarity: currentGearState.arms || 'None' },
+                legs: { rarity: currentGearState.legs || 'None' },
+                chest: { rarity: currentGearState.chest || 'None' },
+                waist: { rarity: currentGearState.waist || 'None' },
             },
             legacyPiece: legacyPieceData,
         };
@@ -390,11 +554,11 @@ async function handleAddUpdateChampion() {
             starColorTier: DOM.champStarColor.value,
             forceLevel: selectedForceLevel,
             gear: {
-                head: { rarity: DOM.gear.head.value },
-                arms: { rarity: DOM.gear.arms.value },
-                legs: { rarity: DOM.gear.legs.value },
-                chest: { rarity: DOM.gear.chest.value },
-                waist: { rarity: DOM.gear.waist.value },
+                head: { rarity: currentGearState.head || 'None' },
+                arms: { rarity: currentGearState.arms || 'None' },
+                legs: { rarity: currentGearState.legs || 'None' },
+                chest: { rarity: currentGearState.chest || 'None' },
+                waist: { rarity: currentGearState.waist || 'None' },
             },
             legacyPiece: legacyPieceData
         };
@@ -481,17 +645,23 @@ function cancelEditMode() {
     if (btnText) btnText.nodeValue = "Add Champion ";
     DOM.cancelEditBtn.classList.add('hidden');
     DOM.customChampDropdownTrigger.disabled = false;
-    if (DOM.rosterFormContainer) {
-        DOM.champSelectDb.value = '';
-        DOM.champStarColor.value = 'Unlocked';
-        DOM.champForceLevel.value = '0';
-        Object.values(DOM.gear).forEach(el => el.value = 'None');
-        DOM.legacyPieceSelect.value = '';
-        DOM.legacyPieceStarColor.value = 'Unlocked';
+
+    // Reset standard form inputs
+    DOM.champSelectDb.value = '';
+    if (forceLevelControl) forceLevelControl.setValue(0);
+    DOM.legacyPieceSelect.value = '';
+    
+    // Reset the new interactive components using their controllers
+    if (champStarSelectorControl) { // Corrected: "window." removed
+        champStarSelectorControl.setValue('Unlocked');
+    }
+    if (legacyStarSelectorControl) { // Corrected: "window." removed
+        legacyStarSelectorControl.setValue('Unlocked');
+    }
+    if (gearGridControl) {
+        gearGridControl.update(null);
     }
 
-    if (champStarSelectorControl) champStarSelectorControl.setValue('Unlocked');
-    if (legacyStarSelectorControl) legacyStarSelectorControl.setValue('Unlocked');
     populateChampionSelect();
     updateChampionFormDisplay(null);
 }
@@ -513,11 +683,11 @@ function handleEditChampion(id) {
     if (champStarSelectorControl) {
         champStarSelectorControl.setValue(champ.starColorTier);
     }
-    DOM.champForceLevel.value = champ.forceLevel;
-    Object.keys(DOM.gear).forEach(key => {
-        const gearValue = champ.gear?.[key];
-        DOM.gear[key].value = gearValue?.rarity || gearValue || 'None';
-    });
+
+    if (forceLevelControl) forceLevelControl.setValue(champ.forceLevel);
+    if (gearGridControl) {
+        gearGridControl.update(champ.gear);
+    }
     populateLegacyPieceSelect(champ.class);
     DOM.legacyPieceSelect.value = champ.legacyPiece?.id || '';
     
@@ -557,7 +727,7 @@ async function handleUpgradeChampion(id) {
     const champIndex = playerRoster.findIndex(c => c.id === id);
     if (champIndex === -1) { showToast("Champion not found for upgrade.", "error"); return; }
     const champ = playerRoster[champIndex];
-    const message = `Upgrade ${champ.name} from Legendary to Mythic? This is permanent and also upgrades their star tier to Blue 5-Star.`;
+    const message = `Upgrade ${champ.name} from Legendary to Mythic? This is permanent and also upgrades their star tier to Purple 5-Star.`;
     openConfirmModal('Confirm Upgrade', message, async () => {
         const upgradedChamp = { ...champ };
         if (upgradedChamp.upgradeSynergy && !upgradedChamp.inherentSynergies.includes(upgradedChamp.upgradeSynergy)) {
@@ -565,7 +735,7 @@ async function handleUpgradeChampion(id) {
         }
         upgradedChamp.baseRarity = "Mythic";
         upgradedChamp.canUpgrade = false;
-        upgradedChamp.starColorTier = "Blue 5-Star";
+        upgradedChamp.starColorTier = "Purple 5-Star";
         upgradedChamp.individualScore = TeamCalculator.calculateIndividualChampionScore(upgradedChamp, GAME_CONSTANTS);
         playerRoster[champIndex] = upgradedChamp;
         await recalculateAndUpdateSavedTeams(upgradedChamp);

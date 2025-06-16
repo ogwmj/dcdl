@@ -109,32 +109,16 @@
                             <input type="hidden" id="champ-star-color">
                         </div>
                         <div class="input-group mt-4">
-                            <label for="champ-force-level">Force Level</label>
-                            <select id="champ-force-level"></select>
+                            <label for="force-level-selector">Force Level</label>
+                            <div id="force-level-selector" class="mt-1"></div>
+                            <input type="hidden" id="champ-force-level">
                         </div>
                     </div>
                     <!-- Column 2: Gear -->
-                    <div class="space-y-4">
-                        <div class="input-group">
-                            <label for="gear-head">Head Gear</label>
-                            <select id="gear-head" class="gear-rarity-select"></select>
-                        </div>
-                        <div class="input-group">
-                            <label for="gear-arms">Arms Gear</label>
-                            <select id="gear-arms" class="gear-rarity-select"></select>
-                        </div>
-                        <div class="input-group">
-                            <label for="gear-legs">Legs Gear</label>
-                            <select id="gear-legs" class="gear-rarity-select"></select>
-                        </div>
-                        <div class="input-group">
-                            <label for="gear-chest">Chest Gear</label>
-                            <select id="gear-chest" class="gear-rarity-select"></select>
-                        </div>
-                        <div class="input-group">
-                            <label for="gear-waist">Waist Gear</label>
-                            <select id="gear-waist" class="gear-rarity-select"></select>
-                        </div>
+                    <div>
+                        <label class="font-bold text-primary mb-2 block">Gear Rarity</label>
+                        <div id="interactive-gear-grid" class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                            </div>
                     </div>
                     <!-- Column 3: Legacy & Actions -->
                     <div>
@@ -235,6 +219,7 @@
     </div>
 
     <!-- Modals -->
+    <div id="custom-tooltip" class="hidden"></div>
     <div id="team-name-modal" class="modal-backdrop hidden"></div>
     <div id="processing-modal" class="modal-backdrop hidden"></div>
     <div id="confirm-modal" class="modal-backdrop hidden"></div>
