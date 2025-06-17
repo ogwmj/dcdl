@@ -5,89 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DC: Dark Legion Guide, Team Builder & Anvil Calculator | FunPlus | DC Universe</title>
     <meta name="description" content="Your ultimate command center for DC: Dark Legion by FunPlus. Get the best team building guides, anvil calculators, and strategies for the popular DC Universe game. Dominate the Dark Legion!">
-    <meta name="keywords" content="DC: Dark Legion, DC Dark Legion, DC Universe, FunPlus, DC Dark Legion Guide, DC Dark Legion Team Builder, DC Dark Legion Anvil Calculator, DC Dark Legion Characters, DC Dark Legion Tips">
+    <meta name="keywords" content="DC: Dark Legion, DC Dark Legion, DC Universe, FunPlus, DC Dark Legion Guide, DC Dark Legion Team Builder, DC Dark Legion Anvil Calculator, DC Dark Legion Champions, DC Dark Legion Tips">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* Custom CSS for thematic elements and animations not directly covered by Tailwind */
         body {
             font-family: 'Inter', sans-serif;
-            /* Deep, dark background for a futuristic/heroic lair feel */
-            background-color: #0d1226; /* A very dark blue/purple */
-            color: #e2e8f0; /* Light off-white for text contrast */
-            overflow-x: hidden; /* Prevent horizontal scroll bars, especially with animations */
+            background-color: #0d1226;
+            color: #e2e8f0;
+            overflow-x: hidden;
         }
 
-        /* Full-screen background image with subtle animation */
         .background-hero {
-            /* Placeholder image. Replace with your actual thematic background image (e.g., a dark cityscape, cosmic view) */
             background-image: url('img/bg/landscape_1.png');
-            background-size: cover; /* Cover the entire element */
-            background-position: center; /* Center the image */
-            position: absolute; /* Position relative to the body */
+            background-size: cover;
+            background-position: center;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1; /* Send to background */
-            /* Apply a filter to make it darker and slightly desaturated for mood */
+            z-index: -1;
             filter: brightness(0.4) grayscale(0.5);
-            /* Subtle panning animation for dynamism */
             animation: subtlePan 60s linear infinite alternate;
         }
 
-        /* Keyframe animation for the background pan effect */
         @keyframes subtlePan {
             0% { background-position: 0% 0%; }
             100% { background-position: 100% 100%; }
         }
 
-        /* Glowing text effect for main titles */
         .glowing-text {
-            text-shadow: 0 0 8px rgba(59, 130, 246, 0.6), /* Inner glow */
-                         0 0 15px rgba(59, 130, 246, 0.4), /* Outer glow */
-                         0 0 25px rgba(59, 130, 246, 0.2); /* Fainter outer glow */
+            text-shadow: 0 0 8px rgba(59, 130, 246, 0.6),
+                         0 0 15px rgba(59, 130, 246, 0.4),
+                         0 0 25px rgba(59, 130, 246, 0.2);
         }
 
-        /* Styles for the Call to Action cards */
         .cta-card {
-            background-color: rgba(17, 24, 39, 0.7); /* Darker, semi-transparent background */
-            backdrop-filter: blur(8px); /* Frosted glass effect for depth */
-            border: 1px solid rgba(59, 130, 246, 0.3); /* Subtle blue border */
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); /* Stronger shadow for lift */
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; /* Smooth transitions for hover effects */
+            background-color: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
         }
 
         .cta-card:hover {
-            transform: translateY(-5px); /* Lift card on hover */
-            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4); /* Enhanced shadow with blue tint */
-            border-color: rgba(59, 130, 246, 0.6); /* Brighter border on hover */
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
+            border-color: rgba(59, 130, 246, 0.6);
         }
 
-        /* Custom primary button style */
         .btn-primary-custom {
-            background-color: #3b82f6; /* Tailwind Blue 500 */
+            background-color: #3b82f6;
             color: white;
             padding: 1rem 2rem;
-            border-radius: 0.75rem; /* Rounded corners */
-            font-weight: 700; /* Bold text */
-            transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease; /* Smooth transitions */
-            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); /* Subtle shadow */
+            border-radius: 0.75rem;
+            font-weight: 700;
+            transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
         }
 
         .btn-primary-custom:hover {
-            background-color: #2563eb; /* Darker blue on hover */
-            transform: translateY(-1px); /* Slight lift on hover */
-            box-shadow: 0 6px 15px rgba(59, 130, 246, 0.5); /* Enhanced shadow on hover */
+            background-color: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(59, 130, 246, 0.5);
         }
 
-        /* Style for the Buy Me A Coffee button image to ensure it scales correctly */
         .bmc-button-img {
             height: 30px !important;
             width: auto !important;
-            box-shadow: none !important; /* Remove any default BMC shadow */
-            border: none !important; /* Remove any default BMC border */
-            vertical-align: middle; /* Align with text */
+            box-shadow: none !important;
+            border: none !important;
+            vertical-align: middle;
         }
     </style>
     <script type="application/ld+json">
@@ -132,34 +121,48 @@
         </p>
     </header>
 
-    <main class="relative z-10 flex flex-col md:flex-row gap-8 lg:gap-12 mt-8 mb-16 max-w-6xl w-full px-4">
+    <main class="relative z-10 flex flex-col items-center gap-8 mt-8 mb-16 max-w-6xl w-full px-4">
+        <div class="flex flex-col md:flex-row gap-8 lg:gap-12 w-full">
+            <section class="cta-card p-8 rounded-xl flex-1 flex flex-col justify-between items-center text-center">
+                <div class="mb-6">
+                    <img src="img/icons/anvil.png" alt="Anvil Icon for DC: Dark Legion Anvil Calculator" class="w-24 h-24 mx-auto mb-4 drop-shadow-lg rounded-full">
+                    <h2 class="text-3xl font-bold text-blue-300 mb-3">Anvil Calculator for Champion Upgrades</h2>
+                    <p class="text-lg text-gray-200 leading-relaxed">
+                        Precisely estimate the Anvils needed for champion upgrades. Plan your pulls, minimize waste, and maximize your Limited Mythic progression with our DC: Dark Legion anvil calculator.
+                    </p>
+                </div>
+                <a href="calculator.html" class="btn-primary-custom mt-auto">
+                    Calculate Anvils Now
+                </a>
+            </section>
+            <section class="cta-card p-8 rounded-xl flex-1 flex flex-col justify-between items-center text-center">
+                <div class="mb-6">
+                    <img src="img/icons/prosperity.png" alt="Team Icon for DC: Dark Legion Team Builder" class="w-24 h-24 mx-auto mb-4 drop-shadow-lg rounded-full">
+                    <h2 class="text-3xl font-bold text-blue-300 mb-3">Ultimate Team Builder for Your Roster</h2>
+                    <p class="text-lg text-gray-200 leading-relaxed">
+                        Craft unbeatable teams from your roster. Analyze synergies, optimize scores, and dominate every challenge with our strategic DC: Dark Legion team builder.
+                    </p>
+                </div>
+                <a href="teams.html" class="btn-primary-custom mt-auto">
+                    Build Your Best Team
+                </a>
+            </section>
+        </div>
 
-        <section class="cta-card p-8 rounded-xl flex-1 flex flex-col justify-between items-center text-center">
-            <div class="mb-6">
-                <img src="img/icons/anvil.png" alt="Anvil Icon for DC: Dark Legion Anvil Calculator" class="w-24 h-24 mx-auto mb-4 drop-shadow-lg rounded-full">
-                <h2 class="text-3xl font-bold text-blue-300 mb-3">Anvil Calculator for Character Upgrades</h2>
-                <p class="text-lg text-gray-200 leading-relaxed">
-                    Precisely estimate the Anvils needed for character upgrades. Plan your pulls, minimize waste, and maximize your Limited Mythic progression with our DC: Dark Legion anvil calculator.
-                </p>
-            </div>
-            <a href="calculator.html" class="btn-primary-custom mt-auto">
-                Calculate Anvils Now
-            </a>
-        </section>
-
-        <section class="cta-card p-8 rounded-xl flex-1 flex flex-col justify-between items-center text-center">
-            <div class="mb-6">
-                <img src="img/icons/prosperity.png" alt="Team Icon for DC: Dark Legion Team Builder" class="w-24 h-24 mx-auto mb-4 drop-shadow-lg rounded-full">
-                <h2 class="text-3xl font-bold text-blue-300 mb-3">Ultimate Team Builder for Your Roster</h2>
-                <p class="text-lg text-gray-200 leading-relaxed">
-                    Craft unbeatable teams from your roster. Analyze synergies, optimize scores, and dominate every challenge with our strategic DC: Dark Legion team builder.
-                </p>
-            </div>
-            <a href="teams.html" class="btn-primary-custom mt-auto">
-                Build Your Best Team
-            </a>
-        </section>
-
+        <div class="w-full md:w-2/3 lg:w-1/2">
+            <section class="cta-card p-8 rounded-xl flex flex-col justify-between items-center text-center h-full">
+                <div class="mb-6">
+                    <img src="img/icons/calendar.png" alt="Calendar Icon for DC: Dark Legion Limited Mythic Events" class="w-24 h-24 mx-auto mb-4 drop-shadow-lg rounded-full">
+                    <h2 class="text-3xl font-bold text-blue-300 mb-3">Mythic Champion Calendar</h2>
+                    <p class="text-lg text-gray-200 leading-relaxed">
+                        Track the upcoming Limited Mythic champion events. Plan your pulls and strategy by knowing who is next in the DC: Dark Legion rotation.
+                    </p>
+                </div>
+                <a href="calendar.html" class="btn-primary-custom mt-auto">
+                    View Calendar
+                </a>
+            </section>
+        </div>
     </main>
 
     <section class="relative z-10 bg-gray-900 bg-opacity-80 backdrop-filter backdrop-blur-sm p-8 rounded-xl max-w-4xl w-full mx-auto my-16 shadow-lg text-left">
