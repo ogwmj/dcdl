@@ -179,6 +179,7 @@
 
 .recommendation-block {
     text-align: center;
+    position: relative; /* Make this a positioning context for the tooltip */
 }
 
 .recommendation-label {
@@ -233,3 +234,50 @@
 .recommendation-rainbow-stars .star-icon.tier-purple { color: #8b5cf6; }
 .recommendation-rainbow-stars .star-icon.tier-gold { color: #f59e0b; }
 .recommendation-rainbow-stars .star-icon.tier-red { color: #ef4444; }
+
+.tooltip-text {
+    visibility: hidden;
+    opacity: 0;
+    width: 220px;
+    background-color: #1e293b; /* slate-800 */
+    color: #e2e8f0;             /* slate-200 */
+    text-align: left;
+    border-radius: 6px;
+    padding: 10px;
+    position: absolute;
+    z-index: 10;
+    bottom: 130%; /* Position above the element */
+    left: 50%;
+    margin-left: -110px; /* Half of the width to center it */
+    transition: opacity 0.3s ease;
+    
+    /* Resetting inherited text styles */
+    font-size: 0.8rem;
+    font-weight: 400;
+    font-style: normal;
+    text-transform: none;
+    letter-spacing: normal;
+    line-height: 1.4;
+    
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    pointer-events: none; /* Prevents the tooltip from interfering with mouse events */
+}
+
+/* Tooltip Arrow */
+.tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%; /* Positioned at the very bottom of the tooltip */
+    left: 50%;
+    margin-left: -6px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: #1e293b transparent transparent transparent;
+}
+
+/* Show the tooltip on hover */
+.recommendation-block:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}

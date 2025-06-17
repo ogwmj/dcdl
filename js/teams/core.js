@@ -38,6 +38,7 @@ export const GAME_CONSTANTS = {
     SYNERGY_ACTIVATION_COUNT: 3,
     SYNERGY_DEPTH_BONUS: 450,
     INDIVIDUAL_SCORE_WEIGHT: 1.25,
+    LEGACY_TIERS_ORDERED: ["Unlocked", "White 1-Star", "White 2-Star", "White 3-Star", "White 4-Star", "White 5-Star", "Blue 1-Star", "Blue 2-Star", "Blue 3-Star", "Blue 4-Star", "Blue 5-Star", "Purple 1-Star", "Purple 2-Star", "Purple 3-Star", "Purple 4-Star", "Purple 5-Star", "Gold 1-Star", "Gold 2-Star", "Gold 3-Star", "Gold 4-Star", "Gold 5-Star", "Red 1-Star", "Red 2-Star", "Red 3-Star", "Red 4-Star", "Red 5-Star"],
 };
 
 // =================================================================================================
@@ -265,6 +266,109 @@ export class TeamCalculator {
             };
             requestAnimationFrame(processBatch);
         });
+    }
+
+    /**
+     * Finds the best single-step upgrades for champions not on the provided best team.
+     * @param {object} bestTeam - The result from evaluateTeam for the current best team.
+     * @param {Array<object>} fullRoster - The entire player roster.
+     * @param {object} gameConstants - The GAME_CONSTANTS object.
+     * @param {boolean} requireHealer - A flag indicating if the team must contain a healer.
+     * @returns {Array<object>} A sorted list of the best upgrade suggestions.
+     */
+    findUpgradeSuggestions(bestTeam, fullRoster, gameConstants, requireHealer = false) {
+        const suggestions = [];
+        const bestTeamMemberIds = new Set(bestTeam.members.map(m => m.id));
+        
+        // 1. Identify the "Weakest Link", respecting the requireHealer flag
+        let potentialSwapTargets = bestTeam.members;
+        if (requireHealer) {
+            // If a healer is required, the potential targets can only be non-healers.
+            const nonHealersOnTeam = bestTeam.members.filter(m => m.isHealer !== true);
+            // Only use the filtered list if it's possible to do so (i.e., the team isn't 100% healers).
+            if (nonHealersOnTeam.length > 0) {
+                potentialSwapTargets = nonHealersOnTeam;
+            }
+        }
+        
+        // If no potential targets are found (e.g., an all-healer team), the function will gracefully exit.
+        if (!potentialSwapTargets.length) {
+            return [];
+        }
+
+        const swapTarget = potentialSwapTargets.reduce((weakest, member) =>
+            member.individualScore < weakest.individualScore ? member : weakest, potentialSwapTargets[0]);
+
+        const challengers = fullRoster.filter(champ => !bestTeamMemberIds.has(champ.id));
+
+        challengers.forEach(champ => {
+            // This helper function and the rest of the loops remain the same
+            const runSimulation = (hypotheticalChamp, suggestionData) => {
+                hypotheticalChamp.individualScore = TeamCalculator.calculateIndividualChampionScore(hypotheticalChamp, gameConstants);
+                const testTeamMembers = bestTeam.members.map(member => member.id === swapTarget.id ? hypotheticalChamp : member);
+                const evaluatedTestTeam = this.evaluateTeam(testTeamMembers);
+                if (evaluatedTestTeam.totalScore > bestTeam.totalScore) {
+                    suggestions.push({
+                        ...suggestionData,
+                        championToUpgrade: champ,
+                        displacedChampion: swapTarget,
+                        newTeamScore: evaluatedTestTeam.totalScore,
+                        scoreIncrease: evaluatedTestTeam.totalScore - bestTeam.totalScore,
+                    });
+                }
+            };
+
+            // --- Suggestion Type: Force Level ---
+            if (champ.forceLevel < 5) {
+                const hypotheticalChamp = { ...champ, forceLevel: champ.forceLevel + 1 };
+                runSimulation(hypotheticalChamp, {
+                    upgradeType: 'Force Level',
+                    fromValue: champ.forceLevel,
+                    toValue: hypotheticalChamp.forceLevel,
+                });
+            }
+
+            // --- Suggestion Type: Gear ---
+            const gearSlots = ['head', 'arms', 'chest', 'legs', 'waist'];
+            gearSlots.forEach(slot => {
+                const currentRarity = champ.gear[slot]?.rarity || 'None';
+                const currentRarityIndex = gameConstants.STANDARD_GEAR_RARITIES.indexOf(currentRarity);
+                if (currentRarityIndex < gameConstants.STANDARD_GEAR_RARITIES.length - 1) {
+                    const nextRarity = gameConstants.STANDARD_GEAR_RARITIES[currentRarityIndex + 1];
+                    const hypotheticalChamp = {
+                        ...champ,
+                        gear: { ...champ.gear, [slot]: { rarity: nextRarity } },
+                    };
+                    runSimulation(hypotheticalChamp, {
+                        upgradeType: 'Gear',
+                        itemName: slot.charAt(0).toUpperCase() + slot.slice(1),
+                        fromValue: currentRarity,
+                        toValue: nextRarity,
+                    });
+                }
+            });
+
+            // --- Suggestion Type: Legacy Piece Tier ---
+            if (champ.legacyPiece && champ.legacyPiece.id) {
+                const currentTier = champ.legacyPiece.starColorTier || 'Unlocked';
+                const currentTierIndex = gameConstants.LEGACY_TIERS_ORDERED.indexOf(currentTier);
+                if (currentTierIndex < gameConstants.LEGACY_TIERS_ORDERED.length - 1) {
+                    const nextTier = gameConstants.LEGACY_TIERS_ORDERED[currentTierIndex + 1];
+                    const hypotheticalChamp = {
+                        ...champ,
+                        legacyPiece: { ...champ.legacyPiece, starColorTier: nextTier },
+                    };
+                    runSimulation(hypotheticalChamp, {
+                        upgradeType: 'Legacy Piece',
+                        itemName: champ.legacyPiece.name,
+                        fromValue: currentTier,
+                        toValue: nextTier,
+                    });
+                }
+            }
+        });
+
+        return suggestions.sort((a, b) => b.scoreIncrease - a.scoreIncrease);
     }
 }
 
