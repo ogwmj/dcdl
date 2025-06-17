@@ -1,0 +1,235 @@
+/* --- Main Timeline Container --- */
+.timeline-container {
+    position: relative;
+    max-width: 1024px;
+    margin: 0 auto;
+    padding: 40px 0;
+}
+
+/* The central glowing spine of the timeline */
+.timeline-container::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    background-color: rgba(59, 130, 246, 0.4);
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.7);
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    margin-left: -2px;
+    z-index: -1;
+}
+
+/* --- Container for each event card --- */
+.timeline-event {
+    padding: 0 40px; /* Padding on left/right for spacing from the spine */
+    position: relative;
+    width: 50%;
+    cursor: pointer;
+    box-sizing: border-box;
+    margin-bottom: 20px; /* Space between cards on mobile */
+}
+
+/* NEW: Use absolute positioning for the staggered layout on desktop/tablet */
+@media screen and (min-width: 769px) {
+    .timeline-container {
+        /* Height will be set by JS to contain the absolutely positioned children */
+    }
+    .timeline-event {
+        position: absolute;
+    }
+
+    /* Position left/right column cards */
+    .timeline-event.left  { left: 0; }
+    .timeline-event.right { left: 50%; }
+}
+
+/* --- The circular marker on the timeline spine for each event --- */
+.timeline-event::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: #0d1226;
+    border: 4px solid #3b82f6;
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%);
+    border-radius: 50%;
+    z-index: 1;
+}
+
+/* Adjust marker position for left/right cards */
+.timeline-event.left::after  { right: -10px; }
+.timeline-event.right::after { left: -10px; }
+
+
+/* --- The main content card for each event --- */
+.timeline-content {
+    padding: 20px;
+    background-color: rgba(17, 24, 39, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    position: relative;
+    border-radius: 8px;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: 230px; /* NEW: Enforce a fixed height for consistent layout */
+    justify-content: space-between; /* Distribute content vertically */
+}
+
+.timeline-content:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 35px rgba(59, 130, 246, 0.2);
+}
+
+.timeline-main-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.timeline-text-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+/* Champion Avatar Image */
+.timeline-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 3px solid #3b82f6;
+    margin-bottom: 0;
+    flex-shrink: 0;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+/* Champion Name */
+.timeline-content h3 {
+    font-family: 'Russo One', sans-serif;
+    font-size: 1.75rem;
+    color: #e2e8f0;
+    margin-bottom: 0.25rem;
+    line-height: 1.2;
+}
+
+/* Date Range */
+.timeline-content .date-range {
+    color: #94a3b8;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Duration Tag */
+.timeline-content .duration-tag {
+    display: inline-block;
+    background-color: rgba(59, 130, 246, 0.2);
+    color: #bfdbfe;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    align-self: flex-start;
+}
+
+/* --- Responsive adjustments for mobile --- */
+@media screen and (max-width: 768px) {
+    .timeline-container::after {
+        left: 31px;
+    }
+
+    .timeline-event {
+        width: 100%;
+        padding: 0 0 0 70px; /* Adjust padding for mobile */
+    }
+
+    .timeline-event.left,
+    .timeline-event.right {
+        left: 0;
+    }
+    
+    .timeline-event::after {
+        left: 21px;
+        transform: translateY(-50%);
+    }
+
+    .timeline-avatar {
+        width: 60px;
+        height: 60px;
+    }
+
+    .timeline-content h3 {
+        font-size: 1.5rem;
+    }
+}
+
+.recommendations-container {
+    display: flex;
+    justify-content: space-around;
+    gap: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.recommendation-block {
+    text-align: center;
+}
+
+.recommendation-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #94a3b8; /* gray-400 */
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.recommendation-skip {
+    font-size: 0.8rem;
+    color: #64748b; /* gray-500 */
+    font-style: italic;
+    display: block;
+    margin-top: 0.25rem;
+}
+
+.recommendation-stars {
+    font-size: 1.25rem;
+    line-height: 1;
+    margin-top: 0.25rem;
+}
+
+.star-icon {
+    color: #4b5563; /* Default empty star color */
+    transition: color 0.2s ease-in-out;
+}
+
+.star-icon.active {
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+/* Star colors based on tier */
+.tier-white .star-icon.active { color: #d1d5db; }
+.tier-blue .star-icon.active { color: #3b82f6; }
+.tier-purple .star-icon.active { color: #8b5cf6; }
+.tier-gold .star-icon.active { color: #f59e0b; }
+.tier-red .star-icon.active { color: #ef4444; }
+
+.recommendation-rainbow-stars {
+    font-size: 1.25rem;
+    line-height: 1;
+    margin-top: 0.25rem;
+    display: flex;
+    justify-content: center;
+}
+
+/* Individual star colors within the rainbow display. These need their own rules. */
+.recommendation-rainbow-stars .star-icon.tier-white { color: #d1d5db; }
+.recommendation-rainbow-stars .star-icon.tier-blue { color: #3b82f6; }
+.recommendation-rainbow-stars .star-icon.tier-purple { color: #8b5cf6; }
+.recommendation-rainbow-stars .star-icon.tier-gold { color: #f59e0b; }
+.recommendation-rainbow-stars .star-icon.tier-red { color: #ef4444; }
