@@ -157,18 +157,17 @@ async function initializeFirebase() {
 async function handleUserSession() {
     const user = auth.currentUser;
     if (user) {
-        if (userId !== user.uid) { // A new user has logged in
+        if (userId !== user.uid) {
             userId = user.uid;
             showLoading(true, "Loading your data...");
             await loadUserData();
-            showLoading(false);
+            loadComicEnhancements();
         }
     } else { // User logged out
         userId = null;
         playerRoster = [];
         savedTeams = [];
         renderRosterTable();
-        // Pass empty comic data map on logout to clear teams correctly.
         renderSavedTeams(new Map());
         populateChampionSelect();
     }
@@ -221,6 +220,16 @@ async function loadUserData() {
         loadSavedTeamsFromFirestore()
     ]);
     populateChampionSelect();
+    showLoading(false);
+}
+
+/**
+ * @description Asynchronously loads comic data and applies it to already-rendered cards.
+ * @async
+ */
+async function loadComicEnhancements() {
+    await fetchCharacterComics();
+    applyChampionCardBackgrounds();
 }
 
 /**
@@ -1082,7 +1091,7 @@ async function handleCalculate() {
 
         originalBestTeam = JSON.parse(JSON.stringify(bestTeam));
         currentDisplayedTeam = JSON.parse(JSON.stringify(bestTeam));
-        displayTeamResults(currentDisplayedTeam, characterComicsData);
+        displayTeamResults(currentDisplayedTeam);
         
         logEvent(analytics, 'calculate_team_success', {
             roster_size: playerRoster.length,
@@ -1103,10 +1112,9 @@ async function handleCalculate() {
 /**
  * @description Renders the calculated team results to the page.
  * @param {object} team - The final team object from the calculator.
- * @param {Map<string, Object>} comicData - The map of comic data for backgrounds.
  */
-function displayTeamResults(team, comicData) {
-    if (!team) { DOM.resultsOutput.innerHTML = '<p class="text-center text-slate-500">Could not determine an optimal team.</p>'; return; }
+function displayTeamResults(team) {
+    if (!team) { DOM.resultsOutput.innerHTML = '<p class="text-center text-slate-500">Could not determine an optimal team.</p>'; return; } 
     const isModified = originalBestTeam && JSON.stringify(team.members.map(m => m.id)) !== JSON.stringify(originalBestTeam.members.map(m => m.id));
     const scoreBreakdownHtml = getScoreBreakdownHtml(team);
     let html = `
@@ -1136,14 +1144,13 @@ function displayTeamResults(team, comicData) {
     if (isModified) { html += `<button id="reset-team-btn" class="btn btn-secondary">Reset to Original</button>`; }
     html += `</div></div>`;
     DOM.resultsOutput.innerHTML = html;
-    applyChampionCardBackgrounds(comicData);
+    applyChampionCardBackgrounds();
 }
 
 /**
  * @description Renders the list of saved teams.
- * @param {Map<string, Object>} comicData - The map of comic data for backgrounds.
  */
-function renderSavedTeams(comicData) {
+function renderSavedTeams() {
     const listEl = DOM.savedTeamsList;
     const dropdownEl = DOM.selectExclusionTeamDropdown;
     if (!listEl || !dropdownEl) return;
@@ -1174,7 +1181,7 @@ function renderSavedTeams(comicData) {
         teamCard.innerHTML = headerHtml + membersHtml;
         listEl.appendChild(teamCard);
     });
-    applyChampionCardBackgrounds(comicData);
+    applyChampionCardBackgrounds();
 }
 
 /**
@@ -1222,7 +1229,7 @@ async function loadSavedTeamsFromFirestore() {
             });
             return { id: doc.id, ...data, members };
         });
-        renderSavedTeams(characterComicsData);
+        renderSavedTeams();
     } catch (error) {
         console.error("Error loading saved teams:", error);
         if (DOM.savedTeamsList) {
@@ -1357,13 +1364,8 @@ function createStarSelector(containerId, hiddenInputId) {
 
 /**
  * @description Applies the correct background image (comic or avatar) to rendered champion cards.
- * @param {Map<string, Object>} comicData - The map of comic data for backgrounds.
  */
-function applyChampionCardBackgrounds(comicData) {
-    if (!comicData) {
-        console.warn("applyChampionCardBackgrounds called without comicData. Using fallbacks.");
-        comicData = new Map(); // Ensure comicData is an empty map to avoid errors
-    }
+function applyChampionCardBackgrounds() {
 
     document.querySelectorAll('.champion-card-enhanced').forEach(card => {
         const bgElement = card.querySelector('.card-background-image');
@@ -1372,7 +1374,7 @@ function applyChampionCardBackgrounds(comicData) {
 
         if (!bgElement || !championId) return;
 
-        const data = comicData.get(championId);
+        const data = characterComicsData.get(championId);
 
         if (data && data.imageUrl) {
             bgElement.style.backgroundImage = `url('${data.imageUrl}')`;
