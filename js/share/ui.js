@@ -92,8 +92,7 @@ async function initializePage() {
         await Promise.all([
             fetchData('champions', (data) => dbChampions = data),
             fetchData('synergies', (data) => dbSynergies = data.sort((a,b) => a.name.localeCompare(b.name))),
-            fetchData('legacyPieces', (data) => dbLegacyPieces = data.sort((a,b) => a.name.localeCompare(b.name))),
-            fetchCharacterComics(),
+            fetchData('legacyPieces', (data) => dbLegacyPieces = data.sort((a,b) => a.name.localeCompare(b.name)))
         ]);
         
         await loadAndDisplaySharedTeam(sharedTeamId);
@@ -171,15 +170,29 @@ async function loadAndDisplaySharedTeam(teamId) {
         evaluatedTeam.name = teamData.name;
         
         displayTeamResults(evaluatedTeam);
-        await generateShareBanner(evaluatedTeam);
-        
-        const heroNames = evaluatedTeam.members.map(m => m.name);
-        await loadComicsForHeroes(db, heroNames);
-
+        loadAndDisplayEnhancements(evaluatedTeam);
     } else {
         showError("Team not found.", `No team exists with the ID: ${teamId}. It may have been deleted.`);
         logEvent(analytics, 'exception', { description: `share_page_team_not_found: ${teamId}`, fatal: false });
     }
+}
+
+/**
+ * @async
+ * @function loadAndDisplayEnhancements
+ * @description Asynchronously loads and applies all non-essential visual data like banners and comics.
+ * @param {Object} team - The evaluated team data.
+ * @returns {Promise<void>}
+ */
+async function loadAndDisplayEnhancements(team) {
+    // Generate the social share banner in the background
+    await generateShareBanner(team);
+
+    // Fetch all comic data (from Firestore and proxy) and display it
+    const heroNames = team.members.map(m => m.name);
+    await fetchCharacterComics(); // Load the initial comic data from our DB
+    applyChampionCardBackgrounds(); // Apply backgrounds immediately with what we have
+    await loadComicsForHeroes(db, heroNames); // Fetch missing data and render the bottom section
 }
 
 /**

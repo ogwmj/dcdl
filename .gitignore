@@ -20,3 +20,7 @@ Gemfile.lock
 # OSX Development
 dev/
 .DS_Store
+
+node_modules/
+functions/
+.firebaserc
