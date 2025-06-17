@@ -56,6 +56,7 @@ const DOM = {
     requireHealerCheckbox: document.getElementById('require-healer-checkbox'),
     excludeSavedTeamCheckbox: document.getElementById('exclude-saved-team-checkbox'),
     selectExclusionTeamDropdown: document.getElementById('select-exclusion-team-dropdown'),
+    selectSynergyFilterDropdown: document.getElementById('select-synergy-filter-dropdown'),
     calculateBtn: document.getElementById('calculate-btn'),
     resultsOutput: document.getElementById('results-output'),
     savedTeamsList: document.getElementById('saved-teams-list'),
@@ -86,6 +87,8 @@ let legacyStarSelectorControl = null;
 let currentGearState = {};
 let gearGridControl = null;
 let forceLevelControl = null;
+let synergyMultiSelect = null;
+let teamExclusionMultiSelect = null;
 
 // =================================================================================================
 // #region INITIALIZATION
@@ -114,11 +117,14 @@ async function initializePage() {
         ]);
         
         populateStaticDropdowns();
+        synergyMultiSelect = createSynergyMultiSelect(); 
         gearGridControl = createInteractiveGearGrid('interactive-gear-grid');
         champStarSelectorControl = createStarSelector('champ-star-selector-container', 'champ-star-color');
         legacyStarSelectorControl = createStarSelector('legacy-piece-selector-container', 'legacy-piece-star-color');
         forceLevelControl = createForceLevelSelector('force-level-selector', 'champ-force-level');
         attachEventListeners();
+
+        teamExclusionMultiSelect = createTeamExclusionMultiSelect([]);
 
         // Now that all game data is loaded, we can safely listen for auth changes and load user data.
         onAuthStateChanged(auth, handleUserSession);
@@ -349,6 +355,193 @@ function populateStaticDropdowns() {
 }
 
 /**
+ * @description Creates a custom, interactive multi-select pillbox for team exclusions.
+ * @param {Array<object>} initialTeams - The initial array of teams to populate with.
+ */
+function createTeamExclusionMultiSelect(initialTeams) {
+    const container = document.getElementById('team-exclusion-multiselect-container');
+    container.innerHTML = `<div class="pills-input-wrapper" tabindex="0">
+                                <input type="text" id="team-exclusion-search-input" placeholder="Select teams to exclude...">
+                           </div>
+                           <div class="custom-options-panel hidden"></div>`;
+    
+    const inputWrapper = container.querySelector('.pills-input-wrapper');
+    const searchInput = container.querySelector('#team-exclusion-search-input');
+    const optionsPanel = container.querySelector('.custom-options-panel');
+
+    let state = {
+        available: initialTeams.map(t => ({ id: t.id, name: t.name })),
+        selected: []
+    };
+
+    const render = () => {
+        inputWrapper.querySelectorAll('.pill').forEach(p => p.remove());
+        state.selected.forEach(item => {
+            const pill = document.createElement('div');
+            pill.className = 'pill';
+            pill.innerHTML = `<span>${item.name}</span>`;
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'pill-remove';
+            removeBtn.innerHTML = '&times;';
+            removeBtn.onclick = (e) => { e.stopPropagation(); deselect(item); };
+            pill.appendChild(removeBtn);
+            inputWrapper.insertBefore(pill, searchInput);
+        });
+
+        optionsPanel.innerHTML = '';
+        const filteredOptions = state.available
+            .filter(opt => opt.name.toLowerCase().includes(searchInput.value.toLowerCase()));
+        
+        filteredOptions.forEach(item => {
+            const optionEl = document.createElement('div');
+            optionEl.className = 'custom-option';
+            optionEl.textContent = item.name;
+            optionEl.onclick = () => select(item);
+            optionsPanel.appendChild(optionEl);
+        });
+    };
+
+    const select = (item) => {
+        state.selected.push(item);
+        state.available = state.available.filter(i => i.id !== item.id);
+        searchInput.value = '';
+        render();
+        searchInput.focus();
+    };
+
+    const deselect = (item) => {
+        state.selected = state.selected.filter(i => i.id !== item.id);
+        state.available.push(item);
+        state.available.sort((a,b) => a.name.localeCompare(b.name));
+        render();
+    };
+
+    const setDisabled = (isDisabled) => {
+        inputWrapper.classList.toggle('disabled', isDisabled);
+        searchInput.readOnly = isDisabled;
+        if (isDisabled) optionsPanel.classList.add('hidden');
+    };
+    
+    const updateOptions = (newTeams) => {
+        state.available = newTeams.map(t => ({ id: t.id, name: t.name }));
+        state.selected = [];
+        render();
+    };
+
+    inputWrapper.addEventListener('click', () => {
+        if (!inputWrapper.classList.contains('disabled')) {
+            optionsPanel.classList.remove('hidden');
+            searchInput.focus();
+        }
+    });
+    searchInput.addEventListener('input', render);
+    document.addEventListener('click', (e) => {
+        if (!container.contains(e.target)) optionsPanel.classList.add('hidden');
+    });
+
+    render();
+    setDisabled(!DOM.excludeSavedTeamCheckbox.checked);
+
+    return {
+        getSelectedValues: () => state.selected.map(s => s.id),
+        setDisabled,
+        updateOptions
+    };
+}
+
+/**
+ * @description Creates a custom, interactive multi-select pillbox for synergies.
+ */
+function createSynergyMultiSelect() {
+    const container = document.getElementById('synergy-multiselect-container');
+    const inputWrapper = container.querySelector('.pills-input-wrapper');
+    const searchInput = document.getElementById('synergy-search-input');
+    const optionsPanel = document.getElementById('synergy-options-panel');
+
+    let state = {
+        available: [...dbSynergies.map(s => s.name)],
+        selected: []
+    };
+
+    const render = () => {
+        // Render Pills
+        inputWrapper.querySelectorAll('.pill').forEach(p => p.remove());
+        state.selected.forEach(value => {
+            const pill = document.createElement('div');
+            pill.className = 'pill';
+            
+            const iconHtml = getSynergyIcon(value);
+            pill.innerHTML = `${iconHtml}<span>${value}</span>`;
+
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'pill-remove';
+            removeBtn.innerHTML = '&times;';
+            removeBtn.onclick = (e) => {
+                e.stopPropagation();
+                deselect(value);
+            };
+            pill.appendChild(removeBtn);
+            inputWrapper.insertBefore(pill, searchInput);
+        });
+
+        optionsPanel.innerHTML = '';
+        const filteredOptions = state.available
+            .filter(opt => opt.toLowerCase().includes(searchInput.value.toLowerCase()));
+        
+        filteredOptions.forEach(value => {
+            const optionEl = document.createElement('div');
+            optionEl.className = 'custom-option';
+
+            const iconHtml = getSynergyIcon(value);
+            optionEl.innerHTML = `${iconHtml}<span>${value}</span>`;
+
+            optionEl.onclick = () => select(value);
+            optionsPanel.appendChild(optionEl);
+        });
+    };
+
+    const select = (value) => {
+        state.selected.push(value);
+        state.available = state.available.filter(v => v !== value);
+        searchInput.value = '';
+        render();
+        searchInput.focus();
+    };
+
+    const deselect = (value) => {
+        state.selected = state.selected.filter(v => v !== value);
+        state.available.push(value);
+        state.available.sort();
+        render();
+    };
+    
+    inputWrapper.addEventListener('click', () => {
+        optionsPanel.classList.remove('hidden');
+        searchInput.focus();
+    });
+
+    searchInput.addEventListener('input', render);
+    
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && searchInput.value === '' && state.selected.length > 0) {
+            deselect(state.selected[state.selected.length - 1]);
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!container.contains(e.target)) {
+            optionsPanel.classList.add('hidden');
+        }
+    });
+
+    render();
+
+    return {
+        getSelectedValues: () => state.selected
+    };
+}
+
+/**
  * @description Generic helper to populate a <select> element.
  * @param {HTMLSelectElement} selectElement - The dropdown element to populate.
  * @param {Array<string|object>} options - An array of options. Can be strings or objects with 'value' and 'text' properties.
@@ -451,7 +644,9 @@ function attachEventListeners() {
     DOM.champSelectDb.addEventListener('change', (e) => updateChampionFormDisplay(e.target.value));
     DOM.calculateBtn.addEventListener('click', handleCalculate);
     DOM.excludeSavedTeamCheckbox.addEventListener('change', (e) => {
-        DOM.selectExclusionTeamDropdown.disabled = !e.target.checked;
+        if (teamExclusionMultiSelect) {
+            teamExclusionMultiSelect.setDisabled(!e.target.checked);
+        }
     });
 
     document.addEventListener('click', (event) => {
@@ -465,6 +660,7 @@ function attachEventListeners() {
         const target = e.target;
         if (target.id === 'save-team-btn') saveCurrentBestTeam();
         else if (target.id === 'reset-team-btn') handleResetTeam();
+        else if (target.id === 'find-upgrades-btn') handleFindUpgradeSuggestions();
         else if (target.dataset.action === 'swap') openSwapModal(parseInt(target.dataset.index, 10));
     });
 
@@ -480,6 +676,7 @@ function attachEventListeners() {
             case 'delete': deleteSavedTeam(id); break;
         }
     });
+    
 }
 
 /**
@@ -1052,6 +1249,71 @@ function handleResetTeam() {
 }
 
 /**
+ * @description Handles the click event to find and display upgrade suggestions.
+ */
+async function handleFindUpgradeSuggestions() {
+    if (!currentDisplayedTeam || playerRoster.length === 0) {
+        showToast("Please calculate a team first.", "warning");
+        return;
+    }
+
+    const outputContainer = document.getElementById('upgrade-suggestions-output');
+    outputContainer.innerHTML = `<div class="text-center card"><div class="loading-spinner"></div><p class="text-indigo-600 mt-2">Analyzing upgrade paths...</p></div>`;
+
+    setTimeout(() => {
+        try {
+            const calculator = new TeamCalculator(dbSynergies, GAME_CONSTANTS);
+            const requireHealer = DOM.requireHealerCheckbox.checked;
+            const suggestions = calculator.findUpgradeSuggestions(currentDisplayedTeam, playerRoster, GAME_CONSTANTS, requireHealer);
+            
+            let html = `<div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                           <h3 class="text-xl font-bold text-accent mb-4">Upgrade Suggestions</h3>`;
+
+            if (suggestions.length === 0) {
+                html += `<p class="text-slate-600">No single-step upgrade was found to improve your current best team.</p>`;
+            } else {
+                html += `<p class="text-slate-600 mb-4">These are the top-ranked upgrades that would improve your team score by replacing a current member.</p>
+                         <div class="space-y-3">`;
+                suggestions.slice(0, 5).forEach(sugg => {
+                    let upgradeText = '';
+                    switch (sugg.upgradeType) {
+                        case 'Force Level':
+                            upgradeText = `<strong>Force Level</strong> from ${sugg.fromValue} to ${sugg.toValue}`;
+                            break;
+                        case 'Gear':
+                            upgradeText = `<strong>${sugg.itemName} Gear</strong> from ${sugg.fromValue} to ${sugg.toValue}`;
+                            break;
+                        case 'Legacy Piece':
+                            upgradeText = `<strong>${sugg.itemName}</strong> from ${sugg.fromValue} to ${sugg.toValue}`;
+                            break;
+                        default:
+                            upgradeText = `${sugg.upgradeType} from ${sugg.fromValue} to ${sugg.toValue}`;
+                    }
+
+                    html += `<div class="p-3 bg-white rounded-md border border-slate-200 hover:border-indigo-300 transition">
+                                <p class="font-semibold text-primary">
+                                    Upgrade <strong class="text-green-700">${sugg.championToUpgrade.name}</strong>'s ${upgradeText}.
+                                </p>
+                                <p class="text-sm text-slate-500">
+                                    This would replace <strong class="text-red-700">${sugg.displacedChampion.name}</strong> on the team,
+                                    increasing the total score by <strong class="text-green-700">+${Math.round(sugg.scoreIncrease)}</strong> 
+                                    to a new total of <strong>${Math.round(sugg.newTeamScore)}</strong>.
+                                </p>
+                             </div>`;
+                });
+                html += `</div>`;
+            }
+            html += `</div>`;
+            outputContainer.innerHTML = html;
+
+        } catch (error) {
+            outputContainer.innerHTML = `<p class="text-red-500">Could not analyze upgrades. Error: ${error.message}</p>`;
+            logEvent(analytics, 'exception', { description: `upgrade_suggestion_failed: ${error.message}` });
+        }
+    }, 50);
+}
+
+/**
  * @description Initiates the team calculation process.
  * @async
  */
@@ -1061,12 +1323,26 @@ async function handleCalculate() {
     
     const requireHealer = DOM.requireHealerCheckbox.checked;
     const excludeTeams = DOM.excludeSavedTeamCheckbox.checked;
+    const requiredSynergies = synergyMultiSelect.getSelectedValues();
     
     try {
         let rosterForCalc = playerRoster.map(champ => ({ ...champ, individualScore: TeamCalculator.calculateIndividualChampionScore(champ, GAME_CONSTANTS) }));
         let excludedCount = 0;
-        if (excludeTeams) {
-            const exclusionTeamIds = Array.from(DOM.selectExclusionTeamDropdown.selectedOptions).map(option => option.value);
+        let synergyFilteredCount = 0;
+
+        if (requiredSynergies.length > 0) {
+            const originalSize = rosterForCalc.length;
+            rosterForCalc = rosterForCalc.filter(champ => 
+                Array.isArray(champ.inherentSynergies) && champ.inherentSynergies.some(s => requiredSynergies.includes(s))
+            );
+            synergyFilteredCount = originalSize - rosterForCalc.length;
+            if (rosterForCalc.length < 5) {
+                throw new Error("Not enough champions match the selected synergy filter to form a team.");
+            }
+        }
+
+        if (excludeTeams && teamExclusionMultiSelect) {
+            const exclusionTeamIds = teamExclusionMultiSelect.getSelectedValues();
             if (exclusionTeamIds.length > 0) {
                 const championsToExcludeIds = new Set();
                 exclusionTeamIds.forEach(teamId => {
@@ -1140,28 +1416,40 @@ function displayTeamResults(team) {
                 <button class="btn btn-secondary btn-sm swap-button" data-action="swap" data-index="${index}">Swap</button>
             </div>`;
     });
-    html += `</div><div class="mt-6 text-center flex justify-center items-center gap-3"><button id="save-team-btn" class="btn btn-primary">Save This Team</button>`;
+    html += `</div><div class="mt-6 text-center flex justify-center items-center gap-3">
+                <button id="save-team-btn" class="btn btn-primary">Save This Team</button>
+                <button id="find-upgrades-btn" class="btn btn-secondary">Find Upgrade Suggestions</button>`;
     if (isModified) { html += `<button id="reset-team-btn" class="btn btn-secondary">Reset to Original</button>`; }
-    html += `</div></div>`;
+    html += `</div></div><div id="upgrade-suggestions-output" class="mt-6"></div>`;
     DOM.resultsOutput.innerHTML = html;
     applyChampionCardBackgrounds();
 }
 
 /**
- * @description Renders the list of saved teams.
+ * @description Renders the list of saved teams and updates the exclusion pillbox.
  */
 function renderSavedTeams() {
     const listEl = DOM.savedTeamsList;
-    const dropdownEl = DOM.selectExclusionTeamDropdown;
-    if (!listEl || !dropdownEl) return;
+    if (!listEl) return;
     listEl.innerHTML = '';
-    dropdownEl.innerHTML = '';
-    if (savedTeams.length === 0) { listEl.innerHTML = '<p class="text-center text-slate-500">No teams saved yet.</p>'; return; }
+
+    if (savedTeams.length === 0) {
+        listEl.innerHTML = '<p class="text-center text-slate-500">No teams saved yet.</p>';
+        if (teamExclusionMultiSelect) {
+            teamExclusionMultiSelect.destroy();
+            teamExclusionMultiSelect = null;
+        }
+        return;
+    }
+
+    // Re-create the exclusion component with the updated list of teams.
+    if (teamExclusionMultiSelect) {
+        teamExclusionMultiSelect.updateOptions(savedTeams);
+    }
+
+    // Render the saved team cards.
     const calculator = new TeamCalculator(dbSynergies, GAME_CONSTANTS);
     savedTeams.forEach(team => {
-        const option = document.createElement('option');
-        option.value = team.id; option.textContent = team.name;
-        dropdownEl.appendChild(option);
         const membersWithScores = ensureIndividualScores(team.members, dbChampions);
         const reEvaluatedTeam = calculator.evaluateTeam(membersWithScores);
         const teamCard = document.createElement('div');

@@ -2,7 +2,7 @@
  * @file js/calendar/ui.js
  * @description Fetches and renders the Limited Mythic champion rotation calendar dynamically from Firestore.
  * Highlights the current rotation and displays investment recommendations.
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 // Import necessary functions from the Firebase SDK
@@ -20,62 +20,68 @@ const DOM = {
 // --- HELPER FUNCTIONS ---
 
 /**
- * Creates the HTML for a single star rating recommendation.
+ * Creates the HTML for a single star rating recommendation with a tooltip.
  * @param {string} label - The label for the recommendation (e.g., "F2P").
  * @param {string} recValue - The recommendation string (e.g., "Gold 4-Star", "skip", "not set").
  * @returns {string} The complete HTML for the recommendation block.
  */
 function createRecommendationHtml(label, recValue) {
     const lowerRecValue = (recValue || '').toLowerCase();
+    let recommendationContentHtml = '';
+    let tooltipText = '';
 
+    // Define tooltip texts based on the label
+    if (label === 'F2P') {
+        tooltipText = 'This recommendation is if you are a light-to-non spender in the game, and how high you should take the champion in rank as a stopping point.';
+    } else if (label === 'Min') {
+        tooltipText = 'If you pull for this champion, this is the base level you should take them to. Anything less would not be a viable champion.';
+    }
+
+    // Generate the main content for the recommendation block based on its value
     if (lowerRecValue === '' || lowerRecValue === 'not set') {
-        return `
-            <div class="recommendation-block">
-                <span class="recommendation-label">${label}</span>
-                <span class="recommendation-skip">Not Set Yet</span>
+        recommendationContentHtml = `
+            <span class="recommendation-label">${label}</span>
+            <span class="recommendation-skip">Not Set Yet</span>
+        `;
+    } else if (lowerRecValue === 'skip') {
+        recommendationContentHtml = `
+            <span class="recommendation-label">${label}</span>
+            <span class="recommendation-skip">Not Recommended</span>
+        `;
+    } else if (label === 'F2P' && recValue === 'Red 5-Star') {
+        recommendationContentHtml = `
+            <span class="recommendation-label">${label}</span>
+            <div class="recommendation-rainbow-stars">
+                <span class="star-icon tier-white active">★</span>
+                <span class="star-icon tier-blue active">★</span>
+                <span class="star-icon tier-purple active">★</span>
+                <span class="star-icon tier-gold active">★</span>
+                <span class="star-icon tier-red active">★</span>
             </div>
         `;
-    }
+    } else {
+        const parts = recValue.split(' ');
+        // Return nothing if the format is invalid to prevent errors
+        if (parts.length < 2) return '';
 
-    if (lowerRecValue === 'skip') {
-        return `
-            <div class="recommendation-block">
-                <span class="recommendation-label">${label}</span>
-                <span class="recommendation-skip">Not Recommended</span>
-            </div>
-        `;
-    }
+        const tier = parts[0].toLowerCase();
+        const stars = parseInt(parts[1].charAt(0), 10);
 
-    if (label === 'F2P' && recValue === 'Red 5-Star') {
-        return `
-            <div class="recommendation-block">
-                <span class="recommendation-label">${label}</span>
-                <div class="recommendation-rainbow-stars">
-                    <span class="star-icon tier-white active">★</span>
-                    <span class="star-icon tier-blue active">★</span>
-                    <span class="star-icon tier-purple active">★</span>
-                    <span class="star-icon tier-gold active">★</span>
-                    <span class="star-icon tier-red active">★</span>
-                </div>
-            </div>
-        `;
-    }
-
-    const parts = recValue.split(' ');
-    if (parts.length < 2) return '';
-
-    const tier = parts[0].toLowerCase();
-    const stars = parseInt(parts[1].charAt(0), 10);
-
-    let starsHtml = '';
-    for (let i = 0; i < 5; i++) {
-        starsHtml += `<span class="star-icon ${i < stars ? 'active' : ''}">★</span>`;
-    }
-
-    return `
-        <div class="recommendation-block">
+        let starsHtml = '';
+        for (let i = 0; i < 5; i++) {
+            starsHtml += `<span class="star-icon ${i < stars ? 'active' : ''}">★</span>`;
+        }
+        recommendationContentHtml = `
             <span class="recommendation-label">${label}</span>
             <div class="recommendation-stars tier-${tier}">${starsHtml}</div>
+        `;
+    }
+
+    // Combine the content and the tooltip into the final HTML structure
+    return `
+        <div class="recommendation-block">
+            ${recommendationContentHtml}
+            <div class="tooltip-text">${tooltipText}</div>
         </div>
     `;
 }
