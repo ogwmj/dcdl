@@ -1264,7 +1264,32 @@ async function handleFindUpgradeSuggestions() {
         try {
             const calculator = new TeamCalculator(dbSynergies, GAME_CONSTANTS);
             const requireHealer = DOM.requireHealerCheckbox.checked;
-            const suggestions = calculator.findUpgradeSuggestions(currentDisplayedTeam, playerRoster, GAME_CONSTANTS, requireHealer);
+            const excludeTeams = DOM.excludeSavedTeamCheckbox.checked;
+            let excludedChampionDbIds = [];
+
+            // Build the list of excluded champion IDs from the selected teams
+            if (excludeTeams && teamExclusionMultiSelect) {
+                const exclusionTeamIds = teamExclusionMultiSelect.getSelectedValues();
+                if (exclusionTeamIds.length > 0) {
+                    const championsToExcludeSet = new Set();
+                    exclusionTeamIds.forEach(teamId => {
+                        const teamToExclude = savedTeams.find(st => st.id === teamId);
+                        if (teamToExclude?.members) {
+                            teamToExclude.members.forEach(member => championsToExcludeSet.add(member.dbChampionId));
+                        }
+                    });
+                    excludedChampionDbIds = Array.from(championsToExcludeSet);
+                }
+            }
+            
+            // Pass the new exclusion list to the suggestions engine
+            const suggestions = calculator.findUpgradeSuggestions(
+                currentDisplayedTeam, 
+                playerRoster, 
+                GAME_CONSTANTS, 
+                requireHealer, 
+                excludedChampionDbIds
+            );
             
             let html = `<div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
                            <h3 class="text-xl font-bold text-accent mb-4">Upgrade Suggestions</h3>`;
