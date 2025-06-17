@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DC: Dark Legion - Event Calendar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Russo+One&display=swap" rel="stylesheet">
+    <link href="css/theme.css" rel="stylesheet">
+    <link href="css/calendar/ui.css" rel="stylesheet">
+</head>
+
+<body>
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="ogwmj" data-description="Support me on Buy me a coffee!" data-message="No pressure." data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+    
+    <div class="background-hero"></div>
+
+    <nav class="bg-slate-900 bg-opacity-80 backdrop-filter backdrop-blur-md shadow-lg sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="index.html" class="text-white text-2xl font-bold">DC:DL Tools</a>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="index.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                    <a href="calculator.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Anvil Calculator</a>
+                    <a href="calendar.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Bleed Calendar</a>
+                    <a href="teams.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Team Builder</a>
+                    <div id="auth-status-desktop"><span class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Loading</span></div>
+                </div>
+                <div class="-mr-2 flex md:hidden">
+                    <button type="button" id="mobile-menu-button" class="bg-slate-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="md:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="calculator.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Anvil Calculator</a>
+                <a href="calendar.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Bleed Calendar</a>
+                <a href="teams.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Team Builder</a>
+                <div id="auth-status-mobile" class="pt-4 mt-2 border-t border-slate-700"></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <header class="text-center mb-16">
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-3 glowing-text">Bleed Calendar</h1>
+            <p class="text-lg md:text-xl text-blue-200">Track the 4-week rotating availability of Limited Mythic champions.</p>
+        </header>
+
+        <main id="timeline-container" class="timeline-container"></main>
+
+    </div>
+
+    <auth-ui status-container-id="auth-status-desktop"></auth-ui>
+    <feedback-widget></feedback-widget>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const desktopAuthContainer = document.getElementById('auth-status-desktop');
+            const mobileAuthContainer = document.getElementById('auth-status-mobile');
+            if (!desktopAuthContainer || !mobileAuthContainer) return;
+
+            const syncAuthStatus = () => {
+                const logoutButton = desktopAuthContainer.querySelector('#logout-btn');
+                if (logoutButton) {
+                    mobileAuthContainer.innerHTML = `<button id="logout-btn-mobile" class="text-gray-300 hover:bg-slate-700 hover:text-white block w-full text-left px-3 py-2 rounded-md text-base font-medium">Logout</button>`;
+                    mobileAuthContainer.querySelector('#logout-btn-mobile').addEventListener('click', () => logoutButton.click());
+                } else {
+                    mobileAuthContainer.innerHTML = desktopAuthContainer.innerHTML;
+                    const loginBtnMobile = mobileAuthContainer.querySelector('#login-btn');
+                    const loginBtnDesktop = desktopAuthContainer.querySelector('#login-btn');
+                    if (loginBtnMobile && loginBtnDesktop) {
+                        loginBtnMobile.addEventListener('click', () => loginBtnDesktop.click());
+                        loginBtnMobile.classList.add('block', 'w-full', 'text-left', 'text-base');
+                        loginBtnMobile.classList.remove('text-sm');
+                    }
+                }
+            };
+            const observer = new MutationObserver(syncAuthStatus);
+            observer.observe(desktopAuthContainer, { childList: true, subtree: true });
+            syncAuthStatus();
+        });
+    </script>
+
+    <script type="module" src="js/auth-ui.js"></script>
+    <script type="module" src="js/feedback-widget.js"></script>
+    <script type="text/javascript" src="js/navigation.js"></script>
+    
+    <script type="module" src="js/calendar/ui.js"></script>
+</body>
+
+</html>

@@ -2,14 +2,14 @@
  * @file js/calculator/ui.js
  * @fileoverview Handles UI interactions, event listeners, and data flow
  * for the redesigned Anvil Calculator.
- * @version 2.0.0
+ * @version 2.1.0
  */
 
 import { calculateExpectedValue, runProbabilitySimulation } from './core.js';
 import { drawCostCard, drawProbabilityChart, drawMonteCarloChart } from './canvas.js';
 import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getFirestore, collection, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
+import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
 // --- DOM ELEMENT REFERENCES ---
 const DOM = {
@@ -22,7 +22,7 @@ const DOM = {
     calculateBtn: document.getElementById('calculateBtn'),
 
     // Inputs
-    lmChampionSelect: document.getElementById('lmChampionSelect'), // Hidden Input
+    lmChampionSelect: document.getElementById('lmChampionSelect'),
     startStarLevel: document.getElementById('startStarLevel'),
     targetStarLevel: document.getElementById('targetStarLevel'),
     toggleUnlockCost: document.getElementById('toggleUnlockCost'),
@@ -65,6 +65,7 @@ const SHARD_REQUIREMENTS = {
 };
 
 let db;
+let analytics;
 let startStarSelectorControl = null;
 let targetStarSelectorControl = null;
 
@@ -90,7 +91,7 @@ async function fetchAndPopulateChampions() {
         const q = query(championsRef, where("baseRarity", "==", "Limited Mythic"), orderBy("name"));
         const querySnapshot = await getDocs(q);
 
-        DOM.customDropdownOptions.innerHTML = ''; // Clear loading state
+        DOM.customDropdownOptions.innerHTML = '';
 
         if (querySnapshot.empty) {
             DOM.selectedChampionName.textContent = 'No Champions Found';
@@ -126,6 +127,13 @@ async function fetchAndPopulateChampions() {
                     DOM.customDropdownOptions.classList.add('hidden');
                     DOM.customDropdownTrigger.setAttribute('aria-expanded', 'false');
                     
+                    if (analytics) {
+                        logEvent(analytics, 'select_champion', {
+                            champion_name: champ.name,
+                            champion_id: doc.id
+                        });
+                    }
+
                     DOM.lmChampionSelect.dispatchEvent(new Event('change'));
                 });
                 DOM.customDropdownOptions.appendChild(optionEl);
@@ -263,6 +271,9 @@ function initializeDropdowns() {
  * @param {number} stepNum - The step number to navigate to.
  */
 function navigateToStep(stepNum) {
+    const fromStep = DOM.stepper.classList.contains('step-2') ? 2 : 1;
+    if (fromStep === stepNum) return;
+
     if (stepNum === 1) {
         DOM.stepper.classList.remove('step-2');
         DOM.step1Btn.classList.add('active');
@@ -275,6 +286,14 @@ function navigateToStep(stepNum) {
         DOM.step2Btn.classList.add('active');
         DOM.step1Content.classList.add('hidden-step');
         DOM.step2Content.classList.remove('hidden-step');
+    }
+
+    if (analytics) {
+        logEvent(analytics, 'navigate_step', {
+            from_step: fromStep,
+            to_step: stepNum,
+            page_title: document.title
+        });
     }
 }
 
@@ -291,24 +310,34 @@ function handleChampionGuidance(event) {
     const selectedOptionEl = DOM.customDropdownOptions.querySelector(`li[data-value="${selectedValue}"]`);
     if (!selectedOptionEl) return;
 
-
     const triggerId = event.target.id;
     let targetLevel;
+    let guidanceType = 'Unknown';
     
     if (triggerId === 'f2pRecBtn') {
         targetLevel = selectedOptionEl.dataset.recF2p;
+        guidanceType = 'F2P';
     } else if (triggerId === 'minRecBtn') {
         targetLevel = selectedOptionEl.dataset.recMin;
+        guidanceType = 'Minimum';
     } else {
         return;
     }
+    
+    if (analytics) {
+        logEvent(analytics, 'guidance_used', {
+            champion_id: selectedValue,
+            champion_name: DOM.selectedChampionName.textContent,
+            guidance_type: guidanceType,
+            target_level: targetLevel
+        });
+    }
 
     if (targetLevel && targetLevel !== 'not set') {
-        // Use the new controls to set the values
         if (startStarSelectorControl) startStarSelectorControl.setValue('0_shards');
         if (targetStarSelectorControl) targetStarSelectorControl.setValue(targetLevel);
 
-        DOM.toggleUnlockCost.checked = true; // Recommendations assume starting from scratch
+        DOM.toggleUnlockCost.checked = true;
 
         handleCalculation();
     } else {
@@ -324,14 +353,12 @@ function attachEventListeners() {
     DOM.step2Btn.addEventListener('click', () => navigateToStep(2));
     DOM.calculateBtn.addEventListener('click', handleCalculation);
 
-    // Custom Dropdown Logic
     DOM.customDropdownTrigger.addEventListener('click', () => {
         const isExpanded = DOM.customDropdownTrigger.getAttribute('aria-expanded') === 'true';
         DOM.customDropdownOptions.classList.toggle('hidden', isExpanded);
         DOM.customDropdownTrigger.setAttribute('aria-expanded', !isExpanded);
     });
 
-    // Close dropdown when clicking outside
     document.addEventListener('click', (event) => {
         if (DOM.customChampionDropdown && !DOM.customChampionDropdown.contains(event.target)) {
             DOM.customDropdownOptions.classList.add('hidden');
@@ -339,7 +366,6 @@ function attachEventListeners() {
         }
     });
 
-    // Show/hide recommendation buttons based on champion selection
     DOM.lmChampionSelect.addEventListener('change', () => {
         const selectedValue = DOM.lmChampionSelect.value;
         const selectedOptionEl = DOM.customDropdownOptions.querySelector(`li[data-value="${selectedValue}"]`);
@@ -388,6 +414,12 @@ function handleCalculation() {
     if (!inputs || inputs.lmChampionSelect === 'default') {
         alert("Please select a champion before calculating.");
         return;
+    }
+
+    if (analytics) {
+        const eventParams = {...inputs};
+        eventParams.championName = DOM.selectedChampionName.textContent || 'unknown';
+        logEvent(analytics, 'calculate', eventParams);
     }
 
     const evResults = calculateExpectedValue(inputs);
@@ -441,8 +473,6 @@ function displayResults(inputs, evResults, simResults) {
     DOM.probabilitySummary.textContent = `Your success rate is ${simResults.successRate.toFixed(1)}%. This chart shows the cost distribution of the successful attempts.`;
 
     drawProbabilityChart('probability-chart-canvas', simResults);
-    
-    // Draw the Monte Carlo chart
     drawMonteCarloChart('monte-carlo-chart-canvas', simResults);
 
     updateAccessibilityInfo(totalCosts, simResults);
@@ -461,6 +491,14 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const app = getApp();
             db = getFirestore(app);
+            analytics = getAnalytics(app);
+            
+            logEvent(analytics, 'page_view', {
+                page_title: document.title,
+                page_location: location.href,
+                page_path: location.pathname
+            });
+
             fetchAndPopulateChampions();
         } catch(e) {
             console.error("Firebase could not be initialized in calculator-ui:", e);
