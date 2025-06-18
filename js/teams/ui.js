@@ -67,6 +67,9 @@ const DOM = {
     swapChampionModal: document.getElementById('swap-champion-modal'),
     toastContainer: document.getElementById('toast-container'),
     customTooltip: document.getElementById('custom-tooltip'),
+    championInfoModal: document.getElementById('champion-info-modal'),
+    championInfoModalBody: document.getElementById('champion-info-modal-body'),
+    championInfoModalClose: document.getElementById('champion-info-modal-close'),
 };
 
 /**
@@ -89,6 +92,7 @@ let gearGridControl = null;
 let forceLevelControl = null;
 let synergyMultiSelect = null;
 let teamExclusionMultiSelect = null;
+let activeFactionFilter = null; 
 
 // =================================================================================================
 // #region INITIALIZATION
@@ -109,6 +113,24 @@ async function initializePage() {
         logEvent(analytics, 'page_view', { page_title: document.title, page_path: '/teams.html' });
         
         showLoading(true, "Loading Game Data...");
+
+        $.fn.dataTable.ext.search.push(
+            function(settings, data, dataIndex) {
+                if (!activeFactionFilter) {
+                    return true;
+                }
+                
+                const rowNode = rosterDataTable.row(dataIndex).node();
+                const championFactions = $(rowNode).data('factions');
+                
+                if (championFactions && championFactions.split(',').includes(activeFactionFilter)) {
+                    return true;
+                }
+                
+                return false;
+            }
+        );
+
         await Promise.all([
             fetchData('champions', (data) => dbChampions = data),
             fetchData('synergies', (data) => dbSynergies = data.sort((a,b) => a.name.localeCompare(b.name))),
@@ -428,24 +450,38 @@ function createTeamExclusionMultiSelect(initialTeams) {
         render();
     };
 
-    inputWrapper.addEventListener('click', () => {
+    const handleClick = () => {
         if (!inputWrapper.classList.contains('disabled')) {
             optionsPanel.classList.remove('hidden');
             searchInput.focus();
         }
-    });
+    };
+
+    const handleDocumentClick = (e) => {
+        if (!container.contains(e.target)) {
+            optionsPanel.classList.add('hidden');
+        }
+    };
+
+    inputWrapper.addEventListener('click', handleClick);
     searchInput.addEventListener('input', render);
-    document.addEventListener('click', (e) => {
-        if (!container.contains(e.target)) optionsPanel.classList.add('hidden');
-    });
+    document.addEventListener('click', handleDocumentClick);
 
     render();
     setDisabled(!DOM.excludeSavedTeamCheckbox.checked);
 
+    const destroy = () => {
+        inputWrapper.removeEventListener('click', handleClick);
+        searchInput.removeEventListener('input', render);
+        document.removeEventListener('click', handleDocumentClick);
+        container.innerHTML = '';
+    };
+
     return {
         getSelectedValues: () => state.selected.map(s => s.id),
         setDisabled,
-        updateOptions
+        updateOptions,
+        destroy,
     };
 }
 
@@ -676,7 +712,13 @@ function attachEventListeners() {
             case 'delete': deleteSavedTeam(id); break;
         }
     });
-    
+
+    DOM.championInfoModalClose.addEventListener('click', () => closeModal('championInfoModal'));
+    DOM.championInfoModal.addEventListener('click', (e) => {
+        if (e.target === DOM.championInfoModal) {
+            closeModal('championInfoModal');
+        }
+    });
 }
 
 /**
@@ -788,9 +830,11 @@ function renderRosterTable() {
     }
     const tableElement = document.getElementById('roster-table');
     const tbody = tableElement.querySelector('tbody');
+    const filterContainer = document.getElementById('roster-faction-filters-container');
 
     if (playerRoster.length === 0) {
         tableElement.style.display = 'none';
+        filterContainer.innerHTML = '';
         DOM.rosterEmptyMessage.classList.remove('hidden');
         DOM.prefillRosterBtn.classList.remove('hidden');
         return;
@@ -801,6 +845,47 @@ function renderRosterTable() {
     DOM.prefillRosterBtn.classList.add('hidden');
     tbody.innerHTML = '';
 
+    const allFactions = new Set();
+    playerRoster.forEach(champ => {
+        (champ.inherentSynergies || []).forEach(faction => allFactions.add(faction));
+    });
+
+    filterContainer.innerHTML = '<strong>Filter by Faction:</strong> ';
+    const sortedFactions = [...allFactions].sort();
+    sortedFactions.forEach(faction => {
+        const btn = document.createElement('button');
+        btn.className = 'faction-filter-btn';
+        btn.dataset.faction = faction;
+        btn.innerHTML = getSynergyIcon(faction);
+        btn.title = faction;
+        filterContainer.appendChild(btn);
+    });
+
+    if (sortedFactions.length > 0) {
+        const clearBtn = document.createElement('button');
+        clearBtn.className = 'btn btn-secondary btn-sm clear-filter-btn';
+        clearBtn.textContent = 'Clear Filter';
+        filterContainer.appendChild(clearBtn);
+    }
+
+    filterContainer.addEventListener('click', (e) => {
+        const target = e.target.closest('button');
+        if (!target) return;
+
+        if (target.classList.contains('clear-filter-btn')) {
+            activeFactionFilter = null;
+        } else if (target.dataset.faction) {
+            const clickedFaction = target.dataset.faction;
+            activeFactionFilter = activeFactionFilter === clickedFaction ? null : clickedFaction;
+        }
+
+        filterContainer.querySelectorAll('.faction-filter-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.faction === activeFactionFilter);
+        });
+
+        rosterDataTable.draw();
+    });
+
     playerRoster.forEach(champ => {
         const score = Math.round(TeamCalculator.calculateIndividualChampionScore(champ, GAME_CONSTANTS));
         let upgradeButton = (champ.baseRarity === 'Legendary' && champ.canUpgrade) ? `<button class="btn btn-secondary btn-sm" data-action="upgrade" data-id="${champ.id}">Upgrade</button>` : '';
@@ -808,8 +893,12 @@ function renderRosterTable() {
         const legacyDisplay = (legacyPiece.id && legacyPiece.rarity && legacyPiece.rarity !== "None") ? `${legacyPiece.name} (${legacyPiece.rarity})<br><div class="text-xs">${getStarRatingHTML(legacyPiece.starColorTier || "Unlocked")}</div>` : "None";
         const healerIconHtml = champ.isHealer ? getHealerPlaceholder() : '';
         const tr = document.createElement('tr');
+
+        const factionsString = (champ.inherentSynergies || []).join(',');
+        tr.setAttribute('data-factions', factionsString);
+
         tr.innerHTML = `
-            <td><div class="flex items-center">${healerIconHtml}${champ.name}</div></td>
+            <td><div class="flex items-center">${healerIconHtml}<span class="clickable-champion" data-id="${champ.dbChampionId}">${champ.name}</span></div></td>
             <td>${getClassPlaceholder(champ.class)}</td>
             <td>${champ.baseRarity}</td>
             <td>${getStarRatingHTML(champ.starColorTier)}</td>
@@ -823,6 +912,14 @@ function renderRosterTable() {
     tbody.querySelectorAll('[data-action="edit"]').forEach(btn => btn.addEventListener('click', (e) => handleEditChampion(parseFloat(e.target.dataset.id))));
     tbody.querySelectorAll('[data-action="remove"]').forEach(btn => btn.addEventListener('click', (e) => handleRemoveChampion(parseFloat(e.target.dataset.id))));
     tbody.querySelectorAll('[data-action="upgrade"]').forEach(btn => btn.addEventListener('click', (e) => handleUpgradeChampion(parseFloat(e.target.dataset.id))));
+    tbody.querySelectorAll('.clickable-champion').forEach(span => {
+        span.addEventListener('click', (e) => {
+            const championId = e.target.dataset.id;
+            if (championId) {
+                showChampionInfoModal(championId);
+            }
+        });
+    });
 
     if (typeof $ !== 'undefined' && $.fn.DataTable) {
         rosterDataTable = new $('#roster-table').DataTable({
@@ -1562,6 +1659,50 @@ async function loadSavedTeamsFromFirestore() {
 // =================================================================================================
 // #region UI Helpers & Modals
 // =================================================================================================
+async function showChampionInfoModal(championId) {
+    DOM.championInfoModal.classList.remove('hidden');
+    DOM.championInfoModal.classList.add('is-open');
+    DOM.championInfoModalBody.innerHTML = `<div class="loader-spinner"></div>`;
+
+    try {
+        const rosterChampion = playerRoster.find(c => c.dbChampionId === championId);
+        if (!rosterChampion) {
+            throw new Error("Champion not found in your roster.");
+        }
+        
+        const champCleanName = rosterChampion.name.replace(/[^a-zA-Z0-9-_]/g, "");
+        const starRatingHtml = getStarRatingHTML(rosterChampion.starColorTier);
+
+        const modalHtml = `
+            <div class="comic-image-panel">
+                <img src="img/champions/full/${champCleanName}.webp" alt="${rosterChampion.name}" class="comic-featured-image" onerror="this.parentElement.style.display='none'">
+            </div>
+            <h3 class="comic-main-title">${rosterChampion.name}</h3>
+            <div class="text-center">
+                <div class="modal-star-rating">${starRatingHtml}</div>
+                <p><strong>Class:</strong> ${rosterChampion.class || 'N/A'}</p>
+                <p><strong>Rarity:</strong> ${rosterChampion.baseRarity}</p>
+                <div class="synergy-icons justify-center mt-2">
+                    ${(rosterChampion.inherentSynergies || []).map(synergyName => getSynergyIconForComic(synergyName, 'modal-synergy-icon')).join('')}
+                </div>
+            </div>
+        `;
+        
+        DOM.championInfoModalBody.innerHTML = modalHtml;
+
+    } catch (error) {
+        console.error("Error creating champion info modal:", error);
+        DOM.championInfoModalBody.innerHTML = `<p class="text-center text-red-500">Could not load champion details.</p>`;
+    }
+}
+
+function getSynergyIconForComic(synergyName, customClass = 'synergy-icon') {
+    if (!synergyName) return '';
+    const nameForIcon = synergyName.trim().replace(/\s+/g, '_');
+    const fallbackSpan = `<span class="icon-placeholder text-xs" style="display:none;">[${synergyName}]</span>`;
+    return `<span class="icon-wrapper" title="${synergyName}"><img src="img/factions/${nameForIcon}.png" alt="${synergyName}" class="${customClass}" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';">${fallbackSpan}</span>`;
+}
+
 /**
  * @description Creates an interactive star rating component.
  * @param {string} containerId - The ID of the container element for the component.
@@ -1889,8 +2030,13 @@ function closeModal(modalId) {
         modal.classList.remove('is-open');
         setTimeout(() => {
           modal.classList.add('hidden');
+           // If the modal is one that is completely generated, clear all its content
            if (modalId === 'confirmModal' || modalId === 'teamNameModal' || modalId === 'shareTeamModal') {
                modal.innerHTML = ''; 
+          }
+          // FIX: If it's the champion info modal, only clear its body to preserve the structure
+          if (modalId === 'championInfoModal' && DOM.championInfoModalBody) {
+              DOM.championInfoModalBody.innerHTML = '';
           }
         }, 300);
     }
