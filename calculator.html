@@ -72,16 +72,13 @@
             <p class="text-lg md:text-xl text-blue-200">Estimate the cost to upgrade your Limited Mythic heroes.</p>
         </header>
 
-        <!-- Main Wizard Container -->
         <main id="wizard-container" class="card">
 
-            <!-- Step Navigation -->
             <div id="stepper" class="stepper">
                 <div id="step-btn-1" class="step active" data-step="1">Define Goal</div>
                 <div id="step-btn-2" class="step" data-step="2">Set Parameters</div>
             </div>
 
-            <!-- Step 1: Define Goal -->
             <div id="step-1-content" class="wizard-step">
                 <h2 class="text-xl font-bold text-accent mb-6">What is your upgrade objective?</h2>
                 
@@ -132,11 +129,9 @@
                 </div>
             </div>
 
-            <!-- Step 2: Set Parameters (Unchanged) -->
             <div id="step-2-content" class="wizard-step hidden-step">
                 <h2 class="text-xl font-bold text-accent mb-6">Fine-tune your calculation parameters.</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Pity & Budget -->
                     <div class="space-y-6">
                          <div class="input-group">
                             <label for="currentMythicPity">Current Mythic Pity
@@ -157,7 +152,6 @@
                             <input type="number" id="anvilBudget" value="100" min="1">
                         </div>
                     </div>
-                    <!-- Advanced Parameters -->
                     <details class="bg-slate-50 p-4 rounded-lg border border-slate-200">
                         <summary class="font-semibold cursor-pointer text-sm">Advanced Pull Rates & Shards</summary>
                         <div class="mt-4 space-y-4">
@@ -186,7 +180,6 @@
                 </div>
             </div>
             
-            <!-- Calculation Button -->
             <div class="text-center mt-10">
                 <button id="calculateBtn" class="btn btn-primary text-lg">
                     <span class="btn-text">Calculate Cost & Probability</span>
@@ -194,29 +187,26 @@
             </div>
         </main>
 
-        <!-- Dynamic Results Container (Unchanged) -->
         <section id="results-container">
             <h2 class="text-2xl font-bold text-center mb-6 font-extrabold mb-3 glowing-text hi-white">Calculation Results</h2>
-            <!-- Canvas-powered result cards -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                 <div class="result-card-canvas">
                     <h4>Worst Case</h4>
-                    <canvas id="worst-case-canvas" width="200" height="120"></canvas>
+                    <div id="worst-case-display" class="result-card-display"></div>
                     <p class="text-xs text-slate-400 mt-2" aria-hidden="true">Statistically Unlikely</p>
                 </div>
                  <div class="result-card-canvas border-2 border-indigo-300">
                     <h4>Average Cost</h4>
-                    <canvas id="average-case-canvas" width="200" height="120"></canvas>
+                    <div id="average-case-display" class="result-card-display"></div>
                      <p class="text-xs text-slate-400 mt-2" aria-hidden="true">Expected Value</p>
                 </div>
                  <div class="result-card-canvas">
                     <h4>Best Case</h4>
-                    <canvas id="best-case-canvas" width="200" height="120"></canvas>
+                    <div id="best-case-display" class="result-card-display"></div>
                      <p class="text-xs text-slate-400 mt-2" aria-hidden="true">Statistically Lucky</p>
                 </div>
             </div>
 
-            <!-- Probability Distribution Chart -->
             <div class="card">
                 <h3 class="text-lg font-bold mb-1 text-center">Probability of Success</h3>
                 <p id="probability-summary" class="text-sm text-slate-500 text-center mb-4">Results for your budget of <span id="budget-display">100</span> Anvils.</p>
@@ -225,7 +215,6 @@
                 </div>
             </div>
             
-            <!-- Monte Carlo Simulation Chart -->
             <div class="card mt-8">
                 <h3 class="text-lg font-bold mb-1 text-center">Monte Carlo Simulation</h3>
                 <p class="text-sm text-slate-500 text-center mb-4">Visualizing 10,000 simulated attempts.</p>
