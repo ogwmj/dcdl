@@ -2,7 +2,7 @@
  * @file js/calculator/ui.js
  * @fileoverview Handles UI interactions, event listeners, and data flow
  * for the redesigned Anvil Calculator.
- * @version 2.1.0
+ * @version 2.2.0
  */
 
 import { calculateExpectedValue, runProbabilitySimulation } from './core.js';
@@ -465,9 +465,9 @@ function displayResults(inputs, evResults, simResults) {
         worst: evResults.upgradeCost.worst + (inputs.toggleUnlockCost ? evResults.unlockCost.worst : 0),
     };
 
-    drawCostCard('average-case-canvas', totalCosts.avg, '#4338ca');
-    drawCostCard('best-case-canvas', totalCosts.best, '#059669');
-    drawCostCard('worst-case-canvas', totalCosts.worst, '#dc2626');
+    drawCostCard('average-case-display', totalCosts.avg, '#4338ca');
+    drawCostCard('best-case-display', totalCosts.best, '#059669');
+    drawCostCard('worst-case-display', totalCosts.worst, '#dc2626');
     
     DOM.budgetDisplay.textContent = inputs.anvilBudget.toLocaleString();
     DOM.probabilitySummary.textContent = `Your success rate is ${simResults.successRate.toFixed(1)}%. This chart shows the cost distribution of the successful attempts.`;

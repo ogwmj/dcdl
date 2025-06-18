@@ -1,8 +1,7 @@
 /**
  * @file js/calculator/canvas.js
- * @fileoverview Handles all drawing and animation on canvas elements
- * for the redesigned Anvil Calculator.
- * @version 2.0.0
+ * @fileoverview Handles all drawing and animation on canvas elements and result displays.
+ * @version 2.1.0
  */
 
 // --- CHART INSTANCES ---
@@ -13,18 +12,18 @@ let monteCarloChart = null;
 
 /**
  * Animates a number counting up from a start value to an end value.
- * @param {Function} drawFunc - The function to call on each animation frame.
+ * @param {HTMLElement} element - The HTML element to update.
  * @param {number} endValue - The final value to animate to.
  * @param {number} duration - The animation duration in ms.
  */
-function animateValue(drawFunc, endValue, duration = 1500) {
+function animateValue(element, endValue, duration = 1500) {
     let startTimestamp = null;
     const step = (timestamp) => {
         if (!startTimestamp) startTimestamp = timestamp;
         const progress = Math.min((timestamp - startTimestamp) / duration, 1);
         const easedProgress = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
         const currentValue = Math.floor(easedProgress * endValue);
-        drawFunc(currentValue);
+        element.querySelector('.result-value').textContent = currentValue.toLocaleString();
         if (progress < 1) {
             window.requestAnimationFrame(step);
         }
@@ -32,42 +31,26 @@ function animateValue(drawFunc, endValue, duration = 1500) {
     window.requestAnimationFrame(step);
 }
 
-// --- CANVAS RENDERING FUNCTIONS ---
+// --- DISPLAY RENDERING FUNCTIONS ---
 
 /**
- * Draws a cost card with an animated number.
- * @param {string} canvasId - The ID of the canvas element.
+ * Draws a cost card using HTML elements.
+ * @param {string} displayId - The ID of the display container div.
  * @param {number} value - The final cost value to display.
  * @param {string} accentColor - The hex color for the text.
  */
-export function drawCostCard(canvasId, value, accentColor) {
-    const canvas = document.getElementById(canvasId);
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
+export function drawCostCard(displayId, value, accentColor) {
+    const displayElement = document.getElementById(displayId);
+    if (!displayElement) return;
 
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    ctx.scale(dpr, dpr);
-
-    const draw = (currentValue) => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // Main Value Text
-        ctx.fillStyle = accentColor;
-        ctx.font = 'bold 48px Inter, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(Math.round(currentValue).toLocaleString(), rect.width / 2, rect.height / 2 - 10);
-        
-        // "Anvils" Label
-        ctx.fillStyle = '#475569'; // text-secondary
-        ctx.font = '600 16px Inter, sans-serif';
-        ctx.fillText('Anvils', rect.width / 2, rect.height / 2 + 30);
-    };
-
-    animateValue(draw, value);
+    // Set the structure and initial state
+    displayElement.innerHTML = `
+        <div class="result-value" style="color: ${accentColor};">0</div>
+        <div class="result-label">Anvils</div>
+    `;
+    
+    // Animate the value
+    animateValue(displayElement, value);
 }
 
 /**

@@ -244,3 +244,25 @@ body {
     visibility: visible;
     opacity: 1;
 }
+
+
+.result-card-display {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 120px;
+}
+.result-value {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800; /* extrabold */
+    font-size: clamp(3rem, 10vw, 5rem); /* Responsive font size */
+    line-height: 1.1;
+}
+.result-label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600; /* semibold */
+    color: #475569; /* text-secondary */
+    font-size: 1rem;
+    margin-top: 0.5rem;
+}
