@@ -92,6 +92,7 @@ let gearGridControl = null;
 let forceLevelControl = null;
 let synergyMultiSelect = null;
 let teamExclusionMultiSelect = null;
+let activeFactionFilter = null; 
 
 // =================================================================================================
 // #region INITIALIZATION
@@ -112,6 +113,24 @@ async function initializePage() {
         logEvent(analytics, 'page_view', { page_title: document.title, page_path: '/teams.html' });
         
         showLoading(true, "Loading Game Data...");
+
+        $.fn.dataTable.ext.search.push(
+            function(settings, data, dataIndex) {
+                if (!activeFactionFilter) {
+                    return true;
+                }
+                
+                const rowNode = rosterDataTable.row(dataIndex).node();
+                const championFactions = $(rowNode).data('factions');
+                
+                if (championFactions && championFactions.split(',').includes(activeFactionFilter)) {
+                    return true;
+                }
+                
+                return false;
+            }
+        );
+
         await Promise.all([
             fetchData('champions', (data) => dbChampions = data),
             fetchData('synergies', (data) => dbSynergies = data.sort((a,b) => a.name.localeCompare(b.name))),
@@ -811,9 +830,11 @@ function renderRosterTable() {
     }
     const tableElement = document.getElementById('roster-table');
     const tbody = tableElement.querySelector('tbody');
+    const filterContainer = document.getElementById('roster-faction-filters-container');
 
     if (playerRoster.length === 0) {
         tableElement.style.display = 'none';
+        filterContainer.innerHTML = '';
         DOM.rosterEmptyMessage.classList.remove('hidden');
         DOM.prefillRosterBtn.classList.remove('hidden');
         return;
@@ -824,6 +845,47 @@ function renderRosterTable() {
     DOM.prefillRosterBtn.classList.add('hidden');
     tbody.innerHTML = '';
 
+    const allFactions = new Set();
+    playerRoster.forEach(champ => {
+        (champ.inherentSynergies || []).forEach(faction => allFactions.add(faction));
+    });
+
+    filterContainer.innerHTML = '<strong>Filter by Faction:</strong> ';
+    const sortedFactions = [...allFactions].sort();
+    sortedFactions.forEach(faction => {
+        const btn = document.createElement('button');
+        btn.className = 'faction-filter-btn';
+        btn.dataset.faction = faction;
+        btn.innerHTML = getSynergyIcon(faction);
+        btn.title = faction;
+        filterContainer.appendChild(btn);
+    });
+
+    if (sortedFactions.length > 0) {
+        const clearBtn = document.createElement('button');
+        clearBtn.className = 'btn btn-secondary btn-sm clear-filter-btn';
+        clearBtn.textContent = 'Clear Filter';
+        filterContainer.appendChild(clearBtn);
+    }
+
+    filterContainer.addEventListener('click', (e) => {
+        const target = e.target.closest('button');
+        if (!target) return;
+
+        if (target.classList.contains('clear-filter-btn')) {
+            activeFactionFilter = null;
+        } else if (target.dataset.faction) {
+            const clickedFaction = target.dataset.faction;
+            activeFactionFilter = activeFactionFilter === clickedFaction ? null : clickedFaction;
+        }
+
+        filterContainer.querySelectorAll('.faction-filter-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.faction === activeFactionFilter);
+        });
+
+        rosterDataTable.draw();
+    });
+
     playerRoster.forEach(champ => {
         const score = Math.round(TeamCalculator.calculateIndividualChampionScore(champ, GAME_CONSTANTS));
         let upgradeButton = (champ.baseRarity === 'Legendary' && champ.canUpgrade) ? `<button class="btn btn-secondary btn-sm" data-action="upgrade" data-id="${champ.id}">Upgrade</button>` : '';
@@ -831,6 +893,10 @@ function renderRosterTable() {
         const legacyDisplay = (legacyPiece.id && legacyPiece.rarity && legacyPiece.rarity !== "None") ? `${legacyPiece.name} (${legacyPiece.rarity})<br><div class="text-xs">${getStarRatingHTML(legacyPiece.starColorTier || "Unlocked")}</div>` : "None";
         const healerIconHtml = champ.isHealer ? getHealerPlaceholder() : '';
         const tr = document.createElement('tr');
+
+        const factionsString = (champ.inherentSynergies || []).join(',');
+        tr.setAttribute('data-factions', factionsString);
+
         tr.innerHTML = `
             <td><div class="flex items-center">${healerIconHtml}<span class="clickable-champion" data-id="${champ.dbChampionId}">${champ.name}</span></div></td>
             <td>${getClassPlaceholder(champ.class)}</td>
