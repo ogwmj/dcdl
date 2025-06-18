@@ -16,6 +16,10 @@ let sortedChampionsList = [];
 const DOM = {
     timelineContainer: document.getElementById('timeline-container')
 };
+const comicModalBackdrop = document.getElementById('comic-modal-backdrop');
+const comicModalBody = document.getElementById('comic-modal-body');
+const comicModalClose = document.getElementById('comic-modal-close');
+const championDetailsCache = new Map();
 
 // --- HELPER FUNCTIONS ---
 
@@ -86,6 +90,111 @@ function createRecommendationHtml(label, recValue) {
     `;
 }
 
+// --- COMIC VIEW FUNCTIONS ---
+
+/**
+ * Fetches details for a list of related champion IDs.
+ * @param {Array<string>} relatedIds - Array of champion IDs to fetch.
+ * @returns {Promise<Array<Object>>} - A promise that resolves to an array of champion objects.
+ */
+async function fetchChampionDetails(relatedIds) {
+    const championsToFetch = relatedIds.filter(id => !championDetailsCache.has(id));
+    
+    if (championsToFetch.length > 0) {
+        const championsRef = collection(db, `artifacts/dc-dark-legion-builder/public/data/champions`);
+        const q = query(championsRef, where('__name__', 'in', championsToFetch));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach(doc => {
+            championDetailsCache.set(doc.id, { id: doc.id, ...doc.data() });
+        });
+    }
+
+    return relatedIds.map(id => championDetailsCache.get(id)).filter(Boolean);
+}
+
+/**
+ * Opens and populates the comic book style modal.
+ * @param {string} championId - The ID of the main champion to display.
+ */
+async function showComicModal(championId) {
+    comicModalBackdrop.classList.add('is-visible');
+    comicModalBody.innerHTML = `<div class="loader-spinner" style="animation: spin 1.5s linear infinite;"></div>`;
+
+    try {
+        // This part remains the same, fetching the main champion's data for the title and large image.
+        const championDocRef = doc(db, `artifacts/dc-dark-legion-builder/public/data/champions`, championId);
+        const championSnap = await getDoc(championDocRef);
+
+        if (!championSnap.exists()) {
+            throw new Error("Main champion not found.");
+        }
+        
+        const mainChampion = { id: championSnap.id, ...championSnap.data() };
+
+        // 1. Create a reference to the 'relatedChampions' subcollection.
+        const relatedSubcollectionRef = collection(db, `artifacts/dc-dark-legion-builder/public/data/champions/${championId}/relatedChampions`);
+
+        // 2. Fetch all documents within that subcollection.
+        const relatedQuerySnapshot = await getDocs(relatedSubcollectionRef);
+
+        let relatedChampionIds = [];
+        // 3. Check if the subcollection is not empty.
+        if (!relatedQuerySnapshot.empty) {
+            // 4. Get the very first document from the subcollection results.
+            const relatedDataDoc = relatedQuerySnapshot.docs[0].data();
+            // 5. Access the 'championIds' array from that document's data.
+            relatedChampionIds = relatedDataDoc.championIds || [];
+        }
+
+        let relatedChampionsHtml = '';
+
+        // The rest of the function works as intended with the correctly fetched array.
+        if (relatedChampionIds.length > 0) {
+            const relatedChampions = await fetchChampionDetails(relatedChampionIds);
+            relatedChampions.sort((a, b) => a.name.localeCompare(b.name));
+
+            relatedChampions.forEach(related => {
+                const relatedChampCleanName = related.name.replace(/[^a-zA-Z0-9_]/g, "");
+                relatedChampionsHtml += `
+                    <div class="related-champion-panel">
+                        <img src="img/champions/avatars/${relatedChampCleanName}.webp" alt="${related.name}" onerror="this.src='img/champions/avatars/dc_logo.webp'">
+                        <h4>${related.name}</h4>
+                    </div>
+                `;
+            });
+        }
+
+        const mainChampCleanName = mainChampion.name.replace(/[^a-zA-Z0-9-_]/g, "");
+        const featuringSection = relatedChampionsHtml 
+            ? `<div class="comic-featuring-title">Increased Odds...</div><div class="related-champions-grid">${relatedChampionsHtml}</div>`
+            : '';
+
+        const modalHtml = `
+            <div class="comic-header">
+                <img src="img/logo_white.webp" alt="Logo" class="comic-header-logo">
+            </div>
+            <div class="comic-image-panel">
+                <img src="img/champions/full/${mainChampCleanName}.webp" alt="${mainChampion.name}" class="comic-featured-image" onerror="this.parentElement.style.display='none'">
+            </div>
+            <h3 class="comic-main-title">${mainChampion.name}</h3>
+            ${featuringSection}
+        `;
+        
+        comicModalBody.innerHTML = modalHtml;
+
+    } catch (error) {
+        console.error("Error creating comic modal:", error);
+        comicModalBody.innerHTML = `<p class="text-center text-red-500">Could not load champion details.</p>`;
+    }
+}
+
+/**
+ * Hides the comic book style modal.
+ */
+function hideComicModal() {
+    comicModalBackdrop.classList.remove('is-visible'); 
+    comicModalBody.innerHTML = '';
+}
 
 // --- CORE FUNCTIONS ---
 
@@ -131,7 +240,7 @@ function renderTimeline(schedule, currentWeek) {
         }
 
         timelineHtml += `
-            <div id="event-${index}" class="timeline-event ${side} ${statusClass}" role="button" tabindex="0">
+            <div id="event-${index}" class="timeline-event ${side} ${statusClass}" role="button" tabindex="0" data-champion-id="${event.id}">
                 <div class="timeline-content">
                     <div class="timeline-main-info">
                         <img src="${event.avatar}" alt="${event.name}" class="timeline-avatar" onerror="this.src='img/champions/avatars/dc_logo.webp'">
@@ -247,11 +356,18 @@ async function initializeCalendar(analytics) {
         DOM.timelineContainer.addEventListener('click', (e) => {
             const eventElement = e.target.closest('.timeline-event');
             if (eventElement) {
-                const navElement = document.querySelector('nav');
-                const navHeight = navElement ? navElement.offsetHeight : 0;
-                const elementPosition = eventElement.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.scrollY - navHeight - 16;
-                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                const championId = eventElement.dataset.championId;
+                // Prevent opening for "To Be Announced" champions
+                if (championId && championId !== 'TBA') { 
+                    showComicModal(championId);
+                }
+            }
+        });
+
+        comicModalClose.addEventListener('click', hideComicModal);
+        comicModalBackdrop.addEventListener('click', (e) => {
+            if (e.target === comicModalBackdrop) {
+                hideComicModal();
             }
         });
 
