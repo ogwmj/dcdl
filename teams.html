@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link href="css/teams/ui.css" rel="stylesheet">
     <link href="css/theme.css" rel="stylesheet">
+    <link href="css/comic-view.css" rel="stylesheet">
 </head>
 
 <body>
@@ -73,7 +74,6 @@
             <p class="text-lg md:text-xl text-blue-200">Build your roster and find your highest-scoring team composition.</p>
         </header>
 
-        <!-- Loading and Error Indicators -->
         <div id="loading-indicator" class="text-center card">
             <div class="loading-spinner"></div>
             <p class="text-indigo-600 mt-2">Loading game data & your roster...</p>
@@ -83,19 +83,15 @@
             <p id="error-message-details" class="text-xs mt-1"></p>
         </div>
 
-        <!-- Main Wizard Container -->
         <main id="main-app-content" class="card hidden">
-            <!-- Step Navigation -->
             <div id="stepper" class="stepper">
                 <div id="step-btn-1" class="step active" data-step="1">Manage Roster</div>
                 <div id="step-btn-2" class="step" data-step="2">Create Teams</div>
             </div>
 
-            <!-- Step 1: Manage Roster -->
             <div id="step-1-content" class="wizard-step">
                 <h2 id="form-mode-title" class="text-xl font-bold text-accent mb-6">Add Champion to Roster</h2>
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 p-4 bg-slate-50 rounded-lg border border-slate-200 mb-8">
-                    <!-- Column 1: Champion Selection -->
                     <div class="input-group">
                         <label for="custom-champ-dropdown-trigger">Select Champion</label>
                         <div id="custom-champ-dropdown" class="relative mt-2">
@@ -127,13 +123,11 @@
                             <input type="hidden" id="champ-force-level">
                         </div>
                     </div>
-                    <!-- Column 2: Gear -->
                     <div>
                         <label class="font-bold text-primary mb-2 block">Gear Rarity</label>
                         <div id="interactive-gear-grid" class="p-4 bg-slate-50 rounded-lg border border-slate-200">
                             </div>
                     </div>
-                    <!-- Column 3: Legacy & Actions -->
                     <div>
                         <div class="input-group">
                             <label for="legacy-piece-select">Legacy Piece</label>
@@ -182,7 +176,6 @@
                 </div>
             </div>
 
-            <!-- Step 2: Find & View Teams -->
             <div id="step-2-content" class="wizard-step hidden-step">
                 <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 mb-8">
                     <h2 class="text-xl font-bold text-accent mb-4">Find Optimal Team</h2>
@@ -238,15 +231,19 @@
         </main>
     </div>
 
-    <!-- Modals -->
     <div id="custom-tooltip" class="hidden"></div>
     <div id="team-name-modal" class="modal-backdrop hidden"></div>
     <div id="processing-modal" class="modal-backdrop hidden"></div>
     <div id="confirm-modal" class="modal-backdrop hidden"></div>
     <div id="share-team-modal" class="modal-backdrop hidden"></div>
     <div id="swap-champion-modal" class="modal-backdrop hidden"></div>
+    <div id="champion-info-modal" class="modal-backdrop hidden">
+        <div id="champion-info-modal-content" class="modal-content">
+            <button id="champion-info-modal-close" aria-label="Close">&times;</button>
+            <div id="champion-info-modal-body"></div>
+        </div>
+    </div>
 
-    <!-- Toast Notifications Container -->
     <div id="toast-container"></div>
 
     <auth-ui status-container-id="auth-status-desktop"></auth-ui>
