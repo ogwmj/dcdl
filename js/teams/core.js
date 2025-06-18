@@ -275,9 +275,10 @@ export class TeamCalculator {
      * @param {object} gameConstants - The GAME_CONSTANTS object.
      * @param {boolean} requireHealer - A flag indicating if the team must contain a healer.
      * @param {Array<string>} excludedChampionDbIds - An array of champion dbChampionIds to exclude from suggestions.
+     * @param {Array<string>} requiredSynergies - An array of synergy names that challengers must have.
      * @returns {Array<object>} A sorted list of the best upgrade suggestions.
      */
-    findUpgradeSuggestions(bestTeam, fullRoster, gameConstants, requireHealer = false, excludedChampionDbIds = []) {
+    findUpgradeSuggestions(bestTeam, fullRoster, gameConstants, requireHealer = false, excludedChampionDbIds = [], requiredSynergies = []) {
         const suggestions = [];
         const bestTeamMemberIds = new Set(bestTeam.members.map(m => m.id));
         
@@ -297,13 +298,31 @@ export class TeamCalculator {
             return [];
         }
 
-        const swapTarget = potentialSwapTargets.reduce((weakest, member) =>
-            member.individualScore < weakest.individualScore ? member : weakest, potentialSwapTargets[0]);
-
+        let swapTarget;
+        if (potentialSwapTargets.length === 1) {
+            swapTarget = potentialSwapTargets[0];
+        } else {
+            // Calculate the score drop caused by removing each potential target. The one with the smallest drop is the weakest link.
+            const memberContributions = potentialSwapTargets.map(memberToTest => {
+                const teamWithoutMember = bestTeam.members.filter(m => m.id !== memberToTest.id);
+                const scoreWithoutMember = this.evaluateTeam(teamWithoutMember).totalScore;
+                const scoreContribution = bestTeam.totalScore - scoreWithoutMember;
+                return { member: memberToTest, contribution: scoreContribution };
+            });
+            memberContributions.sort((a, b) => a.contribution - b.contribution); // Sort ascending by contribution
+            swapTarget = memberContributions[0].member;
+        }
+        
+        // 2. Identify "Challengers", respecting all filters
         const excludedDbIdsSet = new Set(excludedChampionDbIds);
-        const challengers = fullRoster.filter(champ =>
-            !bestTeamMemberIds.has(champ.id) && !excludedDbIdsSet.has(champ.dbChampionId)
-        );
+        const challengers = fullRoster.filter(champ => {
+            const hasRequiredSynergy = requiredSynergies.length === 0 || 
+                (champ.inherentSynergies && champ.inherentSynergies.some(s => requiredSynergies.includes(s)));
+            
+            return !bestTeamMemberIds.has(champ.id) && 
+                !excludedDbIdsSet.has(champ.dbChampionId) &&
+                hasRequiredSynergy;
+        });
 
         challengers.forEach(champ => {
             // This helper function and the rest of the loops remain the same

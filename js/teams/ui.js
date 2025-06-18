@@ -1263,8 +1263,10 @@ async function handleFindUpgradeSuggestions() {
     setTimeout(() => {
         try {
             const calculator = new TeamCalculator(dbSynergies, GAME_CONSTANTS);
+
             const requireHealer = DOM.requireHealerCheckbox.checked;
             const excludeTeams = DOM.excludeSavedTeamCheckbox.checked;
+            const requiredSynergies = synergyMultiSelect.getSelectedValues();
             let excludedChampionDbIds = [];
 
             // Build the list of excluded champion IDs from the selected teams
@@ -1288,7 +1290,8 @@ async function handleFindUpgradeSuggestions() {
                 playerRoster, 
                 GAME_CONSTANTS, 
                 requireHealer, 
-                excludedChampionDbIds
+                excludedChampionDbIds,
+                requiredSynergies
             );
             
             let html = `<div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
