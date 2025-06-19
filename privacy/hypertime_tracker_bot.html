@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - DC: Dark Legion Hypertime Tracker</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #ffffff;
+            padding: 20px 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #1a1a1a;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #343a40;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 5px;
+            margin-top: 40px;
+        }
+        h3 {
+            color: #495057;
+            margin-top: 25px;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .effective-date {
+            text-align: center;
+            color: #6c757d;
+            margin-top: -10px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Privacy Policy for Dark Legion Hypertime Tracker</h1>
+        <p class="effective-date">Effective Date: June 19, 2025</p>
+
+        <p>This Privacy Policy describes how Dark Legion Hypertime Tracker ("Bot," "we," "us," or "our") collects, uses, and discloses your information when you use our services on the Discord platform.</p>
+        <p>By using the Bot, you agree to the collection and use of information in accordance with this policy.</p>
+
+        <h2>1. Information We Collect</h2>
+        <p>We collect the minimum amount of information necessary to provide the Bot's features.</p>
+        
+        <h3>Information You Provide to Us:</h3>
+        <p>When you use the <code>/hypertime_setup</code> command, we collect the data you input: the name of your current champion and the time until the next champion rotation.</p>
+        
+        <h3>Information Collected Automatically:</h3>
+        <p><strong>Discord User ID:</strong> To associate your settings with your specific Discord account, we store your unique Discord User ID. The Bot does not have access to your email address, password, or any personal information from your Discord profile beyond this public ID.</p>
+        <p>The Bot does not read, collect, or store the content of your messages in any channel, except for the explicit slash commands directed at it.</p>
+
+        <h2>2. How We Use Your Information</h2>
+        <p>The information we collect is used for one specific purpose: to calculate, store, and display a personalized event timeline for you within Discord. The <code>anchor_date</code> calculated from your setup command is linked to your User ID so that when you request your schedule, we can provide the correct one.</p>
+        <p>We do not use your information for marketing, advertising, or any other purpose.</p>
+
+        <h2>3. Data Storage and Security</h2>
+        <p>Your personalized settings (the calculated <code>anchor_date</code> associated with your Discord User ID) are stored in a secure cloud database (Google Firestore). We take reasonable measures to protect your information from unauthorized access, use, or disclosure.</p>
+
+        <h2>4. Data Retention</h2>
+        <p>We retain your personalized settings as long as you continue to use the Bot or until you request deletion. If you kick the Bot from your server, your settings data remains in our database in case you decide to re-add the Bot later, but it is not accessed or processed.</p>
+
+        <h2>5. Data Sharing</h2>
+        <p>We do not sell, trade, or share your personalized settings data with third-party companies for marketing purposes. Your data is only processed by the essential services required for the Bot to function:</p>
+        <ul>
+            <li><strong>Discord:</strong> The platform the Bot operates on.</li>
+            <li><strong>Google Cloud / Firebase:</strong> The service that hosts our secure database.</li>
+        </ul>
+
+        <h2>6. Your Data Rights</h2>
+        <p>You have rights over your data.</p>
+        <ul>
+            <li><strong>Right to Access:</strong> You can request to see the data associated with your Discord User ID by contacting us.</li>
+            <li><strong>Right to Rectification:</strong> You can update or correct your information at any time by simply re-running the <code>/hypertime_setup</code> command with new data.</li>
+            <li><strong>Right to Erasure:</strong> You can request the deletion of all data associated with your Discord User ID. To do so, please contact us at the email address provided below.</li>
+        </ul>
+
+        <h2>7. Third-Party Links</h2>
+        <p>The Bot may contain links to other websites, such as the Anvil Calculator. This Privacy Policy does not apply to those external sites. We are not responsible for the privacy practices of other sites, and we encourage you to read their privacy policies.</p>
+
+        <h2>8. Children's Privacy</h2>
+        <p>Our service does not address anyone under the age of 13. We do not knowingly collect personally identifiable information from children under 13.</p>
+
+        <h2>9. Changes to This Privacy Policy</h2>
+        <p>We may update our Privacy Policy from time to time. We will notify you of any significant changes. We encourage you to review this Privacy Policy periodically for any changes.</p>
+
+        <h2>10. Contact Us</h2>
+        <p>If you have any questions or requests regarding this Privacy Policy or your data, please contact us at <span class="protected-email">[loading...]</span>.</p>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const emailUser = 'dclegiondark';
+            const emailDomain = 'proton.me';
+            const contactElements = document.querySelectorAll('.protected-email');
+            contactElements.forEach(element => {
+                const fullEmail = `${emailUser}@${emailDomain}`;
+                element.innerHTML = `<a href="mailto:${fullEmail}">${fullEmail}</a>`;
+            });
+        });
+    </script>
+
+</body>
+</html>
