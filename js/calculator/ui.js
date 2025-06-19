@@ -72,6 +72,26 @@ let targetStarSelectorControl = null;
 // --- UI INITIALIZATION & EVENT LISTENERS ---
 
 /**
+ * Checks the URL for a 'champion' parameter and pre-selects them.
+ */
+function handleUrlParameters() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const championIdFromUrl = urlParams.get('champion');
+
+    if (championIdFromUrl) {
+        // Find the corresponding list item in our custom dropdown
+        const championOption = DOM.customDropdownOptions.querySelector(`li[data-value="${championIdFromUrl}"]`);
+
+        if (championOption) {
+            // Programmatically click the option to trigger all selection logic
+            championOption.click();
+        } else {
+            console.warn(`Champion with ID '${championIdFromUrl}' not found in the dropdown.`);
+        }
+    }
+}
+
+/**
  * Fetches champion data from Firestore and populates the custom dropdown.
  */
 async function fetchAndPopulateChampions() {
@@ -487,7 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeDropdowns();
     attachEventListeners();
 
-    document.addEventListener('firebase-ready', () => {
+    document.addEventListener('firebase-ready', async () => { // Add 'async' here
         try {
             const app = getApp();
             db = getFirestore(app);
@@ -499,7 +519,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 page_path: location.pathname
             });
 
-            fetchAndPopulateChampions();
+            await fetchAndPopulateChampions(); // Add 'await' here
+            
+            handleUrlParameters();
         } catch(e) {
             console.error("Firebase could not be initialized in calculator-ui:", e);
             if (DOM.selectedChampionName) {
