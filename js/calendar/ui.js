@@ -1,8 +1,7 @@
 /**
  * @file js/calendar/ui.js
- * @description Fetches and renders the Limited Mythic champion rotation calendar dynamically from Firestore.
- * Highlights the current rotation and displays investment recommendations.
- * @version 1.4.0
+ * @description Fetches and renders the Limited Mythic champion rotation calendar.
+ * @version 2.0.0 - Displays Owner's Roster data instead of recommendations.
  */
 
 // Import necessary functions from the Firebase SDK
@@ -20,46 +19,9 @@ const comicModalBackdrop = document.getElementById('comic-modal-backdrop');
 const comicModalBody = document.getElementById('comic-modal-body');
 const comicModalClose = document.getElementById('comic-modal-close');
 const championDetailsCache = new Map();
+let ownerRosterCache = new Map(); // <-- NEW: Cache for owner's roster
 
-// --- HELPER FUNCTIONS ---
-
-/**
- * Creates the HTML for a single star rating recommendation with a tooltip.
- * @param {string} label - The label for the recommendation (e.g., "F2P").
- * @param {string} recValue - The recommendation string (e.g., "Gold 4-Star", "skip", "not set").
- * @returns {string} The complete HTML for the recommendation block.
- */
-function createRecommendationHtml(label, recValue) {
-    const lowerRecValue = (recValue || '').toLowerCase();
-    let recommendationContentHtml = '';
-    let tooltipText = '';
-
-    if (label === 'F2P') {
-        tooltipText = 'Coming Soon?';
-    } else if (label === 'Min') {
-        tooltipText = 'Coming Soon?';
-    }
-
-    if (lowerRecValue === '' || lowerRecValue === 'not set') {
-        recommendationContentHtml = `<span class="recommendation-label">${label}</span><span class="recommendation-skip">Not Set Yet</span>`;
-    } else if (lowerRecValue === 'skip') {
-        recommendationContentHtml = `<span class="recommendation-label">${label}</span><span class="recommendation-skip">Not Recommended</span>`;
-    } else if (label === 'F2P' && recValue === 'Red 5-Star') {
-        recommendationContentHtml = `<span class="recommendation-label">${label}</span><div class="recommendation-rainbow-stars"><span class="star-icon tier-white active">★</span><span class="star-icon tier-blue active">★</span><span class="star-icon tier-purple active">★</span><span class="star-icon tier-gold active">★</span><span class="star-icon tier-red active">★</span></div>`;
-    } else {
-        const parts = recValue.split(' ');
-        if (parts.length < 2) return '';
-        const tier = parts[0].toLowerCase();
-        const stars = parseInt(parts[1].charAt(0), 10);
-        let starsHtml = Array(5).fill(0).map((_, i) => `<span class="star-icon ${i < stars ? 'active' : ''}">★</span>`).join('');
-        recommendationContentHtml = `<span class="recommendation-label">${label}</span><div class="recommendation-stars tier-${tier}">${starsHtml}</div>`;
-    }
-
-    return `<div class="recommendation-block">${recommendationContentHtml}<div class="tooltip-text">${tooltipText}</div></div>`;
-}
-
-// --- COMIC VIEW FUNCTIONS ---
-
+// --- HELPER & COMIC VIEW FUNCTIONS (No changes here) ---
 async function fetchChampionDetails(relatedIds) {
     const championsToFetch = relatedIds.filter(id => !championDetailsCache.has(id));
     if (championsToFetch.length > 0) {
@@ -74,16 +36,13 @@ async function fetchChampionDetails(relatedIds) {
 async function showComicModal(championId) {
     comicModalBackdrop.classList.add('is-visible');
     comicModalBody.innerHTML = `<div class="loader-spinner" style="animation: spin 1.5s linear infinite;"></div>`;
-
     try {
         const championDocRef = doc(db, `artifacts/dc-dark-legion-builder/public/data/champions`, championId);
         const championSnap = await getDoc(championDocRef);
         if (!championSnap.exists()) throw new Error("Main champion not found.");
-        
         const mainChampion = { id: championSnap.id, ...championSnap.data() };
         const relatedSubcollectionRef = collection(db, `artifacts/dc-dark-legion-builder/public/data/champions/${championId}/relatedChampions`);
         const relatedQuerySnapshot = await getDocs(relatedSubcollectionRef);
-
         let relatedChampionIds = relatedQuerySnapshot.empty ? [] : (relatedQuerySnapshot.docs[0].data().championIds || []);
         let relatedChampionsHtml = '';
         if (relatedChampionIds.length > 0) {
@@ -94,11 +53,9 @@ async function showComicModal(championId) {
                 return `<div class="related-champion-panel"><img src="img/champions/avatars/${cleanName}.webp" alt="${related.name}" onerror="this.src='img/champions/avatars/dc_logo.webp'"><h4>${related.name}</h4></div>`;
             }).join('');
         }
-
         const mainChampCleanName = mainChampion.name.replace(/[^a-zA-Z0-9-_]/g, "");
         const featuringSection = relatedChampionsHtml ? `<div class="comic-featuring-title">Increased Odds...</div><div class="related-champions-grid">${relatedChampionsHtml}</div>` : '';
         comicModalBody.innerHTML = `<div class="comic-header"><img src="img/logo_white.webp" alt="Logo" class="comic-header-logo"></div><div class="comic-image-panel"><img src="img/champions/full/${mainChampCleanName}.webp" alt="${mainChampion.name}" class="comic-featured-image" onerror="this.parentElement.style.display='none'"></div><h3 class="comic-main-title">${mainChampion.name}</h3>${featuringSection}`;
-
     } catch (error) {
         console.error("Error creating comic modal:", error);
         comicModalBody.innerHTML = `<p class="text-center text-red-500">Could not load champion details.</p>`;
@@ -106,7 +63,7 @@ async function showComicModal(championId) {
 }
 
 function hideComicModal() {
-    comicModalBackdrop.classList.remove('is-visible'); 
+    comicModalBackdrop.classList.remove('is-visible');
     comicModalBody.innerHTML = '';
 }
 
@@ -120,41 +77,82 @@ function createSchedule() {
     }));
 }
 
+/**
+ * Takes a string like "Gold 4-Star" and returns styled star icons.
+ * @param {string} ratingString - The star rating value.
+ * @returns {string} The complete HTML for the star display.
+ */
+function createStarRatingHtml(ratingString) {
+    if (!ratingString || typeof ratingString !== 'string' || ratingString === 'N/A') {
+        return '<span class="roster-value">N/A</span>';
+    }
+
+    const parts = ratingString.split(' ');
+    if (parts.length < 2) return `<span class="roster-value">${ratingString}</span>`;
+
+    const tier = parts[0].toLowerCase();
+    const stars = parseInt(parts[1], 10) || 0;
+
+    let starsHtml = '';
+    for (let i = 0; i < 5; i++) {
+        starsHtml += `<span class="star-icon ${i < stars ? 'active' : ''}">★</span>`;
+    }
+    
+    return `<div class="roster-stars tier-${tier}">${starsHtml}</div>`;
+}
+
 function renderTimeline(schedule, currentWeek) {
     if (!DOM.timelineContainer) return;
-    
     let timelineHtml = '';
     schedule.forEach((event, index) => {
-        const rowClass = index % 2 === 0 ? 'odd' : 'even'; // Odd numbers in top row, even in bottom
+        const rowClass = index % 2 === 0 ? 'odd' : 'even';
         let statusClass = 'is-upcoming';
-        
         if (currentWeek >= event.startWeek && currentWeek <= event.endWeek) {
             statusClass = 'is-active';
         } else if (currentWeek > event.endWeek) {
             statusClass = 'is-past';
         }
 
-        let recommendationsHtml = '';
+        let rosterHtml = '';
         if (event.id !== 'TBA') {
-            recommendationsHtml = `<div class="recommendations-container">${createRecommendationHtml('F2P', event.recF2P)}${createRecommendationHtml('Min', event.recMin)}</div>`;
+            const rosterInfo = ownerRosterCache.get(event.id);
+            let rosterDetails = '<span class="roster-value not-on-roster">Not Unlocked</span>';
+
+            if (rosterInfo) {
+                // Use the new helper function for starColorTier
+                const starRatingHtml = createStarRatingHtml(rosterInfo.starColorTier);
+                
+                rosterDetails = `
+                    <div class="roster-detail">
+                        <span class="roster-label">Star Tier</span>
+                        ${starRatingHtml}
+                    </div>
+                    <div class="roster-detail">
+                        <span class="roster-label">Force</span>
+                        <span class="roster-value">${rosterInfo.forceLevel} of 5</span>
+                    </div>
+                `;
+            }
+            rosterHtml = `<div class="roster-container"><h4>OG's Roster</h4><div class="roster-details-wrapper">${rosterDetails}</div></div>`;
         }
 
-        // The inline style for grid-column-start creates the staggered layout
+        const championName = event.name || "To Be Announced";
+        const championLink = event.id === 'TBA' ? championName : `<a href="calculator.html?champion=${event.id}" class="champion-link">${championName}</a>`;
+
         timelineHtml += `
             <div id="event-${index}" class="timeline-event ${rowClass} ${statusClass}" role="button" tabindex="0" data-champion-id="${event.id}" style="grid-column-start: ${index + 1};">
                 <div class="timeline-content">
                     <div class="timeline-main-info">
-                        <img src="${event.avatar}" alt="${event.name}" class="timeline-avatar" onerror="this.src='img/champions/avatars/dc_logo.webp'">
+                        <img src="${event.avatar}" alt="${championName}" class="timeline-avatar" onerror="this.src='img/champions/avatars/dc_logo.webp'">
                         <div class="timeline-text-content">
-                             <h3>${event.name}</h3>
+                             <h3>${championLink}</h3>
                              <p class="date-range">Weeks ${event.startWeek} &ndash; ${event.endWeek}</p>
                              <span class="duration-tag">4 Week Cycle</span>
                         </div>
                     </div>
-                    ${recommendationsHtml}
+                    ${rosterHtml}
                 </div>
-            </div>
-        `;
+            </div>`;
     });
     DOM.timelineContainer.innerHTML = timelineHtml;
 }
@@ -162,15 +160,37 @@ function renderTimeline(schedule, currentWeek) {
 async function initializeCalendar(analytics) {
     showTimelineMessage('Loading calendar data...');
     try {
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'dc-dark-legion-builder';
-        const dataPrefix = `artifacts/${appId}/public/data`;
-        const championsRef = collection(db, `${dataPrefix}/champions`);
-        const rotationConfigRef = doc(db, `${dataPrefix}/siteConfig/championRotation`);
+        const OWNER_ID = '7F7TOqE1mjbXIzOqW8NzBMrWXbK2';
+        const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'dc-dark-legion-builder';
+        const rosterDocPath = `artifacts/${APP_ID}/users/${OWNER_ID}/roster/myRoster`;
 
-        const [rotationConfigSnap, championsQuerySnap] = await Promise.all([
+        const championsRef = collection(db, `artifacts/${APP_ID}/public/data/champions`);
+        const rotationConfigRef = doc(db, `artifacts/${APP_ID}/public/data/siteConfig/championRotation`);
+        const rosterDocRef = doc(db, rosterDocPath);
+
+        const [rotationConfigSnap, championsQuerySnap, rosterDocSnap] = await Promise.all([
             getDoc(rotationConfigRef),
-            getDocs(query(championsRef, where("baseRarity", "==", "Limited Mythic")))
+            getDocs(query(championsRef, where("baseRarity", "==", "Limited Mythic"))),
+            getDoc(rosterDocRef)
         ]);
+        
+        if (rosterDocSnap.exists()) {
+            const rosterData = rosterDocSnap.data();
+            const rosterChampions = rosterData.champions || [];
+            rosterChampions.forEach(member => {
+                const champId = member.dbChampionId;
+                if (champId) {
+                    const currentScore = member.individualScore || 0;
+                    if (!ownerRosterCache.has(champId) || currentScore > ownerRosterCache.get(champId).individualScore) {
+                        ownerRosterCache.set(champId, {
+                            starColorTier: member.starColorTier || 'N/A',
+                            forceLevel: member.forceLevel !== undefined ? member.forceLevel : 'N/A',
+                            individualScore: currentScore
+                        });
+                    }
+                }
+            });
+        }
 
         if (championsQuerySnap.empty) {
             showTimelineMessage('No "Limited Mythic" champions found.');
@@ -184,8 +204,6 @@ async function initializeCalendar(analytics) {
                 id: doc.id,
                 name: champ.name,
                 avatar: `img/champions/avatars/${(champ.name || "").replace(/[^a-zA-Z0-9-_]/g, "")}.webp`,
-                recF2P: champ.recommendationF2P,
-                recMin: champ.recommendationMin
             });
         });
 
@@ -210,10 +228,12 @@ async function initializeCalendar(analytics) {
             const eventElement = e.target.closest('.timeline-event');
             if (eventElement) {
                 const championId = eventElement.dataset.championId;
-                if (championId && championId !== 'TBA') showComicModal(championId);
+                if (championId && championId !== 'TBA' && !e.target.closest('.champion-link')) {
+                    showComicModal(championId);
+                }
             }
         });
-
+        
         comicModalClose.addEventListener('click', hideComicModal);
         comicModalBackdrop.addEventListener('click', (e) => { if (e.target === comicModalBackdrop) hideComicModal(); });
 
