@@ -93,6 +93,7 @@ let forceLevelControl = null;
 let synergyMultiSelect = null;
 let teamExclusionMultiSelect = null;
 let activeFactionFilter = null; 
+let activeClassFilter = null;
 
 // =================================================================================================
 // #region INITIALIZATION
@@ -116,18 +117,27 @@ async function initializePage() {
 
         $.fn.dataTable.ext.search.push(
             function(settings, data, dataIndex) {
-                if (!activeFactionFilter) {
+                // Ensure this filter only applies to the main roster table
+                if (settings.sTableId !== 'roster-table') {
                     return true;
                 }
                 
-                const rowNode = rosterDataTable.row(dataIndex).node();
-                const championFactions = $(rowNode).data('factions');
-                
-                if (championFactions && championFactions.split(',').includes(activeFactionFilter)) {
+                // Use the provided settings to get the correct table API instance,
+                // avoiding race conditions with the global 'rosterDataTable' variable.
+                const api = new $.fn.dataTable.Api(settings);
+                const rowNode = api.row(dataIndex).node();
+
+                if (!rowNode) {
                     return true;
                 }
-                
-                return false;
+
+                const championFactions = $(rowNode).data('factions') || '';
+                const championClass = $(rowNode).data('class') || '';
+
+                const factionMatch = !activeFactionFilter || championFactions.split(',').includes(activeFactionFilter);
+                const classMatch = !activeClassFilter || championClass === activeClassFilter;
+
+                return factionMatch && classMatch;
             }
         );
 
@@ -830,11 +840,13 @@ function renderRosterTable() {
     }
     const tableElement = document.getElementById('roster-table');
     const tbody = tableElement.querySelector('tbody');
-    const filterContainer = document.getElementById('roster-faction-filters-container');
+    const factionFilterContainer = document.getElementById('roster-faction-filters-container');
+    const classFilterContainer = document.getElementById('roster-class-filters-container');
 
     if (playerRoster.length === 0) {
         tableElement.style.display = 'none';
-        filterContainer.innerHTML = '';
+        factionFilterContainer.innerHTML = '';
+        classFilterContainer.innerHTML = '';
         DOM.rosterEmptyMessage.classList.remove('hidden');
         DOM.prefillRosterBtn.classList.remove('hidden');
         return;
@@ -846,11 +858,16 @@ function renderRosterTable() {
     tbody.innerHTML = '';
 
     const allFactions = new Set();
+    const allClasses = new Set();
     playerRoster.forEach(champ => {
         (champ.inherentSynergies || []).forEach(faction => allFactions.add(faction));
+        if (champ.class && champ.class !== "N/A") {
+            allClasses.add(champ.class);
+        }
     });
 
-    filterContainer.innerHTML = '<strong>Filter by Faction:</strong> ';
+    // --- Faction Filters ---
+    factionFilterContainer.innerHTML = '<strong>Filter by Faction:</strong> ';
     const sortedFactions = [...allFactions].sort();
     sortedFactions.forEach(faction => {
         const btn = document.createElement('button');
@@ -858,17 +875,17 @@ function renderRosterTable() {
         btn.dataset.faction = faction;
         btn.innerHTML = getSynergyIcon(faction);
         btn.title = faction;
-        filterContainer.appendChild(btn);
+        factionFilterContainer.appendChild(btn);
     });
 
     if (sortedFactions.length > 0) {
         const clearBtn = document.createElement('button');
         clearBtn.className = 'btn btn-secondary btn-sm clear-filter-btn';
-        clearBtn.textContent = 'Clear Filter';
-        filterContainer.appendChild(clearBtn);
+        clearBtn.textContent = 'Clear';
+        factionFilterContainer.appendChild(clearBtn);
     }
 
-    filterContainer.addEventListener('click', (e) => {
+    factionFilterContainer.addEventListener('click', (e) => {
         const target = e.target.closest('button');
         if (!target) return;
 
@@ -879,8 +896,45 @@ function renderRosterTable() {
             activeFactionFilter = activeFactionFilter === clickedFaction ? null : clickedFaction;
         }
 
-        filterContainer.querySelectorAll('.faction-filter-btn').forEach(btn => {
+        factionFilterContainer.querySelectorAll('.faction-filter-btn').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.faction === activeFactionFilter);
+        });
+
+        rosterDataTable.draw();
+    });
+
+    // --- Class Filters ---
+    classFilterContainer.innerHTML = '<strong>Filter by Class:</strong> ';
+    const sortedClasses = [...allClasses].sort();
+    sortedClasses.forEach(className => {
+        const btn = document.createElement('button');
+        btn.className = 'faction-filter-btn';
+        btn.dataset.class = className;
+        btn.innerHTML = getClassPlaceholder(className);
+        btn.title = className;
+        classFilterContainer.appendChild(btn);
+    });
+
+    if (sortedClasses.length > 0) {
+        const clearBtn = document.createElement('button');
+        clearBtn.className = 'btn btn-secondary btn-sm clear-filter-btn';
+        clearBtn.textContent = 'Clear';
+        classFilterContainer.appendChild(clearBtn);
+    }
+
+    classFilterContainer.addEventListener('click', (e) => {
+        const target = e.target.closest('button');
+        if (!target) return;
+
+        if (target.classList.contains('clear-filter-btn')) {
+            activeClassFilter = null;
+        } else if (target.dataset.class) {
+            const clickedClass = target.dataset.class;
+            activeClassFilter = activeClassFilter === clickedClass ? null : clickedClass;
+        }
+
+        classFilterContainer.querySelectorAll('.faction-filter-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.class === activeClassFilter);
         });
 
         rosterDataTable.draw();
@@ -896,6 +950,7 @@ function renderRosterTable() {
 
         const factionsString = (champ.inherentSynergies || []).join(',');
         tr.setAttribute('data-factions', factionsString);
+        tr.setAttribute('data-class', champ.class || "N/A");
 
         tr.innerHTML = `
             <td><div class="flex items-center">${healerIconHtml}<span class="clickable-champion" data-id="${champ.dbChampionId}">${champ.name}</span></div></td>

@@ -1068,7 +1068,7 @@ table.dataTable > tbody > tr.dtr-expanded > td.dtr-control::before {
     text-decoration: underline;
 }
 
-#roster-faction-filters-container {
+#roster-faction-filters-container, #roster-class-filters-container {
     padding: 0.75rem;
     background-color: #f8fafc;
     border: 1px solid var(--border-primary);
