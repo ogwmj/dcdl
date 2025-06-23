@@ -17,6 +17,7 @@ import {
 // --- Firebase Imports ---
 import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
 
 // --- DOM ELEMENT REFERENCES ---
@@ -44,6 +45,7 @@ const DOM = {
 
 // --- App State ---
 let db;
+let analytics;
 let gemStoreData = [];
 let currencyStoreData = [];
 let interstellarVisitorData = [];
@@ -159,6 +161,14 @@ function handleAnvilPlanCalculation() {
         return;
     }
     
+    // Analytics Event
+    if (analytics) {
+        logEvent(analytics, 'calculate_anvil_plan', {
+            target_anvils: target,
+            target_date: timeframe
+        });
+    }
+
     const targetDate = new Date(timeframe + 'T00:00:00Z');
     
     const gemStoreMasterList = gemStoreData; 
@@ -226,7 +236,16 @@ function updateStrategyCardContent(deals = []) {
 
 
 function handleStrategyChange(strategy) {
+    if (currentStrategy === strategy) return;
     currentStrategy = strategy;
+    
+    if(analytics) {
+        logEvent(analytics, 'select_content', {
+            content_type: 'spending_strategy',
+            item_id: strategy
+        });
+    }
+
     DOM.strategyTabs.forEach(t => t.classList.toggle('active', t.dataset.strategy === strategy));
     DOM.strategyViewContainer.querySelectorAll('.strategy-card').forEach(card => card.classList.toggle('active', card.id === `${strategy}-card`));
     renderFilteredStores();
@@ -275,7 +294,7 @@ function renderFilteredStores() {
 }
 
 async function fetchAllStoresAndRender() {
-    if (!db) return; 
+    if (!db || !analytics) return; 
     
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'dc-dark-legion-builder';
 
@@ -290,11 +309,14 @@ async function fetchAllStoresAndRender() {
         const interstellarVisitorRef = collection(db, `artifacts/${appId}/public/data/interstellarVisitor`);
         interstellarVisitorData = (await getDocs(interstellarVisitorRef)).docs.map(doc => doc.data());
         
+        logEvent(analytics, 'view_item_list', { item_list_name: 'Store Rotation Load', item_list_id: `stores_initial_load` });
+
         renderFilteredStores();
         displayBestAnvilDeals(); 
 
     } catch (error) {
         console.error("Error fetching store data:", error);
+        logEvent(analytics, 'exception', { description: "Error fetching store data", fatal: false });
         renderMessage(DOM.gemStoreContainer, "Error loading store data.");
     }
 }
@@ -332,6 +354,14 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const app = getApp();
             db = getFirestore(app);
+            analytics = getAnalytics(app);
+            
+            // Log page view event
+            logEvent(analytics, 'page_view', {
+                page_title: document.title,
+                page_location: location.href
+            });
+
             await fetchAllStoresAndRender();
         } catch (e) {
             console.error("Firebase could not be initialized in stores-ui:", e);

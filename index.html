@@ -41,20 +41,6 @@
                          0 0 25px rgba(59, 130, 246, 0.2);
         }
 
-        .cta-card {
-            background-color: rgba(17, 24, 39, 0.7);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-        }
-
-        .cta-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
-            border-color: rgba(59, 130, 246, 0.6);
-        }
-
         .btn-primary-custom {
             background-color: #3b82f6;
             color: white;
@@ -77,6 +63,61 @@
             box-shadow: none !important;
             border: none !important;
             vertical-align: middle;
+        }
+        /* --- Action Grid Styles (Left-Aligned Look) --- */
+
+        .action-grid {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 40px 5%;
+            flex-wrap: wrap;
+        }
+
+        .action-card {
+            display: block;
+            max-width: 450px;
+            background-color: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
+            border-color: rgba(59, 130, 246, 0.6);
+        }
+
+        .action-card .card-content {
+            display: flex;
+            align-items: flex-start; /* Aligns icon to the top of the text block */
+            padding: 20px; /* Reverted to the older padding */
+        }
+
+        .action-card .card-icon {
+            font-size: 2em; /* Slightly smaller icon to fit the layout */
+            margin-right: 20px; /* Creates space between the icon and text */
+            margin-top: -2px; /* Fine-tunes vertical alignment */
+            color: #eee;
+        }
+
+        .action-card .card-text {
+            flex: 1; /* Allows the text block to take up the remaining space */
+        }
+
+        .action-card h2 {
+            color: #fff;
+            font-size: 1.25em;
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .action-card p {
+            font-size: 0.9em;
+            line-height: 1.5;
+            margin: 0;
         }
     </style>
     <script type="application/ld+json">
@@ -121,60 +162,61 @@
         </p>
     </header>
 
-    <main class="relative z-10 flex flex-col items-center gap-8 mt-8 mb-16 max-w-6xl w-full px-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 w-full">
-            <section class="cta-card p-8 rounded-xl flex flex-col justify-between items-center text-center h-full">
-                <div class="mb-6">
-                    <img src="img/discord.png" alt="Discord Bot Icon for Hypertime Tracker" class="h-24 mx-auto mb-4 drop-shadow-lg rounded-full">
-                    <h2 class="text-3xl font-bold text-blue-300 mb-3">Hypertime Tracker Discord Bot</h2>
-                    <p class="text-lg text-gray-200 leading-relaxed">
-                        Add the Hypertime Tracker schedule to your own Discord server. Configure it to your in-game Earth and never miss a champion.
-                    </p>
-                </div>
-                <a target="_blank" href="https://discord.com/discovery/applications/1385296946142380104" class="btn-primary-custom mt-auto">
-                    Add to Your Discord
-                </a>
-            </section>
-            <section class="cta-card p-8 rounded-xl flex flex-col justify-between items-center text-center h-full">
-                <div class="mb-6">
-                    <img src="img/icons/anvil.png" alt="Anvil Icon for DC: Dark Legion Anvil Calculator" class="w-24 h-24 mx-auto mb-4 drop-shadow-lg rounded-full">
-                    <h2 class="text-3xl font-bold text-blue-300 mb-3">Anvil Calculator for Champion Upgrades</h2>
-                    <p class="text-lg text-gray-200 leading-relaxed">
-                        Precisely estimate the Anvils needed for champion upgrades. Plan your pulls, minimize waste, and maximize your Limited Mythic progression with our DC: Dark Legion anvil calculator.
-                    </p>
-                </div>
-                <a href="calculator.html" class="btn-primary-custom mt-auto">
-                    Calculate Anvils Now
-                </a>
-            </section>
-            <section class="cta-card p-8 rounded-xl flex flex-col justify-between items-center text-center h-full">
-                <div class="mb-6">
-                    <img src="img/icons/prosperity.png" alt="Team Icon for DC: Dark Legion Team Builder" class="w-24 h-24 mx-auto mb-4 drop-shadow-lg rounded-full">
-                    <h2 class="text-3xl font-bold text-blue-300 mb-3">Ultimate Team Builder for Your Roster</h2>
-                    <p class="text-lg text-gray-200 leading-relaxed">
-                        Craft unbeatable teams from your roster. Analyze synergies, optimize scores, and dominate every challenge with our strategic DC: Dark Legion team builder.
-                    </p>
-                </div>
-                <a href="teams.html" class="btn-primary-custom mt-auto">
-                    Build Your Best Team
-                </a>
-            </section>
-            <section class="cta-card p-8 rounded-xl flex flex-col justify-between items-center text-center h-full">
-                <div class="mb-6">
-                    <img src="img/icons/calendar.png" alt="Calendar Icon for DC: Dark Legion Limited Mythic Events" class="w-24 h-24 mx-auto mb-4 drop-shadow-lg rounded-full">
-                    <h2 class="text-3xl font-bold text-blue-300 mb-3">Mythic Champion Calendar</h2>
-                    <p class="text-lg text-gray-200 leading-relaxed">
-                        Track the upcoming Limited Mythic champion events. Plan your pulls and strategy by knowing who is next in the DC: Dark Legion rotation.
-                    </p>
-                </div>
-                <a href="calendar.html" class="btn-primary-custom mt-auto">
-                    View Calendar
-                </a>
-            </section>
-        </div>
-    </main>
+    <section class="action-grid">
 
-    <section class="relative z-10 bg-gray-900 bg-opacity-80 backdrop-filter backdrop-blur-sm p-8 rounded-xl max-w-4xl w-full mx-auto my-16 shadow-lg text-left">
+        <a href="calendar.html" class="action-card">
+            <div class="card-content">
+                <span class="card-icon">📅</span>
+                <div class="card-text">
+                    <h2>Bleed Calendar</h2>
+                    <p>Keep track of upcoming Limited Mythic champions! Subject to unplanned changes by game development team.</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="calculator.html" class="action-card">
+            <div class="card-content">
+                <span class="card-icon">🧮</span>
+                <div class="card-text">
+                    <h2>Anvil Calculator</h2>
+                    <p>Calculate the effective pull rate to plan your anvil usage. Get the required amount to unlock Limited Mythics.</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="stores.html" class="action-card">
+            <div class="card-content">
+                <span class="card-icon">🛒</span>
+                <div class="card-text">
+                    <h2>Purchase Planner</h2>
+                    <p>See the best possible deals to buy anvils given any timeframe, from all possible purchase sources in-game.</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="teams.html" class="action-card">
+            <div class="card-content">
+                <span class="card-icon">🏆</span>
+                <div class="card-text">
+                    <h2>Team Builder</h2>
+                    <p>Build & manage your team roster. Determine the best teams to deploy based on your actual roster.</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="https://discord.com/discovery/applications/1385296946142380104" target="_blank" class="action-card">
+            <div class="card-content">
+                <span class="card-icon">💬</span>
+                <div class="card-text">
+                    <h2>Discord App</h2>
+                    <p>You can add the Bleed Calendar to your Discord Server! Check it out.</p>
+                </div>
+            </div>
+        </a>
+
+    </section>
+
+    <section class="relative z-10 bg-gray-900 bg-opacity-80 backdrop-filter backdrop-blur-sm p-8 rounded-xl max-w-6xl w-full mx-auto my-16 shadow-lg text-left">
         <h3 class="text-3xl font-bold text-blue-300 mb-6 text-center">Your Edge in DC: Dark Legion</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
