@@ -1,7 +1,7 @@
 /**
  * @file js/stores/ui.js
  * @fileoverview Handles UI interactions, data fetching, and rendering for the Store Analyzer.
- * @version 1.0.0
+ * @version 1.9.2 - Added daily gem requirement to all strategy cards.
  */
 
 import {
@@ -148,6 +148,40 @@ function displayBestAnvilDeals() {
     }
 }
 
+/**
+ * Updates all strategy cards with the daily gem requirement from a plan.
+ * @param {number} dailyGemsNeeded - The average daily gems required.
+ * @param {number} totalGemCost - The total gem cost of the plan.
+ */
+function updateAllStrategyCardsWithGemReq(dailyGemsNeeded, totalGemCost) {
+    const cards = [DOM.f2pCard, DOM.casualCard, DOM.effectiveCard];
+    
+    // Clear any previous requirement text
+    cards.forEach(card => card.querySelector('.daily-gem-req')?.remove());
+
+    if (!dailyGemsNeeded || dailyGemsNeeded <= 0) return;
+
+    // Create and append the new text to each card
+    const f2pText = `To afford the Gem purchases in this plan, you'll need to earn an average of <strong class="text-green-400">${dailyGemsNeeded.toLocaleString()} Gems</strong> per day.`;
+    const spenderText = `The Gem-based part of this plan costs <strong class="text-indigo-300">${totalGemCost.toLocaleString()} Gems</strong>. To earn this requires an average of <strong class="text-green-400">${dailyGemsNeeded.toLocaleString()} Gems</strong> per day.`;
+
+    const f2pP = document.createElement('p');
+    f2pP.className = 'text-lg mt-4 daily-gem-req';
+    f2pP.innerHTML = f2pText;
+    DOM.f2pCard.appendChild(f2pP);
+
+    const casualP = document.createElement('p');
+    casualP.className = 'text-lg mt-4 daily-gem-req';
+    casualP.innerHTML = spenderText;
+    DOM.casualCard.appendChild(casualP);
+
+    const effectiveP = document.createElement('p');
+    effectiveP.className = 'text-lg mt-4 daily-gem-req';
+    effectiveP.innerHTML = spenderText;
+    DOM.effectiveCard.appendChild(effectiveP);
+}
+
+
 function handleAnvilPlanCalculation() {
     const target = parseInt(DOM.anvilTargetInput.value, 10);
     const timeframe = DOM.anvilTimeframeDate.value;
@@ -161,7 +195,6 @@ function handleAnvilPlanCalculation() {
         return;
     }
     
-    // Analytics Event
     if (analytics) {
         logEvent(analytics, 'calculate_anvil_plan', {
             target_anvils: target,
@@ -174,7 +207,7 @@ function handleAnvilPlanCalculation() {
     const gemStoreMasterList = gemStoreData; 
     const interstellarMasterList = interstellarVisitorData;
 
-    const { plan, totalGemCost, totalFiatCost } = createAnvilAcquisitionPlan(target, gemStoreMasterList, currencyStoreData, interstellarMasterList, targetDate);
+    const { plan, totalGemCost, totalFiatCost, anvilsStillNeeded } = createAnvilAcquisitionPlan(target, gemStoreMasterList, currencyStoreData, interstellarMasterList, targetDate);
 
     if (plan.length === 0) {
         DOM.anvilPlanResultContainer.innerHTML = `<p class="text-amber-400">No sources of Anvils are currently available.</p>`;
@@ -188,7 +221,6 @@ function handleAnvilPlanCalculation() {
         return `<li class="ml-4">${step.replace(/\*\*(.*?)\*\*/g, '<strong class="text-amber-400">$1</strong>')}</li>`;
     }).join('');
     
-    // Add total cost section
     planHtml += `<div class="mt-4 pt-3 border-t border-slate-700">
         <h5 class="font-bold text-green-300">Total Estimated Cost:</h5>
         <ul class="list-disc list-inside ml-2">
@@ -198,6 +230,15 @@ function handleAnvilPlanCalculation() {
     </div>`;
 
     DOM.anvilPlanResultContainer.innerHTML = `<ul class="list-none space-y-1">${planHtml}</ul>`;
+
+    // Update strategy cards with daily gem requirement
+    const daysUntilTarget = (targetDate - new Date()) / (1000 * 60 * 60 * 24);
+    if (totalGemCost > 0 && daysUntilTarget > 0) {
+        const dailyGemsNeeded = Math.ceil(totalGemCost / daysUntilTarget);
+        updateAllStrategyCardsWithGemReq(dailyGemsNeeded, totalGemCost);
+    } else {
+        updateAllStrategyCardsWithGemReq(0, 0); // Clear the text if no gem cost
+    }
 }
 
 function updateStrategyCardContent(deals = []) {
@@ -205,9 +246,9 @@ function updateStrategyCardContent(deals = []) {
     const bestGemDealForAnvils = findBestAnvilDeals(allGemDeals, []).bestGemDeal;
 
     if (bestGemDealForAnvils) {
-        DOM.f2pCard.innerHTML = `<p class="text-lg">The most efficient way to spend your Gems on Anvils right now is the <strong class="text-amber-400">${bestGemDealForAnvils.itemName}</strong>, costing <strong class="text-green-400">${bestGemDealForAnvils.analysis.gemCostPerAnvil} Gems</strong> per Anvil.</p>`;
+        DOM.f2pCard.querySelector('p:first-child').innerHTML = `The most efficient way to spend your Gems on Anvils right now is the <strong class="text-amber-400">${bestGemDealForAnvils.itemName}</strong>, costing <strong class="text-green-400">${bestGemDealForAnvils.analysis.gemCostPerAnvil} Gems</strong> per Anvil.`;
     } else {
-        DOM.f2pCard.innerHTML = `<p class="text-lg">Focusing on maximizing free resources. There are no Anvil deals in the Gem stores currently.</p>`;
+        DOM.f2pCard.querySelector('p:first-child').innerHTML = `Focusing on maximizing free resources. There are no Anvil deals in the Gem stores currently.`;
     }
     
     const bestCasualDeal = deals.find(deal => {
@@ -217,20 +258,20 @@ function updateStrategyCardContent(deals = []) {
     });
 
     if (bestCasualDeal) {
-        DOM.casualCard.innerHTML = `<p class="text-lg">For casual spending, the <strong class="text-amber-400">${bestCasualDeal.bundleName}</strong> offers great value in its lower, cheaper tiers. Check its breakdown in the Currency Store.</p>`;
+        DOM.casualCard.querySelector('p:first-child').innerHTML = `<p class="text-lg">For casual spending, the <strong class="text-amber-400">${bestCasualDeal.bundleName}</strong> offers great value in its lower, cheaper tiers. Check its breakdown in the Currency Store.</p>`;
     } else {
-        DOM.casualCard.innerHTML = `<p class="text-lg">Looking for high-value deals under $20. There are no recommended deals in this price range this week.</p>`;
+        DOM.casualCard.querySelector('p:first-child').innerHTML = `<p class="text-lg">Looking for high-value deals under $20. There are no recommended deals in this price range this week.</p>`;
     }
 
     const bestOverallDeal = deals[0];
     if (bestOverallDeal) {
         const bestValue = bestOverallDeal.tiers ? Math.max(...bestOverallDeal.tiers.map(t => parseFloat(t.analysis.valuePerDollar))) : parseFloat(bestOverallDeal.analysis.gemsPerDollar);
         const bestPercentage = (bestValue / BASE_GEMS_PER_DOLLAR) * 100;
-        DOM.effectiveCard.innerHTML = `
+        DOM.effectiveCard.querySelector('p:first-child').innerHTML = `
             <p class="text-lg">The most cost-effective deal this week is the <strong class="text-amber-400">${bestOverallDeal.bundleName}</strong>, offering a top value of <strong class="text-green-400">${bestPercentage.toFixed(0)}%</strong>.</p>
         `;
     } else {
-        DOM.effectiveCard.innerHTML = `<p class="text-lg">Seeking the most mathematically optimal deals. There are currently no currency deals to analyze.</p>`;
+        DOM.effectiveCard.querySelector('p:first-child').innerHTML = `<p class="text-lg">Seeking the most mathematically optimal deals. There are currently no currency deals to analyze.</p>`;
     }
 }
 
@@ -309,8 +350,6 @@ async function fetchAllStoresAndRender() {
         const interstellarVisitorRef = collection(db, `artifacts/${appId}/public/data/interstellarVisitor`);
         interstellarVisitorData = (await getDocs(interstellarVisitorRef)).docs.map(doc => doc.data());
         
-        logEvent(analytics, 'view_item_list', { item_list_name: 'Store Rotation Load', item_list_id: `stores_initial_load` });
-
         renderFilteredStores();
         displayBestAnvilDeals(); 
 
@@ -356,7 +395,6 @@ document.addEventListener('DOMContentLoaded', () => {
             db = getFirestore(app);
             analytics = getAnalytics(app);
             
-            // Log page view event
             logEvent(analytics, 'page_view', {
                 page_title: document.title,
                 page_location: location.href

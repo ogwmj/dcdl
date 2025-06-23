@@ -1,46 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DC: Dark Legion Guide, Team Builder & Anvil Calculator | FunPlus | DC Universe</title>
     <meta name="description" content="Your ultimate command center for DC: Dark Legion by FunPlus. Get the best team building guides, anvil calculators, and strategies for the popular DC Universe game. Dominate the Dark Legion!">
     <meta name="keywords" content="DC: Dark Legion, DC Dark Legion, DC Universe, FunPlus, DC Dark Legion Guide, DC Dark Legion Team Builder, DC Dark Legion Anvil Calculator, DC Dark Legion Champions, DC Dark Legion Tips">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="css/theme.css" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0d1226;
-            color: #e2e8f0;
-            overflow-x: hidden;
-        }
-
-        .background-hero {
-            background-image: url('img/bg/landscape_1.png');
-            background-size: cover;
-            background-position: center;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            filter: brightness(0.4) grayscale(0.5);
-            animation: subtlePan 60s linear infinite alternate;
-        }
-
-        @keyframes subtlePan {
-            0% { background-position: 0% 0%; }
-            100% { background-position: 100% 100%; }
-        }
-
-        .glowing-text {
-            text-shadow: 0 0 8px rgba(59, 130, 246, 0.6),
-                         0 0 15px rgba(59, 130, 246, 0.4),
-                         0 0 25px rgba(59, 130, 246, 0.2);
-        }
-
+        /* Styles from original index.html for page-specific content */
         .btn-primary-custom {
             background-color: #3b82f6;
             color: white;
@@ -64,7 +36,6 @@
             border: none !important;
             vertical-align: middle;
         }
-        /* --- Action Grid Styles (Left-Aligned Look) --- */
 
         .action-grid {
             display: flex;
@@ -92,19 +63,19 @@
 
         .action-card .card-content {
             display: flex;
-            align-items: flex-start; /* Aligns icon to the top of the text block */
-            padding: 20px; /* Reverted to the older padding */
+            align-items: flex-start;
+            padding: 20px;
         }
 
         .action-card .card-icon {
-            font-size: 2em; /* Slightly smaller icon to fit the layout */
-            margin-right: 20px; /* Creates space between the icon and text */
-            margin-top: -2px; /* Fine-tunes vertical alignment */
+            font-size: 2em;
+            margin-right: 20px;
+            margin-top: -2px;
             color: #eee;
         }
 
         .action-card .card-text {
-            flex: 1; /* Allows the text block to take up the remaining space */
+            flex: 1;
         }
 
         .action-card h2 {
@@ -115,6 +86,7 @@
         }
 
         .action-card p {
+            color: #e2e8f0;
             font-size: 0.9em;
             line-height: 1.5;
             margin: 0;
@@ -149,124 +121,151 @@
     }
     </script>
 </head>
-<body class="relative min-h-screen flex flex-col justify-center items-center p-4">
+
+<body>
+    <notification-center></notification-center>
+    <auth-ui status-container-id="auth-status-desktop"></auth-ui>
+    <feedback-widget></feedback-widget>
+    <discord-widget></discord-widget>
 
     <div class="background-hero"></div>
 
-    <header class="relative z-10 py-12 md:py-20 text-center">
-        <h1 class="text-5xl md:text-7xl font-extrabold mb-4 glowing-text">DC: Dark Legion</h1>
-        <p class="text-xl md:text-2xl text-blue-200 mb-8">Your Tactical Command Center for the FunPlus & DC Universe Game</p>
-        <p class="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Optimize Your Roster. Conquer the Ranks. Dominate the Dark Legion.
-            Every Anvil. Every Team. Calculated for Victory. Get the best DC: Dark Legion guide and tips.
-        </p>
-    </header>
-
-    <section class="action-grid">
-
-        <a href="calendar.html" class="action-card">
-            <div class="card-content">
-                <span class="card-icon">📅</span>
-                <div class="card-text">
-                    <h2>Bleed Calendar</h2>
-                    <p>Keep track of upcoming Limited Mythic champions! Subject to unplanned changes by game development team.</p>
+    <nav class="bg-slate-900 bg-opacity-80 backdrop-filter backdrop-blur-md shadow-lg sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="index.html" class="text-white text-2xl font-bold">DC:DL Tools</a>
+                <div class="hidden md:flex items-center space-x-4">
+                    <div class="relative group">
+                        <button class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium inline-flex items-center" aria-haspopup="true">
+                            <span>Hypertime Details</span>
+                            <svg class="w-4 h-4 ml-1 text-gray-400 group-hover:text-white transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="absolute hidden group-hover:block bg-slate-900 bg-opacity-90 backdrop-filter backdrop-blur-md rounded-md shadow-lg py-1 w-48 z-50 top-full">
+                            <a href="calendar.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Bleed Calendar</a>
+                            <a href="calculator.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Anvil Calculator</a>
+                            <a href="stores.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Store Analyzer</a>
+                        </div>
+                    </div>
+                    <a href="teams.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Team Builder</a>
+                    <div id="auth-status-desktop"><span class="text-gray-300 px-3 py-2 text-sm font-medium">Loading...</span></div>
                 </div>
-            </div>
-        </a>
-
-        <a href="calculator.html" class="action-card">
-            <div class="card-content">
-                <span class="card-icon">🧮</span>
-                <div class="card-text">
-                    <h2>Anvil Calculator</h2>
-                    <p>Calculate the effective pull rate to plan your anvil usage. Get the required amount to unlock Limited Mythics.</p>
+                <div class="-mr-2 flex md:hidden">
+                    <button type="button" id="mobile-menu-button" class="bg-slate-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
                 </div>
-            </div>
-        </a>
-
-        <a href="stores.html" class="action-card">
-            <div class="card-content">
-                <span class="card-icon">🛒</span>
-                <div class="card-text">
-                    <h2>Purchase Planner</h2>
-                    <p>See the best possible deals to buy anvils given any timeframe, from all possible purchase sources in-game.</p>
-                </div>
-            </div>
-        </a>
-
-        <a href="teams.html" class="action-card">
-            <div class="card-content">
-                <span class="card-icon">🏆</span>
-                <div class="card-text">
-                    <h2>Team Builder</h2>
-                    <p>Build & manage your team roster. Determine the best teams to deploy based on your actual roster.</p>
-                </div>
-            </div>
-        </a>
-
-        <a href="https://discord.com/discovery/applications/1385296946142380104" target="_blank" class="action-card">
-            <div class="card-content">
-                <span class="card-icon">💬</span>
-                <div class="card-text">
-                    <h2>Discord App</h2>
-                    <p>You can add the Bleed Calendar to your Discord Server! Check it out.</p>
-                </div>
-            </div>
-        </a>
-
-    </section>
-
-    <section class="relative z-10 bg-gray-900 bg-opacity-80 backdrop-filter backdrop-blur-sm p-8 rounded-xl max-w-6xl w-full mx-auto my-16 shadow-lg text-left">
-        <h3 class="text-3xl font-bold text-blue-300 mb-6 text-center">Your Edge in DC: Dark Legion</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-                <h4 class="text-xl font-semibold text-gray-100 mb-2 flex items-center"><span class="text-2xl mr-2">💰</span> Save Resources</h4>
-                <p class="text-gray-300">Avoid costly mistakes with our accurate Anvil calculator, ensuring every pull counts towards your goals in DC: Dark Legion.</p>
-            </div>
-            <div>
-                <h4 class="text-xl font-semibold text-gray-100 mb-2 flex items-center"><span class="text-2xl mr-2">⚔️</span> Dominate PvE/PvP</h4>
-                <p class="text-gray-300">Discover hidden synergies and maximize your team's power to conquer any opponent or challenge with our team builder.</p>
-            </div>
-            <div>
-                <h4 class="text-xl font-semibold text-gray-100 mb-2 flex items-center"><span class="text-2xl mr-2">📈</span> Stay Ahead of the Meta</h4>
-                <p class="text-gray-300">Leverage data-driven insights for strategic gameplay in DC: Dark Legion, always knowing your next best move.</p>
-            </div>
-            <div>
-                <h4 class="text-xl font-semibold text-gray-100 mb-2 flex items-center"><span class="text-2xl mr-2">✨</span> User-Friendly DC Universe Game Tools</h4>
-                <p class="text-gray-300">Simple, intuitive tools designed by players, for players, making optimization in this DC Universe game accessible to everyone.</p>
             </div>
         </div>
-    </section>
+        <div class="md:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <div class="!mt-3">
+                    <span class="px-3 pt-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Hypertime Details</span>
+                    <a href="calendar.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Bleed Calendar</a>
+                    <a href="calculator.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Anvil Calculator</a>
+                    <a href="stores.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Store Analyzer</a>
+                </div>
+                <a href="teams.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Team Builder</a>
+                <div id="auth-status-mobile" class="pt-4 mt-2 border-t border-slate-700"></div>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="relative z-10 flex flex-col justify-center items-center p-4">
+        <header class="py-12 md:py-20 text-center">
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-4 glowing-text text-white">DC: Dark Legion</h1>
+            <p class="text-xl md:text-2xl text-blue-200 mb-8">Your Tactical Command Center for the FunPlus & DC Universe Game</p>
+            <p class="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                Optimize Your Roster. Conquer the Ranks. Dominate the Dark Legion.
+                Every Anvil. Every Team. Calculated for Victory. Get the best DC: Dark Legion guide and tips.
+            </p>
+        </header>
 
-    <section class="relative z-10 mb-20">
-        <a href="https://www.buymeacoffee.com/ogwmj" target="_blank" class="btn-primary-custom inline-flex items-center mt-8">
-            <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee to support DC: Dark Legion tools" class="bmc-button-img">
-            <span class="ml-2">Support the Mission</span>
-        </a>
-    </section>
+        <section class="action-grid">
+            <a href="calendar.html" class="action-card">
+                <div class="card-content"><span class="card-icon">📅</span><div class="card-text"><h2>Bleed Calendar</h2><p>Keep track of upcoming Limited Mythic champions! Subject to unplanned changes by game development team.</p></div></div>
+            </a>
+            <a href="calculator.html" class="action-card">
+                <div class="card-content"><span class="card-icon">🧮</span><div class="card-text"><h2>Anvil Calculator</h2><p>Calculate the effective pull rate to plan your anvil usage. Get the required amount to unlock Limited Mythics.</p></div></div>
+            </a>
+            <a href="stores.html" class="action-card">
+                <div class="card-content"><span class="card-icon">🛒</span><div class="card-text"><h2>Purchase Planner</h2><p>See the best possible deals to buy anvils given any timeframe, from all possible purchase sources in-game.</p></div></div>
+            </a>
+            <a href="teams.html" class="action-card">
+                <div class="card-content"><span class="card-icon">🏆</span><div class="card-text"><h2>Team Builder</h2><p>Build & manage your team roster. Determine the best teams to deploy based on your actual roster.</p></div></div>
+            </a>
+            <a href="https://discord.com/discovery/applications/1385296946142380104" target="_blank" class="action-card">
+                <div class="card-content"><span class="card-icon">💬</span><div class="card-text"><h2>Discord App</h2><p>You can add the Bleed Calendar to your Discord Server! Check it out.</p></div></div>
+            </a>
+        </section>
+
+        <section class="bg-gray-900 bg-opacity-80 backdrop-filter backdrop-blur-sm p-8 rounded-xl max-w-6xl w-full mx-auto my-16 shadow-lg text-left">
+            <h3 class="text-3xl font-bold text-blue-300 mb-6 text-center">Your Edge in DC: Dark Legion</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-gray-300">
+                <div><h4 class="text-xl font-semibold text-gray-100 mb-2 flex items-center"><span class="text-2xl mr-2">💰</span> Save Resources</h4><p>Avoid costly mistakes with our accurate Anvil calculator, ensuring every pull counts towards your goals in DC: Dark Legion.</p></div>
+                <div><h4 class="text-xl font-semibold text-gray-100 mb-2 flex items-center"><span class="text-2xl mr-2">⚔️</span> Dominate PvE/PvP</h4><p>Discover hidden synergies and maximize your team's power to conquer any opponent or challenge with our team builder.</p></div>
+                <div><h4 class="text-xl font-semibold text-gray-100 mb-2 flex items-center"><span class="text-2xl mr-2">📈</span> Stay Ahead of the Meta</h4><p>Leverage data-driven insights for strategic gameplay in DC: Dark Legion, always knowing your next best move.</p></div>
+                <div><h4 class="text-xl font-semibold text-gray-100 mb-2 flex items-center"><span class="text-2xl mr-2">✨</span> User-Friendly DC Universe Game Tools</h4><p>Simple, intuitive tools designed by players, for players, making optimization in this DC Universe game accessible to everyone.</p></div>
+            </div>
+        </section>
+
+        <section class="mb-20">
+            <a href="https://www.buymeacoffee.com/ogwmj" target="_blank" class="btn-primary-custom inline-flex items-center mt-8">
+                <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee to support DC: Dark Legion tools" class="bmc-button-img">
+                <span class="ml-2">Support the Mission</span>
+            </a>
+        </section>
+    </main>
 
     <footer class="relative z-10 text-gray-500 text-sm py-8 text-center">
         <p class="mt-2">Not affiliated with Warner Bros. Entertainment, DC Comics, or any official game publisher. This is a fan-made site for the game DC: Dark Legion by FunPlus.</p>
     </footer>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const desktopAuthContainer = document.getElementById('auth-status-desktop');
+            const mobileAuthContainer = document.getElementById('auth-status-mobile');
+
+            if (desktopAuthContainer && mobileAuthContainer) {
+                const syncAuthStatus = () => {
+                    mobileAuthContainer.innerHTML = desktopAuthContainer.innerHTML;
+                    const mobileButton = mobileAuthContainer.querySelector('button');
+                    const desktopButton = desktopAuthContainer.querySelector('button');
+
+                    if (mobileButton && desktopButton) {
+                         mobileButton.addEventListener('click', () => desktopButton.click());
+                        
+                        if (mobileButton.id.includes('login')) {
+                           mobileButton.classList.add('block', 'w-full', 'text-left');
+                           mobileButton.classList.remove('text-sm');
+                           mobileButton.classList.add('text-base');
+                        } else if (mobileButton.id.includes('logout')) {
+                             mobileButton.id = 'logout-btn-mobile';
+                             mobileButton.className = 'text-gray-300 hover:bg-slate-700 hover:text-white block w-full text-left px-3 py-2 rounded-md text-base font-medium';
+                        }
+                    }
+                };
+                const observer = new MutationObserver(syncAuthStatus);
+                observer.observe(desktopAuthContainer, { childList: true, subtree: true });
+                syncAuthStatus();
+            }
+        });
+    </script>
+    
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getApp, initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAnalytics, logEvent as fbLogEventInternal } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
-        let fbApp;
+        // Import web components
+        import "./js/auth-ui.js";
+        import "./js/notification-center.js";
+        import "./js/feedback-widget.js";
+        import "./js/discord-widget.js";
+        
         let fbAnalytics;
 
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'dc-dark-legion-builder'; 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAzSQbS4LtAz20syWI2HREPR7UnYh6ldbI",
-            authDomain: "dc-dark-legion-tools.firebaseapp.com",
-            projectId: "dc-dark-legion-tools",
-            storageBucket: "dc-dark-legion-tools.firebasestorage.app",
-            messagingSenderId: "786517074225",
-            appId: "1:786517074225:web:9f14dc4dcae0705fcfd010",
-            measurementId: "G-FTF00DHGV6"
-        };
-        
         function logAnalyticEvent(eventName, params = {}) {
             if (fbAnalytics) {
                 try {
@@ -279,40 +278,41 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        // The auth-ui component will initialize Firebase and dispatch 'firebase-ready'
+        document.addEventListener('firebase-ready', () => {
             try {
-                fbApp = initializeApp(firebaseConfig);
-                fbAnalytics = getAnalytics(fbApp); 
-                logAnalyticEvent('firebase_analytics_initialized', { app_id: appId });
+                const fbApp = getApp();
+                fbAnalytics = getAnalytics(fbApp);
+                logAnalyticEvent('page_view', { page_title: document.title, page_path: window.location.pathname });
+
+                // Attach analytics to CTA clicks
+                document.querySelector('a[href="calculator.html"]')?.addEventListener('click', () => {
+                    logAnalyticEvent('cta_click', { cta_name: 'calculate_anvils_now', destination: 'calculator_page' });
+                });
+                document.querySelector('a[href="stores.html"]')?.addEventListener('click', () => {
+                    logAnalyticEvent('cta_click', { cta_name: 'analyze_stores', destination: 'store_page' });
+                });
+                document.querySelector('a[href="teams.html"]')?.addEventListener('click', () => {
+                    logAnalyticEvent('cta_click', { cta_name: 'build_best_team', destination: 'team_builder_page' });
+                });
+                document.querySelector('a[href="calendar.html"]')?.addEventListener('click', () => {
+                    logAnalyticEvent('cta_click', { cta_name: 'view_mythic_calendar', destination: 'hypertime_tracker_page' });
+                });
+                document.querySelector('a[href^="https://www.buymeacoffee.com"]')?.addEventListener('click', () => {
+                    logAnalyticEvent('cta_click', { cta_name: 'support_the_mission', destination: 'buy_me_a_coffee' });
+                });
+                document.querySelector('a[href^="https://www.discord.com"]')?.addEventListener('click', () => {
+                    logAnalyticEvent('cta_click', { cta_name: 'add_discord_bot', destination: 'discord_app_page' });
+                });
+
             } catch (error) {
                 console.error("Firebase Analytics Initialization Error:", error);
                 logAnalyticEvent('firebase_analytics_init_error', { error_message: error.message });
             }
-
-            logAnalyticEvent('page_view', { page_title: document.title, page_path: window.location.pathname });
-
-            const anvilLink = document.querySelector('a[href="calculator.html"]');
-            if (anvilLink) {
-                anvilLink.addEventListener('click', () => {
-                    logAnalyticEvent('cta_click', { cta_name: 'calculate_anvils_now', destination: 'calculator_page' });
-                });
-            }
-
-            const teamLink = document.querySelector('a[href="teams.html"]');
-            if (teamLink) {
-                teamLink.addEventListener('click', () => {
-                    logAnalyticEvent('cta_click', { cta_name: 'build_best_team', destination: 'team_builder_page' });
-                });
-            }
-
-            const supportLink = document.querySelector('a[href^="https://www.buymeacoffee.com"]');
-            if (supportLink) {
-                supportLink.addEventListener('click', () => {
-                    logAnalyticEvent('cta_click', { cta_name: 'support_the_mission', destination: 'buy_me_a_coffee' });
-                });
-            }
-        });
+        }, { once: true });
     </script>
+
+    <script src="js/navigation.js"></script>
 
 </body>
 </html>
