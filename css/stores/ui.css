@@ -1,0 +1,51 @@
+/**
+ * @file css/stores/ui.css
+ * @description Styles for the redesigned Team Builder page.
+ * Adapted from the Anvil Calculator styles for consistency.
+ */
+
+:root {
+    --bg-primary: #f0f4f8; /* Light grey-blue */
+    --bg-secondary: #ffffff;
+    --bg-interactive: #eef2ff; /* Lighter indigo for hover */
+    --text-primary: #1e293b; /* Slate 800 */
+    --text-secondary: #475569; /* Slate 600 */
+    --text-accent: #4f46e5; /* Indigo 600 */
+    --border-primary: #cbd5e1; /* Slate 300 */
+    --border-accent: #6366f1; /* Indigo 500 */
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --font-main: 'Inter', sans-serif;
+}
+
+body {
+    font-family: var(--font-main);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+/* Custom styles for this specific page elements */
+.tab-btn {
+    transition: all 0.3s ease;
+    border-bottom: 2px solid transparent;
+}
+.tab-btn.active {
+    color: #f59e0b; /* amber-500 for a distinct highlight */
+    border-bottom-color: #f59e0b;
+}
+.strategy-card {
+    display: none;
+}
+.strategy-card.active {
+    display: block;
+}
+/* Style for date picker icon */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.8);
+    cursor: pointer;
+}
