@@ -5,11 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DC: Dark Legion - Store & Resource Analyzer</title>
-    <!-- Tailwind CSS for rapid UI development -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts for modern typography -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <!-- Main theme file for consistent styling -->
      <link href="css/stores/ui.css" rel="stylesheet">
     <link href="css/theme.css" rel="stylesheet">
 
@@ -155,9 +152,9 @@
         <!-- Main Grid for Store Sections -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
-            <!-- Column 1: Gem Store -->
+            <!-- Column 1: Mystery Store -->
             <div class="lg:col-span-1 space-y-6">
-                <h2 class="text-2xl font-bold text-center border-b-2 border-indigo-400 pb-2 text-slate-100">Gem Store</h2>
+                <h2 class="text-2xl font-bold text-center border-b-2 border-indigo-400 pb-2 text-slate-100">Mystery Store</h2>
                 <div id="gem-store-container" class="bg-slate-800/80 backdrop-blur-sm border border-slate-700 rounded-lg p-6 space-y-4 shadow-xl">
                     <p class="text-center text-slate-400">Loading current rotation...</p>
                 </div>
@@ -183,6 +180,12 @@
     </div>
 
     <auth-ui status-container-id="auth-status-desktop"></auth-ui>
+
+    <footer class="relative z-10 text-gray-500 text-sm py-8 text-center">
+        <p class="mt-2">DC: Dark Legion 2025 DC. Software code 2025 FunPlus International AG. DC LOGO and all related characters and elements &copy; &amp; &trade; DC.</p>
+        <p class="mt-2">Proud DC: Dark Legion Content Creator.</p>
+    </footer>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const desktopAuthContainer = document.getElementById('auth-status-desktop');

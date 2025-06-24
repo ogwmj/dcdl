@@ -1,7 +1,7 @@
 /**
  * @file js/stores/core.js
  * @fileoverview Core calculation and time logic for the Store Analyzer.
- * @version 1.0.1 - Corrected Interstellar Visitor schedule to Sat-Mon.
+ * @version 1.0.2 - Renamed Gem Store to Mystery Store.
  */
 
 // --- Time Constants (in UTC) ---
@@ -184,7 +184,7 @@ export function findBestAnvilDeals(allGemItems, analyzedFiatBundles) {
 /**
  * Creates an optimal acquisition plan for a target number of anvils within a timeframe.
  * @param {number} targetAnvils - The number of anvils the user needs.
- * @param {Array} gemStoreMasterList - A master list of ALL possible Gem Store items.
+ * @param {Array} gemStoreMasterList - A master list of ALL possible Mystery Store items.
  * @param {Array} allFiatBundles - All available currency store bundles.
  * @param {Array} interstellarItems - The static list of weekend deals.
  * @param {Date} targetDate - The date the user wants the anvils by.
@@ -219,7 +219,7 @@ export function createAnvilAcquisitionPlan(targetAnvils, gemStoreMasterList, all
 
     const gemRefreshes = Math.floor((targetTimestamp - nowTimestamp) / (MS_IN_HOUR * 8));
 
-    // Gem Store
+    // Mystery Store
     if (gemRefreshes > 0) {
         gemStoreMasterList.forEach(item => {
             const analyzed = analyzeGemStoreItem(item);
@@ -228,7 +228,7 @@ export function createAnvilAcquisitionPlan(targetAnvils, gemStoreMasterList, all
                     availablePurchases.push({
                         type: 'gem', name: item.itemName, cost: item.gemCost, anvils: analyzed.analysis.anvils,
                         efficiency: parseFloat(analyzed.analysis.gemCostPerAnvil),
-                        sourceName: "Gem Store"
+                        sourceName: "Mystery Store"
                     });
                 }
             }

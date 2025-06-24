@@ -1,7 +1,7 @@
 /**
  * @file js/stores/ui.js
  * @fileoverview Handles UI interactions, data fetching, and rendering for the Store Analyzer.
- * @version 1.9.2 - Added daily gem requirement to all strategy cards.
+ * @version 1.9.4 - Renamed Gem Store to Mystery Store.
  */
 
 import {
@@ -114,7 +114,15 @@ function renderMessage(container, message) {
 // --- ANVIL PLANNER & HIGHLIGHTS ---
 
 function displayBestAnvilDeals() {
-    const allGemItems = [...gemStoreData, ...interstellarVisitorData];
+    const timers = getStoreTimers();
+    const isVisitorActive = timers.interstellarVisitor.isActive;
+
+    // Only include Interstellar Visitor items if the visitor is currently active.
+    let allGemItems = [...gemStoreData];
+    if (isVisitorActive) {
+        allGemItems.push(...interstellarVisitorData);
+    }
+    
     const analyzedFiatBundles = currencyStoreData
         .map(bundle => analyzeScalingBundle(bundle, ANVIL_TO_GEM_VALUE));
         
@@ -122,14 +130,14 @@ function displayBestAnvilDeals() {
     
     if (bestGemDeal) {
         DOM.bestGemDealCard.innerHTML = `
-            <h3 class="font-semibold text-indigo-300 text-lg">Best Gem Source</h3>
+            <h3 class="font-semibold text-indigo-300 text-lg">Best Mystery Source</h3>
             <p class="text-slate-200 text-xl font-bold">${bestGemDeal.itemName}</p>
             <p class="text-slate-400">at <strong class="text-amber-400">${bestGemDeal.analysis.gemCostPerAnvil}</strong> Gems per Anvil</p>
         `;
     } else {
         DOM.bestGemDealCard.innerHTML = `
-            <h3 class="font-semibold text-indigo-300 text-lg">Best Gem Source</h3>
-            <p class="text-slate-400">No Anvil deals available for Gems right now.</p>
+            <h3 class="font-semibold text-indigo-300 text-lg">Best Mystery Source</h3>
+            <p class="text-slate-400">No Anvil deals available for Gems in the Mystery Store right now.</p>
         `;
     }
 
@@ -242,13 +250,19 @@ function handleAnvilPlanCalculation() {
 }
 
 function updateStrategyCardContent(deals = []) {
-    const allGemDeals = [...gemStoreData, ...interstellarVisitorData];
+    const timers = getStoreTimers();
+    const isVisitorActive = timers.interstellarVisitor.isActive;
+
+    let allGemDeals = [...gemStoreData];
+    if (isVisitorActive) {
+        allGemDeals.push(...interstellarVisitorData);
+    }
     const bestGemDealForAnvils = findBestAnvilDeals(allGemDeals, []).bestGemDeal;
 
     if (bestGemDealForAnvils) {
         DOM.f2pCard.querySelector('p:first-child').innerHTML = `The most efficient way to spend your Gems on Anvils right now is the <strong class="text-amber-400">${bestGemDealForAnvils.itemName}</strong>, costing <strong class="text-green-400">${bestGemDealForAnvils.analysis.gemCostPerAnvil} Gems</strong> per Anvil.`;
     } else {
-        DOM.f2pCard.querySelector('p:first-child').innerHTML = `Focusing on maximizing free resources. There are no Anvil deals in the Gem stores currently.`;
+        DOM.f2pCard.querySelector('p:first-child').innerHTML = `Focusing on maximizing free resources. There are no Anvil deals in the Mystery Store or Visitor's inventory currently.`;
     }
     
     const bestCasualDeal = deals.find(deal => {
@@ -356,7 +370,7 @@ async function fetchAllStoresAndRender() {
     } catch (error) {
         console.error("Error fetching store data:", error);
         logEvent(analytics, 'exception', { description: "Error fetching store data", fatal: false });
-        renderMessage(DOM.gemStoreContainer, "Error loading store data.");
+        renderMessage(DOM.gemStoreContainer, "Error loading Mystery Store data.");
     }
 }
 
@@ -364,8 +378,8 @@ async function fetchAllStoresAndRender() {
 function updateTimers() { 
     const timers = getStoreTimers();
     const visitorMsg = `${timers.interstellarVisitor.statusMessage} ${timers.interstellarVisitor.countdown}`;
-    const gemMsg = `Gem Store resets in: ${timers.gemStore.countdown}`;
-    DOM.eventTimer.textContent = `${visitorMsg}  |  ${gemMsg}`;
+    const mysteryStoreMsg = `Mystery Store resets in: ${timers.gemStore.countdown}`;
+    DOM.eventTimer.textContent = `${visitorMsg}  |  ${mysteryStoreMsg}`;
 
     if (timers.interstellarVisitor.isActive) {
         DOM.interstellarVisitorSection.classList.remove('hidden');
