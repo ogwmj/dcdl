@@ -1,7 +1,7 @@
 /**
  * @file js/stores/core.js
  * @fileoverview Core calculation and time logic for the Store Analyzer.
- * @version 1.0.0
+ * @version 1.0.1 - Corrected Interstellar Visitor schedule to Sat-Mon.
  */
 
 // --- Time Constants (in UTC) ---
@@ -66,13 +66,18 @@ export function getStoreTimers(now = new Date()) {
     const nextCurrencyStoreRefresh = getNextWeeklyRefresh(now, T_DAY.Monday);
 
     const currentUTCDay = now.getUTCDay();
-    const visitorActiveDays = [T_DAY.Friday, T_DAY.Saturday, T_DAY.Sunday, T_DAY.Monday];
-    const isVisitorActive = visitorActiveDays.includes(currentUTCDay);
-
-    const nextFriday = getNextWeeklyRefresh(now, T_DAY.Friday);
-    const nextTuesday = getNextWeeklyRefresh(now, T_DAY.Tuesday);
     
-    const visitorTimerTarget = isVisitorActive ? nextTuesday : nextFriday;
+    // Corrected Interstellar Visitor Logic
+    // Visitor arrives at 00:00 UTC on Saturday and departs at 00:00 UTC on Monday.
+    // This means the visitor is active on Saturday and Sunday.
+    const visitorArrivalDayUTC = T_DAY.Saturday;
+    const visitorDepartureDayUTC = T_DAY.Monday;
+    const isVisitorActive = currentUTCDay === T_DAY.Saturday || currentUTCDay === T_DAY.Sunday;
+
+    const nextArrival = getNextWeeklyRefresh(now, visitorArrivalDayUTC);
+    const nextDeparture = getNextWeeklyRefresh(now, visitorDepartureDayUTC);
+    
+    const visitorTimerTarget = isVisitorActive ? nextDeparture : nextArrival;
     const visitorStatusMessage = isVisitorActive ? "Visitor departs in:" : "Visitor arrives in:";
 
     return {
