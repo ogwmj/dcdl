@@ -1,7 +1,7 @@
 /**
  * @file js/stores/core.js
  * @fileoverview Core calculation and time logic for the Store Analyzer.
- * @version 1.1.1 - Reworked planner engine to use a dynamic, stateful purchasing model.
+ * @version 1.1.2 - Added immediate gem reward for Super Monthly Pass.
  */
 
 // --- Time Constants (in UTC) ---
@@ -23,6 +23,7 @@ const GEM_INCOME_TIERS = {
 const SUPER_MONTHLY_PASS = {
     name: "Super Monthly Pass",
     cost: 9.99,
+    immediateGems: 600,
     dailyGems: 90,
     durationDays: 30,
     maxStacks: 5,
@@ -250,7 +251,7 @@ export function createAnvilAcquisitionPlan(targetAnvils, gemStoreMasterList, all
                     bundle.tiers.forEach(tier => {
                         const anvils = getAnvilContent(tier.contents);
                         const gems = tier.contents?.find(c => c.item === 'Gems')?.quantity || 0;
-                        const value = (anvils * 60) + gems; // Simple value score
+                        const value = (anvils * 60) + gems;
                         if (value > 0) {
                             for (let j = 0; j < (tier.limit || 1); j++) {
                                 availableFiatPurchases.push({
@@ -265,18 +266,20 @@ export function createAnvilAcquisitionPlan(targetAnvils, gemStoreMasterList, all
             }
         });
     }
-    availableFiatPurchases.sort((a, b) => b.efficiency - a.efficiency); // Sort by best value per dollar
+    availableFiatPurchases.sort((a, b) => b.efficiency - a.efficiency);
 
     // --- 2. Calculate initial gem pool from income ---
     const incomeTier = GEM_INCOME_TIERS[gemIncomeLevel];
     const f2pDailyGemIncome = incomeTier.daily + (incomeTier.weekly / 7) + (incomeTier.monthly / 30);
     const f2pGeneratedGems = f2pDailyGemIncome * daysUntilTarget;
     
+    const immediatePassGems = superMonthlyPassQty * SUPER_MONTHLY_PASS.immediateGems;
     const passActiveDurationDays = SUPER_MONTHLY_PASS.durationDays * superMonthlyPassQty;
     const effectivePassDays = Math.min(daysUntilTarget, passActiveDurationDays);
-    const passGeneratedGems = (superMonthlyPassQty > 0 ? SUPER_MONTHLY_PASS.dailyGems : 0) * effectivePassDays;
+    const passDailyGeneratedGems = (superMonthlyPassQty > 0 ? SUPER_MONTHLY_PASS.dailyGems : 0) * effectivePassDays;
+    const totalPassGems = immediatePassGems + passDailyGeneratedGems;
 
-    let gemPool = f2pGeneratedGems + passGeneratedGems;
+    let gemPool = f2pGeneratedGems + totalPassGems;
     
     // --- 3. Iteratively build the plan ---
     const purchaseLog = [];
@@ -290,20 +293,17 @@ export function createAnvilAcquisitionPlan(targetAnvils, gemStoreMasterList, all
         let canAffordGemOption = bestGemOption && gemPool >= bestGemOption.cost;
 
         if (canAffordGemOption) {
-            // If we can afford the best gem deal, we take it.
             const itemToBuy = availableGemPurchases.shift();
             purchaseLog.push(itemToBuy);
             gemPool -= itemToBuy.cost;
             anvilsRemaining -= itemToBuy.anvils;
         } else {
-            // We can't afford the best gem deal (or any gem deal), so we must buy a fiat bundle.
             if (availableFiatPurchases.length > 0) {
                 const itemToBuy = availableFiatPurchases.shift();
                 purchaseLog.push(itemToBuy);
                 gemPool += itemToBuy.gems;
                 anvilsRemaining -= itemToBuy.anvils;
             } else {
-                // No more options left.
                 break;
             }
         }
@@ -357,7 +357,7 @@ export function createAnvilAcquisitionPlan(targetAnvils, gemStoreMasterList, all
         plan.push(`After all purchases, you will still be short by **${Math.ceil(anvilsRemaining)}** Anvils.`);
     }
     
-    const totalGemsAcquired = f2pGeneratedGems + passGeneratedGems + gemsFromFiatPurchases;
+    const totalGemsAcquired = f2pGeneratedGems + totalPassGems + gemsFromFiatPurchases;
     const finalGemSurplus = totalGemsAcquired - totalGemCost;
 
     return { 
@@ -366,7 +366,7 @@ export function createAnvilAcquisitionPlan(targetAnvils, gemStoreMasterList, all
         gemBreakdown: {
             neededForPurchases: Math.ceil(totalGemCost),
             fromF2PIncome: Math.ceil(f2pGeneratedGems),
-            fromPasses: Math.ceil(passGeneratedGems),
+            fromPasses: Math.ceil(totalPassGems),
             fromBundles: Math.ceil(gemsFromFiatPurchases),
             netCost: Math.ceil(Math.max(0, -finalGemSurplus)),
             surplus: Math.ceil(Math.max(0, finalGemSurplus))
