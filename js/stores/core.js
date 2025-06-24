@@ -1,7 +1,7 @@
 /**
  * @file js/stores/core.js
  * @fileoverview Core calculation and time logic for the Store Analyzer.
- * @version 1.0.2 - Renamed Gem Store to Mystery Store.
+ * @version 1.1.1 - Reworked planner engine to use a dynamic, stateful purchasing model.
  */
 
 // --- Time Constants (in UTC) ---
@@ -12,6 +12,21 @@ const MS_IN_SECOND = 1000;
 const MS_IN_MINUTE = 60 * MS_IN_SECOND;
 const MS_IN_HOUR = 60 * MS_IN_MINUTE;
 const MS_IN_DAY = 24 * MS_IN_HOUR;
+
+// --- Gem Income Tiers ---
+const GEM_INCOME_TIERS = {
+    low: { daily: 65, weekly: 870, monthly: 220 },
+    medium: { daily: 250, weekly: 1800, monthly: 400 },
+    high: { daily: 1000, weekly: 4000, monthly: 720 },
+};
+
+const SUPER_MONTHLY_PASS = {
+    name: "Super Monthly Pass",
+    cost: 9.99,
+    dailyGems: 90,
+    durationDays: 30,
+    maxStacks: 5,
+};
 
 
 // --- TIME CALCULATION FUNCTIONS ---
@@ -67,9 +82,6 @@ export function getStoreTimers(now = new Date()) {
 
     const currentUTCDay = now.getUTCDay();
     
-    // Corrected Interstellar Visitor Logic
-    // Visitor arrives at 00:00 UTC on Saturday and departs at 00:00 UTC on Monday.
-    // This means the visitor is active on Saturday and Sunday.
     const visitorArrivalDayUTC = T_DAY.Saturday;
     const visitorDepartureDayUTC = T_DAY.Monday;
     const isVisitorActive = currentUTCDay === T_DAY.Saturday || currentUTCDay === T_DAY.Sunday;
@@ -183,87 +195,68 @@ export function findBestAnvilDeals(allGemItems, analyzedFiatBundles) {
 
 /**
  * Creates an optimal acquisition plan for a target number of anvils within a timeframe.
- * @param {number} targetAnvils - The number of anvils the user needs.
- * @param {Array} gemStoreMasterList - A master list of ALL possible Mystery Store items.
- * @param {Array} allFiatBundles - All available currency store bundles.
- * @param {Array} interstellarItems - The static list of weekend deals.
- * @param {Date} targetDate - The date the user wants the anvils by.
- * @returns {object} An object containing the formatted plan and total costs.
+ * @returns {object} An object containing the formatted plan and a detailed cost/income breakdown.
  */
-export function createAnvilAcquisitionPlan(targetAnvils, gemStoreMasterList, allFiatBundles, interstellarItems, targetDate) {
-    let anvilsRemaining = targetAnvils;
+export function createAnvilAcquisitionPlan(targetAnvils, gemStoreMasterList, allFiatBundles, interstellarItems, targetDate, gemIncomeLevel = 'medium', superMonthlyPassQty = 0) {
     const now = new Date();
     if (targetDate <= now) {
-        return { plan: ["Target date must be in the future."], totalGemCost: 0, totalFiatCost: 0 };
+        return { plan: ["Target date must be in the future."] };
     }
 
-    const availablePurchases = [];
-
-    // --- 1. Collate all possible INDIVIDUAL purchases within the timeframe ---
-    const msInDay = 24 * 60 * 60 * 1000;
+    // --- 1. Collate all possible purchase opportunities ---
     const nowTimestamp = now.getTime();
     const targetTimestamp = targetDate.getTime();
+    const daysUntilTarget = Math.max(0, (targetTimestamp - nowTimestamp) / MS_IN_DAY);
     
-    let weeklyResetCount = 1; // Always include the current week
+    let weeklyResetCount = 0;
     let visitorResetCount = 0;
     
-    let cursor = new Date(nowTimestamp);
-    cursor.setUTCHours(0, 0, 0, 0);
-
-    while (cursor <= targetDate) {
-        const day = cursor.getUTCDay();
-        if (day === T_DAY.Monday && cursor.getTime() > now.getTime()) weeklyResetCount++;
+    let tempDate = new Date(now.getTime());
+    for (let i = 0; i < daysUntilTarget; i++) {
+        tempDate.setUTCDate(tempDate.getUTCDate() + 1);
+        const day = tempDate.getUTCDay();
+        if (day === T_DAY.Monday) weeklyResetCount++;
         if (day === T_DAY.Friday) visitorResetCount++;
-        cursor.setDate(cursor.getDate() + 1);
     }
+    if(now.getUTCDay() !== T_DAY.Monday && daysUntilTarget > 0) weeklyResetCount++;
 
-    const gemRefreshes = Math.floor((targetTimestamp - nowTimestamp) / (MS_IN_HOUR * 8));
+    const gemRefreshes = Math.floor(daysUntilTarget * 3);
 
-    // Mystery Store
-    if (gemRefreshes > 0) {
-        gemStoreMasterList.forEach(item => {
-            const analyzed = analyzeGemStoreItem(item);
-            if (analyzed.analysis.gemCostPerAnvil !== 'N/A') {
-                for (let i = 0; i < gemRefreshes * (item.limit || 1); i++) {
-                    availablePurchases.push({
-                        type: 'gem', name: item.itemName, cost: item.gemCost, anvils: analyzed.analysis.anvils,
-                        efficiency: parseFloat(analyzed.analysis.gemCostPerAnvil),
-                        sourceName: "Mystery Store"
-                    });
-                }
+    let availableGemPurchases = [];
+    const allGemMasterList = [...gemStoreMasterList, ...interstellarItems];
+    allGemMasterList.forEach(item => {
+        const analyzed = analyzeGemStoreItem(item);
+        if (analyzed.analysis.anvils > 0 && analyzed.analysis.gemCostPerAnvil !== 'N/A') {
+            const isVisitorItem = interstellarItems.includes(item);
+            const availabilityCount = isVisitorItem ? (visitorResetCount * (item.limit || 1)) : (gemRefreshes * (item.limit || 1));
+            
+            for (let i = 0; i < availabilityCount; i++) {
+                availableGemPurchases.push({
+                    type: 'gem', name: item.itemName, cost: item.gemCost, anvils: analyzed.analysis.anvils,
+                    efficiency: parseFloat(analyzed.analysis.gemCostPerAnvil),
+                    sourceName: isVisitorItem ? "Interstellar Visitor" : "Mystery Store",
+                    weekIndex: isVisitorItem ? Math.floor(i / (item.limit || 1)) : -1,
+                });
             }
-        });
-    }
+        }
+    });
+    availableGemPurchases.sort((a, b) => a.efficiency - b.efficiency);
 
-    // Interstellar Visitor
-    if (visitorResetCount > 0) {
-        interstellarItems.forEach(item => {
-            const analyzed = analyzeGemStoreItem(item);
-            if (analyzed.analysis.gemCostPerAnvil !== 'N/A') {
-                for (let i = 0; i < visitorResetCount * (item.limit || 1); i++) {
-                    availablePurchases.push({
-                        type: 'gem', name: item.itemName, cost: item.gemCost, anvils: analyzed.analysis.anvils,
-                        efficiency: parseFloat(analyzed.analysis.gemCostPerAnvil),
-                        sourceName: "Interstellar Visitor"
-                    });
-                }
-            }
-        });
-    }
-
-    // Currency Store
+    let availableFiatPurchases = [];
     if (weeklyResetCount > 0) {
         allFiatBundles.forEach(bundle => {
             if (bundle.bundleType === 'scaling') {
                 for (let i = 0; i < weeklyResetCount; i++) {
                     bundle.tiers.forEach(tier => {
                         const anvils = getAnvilContent(tier.contents);
-                        if (anvils > 0) {
+                        const gems = tier.contents?.find(c => c.item === 'Gems')?.quantity || 0;
+                        const value = (anvils * 60) + gems; // Simple value score
+                        if (value > 0) {
                             for (let j = 0; j < (tier.limit || 1); j++) {
-                                availablePurchases.push({
-                                    type: 'fiat', name: `${bundle.bundleName} (Tier ${tier.tier})`, cost: tier.cost, anvils,
-                                    efficiency: tier.cost > 0 ? (anvils / tier.cost) : 0,
-                                    sourceName: "Currency Store"
+                                availableFiatPurchases.push({
+                                    type: 'fiat', name: `${bundle.bundleName} (Tier ${tier.tier})`, cost: tier.cost, anvils, gems,
+                                    efficiency: tier.cost > 0 ? value / tier.cost : Infinity,
+                                    sourceName: "Currency Store", weekIndex: i,
                                 });
                             }
                         }
@@ -272,58 +265,113 @@ export function createAnvilAcquisitionPlan(targetAnvils, gemStoreMasterList, all
             }
         });
     }
+    availableFiatPurchases.sort((a, b) => b.efficiency - a.efficiency); // Sort by best value per dollar
 
-    // --- 2. Sort all available purchases by efficiency ---
-    const gemSources = availablePurchases.filter(s => s.type === 'gem').sort((a,b) => a.efficiency - b.efficiency);
-    const fiatSources = availablePurchases.filter(s => s.type === 'fiat').sort((a,b) => b.efficiency - a.efficiency);
-    const sortedSources = [...gemSources, ...fiatSources];
+    // --- 2. Calculate initial gem pool from income ---
+    const incomeTier = GEM_INCOME_TIERS[gemIncomeLevel];
+    const f2pDailyGemIncome = incomeTier.daily + (incomeTier.weekly / 7) + (incomeTier.monthly / 30);
+    const f2pGeneratedGems = f2pDailyGemIncome * daysUntilTarget;
+    
+    const passActiveDurationDays = SUPER_MONTHLY_PASS.durationDays * superMonthlyPassQty;
+    const effectivePassDays = Math.min(daysUntilTarget, passActiveDurationDays);
+    const passGeneratedGems = (superMonthlyPassQty > 0 ? SUPER_MONTHLY_PASS.dailyGems : 0) * effectivePassDays;
 
-    // --- 3. Build the plan using the greedy algorithm ---
+    let gemPool = f2pGeneratedGems + passGeneratedGems;
+    
+    // --- 3. Iteratively build the plan ---
     const purchaseLog = [];
-    for (const source of sortedSources) {
-        if (anvilsRemaining <= 0) break;
-        purchaseLog.push(source);
-        anvilsRemaining -= source.anvils;
-    }
+    let anvilsRemaining = targetAnvils;
+    let sanityCheck = 0;
 
-    if (purchaseLog.length === 0 && anvilsRemaining > 0) {
-        return { plan: [`No available sources to acquire **${targetAnvils}** Anvils within the selected timeframe.`], totalGemCost: 0, totalFiatCost: 0 };
+    while (anvilsRemaining > 0 && sanityCheck < 1000) {
+        sanityCheck++;
+        
+        let bestGemOption = availableGemPurchases[0];
+        let canAffordGemOption = bestGemOption && gemPool >= bestGemOption.cost;
+
+        if (canAffordGemOption) {
+            // If we can afford the best gem deal, we take it.
+            const itemToBuy = availableGemPurchases.shift();
+            purchaseLog.push(itemToBuy);
+            gemPool -= itemToBuy.cost;
+            anvilsRemaining -= itemToBuy.anvils;
+        } else {
+            // We can't afford the best gem deal (or any gem deal), so we must buy a fiat bundle.
+            if (availableFiatPurchases.length > 0) {
+                const itemToBuy = availableFiatPurchases.shift();
+                purchaseLog.push(itemToBuy);
+                gemPool += itemToBuy.gems;
+                anvilsRemaining -= itemToBuy.anvils;
+            } else {
+                // No more options left.
+                break;
+            }
+        }
     }
     
-    // --- 4. Group and format the final plan ---
-    const groupedPurchases = {};
+    // --- 4. Final calculations and formatting ---
     let totalGemCost = 0;
     let totalFiatCost = 0;
+    let gemsFromFiatPurchases = 0;
+    const scheduledPurchases = {};
 
     purchaseLog.forEach(p => {
-        const key = `${p.sourceName} - ${p.name}`;
-        groupedPurchases[key] = (groupedPurchases[key] || 0) + 1;
-        if(p.type === 'gem') totalGemCost += p.cost;
-        if(p.type === 'fiat') totalFiatCost += p.cost;
+        if (p.type === 'gem') {
+            totalGemCost += p.cost;
+        } else if (p.type === 'fiat') {
+            totalFiatCost += p.cost;
+            gemsFromFiatPurchases += p.gems;
+        }
+
+        let key;
+        if (p.sourceName === 'Mystery Store') {
+            key = `Always Available (Mystery Store)`;
+        } else {
+             key = `Week ${p.weekIndex + 1}${p.sourceName === 'Interstellar Visitor' ? ' (Visitor)' : ''}`;
+        }
+        
+        if (!scheduledPurchases[key]) scheduledPurchases[key] = [];
+        const existing = scheduledPurchases[key].find(i => i.name === p.name);
+        if (existing) existing.count++;
+        else scheduledPurchases[key].push({ name: p.name, source: p.sourceName, count: 1 });
     });
 
     const plan = [];
-    const groupedByStore = {};
-
-    for (const [key, count] of Object.entries(groupedPurchases)) {
-        const [sourceName, itemName] = key.split(' - ');
-        if (!groupedByStore[sourceName]) {
-            groupedByStore[sourceName] = [];
-        }
-        groupedByStore[sourceName].push(`Purchase ${itemName} **${count}** time(s).`);
-    }
-
-    for (const [storeName, items] of Object.entries(groupedByStore)) {
-        plan.push(`**${storeName}:**`);
-        items.forEach(item => plan.push(`- ${item}`));
-    }
-
+    const sortedWeeks = Object.keys(scheduledPurchases).sort((a, b) => {
+        if (a.startsWith('Always')) return -1;
+        if (b.startsWith('Always')) return 1;
+        const weekA = parseInt(a.match(/(\d+)/)[0], 10);
+        const weekB = parseInt(b.match(/(\d+)/)[0], 10);
+        return weekA - weekB;
+    });
+    
+    sortedWeeks.forEach(week => {
+        plan.push(`**${week}:**`);
+        scheduledPurchases[week].forEach(item => {
+            plan.push(`- Purchase ${item.name} **${item.count}** time(s).`);
+        });
+    });
+    
     if (anvilsRemaining > 0) {
         plan.push(`---`);
-        plan.push(`After all purchases, you will still need **${Math.ceil(anvilsRemaining)}** more Anvils.`);
+        plan.push(`After all purchases, you will still be short by **${Math.ceil(anvilsRemaining)}** Anvils.`);
     }
+    
+    const totalGemsAcquired = f2pGeneratedGems + passGeneratedGems + gemsFromFiatPurchases;
+    const finalGemSurplus = totalGemsAcquired - totalGemCost;
 
-    return { plan, totalGemCost, totalFiatCost };
+    return { 
+        plan, 
+        totalFiatCost: totalFiatCost + (superMonthlyPassQty * SUPER_MONTHLY_PASS.cost),
+        gemBreakdown: {
+            neededForPurchases: Math.ceil(totalGemCost),
+            fromF2PIncome: Math.ceil(f2pGeneratedGems),
+            fromPasses: Math.ceil(passGeneratedGems),
+            fromBundles: Math.ceil(gemsFromFiatPurchases),
+            netCost: Math.ceil(Math.max(0, -finalGemSurplus)),
+            surplus: Math.ceil(Math.max(0, finalGemSurplus))
+        }
+    };
 }
 
 

@@ -1,7 +1,7 @@
 /**
  * @file js/stores/ui.js
  * @fileoverview Handles UI interactions, data fetching, and rendering for the Store Analyzer.
- * @version 1.9.5 - Added content display to currency store item cards.
+ * @version 1.1.3 - Restored deal summaries to strategy cards and appended gem breakdown.
  */
 
 import {
@@ -34,10 +34,14 @@ const DOM = {
     // Anvil Planner
     anvilTargetInput: document.getElementById('anvil-target-input'),
     anvilTimeframeDate: document.getElementById('anvil-timeframe-date'),
+    gemIncomeLevel: document.getElementById('gem-income-level'),
+    superMonthlyPassQuantity: document.getElementById('super-monthly-pass-quantity'),
     calculateAnvilPlanBtn: document.getElementById('calculate-anvil-plan-btn'),
     anvilPlanResultContainer: document.getElementById('anvil-plan-result-container'),
     // Strategy cards
     strategyViewContainer: document.getElementById('strategy-view-container'),
+    strategyBreakdownContent: document.getElementById('strategy-breakdown-content'),
+    instagramWidget: document.getElementById('instagram-widget'),
     f2pCard: document.getElementById('f2p-card'),
     casualCard: document.getElementById('casual-card'),
     effectiveCard: document.getElementById('effective-card'),
@@ -115,8 +119,6 @@ function createSubscriptionCard(pass) {
     }
     if (pass.contents && pass.contents.length > 0) {
         pass.contents.forEach(content => {
-            // Gems are handled by immediateGems and dailyGems from the root of the pass object.
-            // The `contents` array for subscriptions usually contains other bonus items.
             if (content.item.toLowerCase() !== 'gems') { 
                  contentsHtml.push(`<span class="text-xs text-slate-400">${content.quantity.toLocaleString()} ${content.item}</span>`);
             }
@@ -151,7 +153,6 @@ function displayBestAnvilDeals() {
     const timers = getStoreTimers();
     const isVisitorActive = timers.interstellarVisitor.isActive;
 
-    // Only include Interstellar Visitor items if the visitor is currently active.
     let allGemItems = [...gemStoreData];
     if (isVisitorActive) {
         allGemItems.push(...interstellarVisitorData);
@@ -190,103 +191,9 @@ function displayBestAnvilDeals() {
     }
 }
 
-/**
- * Updates all strategy cards with the daily gem requirement from a plan.
- * @param {number} dailyGemsNeeded - The average daily gems required.
- * @param {number} totalGemCost - The total gem cost of the plan.
- */
-function updateAllStrategyCardsWithGemReq(dailyGemsNeeded, totalGemCost) {
-    const cards = [DOM.f2pCard, DOM.casualCard, DOM.effectiveCard];
-    
-    // Clear any previous requirement text
-    cards.forEach(card => card.querySelector('.daily-gem-req')?.remove());
-
-    if (!dailyGemsNeeded || dailyGemsNeeded <= 0) return;
-
-    // Create and append the new text to each card
-    const f2pText = `To afford the Gem purchases in this plan, you'll need to earn an average of <strong class="text-green-400">${dailyGemsNeeded.toLocaleString()} Gems</strong> per day.`;
-    const spenderText = `The Gem-based part of this plan costs <strong class="text-indigo-300">${totalGemCost.toLocaleString()} Gems</strong>. To earn this requires an average of <strong class="text-green-400">${dailyGemsNeeded.toLocaleString()} Gems</strong> per day.`;
-
-    const f2pP = document.createElement('p');
-    f2pP.className = 'text-lg mt-4 daily-gem-req';
-    f2pP.innerHTML = f2pText;
-    DOM.f2pCard.appendChild(f2pP);
-
-    const casualP = document.createElement('p');
-    casualP.className = 'text-lg mt-4 daily-gem-req';
-    casualP.innerHTML = spenderText;
-    DOM.casualCard.appendChild(casualP);
-
-    const effectiveP = document.createElement('p');
-    effectiveP.className = 'text-lg mt-4 daily-gem-req';
-    effectiveP.innerHTML = spenderText;
-    DOM.effectiveCard.appendChild(effectiveP);
-}
-
-
-function handleAnvilPlanCalculation() {
-    const target = parseInt(DOM.anvilTargetInput.value, 10);
-    const timeframe = DOM.anvilTimeframeDate.value;
-
-    if (!target || target <= 0) {
-        DOM.anvilPlanResultContainer.innerHTML = `<p class="text-red-400">Please enter a valid number of Anvils.</p>`;
-        return;
-    }
-    if (!timeframe) {
-        DOM.anvilPlanResultContainer.innerHTML = `<p class="text-red-400">Please select a target date.</p>`;
-        return;
-    }
-    
-    if (analytics) {
-        logEvent(analytics, 'calculate_anvil_plan', {
-            target_anvils: target,
-            target_date: timeframe
-        });
-    }
-
-    const targetDate = new Date(timeframe + 'T00:00:00Z');
-    
-    const gemStoreMasterList = gemStoreData; 
-    const interstellarMasterList = interstellarVisitorData;
-
-    const { plan, totalGemCost, totalFiatCost, anvilsStillNeeded } = createAnvilAcquisitionPlan(target, gemStoreMasterList, currencyStoreData, interstellarMasterList, targetDate);
-
-    if (plan.length === 0) {
-        DOM.anvilPlanResultContainer.innerHTML = `<p class="text-amber-400">No sources of Anvils are currently available.</p>`;
-        return;
-    }
-    
-    let planHtml = plan.map(step => {
-        if (step.startsWith('**') && step.endsWith(':**')) {
-             return `<h5 class="font-bold text-indigo-300 mt-3 mb-1">${step.replace(/\*\*/g, '')}</h5>`;
-        }
-        return `<li class="ml-4">${step.replace(/\*\*(.*?)\*\*/g, '<strong class="text-amber-400">$1</strong>')}</li>`;
-    }).join('');
-    
-    planHtml += `<div class="mt-4 pt-3 border-t border-slate-700">
-        <h5 class="font-bold text-green-300">Total Estimated Cost:</h5>
-        <ul class="list-disc list-inside ml-2">
-            ${totalGemCost > 0 ? `<li>${totalGemCost.toLocaleString()} Gems</li>` : ''}
-            ${totalFiatCost > 0 ? `<li>$${totalFiatCost.toFixed(2)}</li>` : ''}
-        </ul>
-    </div>`;
-
-    DOM.anvilPlanResultContainer.innerHTML = `<ul class="list-none space-y-1">${planHtml}</ul>`;
-
-    // Update strategy cards with daily gem requirement
-    const daysUntilTarget = (targetDate - new Date()) / (1000 * 60 * 60 * 24);
-    if (totalGemCost > 0 && daysUntilTarget > 0) {
-        const dailyGemsNeeded = Math.ceil(totalGemCost / daysUntilTarget);
-        updateAllStrategyCardsWithGemReq(dailyGemsNeeded, totalGemCost);
-    } else {
-        updateAllStrategyCardsWithGemReq(0, 0); // Clear the text if no gem cost
-    }
-}
-
-function updateStrategyCardContent(deals = []) {
+function updateStrategyDealSummaries(deals) {
     const timers = getStoreTimers();
     const isVisitorActive = timers.interstellarVisitor.isActive;
-
     let allGemDeals = [...gemStoreData];
     if (isVisitorActive) {
         allGemDeals.push(...interstellarVisitorData);
@@ -294,9 +201,9 @@ function updateStrategyCardContent(deals = []) {
     const bestGemDealForAnvils = findBestAnvilDeals(allGemDeals, []).bestGemDeal;
 
     if (bestGemDealForAnvils) {
-        DOM.f2pCard.querySelector('p:first-child').innerHTML = `The most efficient way to spend your Gems on Anvils right now is the <strong class="text-amber-400">${bestGemDealForAnvils.itemName}</strong>, costing <strong class="text-green-400">${bestGemDealForAnvils.analysis.gemCostPerAnvil} Gems</strong> per Anvil.`;
+        DOM.f2pCard.innerHTML = `<p class="text-lg mb-4">The most efficient way to spend your Gems on Anvils right now is the <strong class="text-amber-400">${bestGemDealForAnvils.itemName}</strong>, costing <strong class="text-green-400">${bestGemDealForAnvils.analysis.gemCostPerAnvil} Gems</strong> per Anvil.</p>`;
     } else {
-        DOM.f2pCard.querySelector('p:first-child').innerHTML = `Focusing on maximizing free resources. There are no Anvil deals in the Mystery Store or Visitor's inventory currently.`;
+        DOM.f2pCard.innerHTML = `<p class="text-lg mb-4">Focusing on maximizing free resources. There are no Anvil deals in the Mystery Store or Visitor's inventory currently.</p>`;
     }
     
     const bestCasualDeal = deals.find(deal => {
@@ -306,21 +213,134 @@ function updateStrategyCardContent(deals = []) {
     });
 
     if (bestCasualDeal) {
-        DOM.casualCard.querySelector('p:first-child').innerHTML = `<p class="text-lg">For casual spending, the <strong class="text-amber-400">${bestCasualDeal.bundleName}</strong> offers great value in its lower, cheaper tiers. Check its breakdown in the Currency Store.</p>`;
+        DOM.casualCard.innerHTML = `<p class="text-lg mb-4">For casual spending, the <strong class="text-amber-400">${bestCasualDeal.bundleName}</strong> offers great value in its lower, cheaper tiers. Check its breakdown in the Currency Store.</p>`;
     } else {
-        DOM.casualCard.querySelector('p:first-child').innerHTML = `<p class="text-lg">Looking for high-value deals under $20. There are no recommended deals in this price range this week.</p>`;
+        DOM.casualCard.innerHTML = `<p class="text-lg mb-4">Looking for high-value deals under $20. There are no recommended deals in this price range this week.</p>`;
     }
 
     const bestOverallDeal = deals[0];
     if (bestOverallDeal) {
         const bestValue = bestOverallDeal.tiers ? Math.max(...bestOverallDeal.tiers.map(t => parseFloat(t.analysis.valuePerDollar))) : parseFloat(bestOverallDeal.analysis.gemsPerDollar);
         const bestPercentage = (bestValue / BASE_GEMS_PER_DOLLAR) * 100;
-        DOM.effectiveCard.querySelector('p:first-child').innerHTML = `
-            <p class="text-lg">The most cost-effective deal this week is the <strong class="text-amber-400">${bestOverallDeal.bundleName}</strong>, offering a top value of <strong class="text-green-400">${bestPercentage.toFixed(0)}%</strong>.</p>
+        DOM.effectiveCard.innerHTML = `
+            <p class="text-lg mb-4">The most cost-effective deal this week is the <strong class="text-amber-400">${bestOverallDeal.bundleName}</strong>, offering a top value of <strong class="text-green-400">${bestPercentage.toFixed(0)}%</strong>.</p>
         `;
     } else {
-        DOM.effectiveCard.querySelector('p:first-child').innerHTML = `<p class="text-lg">Seeking the most mathematically optimal deals. There are currently no currency deals to analyze.</p>`;
+        DOM.effectiveCard.innerHTML = `<p class="text-lg mb-4">Seeking the most mathematically optimal deals. There are currently no currency deals to analyze.</p>`;
     }
+}
+
+function appendGemBreakdownToStrategyCards(gemBreakdown) {
+    const { neededForPurchases, fromF2PIncome, fromPasses, fromBundles, netCost, surplus } = gemBreakdown;
+
+    let breakdownHtml = `<div class="mt-4 pt-4 border-t border-slate-600">`;
+    breakdownHtml += `<h4 class="text-lg font-semibold text-slate-200 border-b border-slate-600 pb-2 mb-2">Gem Breakdown</h4>`;
+    breakdownHtml += `<ul class="space-y-1 text-slate-300">`;
+    breakdownHtml += `<li class="flex justify-between"><span>Gems Needed for Anvils:</span> <span class="font-semibold text-red-400">${neededForPurchases.toLocaleString()}</span></li>`;
+    breakdownHtml += `<li class="flex justify-between"><span>Generated from Income:</span> <span class="font-semibold text-green-400">+${fromF2PIncome.toLocaleString()}</span></li>`;
+    if(fromPasses > 0) breakdownHtml += `<li class="flex justify-between"><span>From Monthly Pass:</span> <span class="font-semibold text-green-400">+${fromPasses.toLocaleString()}</span></li>`;
+    if(fromBundles > 0) breakdownHtml += `<li class="flex justify-between"><span>From Bundle Purchases:</span> <span class="font-semibold text-green-400">+${fromBundles.toLocaleString()}</span></li>`;
+    breakdownHtml += `</ul>`;
+    breakdownHtml += `<div class="mt-3 pt-3 border-t border-slate-600">`;
+    if (surplus > 0) {
+        breakdownHtml += `<p class="flex justify-between text-lg"><span>Net Gem Surplus:</span> <span class="font-bold text-green-300">${surplus.toLocaleString()}</span></p>`;
+    } else {
+        breakdownHtml += `<p class="flex justify-between text-lg"><span>Net Gem Cost:</span> <span class="font-bold text-amber-400">${netCost.toLocaleString()}</span></p>`;
+    }
+    breakdownHtml += `</div></div>`;
+    
+    DOM.f2pCard.innerHTML += breakdownHtml;
+    DOM.casualCard.innerHTML += breakdownHtml;
+    DOM.effectiveCard.innerHTML += breakdownHtml;
+}
+
+
+function handleAnvilPlanCalculation() {
+    const target = parseInt(DOM.anvilTargetInput.value, 10);
+    const timeframe = DOM.anvilTimeframeDate.value;
+    const incomeLevel = DOM.gemIncomeLevel.value;
+    const passQty = parseInt(DOM.superMonthlyPassQuantity.value, 10);
+
+    if (!target || target <= 0) {
+        DOM.anvilPlanResultContainer.innerHTML = `<p class="text-red-400 text-center">Please enter a valid number of Anvils.</p>`;
+        return;
+    }
+    if (!timeframe) {
+        DOM.anvilPlanResultContainer.innerHTML = `<p class="text-red-400 text-center">Please select a target date.</p>`;
+        return;
+    }
+    
+    if (analytics) {
+        logEvent(analytics, 'calculate_anvil_plan', {
+            target_anvils: target,
+            target_date: timeframe,
+            gem_income_level: incomeLevel,
+            super_pass_qty: passQty,
+        });
+    }
+
+    const targetDate = new Date(timeframe + 'T00:00:00Z');
+    
+    const gemStoreMasterList = gemStoreData; 
+    const interstellarMasterList = interstellarVisitorData;
+
+    const result = createAnvilAcquisitionPlan(target, gemStoreMasterList, currencyStoreData, interstellarMasterList, targetDate, incomeLevel, passQty);
+    
+    if (!result.plan || result.plan.length === 0) {
+        DOM.anvilPlanResultContainer.innerHTML = `<p class="text-amber-400 text-center">No acquisition plan found for the given criteria.</p>`;
+        resetStrategyCards();
+        return;
+    }
+
+    const { plan, totalFiatCost, gemBreakdown } = result;
+    
+    let planHtml = plan.map(step => {
+        if (step.startsWith('**') && step.endsWith(':**')) {
+             return `<h5 class="font-bold text-indigo-300 mt-3 mb-1">${step.replace(/\*\*/g, '')}</h5>`;
+        }
+        return `<li class="ml-4">${step.replace(/\*\*(.*?)\*\*/g, '<strong class="text-amber-400">$1</strong>')}</li>`;
+    }).join('');
+    
+    let costSummary = `<div class="mt-4 pt-3 border-t border-slate-700">
+        <h5 class="font-bold text-green-300">Total Estimated Cost:</h5>
+        <ul class="list-disc list-inside ml-2">`;
+        
+    if (gemBreakdown.netCost > 0) {
+        costSummary += `<li>${gemBreakdown.netCost.toLocaleString()} Net Gems</li>`;
+    }
+    
+    if (totalFiatCost > 0) {
+        costSummary += `<li>$${totalFiatCost.toFixed(2)}</li>`;
+    }
+
+    if (gemBreakdown.netCost <= 0 && totalFiatCost <= 0) {
+         costSummary += `<li>Free! (Based on your income)</li>`;
+    }
+    
+    costSummary += `</ul></div>`;
+    planHtml += costSummary;
+
+    DOM.anvilPlanResultContainer.innerHTML = `<ul class="list-none space-y-1">${planHtml}</ul>`;
+
+    const deals = currencyStoreData.map(bundle => analyzeScalingBundle(bundle, ANVIL_TO_GEM_VALUE)).sort((a, b) => {
+        const valA = a.tiers ? Math.max(...a.tiers.map(t => t.analysis.valuePerDollar)) : a.analysis.gemsPerDollar;
+        const valB = b.tiers ? Math.max(...b.tiers.map(t => t.analysis.valuePerDollar)) : b.analysis.gemsPerDollar;
+        return valB - valA;
+    });
+
+    updateStrategyDealSummaries(deals);
+    appendGemBreakdownToStrategyCards(gemBreakdown);
+    DOM.instagramWidget.classList.remove('hidden');
+}
+
+function resetStrategyCards() {
+    const cardContainer = DOM.strategyBreakdownContent;
+    if (cardContainer) {
+        cardContainer.querySelector('#f2p-card').innerHTML = `<p class="text-lg">Enter a target and click "Find Best Path" to see your personalized acquisition strategy and gem breakdown.</p>`;
+        cardContainer.querySelector('#casual-card').innerHTML = `<p class="text-lg">Enter a target and click "Find Best Path" to see your personalized acquisition strategy and gem breakdown.</p>`;
+        cardContainer.querySelector('#effective-card').innerHTML = `<p class="text-lg">Enter a target and click "Find Best Path" to see your personalized acquisition strategy and gem breakdown.</p>`;
+    }
+    DOM.instagramWidget.classList.add('hidden');
 }
 
 
@@ -336,7 +356,14 @@ function handleStrategyChange(strategy) {
     }
 
     DOM.strategyTabs.forEach(t => t.classList.toggle('active', t.dataset.strategy === strategy));
-    DOM.strategyViewContainer.querySelectorAll('.strategy-card').forEach(card => card.classList.toggle('active', card.id === `${strategy}-card`));
+    
+    const cardContainer = DOM.strategyBreakdownContent;
+    if(cardContainer) {
+        cardContainer.querySelectorAll('.strategy-card').forEach(card => {
+            card.classList.toggle('active', card.id === `${strategy}-card`);
+        });
+    }
+    
     renderFilteredStores();
 }
 
@@ -354,8 +381,8 @@ function renderFilteredStores() {
         const valB = b.tiers ? Math.max(...b.tiers.map(t => t.analysis.valuePerDollar)) : b.analysis.gemsPerDollar;
         return valB - valA;
     });
-    updateStrategyCardContent(sortedForEffective);
 
+    updateStrategyDealSummaries(sortedForEffective);
 
     if (gemStoreData.length === 0) renderMessage(DOM.gemStoreContainer, "No items in rotation.");
     else DOM.gemStoreContainer.innerHTML = gemStoreData.map(item => createGemStoreCard(analyzeGemStoreItem(item))).join('');
@@ -401,7 +428,8 @@ async function fetchAllStoresAndRender() {
         renderFilteredStores();
         displayBestAnvilDeals(); 
 
-    } catch (error) {
+    } catch (error)
+{
         console.error("Error fetching store data:", error);
         logEvent(analytics, 'exception', { description: "Error fetching store data", fatal: false });
         renderMessage(DOM.gemStoreContainer, "Error loading Mystery Store data.");
@@ -429,13 +457,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const today = new Date();
     const nextWeek = new Date(today.setDate(today.getDate() + 7));
     DOM.anvilTimeframeDate.value = nextWeek.toISOString().split('T')[0];
-
+    
+    resetStrategyCards();
     updateTimers();
     setInterval(updateTimers, 1000);
 
     // Event listeners
     DOM.strategyTabs.forEach(tab => tab.addEventListener('click', () => handleStrategyChange(tab.dataset.strategy)));
     DOM.calculateAnvilPlanBtn.addEventListener('click', handleAnvilPlanCalculation);
+    
+    if (DOM.instagramWidget) {
+        DOM.instagramWidget.addEventListener('click', () => {
+            if (analytics) {
+                logEvent(analytics, 'select_content', {
+                    content_type: 'community_resource',
+                    item_id: 'guidesdcdl_instagram'
+                });
+            }
+        });
+    }
 
     document.addEventListener('firebase-ready', async () => {
         try {

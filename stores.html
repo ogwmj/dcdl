@@ -5,8 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DC: Dark Legion - Store & Resource Analyzer</title>
+    <!-- Tailwind CSS for rapid UI development -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for modern typography -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Main theme file for consistent styling -->
      <link href="css/stores/ui.css" rel="stylesheet">
     <link href="css/theme.css" rel="stylesheet">
 
@@ -78,9 +81,26 @@
         <div id="event-hub" class="mb-8 text-center p-4 rounded-lg bg-slate-800/80 border border-slate-700 shadow-lg backdrop-blur-sm">
             <p id="event-timer" class="text-xl font-bold text-amber-400">Initializing Timers...</p>
         </div>
+
+        <!-- Best Anvil Deals Highlight Section -->
+        <div class="mb-8 mt-8">
+            <h2 class="text-2xl font-bold text-center mb-4 text-slate-100">Today's Best Anvil Deals</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Best Gem Deal -->
+                <div id="best-gem-deal-card" class="bg-slate-800/80 p-4 rounded-lg border border-indigo-400">
+                    <h3 class="font-semibold text-indigo-300 text-lg">Best Mystery Source</h3>
+                    <p class="text-slate-400">Calculating...</p>
+                </div>
+                <!-- Best Fiat Deal -->
+                <div id="best-fiat-deal-card" class="bg-slate-800/80 p-4 rounded-lg border border-green-400">
+                    <h3 class="font-semibold text-green-300 text-lg">Best Fiat Source</h3>
+                    <p class="text-slate-400">Calculating...</p>
+                </div>
+            </div>
+        </div>
         
         <!-- Player Dashboard Section -->
-        <div class="mt-8">
+        <div class="mt-8 mb-8">
             <h2 class="text-3xl font-bold text-center mb-6 text-slate-100">Player Dashboard</h2>
             <div class="bg-slate-800/80 backdrop-blur-sm border border-slate-700 rounded-lg p-6 shadow-xl">
                 <div id="dashboard-content" class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -97,6 +117,18 @@
                                     <label for="anvil-timeframe-date" class="block text-sm font-medium text-slate-300 mb-1">Acquire By Date:</label>
                                     <input type="date" id="anvil-timeframe-date" class="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-3 text-slate-100 focus:ring-indigo-500 focus:border-indigo-500">
                                 </div>
+                                <div>
+                                    <label for="gem-income-level" class="block text-sm font-medium text-slate-300 mb-1">Gem Income Level:</label>
+                                    <select id="gem-income-level" class="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-3 text-slate-100 focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option value="low">Low (~197/day)</option>
+                                        <option value="medium" selected>Medium (~520/day)</option>
+                                        <option value="high">High (~1595/day)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="super-monthly-pass-quantity" class="block text-sm font-medium text-slate-300 mb-1">Super Monthly Passes:</label>
+                                    <input type="number" id="super-monthly-pass-quantity" value="0" min="0" max="5" class="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-3 text-slate-100 focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
                             </div>
                             <div class="text-center">
                                 <button id="calculate-anvil-plan-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Find Best Path</button>
@@ -109,35 +141,32 @@
                     <!-- Spending Strategy -->
                     <div>
                         <h3 class="text-xl font-semibold mb-4 text-slate-200">My Spending Strategy</h3>
-                        <div id="strategy-view-container" class="text-slate-300">
-                           <div id="f2p-card" class="strategy-card active">
-                               <p class="text-lg">Focusing on maximizing free resources. The tool will highlight the best Gem purchases and track event rewards to help you plan.</p>
-                           </div>
-                           <div id="casual-card" class="strategy-card">
-                               <p class="text-lg">Looking for high-value deals under $20. The tool will analyze cheap bundles and subscription passes for the best return.</p>
-                           </div>
-                           <div id="effective-card" class="strategy-card">
-                               <p class="text-lg">Seeking the most mathematically optimal deals. The tool will provide detailed value-per-dollar breakdowns for all purchases.</p>
+                        <div id="strategy-view-container" class="text-slate-300 flex flex-col bg-slate-900/40 p-4 rounded-lg">
+                           <div id="strategy-breakdown-content">
+                               <div id="f2p-card" class="strategy-card active">
+                                   <p class="text-lg">Enter a target and click "Find Best Path" to see your personalized acquisition strategy and gem breakdown.</p>
+                               </div>
+                               <div id="casual-card" class="strategy-card">
+                                   <p class="text-lg">Enter a target and click "Find Best Path" to see your personalized acquisition strategy and gem breakdown.</p>
+                               </div>
+                               <div id="effective-card" class="strategy-card">
+                                   <p class="text-lg">Enter a target and click "Find Best Path" to see your personalized acquisition strategy and gem breakdown.</p>
+                               </div>
+                            </div>
+                           <!-- Community Resource Link -->
+                           <div id="instagram-widget" class="hidden mt-5 pt-4 border-t border-slate-700/50">
+                                <p class="text-xs text-slate-500 uppercase font-semibold mb-2 text-center">Community Resources</p>
+                                <a href="https://www.instagram.com/guidesdcdl/" target="_blank" rel="noopener noreferrer" class="flex items-center p-3 bg-slate-800/80 rounded-lg hover:bg-slate-700/80 transition-colors duration-300">
+                                    <img src="img/logos/guides_dcdl.jpg" alt="Guides DCDL Logo" class="w-12 h-12 rounded-md mr-4 object-cover">
+                                    <div class="flex-grow">
+                                        <p class="font-bold text-slate-100">Guides DC Dark Legion</p>
+                                        <p class="text-sm text-slate-400">Player-made guides & infographics</p>
+                                    </div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-slate-500"><path d="M9 18l6-6-6-6"/></svg>
+                                </a>
                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Best Anvil Deals Highlight Section -->
-        <div class="mb-8 mt-8">
-            <h2 class="text-2xl font-bold text-center mb-4 text-slate-100">Today's Best Anvil Deals</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Best Gem Deal -->
-                <div id="best-gem-deal-card" class="bg-slate-800/80 p-4 rounded-lg border border-indigo-400">
-                    <h3 class="font-semibold text-indigo-300 text-lg">Best Gem Source</h3>
-                    <p class="text-slate-400">Calculating...</p>
-                </div>
-                <!-- Best Fiat Deal -->
-                <div id="best-fiat-deal-card" class="bg-slate-800/80 p-4 rounded-lg border border-green-400">
-                    <h3 class="font-semibold text-green-300 text-lg">Best Fiat Source</h3>
-                    <p class="text-slate-400">Calculating...</p>
                 </div>
             </div>
         </div>
@@ -162,16 +191,17 @@
 
             <!-- Column 2: Currency & Weekend Stores -->
             <div class="lg:col-span-2 space-y-6">
-                <div id="interstellar-visitor-section" class="hidden">
-                    <h2 class="text-2xl font-bold text-center border-b-2 border-amber-400 pb-2 text-slate-100">Interstellar Visitor</h2>
-                    <div id="interstellar-visitor-container" class="bg-slate-800/80 backdrop-blur-sm rounded-lg p-6 mt-6 space-y-4 shadow-xl border-2 border-amber-400/50">
-                         <p class="text-center text-slate-400">Awaiting the Visitor's arrival...</p>
-                    </div>
-                </div>
                 <div id="currency-store-section">
                     <h2 class="text-2xl font-bold text-center border-b-2 border-green-400 pb-2 text-slate-100">Currency Store</h2>
                     <div id="currency-store-container" class="bg-slate-800/80 backdrop-blur-sm border border-slate-700 rounded-lg p-6 mt-6 space-y-4 shadow-xl">
                          <p class="text-center text-slate-400">Loading weekly deals...</p>
+                    </div>
+                </div>
+
+                <div id="interstellar-visitor-section" class="hidden">
+                    <h2 class="text-2xl font-bold text-center border-b-2 border-amber-400 pb-2 text-slate-100">Interstellar Visitor</h2>
+                    <div id="interstellar-visitor-container" class="bg-slate-800/80 backdrop-blur-sm rounded-lg p-6 mt-6 space-y-4 shadow-xl border-2 border-amber-400/50">
+                         <p class="text-center text-slate-400">Awaiting the Visitor's arrival...</p>
                     </div>
                 </div>
             </div>
@@ -180,12 +210,6 @@
     </div>
 
     <auth-ui status-container-id="auth-status-desktop"></auth-ui>
-
-    <footer class="relative z-10 text-gray-500 text-sm py-8 text-center">
-        <p class="mt-2">DC: Dark Legion 2025 DC. Software code 2025 FunPlus International AG. DC LOGO and all related characters and elements &copy; &amp; &trade; DC.</p>
-        <p class="mt-2">Proud DC: Dark Legion Content Creator.</p>
-    </footer>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const desktopAuthContainer = document.getElementById('auth-status-desktop');
