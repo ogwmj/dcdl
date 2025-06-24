@@ -1,7 +1,7 @@
 /**
  * @file js/stores/ui.js
  * @fileoverview Handles UI interactions, data fetching, and rendering for the Store Analyzer.
- * @version 1.9.4 - Renamed Gem Store to Mystery Store.
+ * @version 1.9.5 - Added content display to currency store item cards.
  */
 
 import {
@@ -64,12 +64,21 @@ function createScalingBundleCard(bundle) {
         const valueDisplay = valuePerDollar > 0 
             ? `<span class="font-semibold text-amber-400" title="${valuePerDollar.toFixed(2)} Eq. Gems per dollar">${percentageValue.toFixed(0)}% Value</span>`
             : `<span class="text-slate-500">-</span>`;
+
+        const contentsHtml = tier.contents.map(content => {
+            return `<span class="text-xs text-slate-400">${content.quantity.toLocaleString()} ${content.item}</span>`;
+        }).join('<span class="mx-1 text-slate-500">&bull;</span>');
         
         return `
-        <li class="flex justify-between items-center py-2 border-b border-slate-700 last:border-b-0 p-2 rounded">
-            <span class="text-slate-300">Tier ${tier.tier} ($${tier.cost})</span>
-            <div>
-                ${valueDisplay}
+        <li class="py-2 border-b border-slate-700 last:border-b-0 p-2 rounded">
+            <div class="flex justify-between items-center">
+                <span class="text-slate-300 font-semibold">Tier ${tier.tier} ($${tier.cost})</span>
+                <div>
+                    ${valueDisplay}
+                </div>
+            </div>
+            <div class="mt-2 flex flex-wrap items-center gap-x-2">
+                ${contentsHtml}
             </div>
         </li>
     `}).join('');
@@ -77,7 +86,7 @@ function createScalingBundleCard(bundle) {
     return `
         <div class="p-4 bg-slate-900 rounded-lg border border-slate-700">
             <h4 class="font-bold text-lg text-slate-100 mb-2">${bundle.bundleName}</h4>
-            <ul class="text-sm">${tiersHtml}</ul>
+            <ul class="text-sm space-y-2">${tiersHtml}</ul>
         </div>
     `;
 }
@@ -97,14 +106,39 @@ function createSubscriptionCard(pass) {
     const analysis = analyzeSubscription(pass, 1.0); 
     const percentageValue = (parseFloat(analysis.analysis.gemsPerDollar) / BASE_GEMS_PER_DOLLAR) * 100;
 
+    let contentsHtml = [];
+    if (pass.immediateGems > 0) {
+        contentsHtml.push(`<span class="text-xs text-slate-400">${pass.immediateGems.toLocaleString()} Gems (Immediate)</span>`);
+    }
+    if (pass.dailyGems > 0) {
+         contentsHtml.push(`<span class="text-xs text-slate-400">${pass.dailyGems.toLocaleString()} Gems / day</span>`);
+    }
+    if (pass.contents && pass.contents.length > 0) {
+        pass.contents.forEach(content => {
+            // Gems are handled by immediateGems and dailyGems from the root of the pass object.
+            // The `contents` array for subscriptions usually contains other bonus items.
+            if (content.item.toLowerCase() !== 'gems') { 
+                 contentsHtml.push(`<span class="text-xs text-slate-400">${content.quantity.toLocaleString()} ${content.item}</span>`);
+            }
+        });
+    }
+
     return `
         <div class="p-4 bg-slate-900 rounded-lg border border-slate-700">
-            <h4 class="font-bold text-lg text-slate-100">${analysis.bundleName}</h4>
-            <p class="text-sm text-slate-300">$${analysis.cost} for ${analysis.durationDays} days</p>
-            <p class="text-sm text-slate-400 mt-2">Value (at 100% login): <span class="font-semibold text-green-400">${percentageValue.toFixed(0)}%</span></p>
+            <div class="flex justify-between items-baseline mb-2">
+                <h4 class="font-bold text-lg text-slate-100">${analysis.bundleName}</h4>
+                <p class="text-sm text-slate-300">$${analysis.cost} for ${analysis.durationDays} days</p>
+            </div>
+            <div class="flex justify-end items-baseline mb-2">
+                 <span class="font-semibold text-green-400">${percentageValue.toFixed(0)}% Value</span>
+            </div>
+            <div class="mt-2 pt-2 border-t border-slate-700 flex flex-wrap items-center gap-x-2 gap-y-1">
+                ${contentsHtml.join('<span class="mx-1 text-slate-500">&bull;</span>')}
+            </div>
         </div>
     `;
 }
+
 
 function renderMessage(container, message) {
     container.innerHTML = `<p class="text-center text-slate-400">${message}</p>`;
