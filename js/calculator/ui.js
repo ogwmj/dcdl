@@ -11,7 +11,7 @@ import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.j
 import { getFirestore, collection, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
-// --- DOM ELEMENT REFERENCES ---
+// #region --- DOM ELEMENT REFERENCES ---
 const DOM = {
     // Wizard
     stepper: document.getElementById('stepper'),
@@ -53,9 +53,12 @@ const DOM = {
     
     // Accessibility
     canvasAccessibility: document.getElementById('canvas-accessibility'),
+
+    // Shard Requirements
+    shardRequirementSummary: document.getElementById('shard-requirement-summary'),
 };
 
-// --- DATA & STATE ---
+// #region --- DATA & STATE ---
 const SHARD_REQUIREMENTS = {
     "Base Character (0 Shards)": 0, "White 1-Star": 2, "White 2-Star": 5, "White 3-Star": 10, "White 4-Star": 20, "White 5-Star": 40,
     "Blue 1-Star": 60, "Blue 2-Star": 80, "Blue 3-Star": 100, "Blue 4-Star": 130, "Blue 5-Star": 160,
@@ -69,7 +72,7 @@ let analytics;
 let startStarSelectorControl = null;
 let targetStarSelectorControl = null;
 
-// --- UI INITIALIZATION & EVENT LISTENERS ---
+// #region --- UI INITIALIZATION & EVENT LISTENERS ---
 
 /**
  * Checks the URL for a 'champion' parameter and pre-selects them.
@@ -237,6 +240,7 @@ function createStarSelector(containerId, hiddenInputId, allowBase = true) {
             hiddenInput.value = `${selectedTier} ${selectedStars}-Star`;
         }
         updateVisuals();
+        updateShardRequirementSummary();
     };
 
     tiersContainer.addEventListener('click', e => {
@@ -399,10 +403,63 @@ function attachEventListeners() {
 
     DOM.f2pRecBtn.addEventListener('click', handleChampionGuidance);
     DOM.minRecBtn.addEventListener('click', handleChampionGuidance);
+
+    DOM.lmShardsYield.addEventListener('input', updateShardRequirementSummary);
+    DOM.toggleUnlockCost.addEventListener('change', updateShardRequirementSummary);
 }
 
 
-// --- DATA GATHERING & CALCULATION HANDLING ---
+// #region --- DATA GATHERING & CALCULATION HANDLING ---
+
+function updateShardRequirementSummary() {
+    const startValue = DOM.startStarLevel.value;
+    const targetValue = DOM.targetStarLevel.value;
+
+    const startShards = startValue === '0_shards' ? 0 : SHARD_REQUIREMENTS[startValue] || 0; //
+    const targetShards = SHARD_REQUIREMENTS[targetValue] || 0; //
+
+    if (!targetValue || !SHARD_REQUIREMENTS[targetValue]) { //
+        DOM.shardRequirementSummary.classList.add('hidden');
+        return;
+    }
+
+    const shardsNeeded = targetShards - startShards; //
+    const lmShardsYield = parseInt(DOM.lmShardsYield.value, 10) || 40; //
+    const includeUnlock = DOM.toggleUnlockCost.checked; //
+
+    // Determine the number of pulls needed just for shards
+    const pullsForShards = (shardsNeeded > 0 && lmShardsYield > 0) ? Math.ceil(shardsNeeded / lmShardsYield) : 0;
+
+    // The cost to unlock is 1 successful pull, if checked.
+    const unlockPullCost = includeUnlock ? 1 : 0;
+    const totalEstimatedPulls = pullsForShards + unlockPullCost;
+
+    if (totalEstimatedPulls > 0) {
+        // Create a dynamic message based on what the user has selected.
+        let primaryMessage, secondaryMessage;
+
+        if (pullsForShards > 0 && includeUnlock) {
+            primaryMessage = `Shards to Goal: <strong class="text-indigo-600">${shardsNeeded.toLocaleString()}</strong>`;
+            secondaryMessage = `Requires an estimated <strong class="text-indigo-600">${totalEstimatedPulls}</strong> successful LM pulls (${pullsForShards} for shards + 1 for unlock).`;
+        } else if (pullsForShards > 0) {
+            primaryMessage = `Shards to Goal: <strong class="text-indigo-600">${shardsNeeded.toLocaleString()}</strong>`;
+            secondaryMessage = `Requires an estimated <strong class="text-indigo-600">${totalEstimatedPulls}</strong> successful LM pull(s).`;
+        } else if (includeUnlock) {
+            primaryMessage = 'No shards needed for upgrade.';
+            secondaryMessage = 'Requires an estimated <strong class="text-indigo-600">1</strong> successful LM pull for the unlock.';
+        }
+
+        DOM.shardRequirementSummary.innerHTML = `
+            <p class="text-sm font-medium text-slate-700">${primaryMessage}</p>
+            <p class="text-xs text-slate-500 mt-1">${secondaryMessage}</p>
+        `;
+        DOM.shardRequirementSummary.classList.remove('hidden');
+
+    } else {
+        // Hide the summary box if no action is required.
+        DOM.shardRequirementSummary.classList.add('hidden');
+    }
+}
 
 /**
  * Gathers all inputs from the DOM and returns a structured object.
@@ -453,7 +510,7 @@ function handleCalculation() {
 }
 
 
-// --- RESULTS DISPLAY ---
+// #region --- RESULTS DISPLAY ---
 
 /**
  * Updates the accessibility div with text content of the results.
@@ -507,7 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeDropdowns();
     attachEventListeners();
 
-    document.addEventListener('firebase-ready', async () => { // Add 'async' here
+    document.addEventListener('firebase-ready', async () => {
         try {
             const app = getApp();
             db = getFirestore(app);
@@ -519,7 +576,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 page_path: location.pathname
             });
 
-            await fetchAndPopulateChampions(); // Add 'await' here
+            await fetchAndPopulateChampions();
             
             handleUrlParameters();
         } catch(e) {
