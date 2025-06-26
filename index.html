@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link href="css/theme.css" rel="stylesheet">
     <style>
-        /* Styles from original index.html for page-specific content */
+        /* Styles for page-specific content */
         .btn-primary-custom {
             background-color: #3b82f6;
             color: white;
@@ -37,22 +37,16 @@
             vertical-align: middle;
         }
 
-        .action-grid {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            padding: 40px 5%;
-            flex-wrap: wrap;
-        }
-
         .action-card {
             display: block;
-            max-width: 450px;
             background-color: rgba(17, 24, 39, 0.7);
             backdrop-filter: blur(8px);
             border: 1px solid rgba(59, 130, 246, 0.3);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
             transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            display: flex; /* Use flexbox to make cards fill height */
         }
 
         .action-card:hover {
@@ -65,6 +59,7 @@
             display: flex;
             align-items: flex-start;
             padding: 20px;
+            width: 100%; /* Ensure content fills the card */
         }
 
         .action-card .card-icon {
@@ -122,7 +117,7 @@
     </script>
 </head>
 
-<body>
+<body class="text-gray-800">
     <notification-center></notification-center>
     <auth-ui status-container-id="auth-status-desktop"></auth-ui>
     <feedback-widget></feedback-widget>
@@ -183,7 +178,10 @@
             </p>
         </header>
 
-        <section class="action-grid">
+        <section class="w-full max-w-7xl mx-auto p-4 md:p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">            
+            <a href="https://discord.com/invite/ctMHpBsu" target="_blank" class="action-card">
+                <div class="card-content"><span class="card-icon">🤝</span><div class="card-text"><h2>Join the Community</h2><p>Join our Discord for support, to provide feedback, and to talk about other games!</p></div></div>
+            </a>
             <a href="calendar.html" class="action-card">
                 <div class="card-content"><span class="card-icon">📅</span><div class="card-text"><h2>Bleed Calendar</h2><p>Keep track of upcoming Limited Mythic champions! Subject to unplanned changes by game development team.</p></div></div>
             </a>
@@ -287,23 +285,23 @@
                 logAnalyticEvent('page_view', { page_title: document.title, page_path: window.location.pathname });
 
                 // Attach analytics to CTA clicks
-                document.querySelector('a[href="calculator.html"]')?.addEventListener('click', () => {
-                    logAnalyticEvent('cta_click', { cta_name: 'calculate_anvils_now', destination: 'calculator_page' });
+                document.querySelectorAll('.action-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        let cta_name = 'unknown';
+                        const href = card.getAttribute('href');
+                        if (href.includes('discord.com/invite')) cta_name = 'join_discord_community';
+                        else if (href.includes('calendar.html')) cta_name = 'view_mythic_calendar';
+                        else if (href.includes('calculator.html')) cta_name = 'calculate_anvils_now';
+                        else if (href.includes('stores.html')) cta_name = 'analyze_stores';
+                        else if (href.includes('teams.html')) cta_name = 'build_best_team';
+                        else if (href.includes('discord.com/discovery')) cta_name = 'add_discord_bot';
+                        
+                        logAnalyticEvent('cta_click', { cta_name });
+                    });
                 });
-                document.querySelector('a[href="stores.html"]')?.addEventListener('click', () => {
-                    logAnalyticEvent('cta_click', { cta_name: 'analyze_stores', destination: 'store_page' });
-                });
-                document.querySelector('a[href="teams.html"]')?.addEventListener('click', () => {
-                    logAnalyticEvent('cta_click', { cta_name: 'build_best_team', destination: 'team_builder_page' });
-                });
-                document.querySelector('a[href="calendar.html"]')?.addEventListener('click', () => {
-                    logAnalyticEvent('cta_click', { cta_name: 'view_mythic_calendar', destination: 'hypertime_tracker_page' });
-                });
+                
                 document.querySelector('a[href^="https://www.buymeacoffee.com"]')?.addEventListener('click', () => {
                     logAnalyticEvent('cta_click', { cta_name: 'support_the_mission', destination: 'buy_me_a_coffee' });
-                });
-                document.querySelector('a[href^="https://www.discord.com"]')?.addEventListener('click', () => {
-                    logAnalyticEvent('cta_click', { cta_name: 'add_discord_bot', destination: 'discord_app_page' });
                 });
 
             } catch (error) {
