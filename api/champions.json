@@ -1,0 +1,603 @@
+{
+  "updated_at": "2025-06-26T10:34:00.025Z",
+  "champions": [
+    {
+      "name": "Atom",
+      "baseRarity": "Legendary",
+      "class": "Warrior",
+      "inherentSynergies": [
+        "Teen Titans",
+        "Metahuman",
+        "Justice League"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Catwoman",
+      "baseRarity": "Legendary",
+      "class": "Warrior",
+      "inherentSynergies": [
+        "Birds of Prey",
+        "Weapon Master",
+        "Arkham's Most Wanted"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Gatling Girl",
+      "baseRarity": "Epic",
+      "class": "Firepower",
+      "inherentSynergies": [],
+      "isHealer": false
+    },
+    {
+      "name": "Batman",
+      "baseRarity": "Mythic",
+      "class": "Warrior",
+      "inherentSynergies": [
+        "Bat Family",
+        "Weapon Master",
+        "Justice League"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Good Day AK",
+      "baseRarity": "Epic",
+      "class": "Firepower",
+      "inherentSynergies": [],
+      "isHealer": false
+    },
+    {
+      "name": "Green Lantern",
+      "baseRarity": "Mythic",
+      "class": "Supporter",
+      "inherentSynergies": [
+        "Justice League",
+        "Energy Wielder",
+        "Green Lantern Corps"
+      ],
+      "isHealer": true
+    },
+    {
+      "name": "Hawkgirl",
+      "baseRarity": "Limited Mythic",
+      "class": "Warrior",
+      "inherentSynergies": [
+        "Birds of Prey",
+        "Weapon Master",
+        "Justice League"
+      ],
+      "isHealer": false,
+      "relatedChampions": [
+        "Catwoman",
+        "Vixen",
+        "Wonder Woman"
+      ]
+    },
+    {
+      "name": "Starfire",
+      "class": "Supporter",
+      "inherentSynergies": [
+        "Teen Titans",
+        "Energy Wielder",
+        "Outsiders"
+      ],
+      "isHealer": true,
+      "baseRarity": "Limited Mythic",
+      "relatedChampions": [
+        "Arsenal",
+        "Poison Ivy",
+        "The Penguin"
+      ]
+    },
+    {
+      "name": "Wonder Woman",
+      "baseRarity": "Legendary",
+      "class": "Guardian",
+      "inherentSynergies": [
+        "Justice League",
+        "Metahuman",
+        "Justice League Dark"
+      ],
+      "isHealer": false,
+      "canUpgrade": true,
+      "upgradeSynergy": "Amazons"
+    },
+    {
+      "name": "Black Canary",
+      "baseRarity": "Mythic",
+      "class": "Intimidator",
+      "inherentSynergies": [
+        "Birds of Prey",
+        "Metahuman"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Supergirl",
+      "baseRarity": "Limited Mythic",
+      "isHealer": false,
+      "class": "Warrior",
+      "inherentSynergies": [
+        "Superman Family",
+        "Metahuman"
+      ],
+      "relatedChampions": [
+        "Aquaman",
+        "Shazam",
+        "The Flash"
+      ]
+    },
+    {
+      "name": "Poison Ivy",
+      "baseRarity": "Mythic",
+      "class": "Supporter",
+      "inherentSynergies": [
+        "Birds of Prey",
+        "Energy Wielder",
+        "Arkham's Most Wanted"
+      ],
+      "isHealer": true
+    },
+    {
+      "name": "Chop Chop",
+      "baseRarity": "Epic",
+      "class": "Assassin",
+      "inherentSynergies": [],
+      "isHealer": false
+    },
+    {
+      "name": "Krypto",
+      "inherentSynergies": [
+        "Superman Family",
+        "Metahuman"
+      ],
+      "class": "Supporter",
+      "isHealer": false,
+      "baseRarity": "Mythic"
+    },
+    {
+      "name": "Patrolman",
+      "baseRarity": "Epic",
+      "class": "Firepower",
+      "inherentSynergies": [],
+      "isHealer": false
+    },
+    {
+      "name": "Red Robin",
+      "baseRarity": "Mythic",
+      "class": "Guardian",
+      "inherentSynergies": [
+        "Teen Titans",
+        "Weapon Master",
+        "Bat Family"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Deathstroke",
+      "baseRarity": "Limited Mythic",
+      "class": "Assassin",
+      "inherentSynergies": [
+        "League of Assassins",
+        "Weapon Master",
+        "Legion of Doom"
+      ],
+      "isHealer": false,
+      "relatedChampions": [
+        "Batgirl",
+        "Cyborg",
+        "Deadshot"
+      ]
+    },
+    {
+      "name": "Constantine",
+      "baseRarity": "Limited Mythic",
+      "class": "Magical",
+      "inherentSynergies": [
+        "Justice League Dark",
+        "Energy Wielder"
+      ],
+      "isHealer": false,
+      "relatedChampions": [
+        "Doctor Fate",
+        "Shazam",
+        "The Flash"
+      ]
+    },
+    {
+      "name": "Sinestro",
+      "baseRarity": "Limited Mythic",
+      "class": "Magical",
+      "inherentSynergies": [
+        "Legion of Doom",
+        "Energy Wielder"
+      ],
+      "isHealer": false,
+      "relatedChampions": [
+        "Black Canary",
+        "Lex Luthor",
+        "Stargirl"
+      ]
+    },
+    {
+      "name": "Aquaman",
+      "baseRarity": "Mythic",
+      "class": "Firepower",
+      "inherentSynergies": [
+        "Justice League",
+        "Metahuman",
+        "Atlanteans"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Raven",
+      "baseRarity": "Mythic",
+      "class": "Supporter",
+      "inherentSynergies": [
+        "Teen Titans",
+        "Energy Wielder",
+        "Justice League Dark"
+      ],
+      "isHealer": true
+    },
+    {
+      "name": "Mera",
+      "baseRarity": "Legendary",
+      "class": "Supporter",
+      "inherentSynergies": [
+        "Atlanteans",
+        "Energy Wielder"
+      ],
+      "isHealer": true
+    },
+    {
+      "name": "Robin",
+      "baseRarity": "Mythic",
+      "class": "Assassin",
+      "inherentSynergies": [
+        "Teen Titans",
+        "Weapon Master",
+        "Bat Family"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Red Hood",
+      "baseRarity": "Legendary",
+      "class": "Firepower",
+      "inherentSynergies": [
+        "League of Assassins",
+        "Weapon Master",
+        "Bat Family"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Arsenal",
+      "baseRarity": "Mythic",
+      "class": "Firepower",
+      "inherentSynergies": [
+        "Teen Titans",
+        "Weapon Master",
+        "Outsiders"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Martian Manhunter",
+      "baseRarity": "Limited Mythic",
+      "class": "Warrior",
+      "inherentSynergies": [
+        "Justice League",
+        "Metahuman",
+        "Outsiders"
+      ],
+      "isHealer": false,
+      "relatedChampions": [
+        "Atom",
+        "Mera",
+        "Vixen"
+      ]
+    },
+    {
+      "name": "Captain Cold",
+      "baseRarity": "Legendary",
+      "class": "Intimidator",
+      "inherentSynergies": [
+        "Suicide Squad",
+        "Weapon Master",
+        "Legion of Doom"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Vixen",
+      "baseRarity": "Legendary",
+      "class": "Supporter",
+      "inherentSynergies": [
+        "Birds of Prey",
+        "Metahuman"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Doctor Fate",
+      "baseRarity": "Mythic",
+      "class": "Guardian",
+      "inherentSynergies": [
+        "Justice League Dark",
+        "Energy Wielder"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Deadshot",
+      "baseRarity": "Mythic",
+      "class": "Firepower",
+      "inherentSynergies": [
+        "Suicide Squad",
+        "Weapon Master"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Killer Croc",
+      "baseRarity": "Legendary",
+      "class": "Guardian",
+      "inherentSynergies": [
+        "Suicide Squad",
+        "Metahuman",
+        "Legion of Doom"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Cyborg",
+      "baseRarity": "Mythic",
+      "class": "Intimidator",
+      "inherentSynergies": [
+        "Teen Titans",
+        "Weapon Master",
+        "Justice League"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Bazooka Bro",
+      "baseRarity": "Epic",
+      "class": "Firepower",
+      "inherentSynergies": [],
+      "isHealer": false
+    },
+    {
+      "name": "Scarecrow",
+      "baseRarity": "Limited Mythic",
+      "class": "Guardian",
+      "inherentSynergies": [
+        "Legion of Doom",
+        "Weapon Master",
+        "Arkham's Most Wanted"
+      ],
+      "isHealer": false,
+      "relatedChampions": [
+        "Aquaman",
+        "Poison Ivy",
+        "The Penguin"
+      ]
+    },
+    {
+      "name": "Two-Face",
+      "baseRarity": "Mythic",
+      "class": "Firepower",
+      "inherentSynergies": [
+        "Arkham's Most Wanted",
+        "Weapon Master"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Zatanna",
+      "baseRarity": "Limited Mythic",
+      "class": "Supporter",
+      "inherentSynergies": [
+        "Justice League Dark",
+        "Energy Wielder"
+      ],
+      "isHealer": false,
+      "relatedChampions": [
+        "Doctor Fate",
+        "Raven",
+        "Robin"
+      ]
+    },
+    {
+      "name": "Lex Luthor",
+      "baseRarity": "Mythic",
+      "class": "Firepower",
+      "inherentSynergies": [
+        "Legion of Doom",
+        "Weapon Master"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Batgirl",
+      "baseRarity": "Mythic",
+      "class": "Supporter",
+      "inherentSynergies": [
+        "Birds of Prey",
+        "Weapon Master",
+        "Bat Family"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Homefun",
+      "baseRarity": "Epic",
+      "class": "Guardian",
+      "inherentSynergies": [],
+      "isHealer": false
+    },
+    {
+      "name": "Bane",
+      "baseRarity": "Mythic",
+      "class": "Guardian",
+      "inherentSynergies": [
+        "League of Assassins",
+        "Metahuman",
+        "Arkham's Most Wanted"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Stargirl",
+      "baseRarity": "Mythic",
+      "class": "Supporter",
+      "inherentSynergies": [
+        "Justice League",
+        "Energy Wielder"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Harley Quinn",
+      "baseRarity": "Mythic",
+      "class": "Warrior",
+      "inherentSynergies": [
+        "Suicide Squad",
+        "Weapon Master",
+        "Birds of Prey"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Big Boy",
+      "baseRarity": "Epic",
+      "class": "Guardian",
+      "inherentSynergies": [],
+      "isHealer": false
+    },
+    {
+      "name": "Crossbar",
+      "baseRarity": "Epic",
+      "class": "Warrior",
+      "inherentSynergies": [],
+      "isHealer": false
+    },
+    {
+      "name": "Black Adam",
+      "baseRarity": "Legendary",
+      "class": "Magical",
+      "inherentSynergies": [
+        "Legion of Doom",
+        "Metahuman"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Green Arrow",
+      "baseRarity": "Legendary",
+      "class": "Firepower",
+      "inherentSynergies": [
+        "Justice League",
+        "Weapon Master"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Bang Bang",
+      "baseRarity": "Epic",
+      "class": "Supporter",
+      "inherentSynergies": [],
+      "isHealer": false
+    },
+    {
+      "name": "The Joker",
+      "baseRarity": "Limited Mythic",
+      "class": "Intimidator",
+      "inherentSynergies": [
+        "Arkham's Most Wanted",
+        "Weapon Master"
+      ],
+      "isHealer": false,
+      "relatedChampions": [
+        "Bane",
+        "Harley Quinn",
+        "Two-Face"
+      ]
+    },
+    {
+      "name": "Superman",
+      "baseRarity": "Limited Mythic",
+      "inherentSynergies": [
+        "Justice League",
+        "Superman Family",
+        "Metahuman"
+      ],
+      "class": "Warrior",
+      "isHealer": false,
+      "relatedChampions": [
+        "Cyborg",
+        "Shazam",
+        "The Flash"
+      ]
+    },
+    {
+      "name": "The Penguin",
+      "baseRarity": "Mythic",
+      "class": "Intimidator",
+      "inherentSynergies": [
+        "Arkham's Most Wanted",
+        "Weapon Master"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Shazam",
+      "baseRarity": "Mythic",
+      "class": "Guardian",
+      "inherentSynergies": [
+        "Justice League",
+        "Metahuman"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Shield Squad",
+      "baseRarity": "Epic",
+      "class": "Guardian",
+      "inherentSynergies": [],
+      "isHealer": false
+    },
+    {
+      "name": "The Flash",
+      "baseRarity": "Mythic",
+      "class": "Supporter",
+      "inherentSynergies": [
+        "Justice League",
+        "Metahuman",
+        "Flash Family"
+      ],
+      "isHealer": false
+    },
+    {
+      "name": "Nightwing",
+      "baseRarity": "Limited Mythic",
+      "class": "Assassin",
+      "inherentSynergies": [
+        "Teen Titans",
+        "Weapon Master",
+        "Bat Family"
+      ],
+      "isHealer": false,
+      "relatedChampions": [
+        "Batgirl",
+        "Red Robin",
+        "Robin"
+      ]
+    }
+  ]
+}
