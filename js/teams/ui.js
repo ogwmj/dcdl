@@ -1624,7 +1624,11 @@ function renderSavedTeams() {
 
     // Re-create the exclusion component with the updated list of teams.
     if (teamExclusionMultiSelect) {
+        // If it already exists, just update its options.
         teamExclusionMultiSelect.updateOptions(savedTeams);
+    } else {
+        // If it doesn't exist (was null), create it now that there are teams to show.
+        teamExclusionMultiSelect = createTeamExclusionMultiSelect(savedTeams);
     }
 
     // Render the saved team cards.
