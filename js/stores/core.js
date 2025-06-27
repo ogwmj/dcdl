@@ -83,9 +83,9 @@ export function getStoreTimers(now = new Date()) {
 
     const currentUTCDay = now.getUTCDay();
     
-    const visitorArrivalDayUTC = T_DAY.Saturday;
-    const visitorDepartureDayUTC = T_DAY.Monday;
-    const isVisitorActive = currentUTCDay === T_DAY.Saturday || currentUTCDay === T_DAY.Sunday;
+    const visitorArrivalDayUTC = T_DAY.Sunday;
+    const visitorDepartureDayUTC = T_DAY.Tuesday;
+    const isVisitorActive = currentUTCDay === T_DAY.Sunday || currentUTCDay === T_DAY.Monday;
 
     const nextArrival = getNextWeeklyRefresh(now, visitorArrivalDayUTC);
     const nextDeparture = getNextWeeklyRefresh(now, visitorDepartureDayUTC);
