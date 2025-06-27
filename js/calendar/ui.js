@@ -221,7 +221,7 @@ async function initializeCalendar(analytics) {
         renderTimeline(schedule, currentWeek);
 
         if (analytics) {
-            logEvent(analytics, 'page_view', { page_title: 'Bleed Calendar', page_location: window.location.href, page_path: window.location.pathname });
+            logEvent(analytics, 'page_view', { page_title: document.title, page_location: window.location.href, page_path: window.location.pathname });
         }
 
         DOM.timelineContainer.addEventListener('click', (e) => {
