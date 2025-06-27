@@ -1,0 +1,370 @@
+/**
+ * @file css/codex/ui.css
+ * @description Styles for the redesigned Champion Codes page.
+ */
+
+:root {
+    --rarity-epic-color: #8b5cf6;
+    --rarity-legendary-color: #facc15;
+    --rarity-mythic-color: #ef4444;
+    --base-bg-color: #0d1226;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 3rem; /* 48px */
+    height: 3rem; /* 48px */
+    border: 5px solid rgba(59, 130, 246, 0.2); /* Light blue transparent border */
+    border-radius: 50%;
+    border-top-color: #60a5fa; /* A brighter blue for the spinning part */
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Ensure the generic hidden class is available if not provided by Tailwind in some contexts */
+.hidden {
+    display: none;
+}
+
+/* Replace the old .codex-grid rule with this one */
+.codex-grid {
+    display: grid;
+    /* Default to 2 columns for mobile, with a smaller gap */
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+/* For screens 768px and wider, switch to the auto-filling grid */
+@media (min-width: 768px) {
+    .codex-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem; /* Restore the larger gap for bigger screens */
+    }
+}
+
+.champion-card {
+    background-color: var(--base-bg-color);
+    border: 2px solid; /* Border color will be set by rarity class */
+    border-radius: 0.75rem;
+    overflow: hidden;
+    position: relative;
+    aspect-ratio: 3 / 4;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.champion-card:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 0 25px -5px var(--glow-color, #fff); /* Glow color set by rarity */
+}
+
+/* Rarity-specific styles */
+.rarity-bg-Epic {
+    border-color: var(--rarity-epic-color);
+    --glow-color: var(--rarity-epic-color);
+}
+.rarity-bg-Legendary {
+    border-color: var(--rarity-legendary-color);
+    --glow-color: var(--rarity-legendary-color);
+}
+.rarity-bg-Mythic, .rarity-bg-Limited-Mythic {
+    border-color: var(--rarity-mythic-color);
+    --glow-color: var(--rarity-mythic-color);
+}
+
+/* The background is now a pseudo-element for the gradient glow */
+.champion-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at 50% 120%, var(--glow-color, transparent) 0%, transparent 60%);
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+}
+
+.champion-card:hover::before {
+    opacity: 0.6;
+}
+
+.champion-card .avatar-bg {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-size: cover;
+    background-position: center 20%; /* Position avatar slightly higher */
+    background-blend-mode: luminosity;
+    opacity: 0.8;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 1;
+}
+
+.champion-card:hover .avatar-bg {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.champion-card .card-content {
+    position: relative;
+    z-index: 2;
+    padding: 1rem;
+    background: linear-gradient(to top, rgba(13, 18, 38, 1) 10%, rgba(13, 18, 38, 0.7) 50%, transparent 100%);
+}
+
+.champion-card .name {
+    font-family: 'Russo One', sans-serif;
+    font-size: 1.5rem;
+    color: #fff;
+    line-height: 1.1;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+}
+
+.champion-card .class {
+    font-weight: 700;
+    color: #d1d5db;
+    font-size: 0.9rem;
+}
+
+/* 1. Define the keyframe animation for the shine effect */
+@keyframes shine-effect {
+    /* Animation starts with the shine off-screen to the left */
+    0% {
+        transform: translateX(-100%) skewX(-25deg);
+    }
+    /* The shine quickly moves across the card over 20% of the animation duration */
+    20% {
+        transform: translateX(100%) skewX(-25deg);
+    }
+    /* The shine stays off-screen to the right for the remainder, creating a pause */
+    100% {
+        transform: translateX(100%) skewX(-25deg);
+    }
+}
+
+/* 3. Add a new pseudo-element specifically for the Limited Mythic cards */
+.rarity-bg-Limited-Mythic::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%; /* The width of the shine gradient */
+    height: 100%;
+    
+    /* A white, semi-transparent gradient creates the shine */
+    background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    
+    /* Apply the animation */
+    animation: shine-effect 4s infinite linear; /* A 4-second loop */
+    
+    /* Start the shine off-screen */
+    transform: translateX(-100%) skewX(-25deg);
+}
+    
+.filter-label {
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.filter-button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.filter-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background-color: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: #e2e8f0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    font-size: 0.8rem;
+}
+
+.filter-btn:hover {
+    background-color: rgba(51, 65, 85, 1);
+    border-color: rgba(59, 130, 246, 0.7);
+}
+
+/* Active state for filter buttons */
+.filter-btn.active {
+    background-color: #3b82f6;
+    color: white;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+    border-color: #60a5fa;
+}
+
+.class-filter-btn {
+    background-color: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 50%; /* Circular buttons */
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.class-filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+.class-filter-btn.active {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
+    background-color: #3b82f6;
+}
+.class-filter-btn img {
+    width: 28px;
+    height: 28px;
+}
+
+/* --- NEW: Dark Theme Pillbox/Multiselect Styles --- */
+.custom-multiselect-container {
+    position: relative;
+}
+.pills-input-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 6px;
+    background-color: #0d1226; /* Dark background */
+    cursor: text;
+}
+.pills-input-wrapper:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+.pills-input-wrapper input {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    padding: 0.25rem;
+    background-color: transparent;
+    color: #e2e8f0; /* Light text */
+    min-width: 150px;
+}
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #3b82f6; /* Blue accent for pills */
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+.pill .synergy-icon {
+    width: 16px;
+    height: 16px;
+}
+.pill-remove {
+    margin-left: 0.5rem;
+    width: 1rem;
+    height: 1rem;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    line-height: 1;
+}
+.pill-remove:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+.custom-options-panel {
+    position: absolute;
+    z-index: 50;
+    margin-top: 0.25rem;
+    width: 100%;
+    background-color: rgba(17, 24, 39, 0.95); /* Dark, blurred background */
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    max-height: 15rem;
+    border-radius: 0.5rem;
+    overflow-y: auto;
+}
+.custom-option {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #e2e8f0; /* Light text */
+}
+.custom-option:hover {
+    background-color: rgba(59, 130, 246, 0.3);
+}
+.custom-option .synergy-icon {
+    width: 20px;
+    height: 20px;
+}
+#filter-controls {
+    position: relative;
+    z-index: 40;
+}
+
+/* Container for the class icon in the top-left */
+.card-class-icon {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 3;
+    background-color: rgba(13, 18, 38, 0.5);
+    border-radius: 50%;
+    padding: 0.25rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+}
+.card-class-icon img {
+    display: block;
+    width: 32px;
+    height: 32px;
+}
+
+/* Container for the synergy icons in the top-right */
+.card-synergy-icons {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem; /* Spacing between icons */
+}
+.card-synergy-icons .synergy-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: rgba(13, 18, 38, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    padding: 2px;
+}

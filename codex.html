@@ -4,21 +4,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DC: Dark Legion - Store & Resource Analyzer</title>
-    <!-- Tailwind CSS for rapid UI development -->
+    <title>DC: Dark Legion - Champion Codex</title>
+    <meta name="description" content="Explore the complete database of champions in DC: Dark Legion. View stats, synergies, and comic book origins for every character.">
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts for modern typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <!-- Main theme file for consistent styling -->
-     <link href="css/stores/ui.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Russo+One&display=swap" rel="stylesheet">
     <link href="css/theme.css" rel="stylesheet">
-
+    <link href="css/comic-view.css" rel="stylesheet">
+    <link href="css/codex/ui.css" rel="stylesheet">
 </head>
 
-<body>
+<body class="text-gray-200">
     <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="ogwmj" data-description="Support me on Buy me a coffee!" data-message="" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
 
     <notification-center></notification-center>
+    <auth-ui status-container-id="auth-status-desktop"></auth-ui>
+    <feedback-widget></feedback-widget>
+    <discord-widget></discord-widget>
+
     <div class="background-hero"></div>
 
     <nav class="bg-slate-900 bg-opacity-80 backdrop-filter backdrop-blur-md shadow-lg sticky top-0 z-50">
@@ -78,119 +81,62 @@
             </div>
         </div>
     </nav>
-     
-    <div class="container">
-        <header class="text-center mb-12">
-            <h1 class="text-4xl md:text-6xl font-extrabold mb-3 glowing-text">Store & Resource Analyzer</h1>
-            <p class="text-lg md:text-xl text-blue-200">Your daily guide to the best deals and resource management.</p>
+    
+    <main class="relative z-10 max-w-7xl mx-auto p-4 md:p-8">
+        <header class="py-8 md:py-12 text-center">
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-4 glowing-text text-white">Champion Codex</h1>
+            <p class="text-xl md:text-2xl text-blue-200">The complete library of heroes and villains.</p>
         </header>
 
-        <!-- Dynamic Event Hub -->
-        <div id="event-hub" class="mb-8 text-center p-4 rounded-lg bg-slate-800/80 border border-slate-700 shadow-lg backdrop-blur-sm">
-            <p id="event-timer" class="text-xl font-bold text-amber-400">Initializing Timers...</p>
+        <div id="loading-indicator" class="text-center p-8 bg-slate-800/50 rounded-lg">
+            <div class="loading-spinner mx-auto"></div>
+            <p class="text-blue-300 mt-4 text-lg font-semibold">Loading Codex...</p>
         </div>
-        
-        <!-- Player Dashboard Section -->
-        <div class="mt-8">
-            <h2 class="text-3xl font-bold text-center mb-6 text-slate-100">Player Dashboard</h2>
-            <div class="bg-slate-800/80 backdrop-blur-sm border border-slate-700 rounded-lg p-6 shadow-xl">
-                <div id="dashboard-content" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Anvil Acquisition Planner -->
-                    <div>
-                        <h3 class="text-xl font-semibold mb-4 text-slate-200">Anvil Acquisition Planner</h3>
-                        <div id="anvil-planner-container" class="space-y-4">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label for="anvil-target-input" class="block text-sm font-medium text-slate-300 mb-1">Anvils Needed:</label>
-                                    <input type="number" id="anvil-target-input" placeholder="e.g., 50" class="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-3 text-slate-100 focus:ring-indigo-500 focus:border-indigo-500">
-                                </div>
-                                <div>
-                                    <label for="anvil-timeframe-date" class="block text-sm font-medium text-slate-300 mb-1">Acquire By Date:</label>
-                                    <input type="date" id="anvil-timeframe-date" class="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-3 text-slate-100 focus:ring-indigo-500 focus:border-indigo-500">
-                                </div>
+
+        <div id="codex-main-content" class="hidden">
+
+            <section id="filter-controls" class="mb-8 p-4 bg-slate-900 bg-opacity-70 backdrop-blur-sm rounded-lg border border-blue-500/20">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
+                    
+                    <div id="filter-group-class">
+                        <h4 class="filter-label">Filter by Class</h4>
+                        <div id="class-filters-container" class="filter-button-group">
                             </div>
-                            <div class="text-center">
-                                <button id="calculate-anvil-plan-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Find Best Path</button>
+                    </div>
+
+                    <div id="filter-group-synergy">
+                        <h4 class="filter-label">Filter by Synergy</h4>
+                        <div id="synergy-multiselect-container" class="custom-multiselect-container">
                             </div>
-                            <div id="anvil-plan-result-container" class="text-left pt-4 min-h-[96px]">
-                                <p class="text-center text-slate-400">Enter a target to get a plan.</p>
+                    </div>
+                    
+                    <div id="filter-group-other">
+                        <h4 class="filter-label">Other Filters</h4>
+                        <div id="rarity-filters-container" class="filter-button-group mb-4">
                             </div>
+                        <div class="flex items-center space-x-4">
+                            <button id="healer-filter-btn" class="filter-btn text-sm flex-grow">
+                                <span>Show Only Healers</span>
+                            </button>
+                            <button id="reset-filters-btn" class="filter-btn text-sm !bg-red-600/50 hover:!bg-red-600/80">Reset All</button>
                         </div>
                     </div>
-                    <!-- Spending Strategy -->
-                    <div>
-                        <h3 class="text-xl font-semibold mb-4 text-slate-200">My Spending Strategy</h3>
-                        <div id="strategy-view-container" class="text-slate-300">
-                           <div id="f2p-card" class="strategy-card active">
-                               <p class="text-lg">Focusing on maximizing free resources. The tool will highlight the best Gem purchases and track event rewards to help you plan.</p>
-                           </div>
-                           <div id="casual-card" class="strategy-card">
-                               <p class="text-lg">Looking for high-value deals under $20. The tool will analyze cheap bundles and subscription passes for the best return.</p>
-                           </div>
-                           <div id="effective-card" class="strategy-card">
-                               <p class="text-lg">Seeking the most mathematically optimal deals. The tool will provide detailed value-per-dollar breakdowns for all purchases.</p>
-                           </div>
-                        </div>
-                    </div>
+
                 </div>
-            </div>
+            </section>
+
+            <section id="codex-grid" class="codex-grid">
+                </section>
         </div>
+    </main>
 
-        <!-- Best Anvil Deals Highlight Section -->
-        <div class="mb-8 mt-8">
-            <h2 class="text-2xl font-bold text-center mb-4 text-slate-100">Today's Best Anvil Deals</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Best Gem Deal -->
-                <div id="best-gem-deal-card" class="bg-slate-800/80 p-4 rounded-lg border border-indigo-400">
-                    <h3 class="font-semibold text-indigo-300 text-lg">Best Mystery Source</h3>
-                    <p class="text-slate-400">Calculating...</p>
+    <div id="comic-modal-backdrop">
+        <div id="comic-modal-content">
+            <button id="comic-modal-close" aria-label="Close">&times;</button>
+            <div id="comic-modal-body">
                 </div>
-                <!-- Best Fiat Deal -->
-                <div id="best-fiat-deal-card" class="bg-slate-800/80 p-4 rounded-lg border border-green-400">
-                    <h3 class="font-semibold text-green-300 text-lg">Best Fiat Source</h3>
-                    <p class="text-slate-400">Calculating...</p>
-                </div>
-            </div>
         </div>
-
-        <!-- Strategy Tabs -->
-        <div class="mt-8 mb-8 flex justify-center border-b border-slate-700">
-            <button class="tab-btn active text-lg font-semibold py-2 px-6" data-strategy="f2p">Free-to-Play</button>
-            <button class="tab-btn text-lg font-semibold py-2 px-6" data-strategy="casual">Casual Spender</button>
-            <button class="tab-btn text-lg font-semibold py-2 px-6" data-strategy="effective">Cost-Effective</button>
-        </div>
-
-        <!-- Main Grid for Store Sections -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <!-- Column 1: Mystery Store -->
-            <div class="lg:col-span-1 space-y-6">
-                <h2 class="text-2xl font-bold text-center border-b-2 border-indigo-400 pb-2 text-slate-100">Mystery Store</h2>
-                <div id="gem-store-container" class="bg-slate-800/80 backdrop-blur-sm border border-slate-700 rounded-lg p-6 space-y-4 shadow-xl">
-                    <p class="text-center text-slate-400">Loading current rotation...</p>
-                </div>
-            </div>
-
-            <!-- Column 2: Currency & Weekend Stores -->
-            <div class="lg:col-span-2 space-y-6">
-                <div id="interstellar-visitor-section" class="hidden">
-                    <h2 class="text-2xl font-bold text-center border-b-2 border-amber-400 pb-2 text-slate-100">Interstellar Visitor</h2>
-                    <div id="interstellar-visitor-container" class="bg-slate-800/80 backdrop-blur-sm rounded-lg p-6 mt-6 space-y-4 shadow-xl border-2 border-amber-400/50">
-                         <p class="text-center text-slate-400">Awaiting the Visitor's arrival...</p>
-                    </div>
-                </div>
-                <div id="currency-store-section">
-                    <h2 class="text-2xl font-bold text-center border-b-2 border-green-400 pb-2 text-slate-100">Currency Store</h2>
-                    <div id="currency-store-container" class="bg-slate-800/80 backdrop-blur-sm border border-slate-700 rounded-lg p-6 mt-6 space-y-4 shadow-xl">
-                         <p class="text-center text-slate-400">Loading weekly deals...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
-
-    <auth-ui status-container-id="auth-status-desktop"></auth-ui>
 
     <footer class="relative z-10 text-gray-500 text-sm py-8 text-center">
         <p class="mt-2">DC: Dark Legion 2025 DC. Software code 2025 FunPlus International AG. DC LOGO and all related characters and elements &copy; &amp; &trade; DC.</p>
@@ -241,11 +187,12 @@
             }
         });
     </script>
-    <feedback-widget></feedback-widget>
-
-    <script type="module" src="js/stores/ui.js"></script>
+    
+    <script type="module" src="js/codex/ui.js"></script>
     <script type="module" src="js/auth-ui.js"></script>
     <script type="module" src="js/feedback-widget.js"></script>
+    <script type="module" src="js/notification-center.js"></script>
     <script type="text/javascript" src="js/navigation.js"></script>
 </body>
+
 </html>
