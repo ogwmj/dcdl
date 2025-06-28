@@ -4,17 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DC: Dark Legion - Shared Team</title>
-    
-    <!-- Social Media Meta Tags -->
     <meta property="og:title" content="DC: Dark Legion Shared Team">
     <meta property="og:description" content="Check out this team composition created with the DC: Dark Legion Team Builder.">
-    <!-- Using a static, generic fallback image for direct link sharing -->
     <meta property="og:image" content="https://storage.googleapis.com/assets.burbank.app/games/dcdl/dcdl-social-share-default.png">
-    <meta property="og:url" content="https://your-domain.com/share.html"> <!-- Replace with your actual domain -->
+    <meta property="og:url" content="https://ogwmj.github.io/dcdl/share.html">
     <meta name="twitter:card" content="summary_large_image">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Adding a font that fits the gamer aesthetic for the banner -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Russo+One&display=swap" rel="stylesheet">
@@ -176,6 +172,16 @@
                 syncAuthStatus();
             }
         });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/dcdl/sw.js').then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
     </script>
     <feedback-widget></feedback-widget>
 

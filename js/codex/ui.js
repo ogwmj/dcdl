@@ -20,7 +20,7 @@ let sortDropdown = null;
 let currentChampionList = [];
 const RARITY_ORDER = { 'Epic': 1, 'Legendary': 2, 'Mythic': 3, 'Limited Mythic': 4 };
 const CACHE_KEY = 'codexData';
-const CACHE_DURATION_MS = 0 * 60 * 60 * 1000;
+const CACHE_DURATION_MS = 12 * 60 * 60 * 1000;
 
 // --- Filter State ---
 let activeFilters = {

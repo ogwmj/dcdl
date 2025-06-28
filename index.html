@@ -297,7 +297,6 @@
         import { getApp, initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAnalytics, logEvent as fbLogEventInternal } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
-        // Import web components
         import "./js/auth-ui.js";
         import "./js/notification-center.js";
         import "./js/feedback-widget.js";
@@ -317,14 +316,12 @@
             }
         }
 
-        // The auth-ui component will initialize Firebase and dispatch 'firebase-ready'
         document.addEventListener('firebase-ready', () => {
             try {
                 const fbApp = getApp();
                 fbAnalytics = getAnalytics(fbApp);
                 logAnalyticEvent('page_view', { page_title: document.title, page_path: window.location.pathname });
 
-                // Attach analytics to CTA clicks
                 document.querySelectorAll('.action-card').forEach(card => {
                     card.addEventListener('click', () => {
                         let cta_name = 'unknown';
@@ -349,6 +346,16 @@
                 logAnalyticEvent('firebase_analytics_init_error', { error_message: error.message });
             }
         }, { once: true });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
     </script>
 
     <script src="js/navigation.js"></script>
