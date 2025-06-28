@@ -15,8 +15,10 @@ let ALL_SYNERGIES = {};
 let COMICS_DATA = {};
 let synergyPillbox = null;
 let sortDropdown = null;
-const RARITY_ORDER = { 'Epic': 1, 'Legendary': 2, 'Mythic': 3, 'Limited Mythic': 4 };
+let currentChampionList = [];
 
+// --- Constants ---
+const RARITY_ORDER = { 'Epic': 1, 'Legendary': 2, 'Mythic': 3, 'Limited Mythic': 4 };
 const CACHE_KEY = 'codexData';
 const CACHE_DURATION_MS = 12 * 60 * 60 * 1000;
 
@@ -38,6 +40,8 @@ const DOM = {
     modalBackdrop: document.getElementById('comic-modal-backdrop'),
     modalBody: document.getElementById('comic-modal-body'),
     modalClose: document.getElementById('comic-modal-close'),
+    modalPrevBtn: document.getElementById('modal-prev-btn'),
+    modalNextBtn: document.getElementById('modal-next-btn'),
     filterControls: document.getElementById('filter-controls'),
     searchInput: document.getElementById('search-input'),
     sortSelectContainer: document.getElementById('sort-select-container'),
@@ -50,10 +54,19 @@ const DOM = {
 
 // --- START: Helper & Utility Functions ---
 
-function showLoading(isLoading, message = 'Loading Codex...') {
+/**
+ * Shows or hides the skeleton loader for the page.
+ * @param {boolean} isLoading - Whether to show the loading indicator.
+ */
+function showLoading(isLoading) {
     if (isLoading) {
         if (DOM.loadingIndicator) {
-            DOM.loadingIndicator.querySelector('p').textContent = message;
+            DOM.loadingIndicator.innerHTML = '';
+            for (let i = 0; i < 12; i++) {
+                const skeletonCard = document.createElement('div');
+                skeletonCard.className = 'skeleton-card';
+                DOM.loadingIndicator.appendChild(skeletonCard);
+            }
             DOM.loadingIndicator.classList.remove('hidden');
         }
         if (DOM.codexMainContent) DOM.codexMainContent.classList.add('hidden');
@@ -429,14 +442,35 @@ async function showModal(championId) {
         champion_id: champion.id,
         champion_name: champion.name,
     });
+
+    const currentIndex = currentChampionList.findIndex(c => c.id === championId);
+    DOM.modalPrevBtn.disabled = currentIndex <= 0;
+    DOM.modalNextBtn.disabled = currentIndex >= currentChampionList.length - 1;
     
+    const newPrev = DOM.modalPrevBtn.cloneNode(true);
+    DOM.modalPrevBtn.parentNode.replaceChild(newPrev, DOM.modalPrevBtn);
+    DOM.modalPrevBtn = newPrev;
+    
+    const newNext = DOM.modalNextBtn.cloneNode(true);
+    DOM.modalNextBtn.parentNode.replaceChild(newNext, DOM.modalNextBtn);
+    DOM.modalNextBtn = newNext;
+
+    if (currentIndex > 0) {
+        DOM.modalPrevBtn.addEventListener('click', () => {
+            showModal(currentChampionList[currentIndex - 1].id);
+        });
+    }
+    if (currentIndex < currentChampionList.length - 1) {
+        DOM.modalNextBtn.addEventListener('click', () => {
+            showModal(currentChampionList[currentIndex + 1].id);
+        });
+    }
+
     const comicId = champion.name.toLowerCase().replace(/\s+/g, '_').replace('two-face', 'two_face');
     const comic = COMICS_DATA[comicId];
     const cleanName = sanitizeName(champion.name);
-    
     let mainImageHtml = '';
     let imagePanelCaption = '';
-
     if (comic && comic.imageUrl) {
         const comicYear = comic.coverDate ? `(${new Date(comic.coverDate).getFullYear()})` : '';
         mainImageHtml = `<img src="${comic.imageUrl}" alt="Cover of ${comic.title}" class="comic-featured-image" onerror="this.style.display='none'">`;
@@ -445,7 +479,6 @@ async function showModal(championId) {
         mainImageHtml = `<img src="img/champions/full/${cleanName}.webp" alt="Artwork of ${champion.name}" class="comic-featured-image" onerror="this.style.display='none'">`;
         imagePanelCaption = `Codex Image`;
     }
-
     let synergiesHtml = '';
     if (champion.inherentSynergies && champion.inherentSynergies.length > 0) {
         const synergyItems = champion.inherentSynergies.map(synName => {
@@ -453,7 +486,6 @@ async function showModal(championId) {
             const description = synergyData ? synergyData.description : 'No description available.';
             return `<li class="mt-2"><strong>${synName}</strong>: ${description}</li>`;
         }).join('');
-        // This is the corrected line
         synergiesHtml = `<div class="comic-featuring-title mt-6">Inherent Synergies</div><ul class="list-disc list-inside">${synergyItems}</ul>`;
     }
      
@@ -461,14 +493,11 @@ async function showModal(championId) {
 
     DOM.modalBody.innerHTML = `
         <div class="comic-header"><img src="img/logo_white.webp" alt="Logo" class="comic-header-logo"></div>
-        
         <div class="comic-image-panel">
             ${mainImageHtml}
-            <div class="panel-related-champions" id="${relatedChampsContainerId}">
-            </div>
+            <div class="panel-related-champions" id="${relatedChampsContainerId}"></div>
         </div>
         <div class="comic-featuring-title">${imagePanelCaption}</div>
-
         <h3 class="comic-main-title">${champion.name}</h3>
         <div class="champion-details" style="padding: 0 1.5rem 1rem; color: #1a202c; font-family: 'Inter', sans-serif;">
            <p><strong>Class:</strong> ${champion.class}</p>
@@ -484,17 +513,15 @@ async function showModal(championId) {
         if (!relatedSnap.empty) {
             const relatedDocData = relatedSnap.docs[0].data();
             const relatedIds = relatedDocData.championIds;
-
             if (relatedIds && relatedIds.length > 0) {
                 const relatedChampsData = relatedIds.map(id => ALL_CHAMPIONS.find(c => c.id === id)).filter(Boolean);
                 if (relatedChampsData.length > 0) {
                     const relatedItemsHtml = relatedChampsData.map(rc => `
-                        <div class="related-champion-card">
+                        <div class="related-champion-card" data-id="${rc.id}">
                             <img src="img/champions/avatars/${sanitizeName(rc.name)}.webp" alt="${rc.name}">
                             <span>${rc.name}</span>
                         </div>
                     `).join('');
-                    
                     const relatedContainer = document.getElementById(relatedChampsContainerId);
                     if (relatedContainer) {
                         relatedContainer.innerHTML = relatedItemsHtml;
@@ -550,6 +577,8 @@ function createChampionCard(champion) {
 function renderGrid(championsToRender) {
     if (!DOM.grid) return;
     DOM.grid.innerHTML = '';
+
+    currentChampionList = championsToRender;
 
     if (championsToRender.length === 0) {
         DOM.grid.innerHTML = `<p class="text-center text-blue-200 col-span-full">No champions match the current filters.</p>`;
@@ -661,5 +690,11 @@ DOM.modalBackdrop.addEventListener('click', (e) => {
 
 DOM.filterControls.addEventListener('click', handleFilterClick);
 DOM.searchInput.addEventListener('input', () => applyFiltersAndSort());
+DOM.modalBody.addEventListener('click', (e) => {
+    const relatedCard = e.target.closest('.related-champion-card');
+    if (relatedCard && relatedCard.dataset.id) {
+        showModal(relatedCard.dataset.id);
+    }
+});
 
 // --- END: Event Listeners ---

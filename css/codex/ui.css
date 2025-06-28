@@ -4,7 +4,6 @@
  * @version 1.3.0
  */
 
-/* --- Base Styles & Variables --- */
 :root {
     --rarity-epic-color: #8b5cf6;
     --rarity-legendary-color: #facc15;
@@ -16,7 +15,6 @@
     display: none;
 }
 
-/* --- Loading Spinner --- */
 .loading-spinner {
     display: inline-block;
     width: 3rem;
@@ -31,7 +29,6 @@
     to { transform: rotate(360deg); }
 }
 
-/* --- Filter Bar --- */
 #filter-controls {
     position: relative;
     z-index: 40;
@@ -121,8 +118,6 @@
     height: 28px;
 }
 
-
-/* --- Custom Dropdown Styles (Synergy & Sort) --- */
 .custom-multiselect-container,
 .custom-select-container {
     position: relative;
@@ -259,8 +254,6 @@
     background-color: rgba(59, 130, 246, 0.5);
 }
 
-
-/* --- Champion Card Grid --- */
 .codex-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -329,9 +322,12 @@
     transform: translateX(-100%) skewX(-25deg);
 }
 @keyframes shine-effect {
-    0% { transform: translateX(-100%) skewX(-25deg); }
-    20% { transform: translateX(100%) skewX(-25deg); }
-    100% { transform: translateX(100%) skewX(-25deg); }
+    0% {
+        transform: translateX(-125%) skewX(-25deg);
+    }
+    100% {
+        transform: translateX(225%) skewX(-25deg);
+    }
 }
 
 .champion-card .avatar-bg {
@@ -402,10 +398,8 @@
     padding: 2px;
 }
 
-
-/* --- Modal Related Champions (Inside Panel) --- */
 .comic-image-panel {
-    position: relative; /* This is crucial for absolute positioning of children */
+    position: relative;
     background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url('../../img/bg/portrait_1.webp');
     background-size: cover;
     background-position: center;
@@ -415,28 +409,25 @@
     box-shadow: 3px 3px 10px rgba(0,0,0,0.3);
 }
 
-/* REVISED: The main image now fills the entire panel. */
 .comic-featured-image {
-    width: 100%; /* Fill the container */
+    width: 100%;
     height: 500px;
     object-fit: cover;
     object-position: center top;
     display: block;
 }
 
-/* Replace the old rule with this one */
 .panel-related-champions {
     position: absolute;
-    bottom: 1rem;                 /* Position from the bottom */
-    left: 50%;                    /* Position the left edge at the center */
-    transform: translateX(-50%);   /* Pull it back by half its own width to truly center it */
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 10;
-    width: auto;                  /* Let the content's width be automatic */
+    width: auto;
     display: flex;
-    flex-direction: row;          /* Lay out the avatars horizontally */
+    flex-direction: row;
     gap: 0.75rem;
 }
-/* In css/codex/ui.css */
 
 .related-champion-card {
     text-align: center;
@@ -450,19 +441,16 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 0.5rem;
     padding: 0.5rem;
-
-    /* --- ADDED LINES --- */
-    width: 90px; /* Set a fixed width for all cards */
-    display: flex; /* Use flexbox to help center content vertically */
+    width: 90px;
+    display: flex;
     flex-direction: column;
     justify-content: center;
+    cursor: pointer;
 }
 
 .related-champion-card:hover {
     transform: scale(1.05);
 }
-
-/* In css/codex/ui.css */
 
 .related-champion-card img {
     width: 56px;
@@ -471,5 +459,80 @@
     border: 2px solid rgba(255, 255, 255, 0.4);
     margin: 0 auto 0.25rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    object-fit: cover; /* Add this line to prevent skewing */
+    object-fit: cover;
+}
+
+@keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+
+.skeleton-card {
+    background-color: #1e293b;
+    border-radius: 0.75rem;
+    aspect-ratio: 3 / 4;
+    position: relative;
+    overflow: hidden;
+}
+
+.skeleton-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, 
+        transparent 0%, 
+        rgba(59, 130, 246, 0.1) 20%, 
+        rgba(59, 130, 246, 0.2) 60%, 
+        transparent 100%);
+    animation: shimmer 2s infinite linear;
+}
+
+.modal-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 15;
+    
+    width: 44px;
+    height: 44px;
+    
+    background: #3b82f6;
+    color: #fff;
+    border: 4px solid #1a202c;
+    border-radius: 50%;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+    
+    font-family: 'Russo One', sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 1;
+    
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.modal-nav-btn:hover:not(:disabled) {
+    transform: translateY(-50%) scale(1.1);
+    background-color: #2563eb;
+}
+
+.modal-nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+    background-color: #1e3a8a;
+}
+
+.modal-nav-btn.prev-btn {
+    left: -22px;
+}
+
+.modal-nav-btn.next-btn {
+    right: -22px;
 }

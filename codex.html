@@ -88,10 +88,8 @@
             <p class="text-xl md:text-2xl text-blue-200">The complete library of heroes and villains.</p>
         </header>
 
-        <div id="loading-indicator" class="text-center p-8 bg-slate-800/50 rounded-lg">
-            <div class="loading-spinner mx-auto"></div>
-            <p class="text-blue-300 mt-4 text-lg font-semibold">Loading Codex...</p>
-        </div>
+        <div id="loading-indicator" class="codex-grid">
+            </div>
 
         <div id="codex-main-content" class="hidden">
 
@@ -144,6 +142,9 @@
     <div id="comic-modal-backdrop">
         <div id="comic-modal-content">
             <button id="comic-modal-close" aria-label="Close">&times;</button>
+            <button id="modal-prev-btn" class="modal-nav-btn prev-btn" aria-label="Previous Champion">&lt;</button>
+            <button id="modal-next-btn" class="modal-nav-btn next-btn" aria-label="Next Champion">&gt;</button>
+        
             <div id="comic-modal-body">
                 </div>
         </div>
