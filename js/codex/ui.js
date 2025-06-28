@@ -1,16 +1,16 @@
 /**
  * @file js/codex/ui.js
- * @description Fetches and renders champions with filters, sorting, URL state, and analytics.
- * @version 2.2.0 - Fixes synergy list rendering in modal.
+ * @description Final version with card-based image generation.
+ * @version 6.0.0
  */
 
 // --- Firebase & Data ---
 import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
 
+// --- Global Variables ---
 let db, analytics, functions;
 let ALL_CHAMPIONS = [];
 let ALL_SYNERGIES = {};
@@ -18,6 +18,11 @@ let COMICS_DATA = {};
 let synergyPillbox = null;
 let sortDropdown = null;
 let currentChampionList = [];
+const RARITY_ORDER = { 'Epic': 1, 'Legendary': 2, 'Mythic': 3, 'Limited Mythic': 4 };
+const CACHE_KEY = 'codexData';
+const CACHE_DURATION_MS = 0 * 60 * 60 * 1000;
+
+// --- Filter State ---
 let activeFilters = {
     search: '',
     sort: 'name_asc',
@@ -26,11 +31,6 @@ let activeFilters = {
     synergy: [],
     isHealer: false,
 };
-
-// --- Constants ---
-const RARITY_ORDER = { 'Epic': 1, 'Legendary': 2, 'Mythic': 3, 'Limited Mythic': 4 };
-const CACHE_KEY = 'codexData';
-const CACHE_DURATION_MS = 12 * 60 * 60 * 1000;
 
 // --- DOM ELEMENTS ---
 const DOM = {
@@ -438,22 +438,16 @@ function populateFilters() {
 
 async function downloadImage(imageUrl, filename) {
     try {
-        // Fetch the image data
         const response = await fetch(imageUrl);
         if (!response.ok) throw new Error('Network response was not ok.');
         const blob = await response.blob();
-
-        // Create a temporary link to trigger the download
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.style.display = 'none';
         a.href = url;
         a.download = filename;
-        
         document.body.appendChild(a);
         a.click();
-        
-        // Clean up the temporary URL and link
         window.URL.revokeObjectURL(url);
         a.remove();
     } catch (error) {
@@ -463,46 +457,49 @@ async function downloadImage(imageUrl, filename) {
 }
 
 async function generateAndUploadCardImage(championId) {
-    dispatchNotification('Preparing card...', 'info');
+    dispatchNotification('Preparing card...', 'info', 4000);
 
     const champion = ALL_CHAMPIONS.find(c => c.id === championId);
+    const cleanName = sanitizeName(champion.name);
+
     if (champion && champion.cardImageUrl) {
-        dispatchNotification('Card image has already been generated.', 'info');
+        dispatchNotification('Image already exists. Starting download...', 'success', 4000);
+        await downloadImage(champion.cardImageUrl, `${cleanName}-card.png`);
         return;
     }
 
     const cardElement = document.querySelector(`.champion-card[data-champion-id="${championId}"]`);
     if (!cardElement) {
-        dispatchNotification('Error finding champion card on page.', 'error');
+        dispatchNotification('Error finding champion card on page.', 'error', 4000);
         return;
     }
 
-    try {
-        // 1. Render HTML to Canvas (still done on client)
-        const canvas = await html2canvas(cardElement, {
-            useCORS: true,
-            backgroundColor: null,
-        });
+    const downloadButton = cardElement.querySelector('.card-download-btn');
+    if (downloadButton) {
+        downloadButton.style.display = 'none';
+    }
 
-        // 2. Convert Canvas to a Base64 Data URL to send to the function
+    try {
+        const canvas = await html2canvas(cardElement, { useCORS: true, backgroundColor: null });
         const imageDataUrl = canvas.toDataURL('image/png');
 
-        // 3. Call the Cloud Function
-        dispatchNotification('Saving card securely...', 'info', 4000);
         const saveImage = httpsCallable(functions, 'saveChampionCardImage');
         const result = await saveImage({ championId, imageDataUrl });
 
-        // 4. Update local data with the URL returned from the function
         if (champion && result.data.url) {
             champion.cardImageUrl = result.data.url;
         }
 
         logAnalyticsEvent('generate_card_image', { champion_id: championId });
-        dispatchNotification('Card image saved successfully!', 'success');
-
+        dispatchNotification('Card image saved! Starting download...', 'success', 4000);
+            
+        await downloadImage(result.data.url, `${cleanName}-card.png`);
     } catch (error) {
         console.error("Failed to call saveChampionCardImage function:", error);
-        dispatchNotification(error.message || 'An error occurred while saving.', 'error');
+    } finally {
+        if (downloadButton) {
+            downloadButton.style.display = 'flex';
+        }
     }
 }
 
@@ -592,40 +589,7 @@ async function showModal(championId) {
            <p><strong>Base Rarity:</strong> ${champion.baseRarity}</p>
            ${synergiesHtml}
         </div>
-
-        <div class="text-center p-4">
-            <button id="generate-card-btn" class="filter-btn">Generate & Save Card Image</button>
-        </div>
     `;
-
-    const generateBtn = document.getElementById('generate-card-btn');
-    const updateButtonState = () => {
-        if (champion && champion.cardImageUrl) {
-            generateBtn.textContent = 'Download Card Image';
-            generateBtn.disabled = false;
-        } else {
-            generateBtn.textContent = 'Generate & Save Card Image';
-            generateBtn.disabled = false;
-        }
-    };
-
-    generateBtn.addEventListener('click', async () => {
-        // Check the state of the champion AGAIN when clicked
-        if (champion && champion.cardImageUrl) {
-            // If URL exists, download it
-            dispatchNotification('Preparing download...', 'info');
-            generateBtn.disabled = true;
-            await downloadImage(champion.cardImageUrl, `${cleanName}-card.png`);
-            generateBtn.disabled = false;
-        } else {
-            // If no URL, generate it
-            generateBtn.disabled = true;
-            generateBtn.textContent = 'Generating...';
-            await generateAndUploadCardImage(championId);
-            // After generation, update the button to its new "Download" state
-            updateButtonState();
-        }
-    });
 
     try {
         const relatedChampsRef = collection(db, `artifacts/dc-dark-legion-builder/public/data/champions/${championId}/relatedChampions`);
@@ -663,28 +627,27 @@ function hideModal() {
 function createChampionCard(champion) {
     const cleanName = sanitizeName(champion.name);
     const card = document.createElement('div');
-    
     const rarityBgClass = `rarity-bg-${champion.baseRarity.replace(' ', '-')}`;
     card.className = `champion-card ${rarityBgClass}`;
-    
     card.dataset.championId = champion.id;
     
-    const classIconHtml = champion.class ? 
-        `<div class="card-class-icon" title="${champion.class}">${getClassIcon(champion.class)}</div>` : '';
-
+    const classIconHtml = champion.class ? `<div class="card-class-icon" title="${champion.class}">${getClassIcon(champion.class)}</div>` : '';
     let synergyIconsHtml = '';
     if (champion.inherentSynergies && champion.inherentSynergies.length > 0) {
-        synergyIconsHtml = `
-            <div class="card-synergy-icons">
-                ${champion.inherentSynergies.map(s => getSynergyIcon(s)).join('')}
-            </div>
-        `;
+        synergyIconsHtml = `<div class="card-synergy-icons">${champion.inherentSynergies.map(s => getSynergyIcon(s)).join('')}</div>`;
     }
+    
+    const downloadBtnHtml = `
+        <button class="card-download-btn" data-champion-id="${champion.id}" title="Generate or Download Card Image">
+            <svg><use xlink:href="#icon-download"></use></svg>
+        </button>
+    `;
     
     card.innerHTML = `
         <div class="avatar-bg" style="background-image: url('img/champions/avatars/${cleanName}.webp')"></div>
         ${classIconHtml}
         ${synergyIconsHtml}
+        ${downloadBtnHtml} 
         <div class="card-content">
             <div class="name">${champion.name}</div>
             <div class="class">${champion.class || 'N/A'}</div>
@@ -709,6 +672,20 @@ function renderGrid(championsToRender) {
     championsToRender.forEach(champion => {
         const card = createChampionCard(champion);
         DOM.grid.appendChild(card);
+    });
+
+    document.querySelectorAll('.card-download-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent the modal from opening
+            
+            const championId = e.currentTarget.dataset.championId;
+            const icon = e.currentTarget;
+            icon.classList.add('is-loading'); // Add loading class for visual feedback
+            
+            generateAndUploadCardImage(championId).finally(() => {
+                icon.classList.remove('is-loading');
+            });
+        });
     });
 }
 

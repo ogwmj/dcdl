@@ -564,3 +564,35 @@
     height: calc(100% - 20px);
     object-position: center top;
 }
+.card-download-btn {
+    position: absolute;
+    bottom: 0.75rem;
+    right: 0.75rem;
+    z-index: 3;
+    width: 36px;
+    height: 36px;
+    background-color: rgba(13, 18, 38, 0.7);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: #e2e8f0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.card-download-btn:hover {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.card-download-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.card-download-btn.is-loading svg {
+    animation: spin 1s linear infinite;
+}
