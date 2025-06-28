@@ -456,14 +456,44 @@ async function downloadImage(imageUrl, filename) {
     }
 }
 
+/**
+ * Checks if a resource exists at a given URL by making a lightweight HEAD request.
+ * @param {string} url The URL to check.
+ * @returns {Promise<boolean>} A promise that resolves to true if the URL exists, false otherwise.
+ */
+async function checkUrlExists(url) {
+  try {
+    const response = await fetch(url, { method: 'HEAD' });
+    console.log('File exists in repository: ', response.ok)
+    return response.ok;
+  } catch (error) {
+    // This catches network errors, etc.
+    console.warn(`Could not check URL ${url}:`, error.message);
+    return false;
+  }
+}
+
 async function generateAndUploadCardImage(championId) {
     dispatchNotification('Preparing card...', 'info', 4000);
 
     const champion = ALL_CHAMPIONS.find(c => c.id === championId);
     const cleanName = sanitizeName(champion.name);
 
+    const championFileNameBase = champion.name.replace(/\s+/g, '');
+    const cardImageFileName = `${championFileNameBase}-card.png`;
+    const githubRepoUrl = `https://ogwmj.github.io/dcdl/img/champions/cards/${cardImageFileName}`;
+
+    const imageExistsInRepo = await checkUrlExists(githubRepoUrl);
+
+    if (imageExistsInRepo) {
+        console.log('Fetching card from GitHub.');
+        dispatchNotification('Starting download...', 'success', 4000);
+        await downloadImage(githubRepoUrl, `${cleanName}-card.png`);
+        return;
+    }
+
     if (champion && champion.cardImageUrl) {
-        dispatchNotification('Image already exists. Starting download...', 'success', 4000);
+        dispatchNotification('Starting download...', 'success', 4000);
         await downloadImage(champion.cardImageUrl, `${cleanName}-card.png`);
         return;
     }
@@ -491,7 +521,7 @@ async function generateAndUploadCardImage(championId) {
         }
 
         logAnalyticsEvent('generate_card_image', { champion_id: championId });
-        dispatchNotification('Card image saved! Starting download...', 'success', 4000);
+        dispatchNotification('Card image created! Starting download...', 'success', 4000);
             
         await downloadImage(result.data.url, `${cleanName}-card.png`);
     } catch (error) {
