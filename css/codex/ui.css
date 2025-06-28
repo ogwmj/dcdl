@@ -536,3 +536,31 @@
 .modal-nav-btn.next-btn {
     right: -22px;
 }
+
+.modal-avatar-overlay {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    z-index: 5;
+    
+    width: 120px;
+    height: 120px;
+    
+    border-radius: 50%;
+    border: 4px solid #fff;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.6);
+    object-fit: cover;
+}
+
+.is-background-image {
+    filter: blur(3px) brightness(0.7);
+}
+
+.is-foreground-image {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: calc(100% - 20px);
+    height: calc(100% - 20px);
+    object-position: center top;
+}

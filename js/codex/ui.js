@@ -442,7 +442,8 @@ async function showModal(championId) {
         champion_id: champion.id,
         champion_name: champion.name,
     });
-
+    
+    // --- Navigation Logic ---
     const currentIndex = currentChampionList.findIndex(c => c.id === championId);
     DOM.modalPrevBtn.disabled = currentIndex <= 0;
     DOM.modalNextBtn.disabled = currentIndex >= currentChampionList.length - 1;
@@ -456,29 +457,34 @@ async function showModal(championId) {
     DOM.modalNextBtn = newNext;
 
     if (currentIndex > 0) {
-        DOM.modalPrevBtn.addEventListener('click', () => {
-            showModal(currentChampionList[currentIndex - 1].id);
-        });
+        DOM.modalPrevBtn.addEventListener('click', () => showModal(currentChampionList[currentIndex - 1].id));
     }
     if (currentIndex < currentChampionList.length - 1) {
-        DOM.modalNextBtn.addEventListener('click', () => {
-            showModal(currentChampionList[currentIndex + 1].id);
-        });
+        DOM.modalNextBtn.addEventListener('click', () => showModal(currentChampionList[currentIndex + 1].id));
     }
 
     const comicId = champion.name.toLowerCase().replace(/\s+/g, '_').replace('two-face', 'two_face');
     const comic = COMICS_DATA[comicId];
     const cleanName = sanitizeName(champion.name);
+    
     let mainImageHtml = '';
     let imagePanelCaption = '';
+
+    // --- MODIFIED LOGIC FOR IMAGE LAYERING ---
     if (comic && comic.imageUrl) {
         const comicYear = comic.coverDate ? `(${new Date(comic.coverDate).getFullYear()})` : '';
-        mainImageHtml = `<img src="${comic.imageUrl}" alt="Cover of ${comic.title}" class="comic-featured-image" onerror="this.style.display='none'">`;
+        // Create two images: a blurred background comic and a crisp foreground portrait
+        mainImageHtml = `
+            <img src="${comic.imageUrl}" alt="Cover of ${comic.title}" class="comic-featured-image is-background-image" onerror="this.style.display='none'">
+            <img src="img/champions/full/${cleanName}.webp" alt="${champion.name}" class="comic-featured-image is-foreground-image">
+        `;
         imagePanelCaption = `First Appearance: ${comic.title} #${comic.issueNumber} ${comicYear}`;
     } else {
+        // Fallback remains the same
         mainImageHtml = `<img src="img/champions/full/${cleanName}.webp" alt="Artwork of ${champion.name}" class="comic-featured-image" onerror="this.style.display='none'">`;
         imagePanelCaption = `Codex Image`;
     }
+
     let synergiesHtml = '';
     if (champion.inherentSynergies && champion.inherentSynergies.length > 0) {
         const synergyItems = champion.inherentSynergies.map(synName => {
