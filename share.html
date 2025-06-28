@@ -1,34 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DC: Dark Legion - Store & Resource Analyzer</title>
-    <!-- Tailwind CSS for rapid UI development -->
+    <title>DC: Dark Legion - Shared Team</title>
+    
+    <!-- Social Media Meta Tags -->
+    <meta property="og:title" content="DC: Dark Legion Shared Team">
+    <meta property="og:description" content="Check out this team composition created with the DC: Dark Legion Team Builder.">
+    <!-- Using a static, generic fallback image for direct link sharing -->
+    <meta property="og:image" content="https://storage.googleapis.com/assets.burbank.app/games/dcdl/dcdl-social-share-default.png">
+    <meta property="og:url" content="https://your-domain.com/share.html"> <!-- Replace with your actual domain -->
+    <meta name="twitter:card" content="summary_large_image">
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts for modern typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <!-- Main theme file for consistent styling -->
-     <link href="css/stores/ui.css" rel="stylesheet">
+    <!-- Adding a font that fits the gamer aesthetic for the banner -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Russo+One&display=swap" rel="stylesheet">
+    <link href="css/teams/ui.css" rel="stylesheet">
     <link href="css/theme.css" rel="stylesheet">
-
 </head>
-
 <body>
-    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="ogwmj" data-description="Support me on Buy me a coffee!" data-message="" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+    <!-- Full Page Loader -->
+    <div id="page-loader">
+        <div class="loader-spinner"></div>
+        <p>Assembling the Team...</p>
+    </div>
+
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="ogwmj" data-description="Support me on Buy me a coffee!" data-message="No pressure." data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
 
     <notification-center></notification-center>
     <div class="background-hero"></div>
-
+    
     <nav class="bg-slate-900 bg-opacity-80 backdrop-filter backdrop-blur-md shadow-lg sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <a href="index.html" class="text-white text-2xl font-bold">DC:DL Tools</a>
-                <div class="hidden md:flex items-center space-x-4">
-                    <a href="index.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
-                    <div class="relative group">
-                        <button class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium inline-flex items-center" aria-haspopup="true">
+                <div class="hidden md:flex items-center space-x-4"> <a href="index.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                    
+                    <div class="relative group"> <button class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium inline-flex items-center" aria-haspopup="true">
                             <span>Hypertime Details</span>
                             <svg class="w-4 h-4 ml-1 text-gray-400 group-hover:text-white transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
@@ -38,24 +49,19 @@
                             <a href="stores.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Store Analyzer</a>
                         </div>
                     </div>
-                    <div class="relative group">
-                        <button class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium inline-flex items-center" aria-haspopup="true">
-                            <span>Champions</span>
-                            <svg class="w-4 h-4 ml-1 text-gray-400 group-hover:text-white transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </button>
-                        <div class="absolute hidden group-hover:block bg-slate-900 bg-opacity-90 backdrop-filter backdrop-blur-md rounded-md shadow-lg py-1 w-48 z-50 top-full">
-                            <a href="teams.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Team Builder</a>
-                            <a href="codex.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Codex</a>
-                        </div>
-                    </div>
                     
-                    <div id="auth-status-desktop"><span class="text-gray-300 px-3 py-2 text-sm font-medium">Loading...</span></div>
+                    <a href="teams.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Team Builder</a>
+                    <div id="auth-status-desktop"><span class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Loading</span></div>
                 </div>
                 <div class="-mr-2 flex md:hidden">
                     <button type="button" id="mobile-menu-button" class="bg-slate-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
                         <span class="sr-only">Open main menu</span>
-                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
-                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
                     </button>
                 </div>
             </div>
@@ -63,140 +69,70 @@
         <div class="md:hidden hidden" id="mobile-menu">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="index.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                
                 <div class="!mt-3">
-                    <span class="px-3 pt-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Hypertime Details</span>
+                    <span class="px-3 pt-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Hypertime Tracker</span>
                     <a href="calendar.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Bleed Calendar</a>
                     <a href="calculator.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Anvil Calculator</a>
-                    <a href="stores.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Store Analyzer</a>
                 </div>
-                <div class="!mt-3">
-                    <span class="px-3 pt-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Champions</span>
-                    <a href="teams.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Team Builder</a>
-                    <a href="codex.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Codex</a>
-                </div>
+
+                <a href="teams.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Team Builder</a>
                 <div id="auth-status-mobile" class="pt-4 mt-2 border-t border-slate-700"></div>
             </div>
         </div>
     </nav>
-     
-    <div class="container">
+
+    <div class="container mx-auto p-4 md:p-8">
         <header class="text-center mb-12">
-            <h1 class="text-4xl md:text-6xl font-extrabold mb-3 glowing-text">Store & Resource Analyzer</h1>
-            <p class="text-lg md:text-xl text-blue-200">Your daily guide to the best deals and resource management.</p>
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-3 glowing-text hi-white">Shared Team View</h1>
+            <p class="text-lg md:text-xl text-blue-200">Viewing a team shared by another user.</p>
         </header>
 
-        <!-- Dynamic Event Hub -->
-        <div id="event-hub" class="mb-8 text-center p-4 rounded-lg bg-slate-800/80 border border-slate-700 shadow-lg backdrop-blur-sm">
-            <p id="event-timer" class="text-xl font-bold text-amber-400">Initializing Timers...</p>
+        <!-- Dynamic Social Share Banner Section -->
+        <div id="social-banner-container" class="mb-8 hidden">
+            <div class="bg-white rounded-lg p-4 shadow-lg border border-slate-200">
+                <img id="generated-banner-img" src="" alt="Dynamically generated team banner" class="w-full rounded-md border border-slate-300">
+            </div>
+        </div>
+
+        <!-- Main content area where the team will be rendered -->
+        <main id="shared-team-container" class="bg-white p-6 rounded-lg shadow-lg hidden">
+            <div id="loading-indicator" class="text-center">
+                <div class="loading-spinner"></div>
+                <p class="text-indigo-600 mt-2 font-semibold">Loading Shared Team...</p>
+            </div>
+
+            <div id="error-indicator" class="text-center hidden">
+                <h2 class="text-2xl font-bold text-red-600">Could Not Load Team</h2>
+                <p id="error-message-details" class="text-slate-500 mt-2">The requested team could not be found. The link may be expired or incorrect.</p>
+            </div>
+        </main>
+
+
+        <div class="text-center mt-8">
+            <a href="teams.html" class="inline-block bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                &larr; Back to the Team Builder
+            </a>
         </div>
         
-        <!-- Player Dashboard Section -->
-        <div class="mt-8">
-            <h2 class="text-3xl font-bold text-center mb-6 text-slate-100">Player Dashboard</h2>
-            <div class="bg-slate-800/80 backdrop-blur-sm border border-slate-700 rounded-lg p-6 shadow-xl">
-                <div id="dashboard-content" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Anvil Acquisition Planner -->
-                    <div>
-                        <h3 class="text-xl font-semibold mb-4 text-slate-200">Anvil Acquisition Planner</h3>
-                        <div id="anvil-planner-container" class="space-y-4">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label for="anvil-target-input" class="block text-sm font-medium text-slate-300 mb-1">Anvils Needed:</label>
-                                    <input type="number" id="anvil-target-input" placeholder="e.g., 50" class="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-3 text-slate-100 focus:ring-indigo-500 focus:border-indigo-500">
-                                </div>
-                                <div>
-                                    <label for="anvil-timeframe-date" class="block text-sm font-medium text-slate-300 mb-1">Acquire By Date:</label>
-                                    <input type="date" id="anvil-timeframe-date" class="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-3 text-slate-100 focus:ring-indigo-500 focus:border-indigo-500">
-                                </div>
-                            </div>
-                            <div class="text-center">
-                                <button id="calculate-anvil-plan-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Find Best Path</button>
-                            </div>
-                            <div id="anvil-plan-result-container" class="text-left pt-4 min-h-[96px]">
-                                <p class="text-center text-slate-400">Enter a target to get a plan.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Spending Strategy -->
-                    <div>
-                        <h3 class="text-xl font-semibold mb-4 text-slate-200">My Spending Strategy</h3>
-                        <div id="strategy-view-container" class="text-slate-300">
-                           <div id="f2p-card" class="strategy-card active">
-                               <p class="text-lg">Focusing on maximizing free resources. The tool will highlight the best Gem purchases and track event rewards to help you plan.</p>
-                           </div>
-                           <div id="casual-card" class="strategy-card">
-                               <p class="text-lg">Looking for high-value deals under $20. The tool will analyze cheap bundles and subscription passes for the best return.</p>
-                           </div>
-                           <div id="effective-card" class="strategy-card">
-                               <p class="text-lg">Seeking the most mathematically optimal deals. The tool will provide detailed value-per-dollar breakdowns for all purchases.</p>
-                           </div>
-                        </div>
-                    </div>
-                </div>
+        <!-- Comic Books Section -->
+        <section id="comics-display-section" class="hidden mt-12">
+            <h2 class="text-2xl font-bold text-accent text-center mb-6 glowing-text hi-white">First Comic Appearances</h2>
+            <div id="comics-display-grid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                <!-- Comic cards will be injected here -->
             </div>
-        </div>
-
-        <!-- Best Anvil Deals Highlight Section -->
-        <div class="mb-8 mt-8">
-            <h2 class="text-2xl font-bold text-center mb-4 text-slate-100">Today's Best Anvil Deals</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Best Gem Deal -->
-                <div id="best-gem-deal-card" class="bg-slate-800/80 p-4 rounded-lg border border-indigo-400">
-                    <h3 class="font-semibold text-indigo-300 text-lg">Best Mystery Source</h3>
-                    <p class="text-slate-400">Calculating...</p>
-                </div>
-                <!-- Best Fiat Deal -->
-                <div id="best-fiat-deal-card" class="bg-slate-800/80 p-4 rounded-lg border border-green-400">
-                    <h3 class="font-semibold text-green-300 text-lg">Best Fiat Source</h3>
-                    <p class="text-slate-400">Calculating...</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Strategy Tabs -->
-        <div class="mt-8 mb-8 flex justify-center border-b border-slate-700">
-            <button class="tab-btn active text-lg font-semibold py-2 px-6" data-strategy="f2p">Free-to-Play</button>
-            <button class="tab-btn text-lg font-semibold py-2 px-6" data-strategy="casual">Casual Spender</button>
-            <button class="tab-btn text-lg font-semibold py-2 px-6" data-strategy="effective">Cost-Effective</button>
-        </div>
-
-        <!-- Main Grid for Store Sections -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <!-- Column 1: Mystery Store -->
-            <div class="lg:col-span-1 space-y-6">
-                <h2 class="text-2xl font-bold text-center border-b-2 border-indigo-400 pb-2 text-slate-100">Mystery Store</h2>
-                <div id="gem-store-container" class="bg-slate-800/80 backdrop-blur-sm border border-slate-700 rounded-lg p-6 space-y-4 shadow-xl">
-                    <p class="text-center text-slate-400">Loading current rotation...</p>
-                </div>
-            </div>
-
-            <!-- Column 2: Currency & Weekend Stores -->
-            <div class="lg:col-span-2 space-y-6">
-                <div id="interstellar-visitor-section" class="hidden">
-                    <h2 class="text-2xl font-bold text-center border-b-2 border-amber-400 pb-2 text-slate-100">Interstellar Visitor</h2>
-                    <div id="interstellar-visitor-container" class="bg-slate-800/80 backdrop-blur-sm rounded-lg p-6 mt-6 space-y-4 shadow-xl border-2 border-amber-400/50">
-                         <p class="text-center text-slate-400">Awaiting the Visitor's arrival...</p>
-                    </div>
-                </div>
-                <div id="currency-store-section">
-                    <h2 class="text-2xl font-bold text-center border-b-2 border-green-400 pb-2 text-slate-100">Currency Store</h2>
-                    <div id="currency-store-container" class="bg-slate-800/80 backdrop-blur-sm border border-slate-700 rounded-lg p-6 mt-6 space-y-4 shadow-xl">
-                         <p class="text-center text-slate-400">Loading weekly deals...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        </section>
+        
     </div>
-
-    <auth-ui status-container-id="auth-status-desktop"></auth-ui>
+    
+    <canvas id="social-banner-canvas" width="1200" height="473" class="hidden"></canvas>
 
     <footer class="relative z-10 text-gray-500 text-sm py-8 text-center">
         <p class="mt-2">DC: Dark Legion 2025 DC. Software code 2025 FunPlus International AG. DC LOGO and all related characters and elements &copy; &amp; &trade; DC.</p>
         <p class="mt-2">Proud DC: Dark Legion Content Creator.</p>
     </footer>
 
+    <auth-ui status-container-id="auth-status-desktop"></auth-ui>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const desktopAuthContainer = document.getElementById('auth-status-desktop');
@@ -243,9 +179,11 @@
     </script>
     <feedback-widget></feedback-widget>
 
-    <script type="module" src="js/stores/ui.js"></script>
     <script type="module" src="js/auth-ui.js"></script>
     <script type="module" src="js/feedback-widget.js"></script>
+    <script type="module" src="js/notification-center.js"></script>
+    <script type="module" src="js/share/ui.js"></script>
     <script type="text/javascript" src="js/navigation.js"></script>
+
 </body>
 </html>
