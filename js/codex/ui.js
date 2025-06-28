@@ -6,23 +6,18 @@
 
 // --- Firebase & Data ---
 import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
 
-let db, analytics;
+let db, analytics, functions;
 let ALL_CHAMPIONS = [];
 let ALL_SYNERGIES = {};
 let COMICS_DATA = {};
 let synergyPillbox = null;
 let sortDropdown = null;
 let currentChampionList = [];
-
-// --- Constants ---
-const RARITY_ORDER = { 'Epic': 1, 'Legendary': 2, 'Mythic': 3, 'Limited Mythic': 4 };
-const CACHE_KEY = 'codexData';
-const CACHE_DURATION_MS = 12 * 60 * 60 * 1000;
-
-// --- Filter State ---
 let activeFilters = {
     search: '',
     sort: 'name_asc',
@@ -31,6 +26,11 @@ let activeFilters = {
     synergy: [],
     isHealer: false,
 };
+
+// --- Constants ---
+const RARITY_ORDER = { 'Epic': 1, 'Legendary': 2, 'Mythic': 3, 'Limited Mythic': 4 };
+const CACHE_KEY = 'codexData';
+const CACHE_DURATION_MS = 12 * 60 * 60 * 1000;
 
 // --- DOM ELEMENTS ---
 const DOM = {
@@ -53,6 +53,15 @@ const DOM = {
 };
 
 // --- START: Helper & Utility Functions ---
+
+function dispatchNotification(message, type = 'info', duration = 3000) {
+    const event = new CustomEvent('show-notification', {
+        detail: { message, type, duration },
+        bubbles: true,
+        composed: true
+    });
+    document.dispatchEvent(event);
+}
 
 /**
  * Shows or hides the skeleton loader for the page.
@@ -425,6 +434,79 @@ function populateFilters() {
 
 // --- END: URL and Filter Logic ---
 
+// --- START: Image Generation ---
+
+async function downloadImage(imageUrl, filename) {
+    try {
+        // Fetch the image data
+        const response = await fetch(imageUrl);
+        if (!response.ok) throw new Error('Network response was not ok.');
+        const blob = await response.blob();
+
+        // Create a temporary link to trigger the download
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = filename;
+        
+        document.body.appendChild(a);
+        a.click();
+        
+        // Clean up the temporary URL and link
+        window.URL.revokeObjectURL(url);
+        a.remove();
+    } catch (error) {
+        console.error('Error downloading image:', error);
+        dispatchNotification('Could not download image.', 'error');
+    }
+}
+
+async function generateAndUploadCardImage(championId) {
+    dispatchNotification('Preparing card...', 'info');
+
+    const champion = ALL_CHAMPIONS.find(c => c.id === championId);
+    if (champion && champion.cardImageUrl) {
+        dispatchNotification('Card image has already been generated.', 'info');
+        return;
+    }
+
+    const cardElement = document.querySelector(`.champion-card[data-champion-id="${championId}"]`);
+    if (!cardElement) {
+        dispatchNotification('Error finding champion card on page.', 'error');
+        return;
+    }
+
+    try {
+        // 1. Render HTML to Canvas (still done on client)
+        const canvas = await html2canvas(cardElement, {
+            useCORS: true,
+            backgroundColor: null,
+        });
+
+        // 2. Convert Canvas to a Base64 Data URL to send to the function
+        const imageDataUrl = canvas.toDataURL('image/png');
+
+        // 3. Call the Cloud Function
+        dispatchNotification('Saving card securely...', 'info', 4000);
+        const saveImage = httpsCallable(functions, 'saveChampionCardImage');
+        const result = await saveImage({ championId, imageDataUrl });
+
+        // 4. Update local data with the URL returned from the function
+        if (champion && result.data.url) {
+            champion.cardImageUrl = result.data.url;
+        }
+
+        logAnalyticsEvent('generate_card_image', { champion_id: championId });
+        dispatchNotification('Card image saved successfully!', 'success');
+
+    } catch (error) {
+        console.error("Failed to call saveChampionCardImage function:", error);
+        dispatchNotification(error.message || 'An error occurred while saving.', 'error');
+    }
+}
+
+// --- END: Image Generation ---
 
 // --- START: Modal and Grid Rendering ---
 
@@ -510,7 +592,40 @@ async function showModal(championId) {
            <p><strong>Base Rarity:</strong> ${champion.baseRarity}</p>
            ${synergiesHtml}
         </div>
+
+        <div class="text-center p-4">
+            <button id="generate-card-btn" class="filter-btn">Generate & Save Card Image</button>
+        </div>
     `;
+
+    const generateBtn = document.getElementById('generate-card-btn');
+    const updateButtonState = () => {
+        if (champion && champion.cardImageUrl) {
+            generateBtn.textContent = 'Download Card Image';
+            generateBtn.disabled = false;
+        } else {
+            generateBtn.textContent = 'Generate & Save Card Image';
+            generateBtn.disabled = false;
+        }
+    };
+
+    generateBtn.addEventListener('click', async () => {
+        // Check the state of the champion AGAIN when clicked
+        if (champion && champion.cardImageUrl) {
+            // If URL exists, download it
+            dispatchNotification('Preparing download...', 'info');
+            generateBtn.disabled = true;
+            await downloadImage(champion.cardImageUrl, `${cleanName}-card.png`);
+            generateBtn.disabled = false;
+        } else {
+            // If no URL, generate it
+            generateBtn.disabled = true;
+            generateBtn.textContent = 'Generating...';
+            await generateAndUploadCardImage(championId);
+            // After generation, update the button to its new "Download" state
+            updateButtonState();
+        }
+    });
 
     try {
         const relatedChampsRef = collection(db, `artifacts/dc-dark-legion-builder/public/data/champions/${championId}/relatedChampions`);
@@ -674,6 +789,7 @@ document.addEventListener('firebase-ready', () => {
         const app = getApp();
         db = getFirestore(app);
         analytics = getAnalytics(app);
+        functions = getFunctions(app);
 
         logAnalyticsEvent('page_view', { page_title: document.title, page_path: '/codex.html' });
         

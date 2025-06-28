@@ -96,6 +96,11 @@ class NotificationCenter extends HTMLElement {
             this.auth = getAuth(app);
             this.initializeAuthObserver();
         }, { once: true });
+
+        document.addEventListener('show-notification', (e) => {
+            const { message, type, duration } = e.detail;
+            this.displayTemporaryNotification(message, type, duration);
+        });
     }
 
     initializeAuthObserver() {
@@ -181,6 +186,41 @@ async fetchAndDisplayNotifications() {
         } catch (error) {
             console.error("Error dismissing notification: ", error);
         }
+    }
+
+    displayTemporaryNotification(message, type = 'info', duration = 3000) {
+        const container = this.shadowRoot.querySelector('.notification-container');
+        const notifElement = document.createElement('div');
+        const tempId = `temp-notif-${Date.now()}`;
+
+        notifElement.id = tempId;
+        notifElement.className = `notification-banner ${type}`;
+        notifElement.innerHTML = `<p class="message">${message}</p><button class="close-btn" title="Dismiss">&times;</button>`;
+        
+        // The close button calls a simple removal function, NOT the Firestore one
+        notifElement.querySelector('.close-btn').addEventListener('click', () => {
+            this.removeNotificationElement(notifElement);
+        });
+
+        container.appendChild(notifElement);
+
+        // Automatically remove the notification after the specified duration
+        setTimeout(() => {
+            // Check if the element hasn't already been closed by the user
+            const elToRemove = this.shadowRoot.getElementById(tempId);
+            if (elToRemove) {
+                this.removeNotificationElement(elToRemove);
+            }
+        }, duration);
+    }
+
+    removeNotificationElement(element) {
+        if (!element) return;
+        
+        element.classList.add('removing');
+        element.addEventListener('animationend', () => {
+            element.remove();
+        });
     }
 
     clearNotifications() {
