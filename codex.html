@@ -96,6 +96,17 @@
         <div id="codex-main-content" class="hidden">
 
             <section id="filter-controls" class="mb-8 p-4 bg-slate-900 bg-opacity-70 backdrop-blur-sm rounded-lg border border-blue-500/20">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 mb-6 pb-6 border-b border-blue-500/20">
+                    <div>
+                        <label for="search-input" class="filter-label">Search by Name</label>
+                        <input type="search" id="search-input" placeholder="e.g., Batman" class="filter-input w-full">
+                    </div>
+                    <div>
+                        <label for="sort-select-container" class="filter-label">Sort By</label>
+                        <div id="sort-select-container" class="custom-select-container">
+                            </div>
+                    </div>
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
                     
                     <div id="filter-group-class">
