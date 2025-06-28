@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-06-28T17:20:47.029Z",
+  "updated_at": "2025-06-28T21:06:34.721Z",
   "champions": [
     {
       "name": "Atom",
@@ -11,7 +11,7 @@
         "Justice League"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2F4Lww44ZdsF3tbFbgd6cB.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Atom-card.png"
     },
     {
       "name": "Catwoman",
@@ -23,7 +23,7 @@
         "Arkham's Most Wanted"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2F5mjPbaB7LOVFPaZWvWKh.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Catwoman-card.png"
     },
     {
       "name": "Gatling Girl",
@@ -31,7 +31,7 @@
       "class": "Firepower",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2F5v7pCEwPKA4yGaPFX2SP.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/GatlingGirl-card.png"
     },
     {
       "name": "Batman",
@@ -43,7 +43,7 @@
         "Justice League"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2F6630LpK6oaH7PXTYpoJ0.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Batman-card.png"
     },
     {
       "name": "Good Day AK",
@@ -51,7 +51,7 @@
       "class": "Firepower",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2F6Tkhj9xvnXc7QENukbKW.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/GoodDayAK-card.png"
     },
     {
       "name": "Green Lantern",
@@ -63,7 +63,7 @@
         "Green Lantern Corps"
       ],
       "isHealer": true,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2F9tRf2C6ChahkIoHSFxiL.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/GreenLantern-card.png"
     },
     {
       "name": "Hawkgirl",
@@ -75,7 +75,7 @@
         "Justice League"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FAnkFQ1wHWHBuEcqLQEFG.png",
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Hawkgirl-card.png",
       "relatedChampions": [
         "Catwoman",
         "Vixen",
@@ -92,7 +92,7 @@
       ],
       "isHealer": true,
       "baseRarity": "Limited Mythic",
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FBXk3dZxeG48yZd5JBrHQ.png",
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Starfire-card.png",
       "relatedChampions": [
         "Arsenal",
         "Poison Ivy",
@@ -111,7 +111,7 @@
       "isHealer": false,
       "canUpgrade": true,
       "upgradeSynergy": "Amazons",
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FDJi8tO52XXzQTee0waQT.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/WonderWoman-card.png"
     },
     {
       "name": "Black Canary",
@@ -122,7 +122,7 @@
         "Metahuman"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FDSdsLeFVe5jNOQvogwwu.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/BlackCanary-card.png"
     },
     {
       "name": "Supergirl",
@@ -133,7 +133,7 @@
         "Superman Family",
         "Metahuman"
       ],
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FDVtMBIhLuIy3PCB9JycX.png",
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Supergirl-card.png",
       "relatedChampions": [
         "Aquaman",
         "Shazam",
@@ -150,7 +150,7 @@
         "Arkham's Most Wanted"
       ],
       "isHealer": true,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FFesAOabCkhIeq4l2dcki.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/PoisonIvy-card.png"
     },
     {
       "name": "Chop Chop",
@@ -158,7 +158,7 @@
       "class": "Assassin",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FGaDqqgGi2kCWP0R6qbpx.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/ChopChop-card.png"
     },
     {
       "name": "Krypto",
@@ -169,7 +169,7 @@
       "class": "Supporter",
       "isHealer": false,
       "baseRarity": "Mythic",
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FJv8ai9Auq1h6yo5RLon2.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Krypto-card.png"
     },
     {
       "name": "Patrolman",
@@ -177,7 +177,7 @@
       "class": "Firepower",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FK7LoZd040uNhczRZv9vx.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Patrolman-card.png"
     },
     {
       "name": "Red Robin",
@@ -189,7 +189,7 @@
         "Bat Family"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FLC7i111iQkLf8PQiLgwL.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/RedRobin-card.png"
     },
     {
       "name": "Deathstroke",
@@ -201,7 +201,7 @@
         "Legion of Doom"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FM9IUhOIBCKemHbnqj6IL.png",
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Deathstroke-card.png",
       "relatedChampions": [
         "Batgirl",
         "Cyborg",
@@ -217,7 +217,7 @@
         "Energy Wielder"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FO6D8glYExwGuQu7ikON2.png",
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Constantine-card.png",
       "relatedChampions": [
         "Doctor Fate",
         "Shazam",
@@ -233,7 +233,7 @@
         "Energy Wielder"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FOG7mbucgeitu1DMYP48z.png",
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Sinestro-card.png",
       "relatedChampions": [
         "Black Canary",
         "Lex Luthor",
@@ -250,7 +250,7 @@
         "Atlanteans"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FORnp42LOv4ZZXRiFGg7a.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Aquaman-card.png"
     },
     {
       "name": "Raven",
@@ -262,7 +262,7 @@
         "Justice League Dark"
       ],
       "isHealer": true,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FOyFMKdivv4yP1j4fHqTW.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Raven-card.png"
     },
     {
       "name": "Mera",
@@ -273,7 +273,7 @@
         "Energy Wielder"
       ],
       "isHealer": true,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FQqi6OL6TPr1zlZJ0Lk2Z.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Mera-card.png"
     },
     {
       "name": "Robin",
@@ -285,7 +285,7 @@
         "Bat Family"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FRJegEOAtYjufdDAZuiUH.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Robin-card.png"
     },
     {
       "name": "Red Hood",
@@ -297,7 +297,7 @@
         "Bat Family"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FTVU4FvMe3zWiOn10VHEP.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/RedHood-card.png"
     },
     {
       "name": "Arsenal",
@@ -309,7 +309,7 @@
         "Outsiders"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FUSjQrQwLEkq4hTfWWVHS.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Arsenal-card.png"
     },
     {
       "name": "Martian Manhunter",
@@ -321,7 +321,7 @@
         "Outsiders"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FUWB4OFzxMVgnCmeD0CJL.png",
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/MartianManhunter-card.png",
       "relatedChampions": [
         "Atom",
         "Mera",
@@ -338,7 +338,7 @@
         "Legion of Doom"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FXBz78N2M2iAZ2I208qRR.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/CaptainCold-card.png"
     },
     {
       "name": "Vixen",
@@ -349,7 +349,7 @@
         "Metahuman"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FXnZrFBkXY9xINwsatpNn.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Vixen-card.png"
     },
     {
       "name": "Doctor Fate",
@@ -360,7 +360,7 @@
         "Energy Wielder"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FXwhdHJS9ToPBhCneRkPh.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/DoctorFate-card.png"
     },
     {
       "name": "Deadshot",
@@ -371,7 +371,7 @@
         "Weapon Master"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FYYsXv0hFfAOja8RDRY7x.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Deadshot-card.png"
     },
     {
       "name": "Killer Croc",
@@ -383,7 +383,7 @@
         "Legion of Doom"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FZnd6O7WPJCtvqGSOLcIt.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/KillerCroc-card.png"
     },
     {
       "name": "Cyborg",
@@ -395,7 +395,7 @@
         "Justice League"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FZvuvb08IP9B0CvKIJHX0.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Cyborg-card.png"
     },
     {
       "name": "Bazooka Bro",
@@ -403,7 +403,7 @@
       "class": "Firepower",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2Fa4KKFOkoINFAAyJcSiOC.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/BazookaBro-card.png"
     },
     {
       "name": "Scarecrow",
@@ -415,7 +415,7 @@
         "Arkham's Most Wanted"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FdFv9N8uj9IvsG1GFHWkk.png",
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Scarecrow-card.png",
       "relatedChampions": [
         "Aquaman",
         "Poison Ivy",
@@ -431,7 +431,7 @@
         "Weapon Master"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FfB7jk2y4z4G2fSaAK11C.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Two-Face-card.png"
     },
     {
       "name": "Zatanna",
@@ -442,7 +442,7 @@
         "Energy Wielder"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FfPMRkk23ygNtx7mopou6.png",
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Zatanna-card.png",
       "relatedChampions": [
         "Doctor Fate",
         "Raven",
@@ -458,7 +458,7 @@
         "Weapon Master"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FgL8MXMLb91A2UTJ56RCX.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/LexLuthor-card.png"
     },
     {
       "name": "Batgirl",
@@ -470,7 +470,7 @@
         "Bat Family"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FgnGMleDbPtavl4ilSUFV.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Batgirl-card.png"
     },
     {
       "name": "Homefun",
@@ -478,7 +478,7 @@
       "class": "Guardian",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FiKrDhfmMiLcOaTuUfH89.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Homefun-card.png"
     },
     {
       "name": "Bane",
@@ -490,7 +490,7 @@
         "Arkham's Most Wanted"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FjoMKZaiDbEw6gFWn0nwp.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Bane-card.png"
     },
     {
       "name": "Stargirl",
@@ -501,7 +501,7 @@
         "Energy Wielder"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FklDjUwGSbQmTR7P8B8Sn.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Stargirl-card.png"
     },
     {
       "name": "Harley Quinn",
@@ -513,14 +513,15 @@
         "Birds of Prey"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2Fmbg6rzaMiIVDWcVbYEZY.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/HarleyQuinn-card.png"
     },
     {
       "name": "Big Boy",
       "baseRarity": "Epic",
       "class": "Guardian",
       "inherentSynergies": [],
-      "isHealer": false
+      "isHealer": false,
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/BigBoy-card.png"
     },
     {
       "name": "Crossbar",
@@ -528,7 +529,7 @@
       "class": "Warrior",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2Fq7SUmSayPzX9FhRf7OeZ.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Crossbar-card.png"
     },
     {
       "name": "Black Adam",
@@ -539,7 +540,7 @@
         "Metahuman"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FqKz6QMLV9we2MNUsVMMF.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/BlackAdam-card.png"
     },
     {
       "name": "Green Arrow",
@@ -550,7 +551,7 @@
         "Weapon Master"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FqdMxV6g9xEfxhCgRnZzw.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/GreenArrow-card.png"
     },
     {
       "name": "Bang Bang",
@@ -558,7 +559,7 @@
       "class": "Supporter",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FsH6O1x9clsoTxjA6I6Ut.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/BangBang-card.png"
     },
     {
       "name": "The Joker",
@@ -569,7 +570,7 @@
         "Weapon Master"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2Fstgljl6A5iQHaZvuF67t.png",
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/TheJoker-card.png",
       "relatedChampions": [
         "Bane",
         "Harley Quinn",
@@ -586,7 +587,7 @@
       ],
       "class": "Warrior",
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2Fsuperman.png",
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Superman-card.png",
       "relatedChampions": [
         "Cyborg",
         "Shazam",
@@ -602,7 +603,7 @@
         "Weapon Master"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2Fvz4my08PFvqfx8JRVirg.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/ThePenguin-card.png"
     },
     {
       "name": "Shazam",
@@ -613,7 +614,7 @@
         "Metahuman"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FyWOJB7w5XgYzTA2gNexi.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Shazam-card.png"
     },
     {
       "name": "Shield Squad",
@@ -621,7 +622,7 @@
       "class": "Guardian",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2Fz4Cgg6PN9nRIHuKPeUxJ.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/ShieldSquad-card.png"
     },
     {
       "name": "The Flash",
@@ -633,7 +634,7 @@
         "Flash Family"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FzRIBPscLx30CctaspaMd.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/TheFlash-card.png"
     },
     {
       "name": "Nightwing",
@@ -645,7 +646,7 @@
         "Bat Family"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://storage.googleapis.com/dc-dark-legion-tools.firebasestorage.app/champion-cards%2FzkrJBX5QHCagGkGfS4So.png",
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Nightwing-card.png",
       "relatedChampions": [
         "Batgirl",
         "Red Robin",
