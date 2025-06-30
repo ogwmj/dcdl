@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-06-30T13:44:42.119Z",
+  "updated_at": "2025-06-30T14:28:08.658Z",
   "champions": [
     {
       "name": "Atom",
@@ -11,7 +11,9 @@
         "Justice League"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Atom-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Atom-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Atom.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Atom"
     },
     {
       "name": "Catwoman",
@@ -23,7 +25,9 @@
         "Arkham's Most Wanted"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Catwoman-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Catwoman-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Catwoman.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Catwoman"
     },
     {
       "name": "Gatling Girl",
@@ -31,7 +35,9 @@
       "class": "Firepower",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/GatlingGirl-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/GatlingGirl-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/GatlingGirl.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Gatling%20Girl"
     },
     {
       "name": "Batman",
@@ -43,7 +49,9 @@
         "Justice League"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Batman-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Batman-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Batman.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Batman"
     },
     {
       "name": "Good Day AK",
@@ -51,7 +59,9 @@
       "class": "Firepower",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/GoodDayAK-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/GoodDayAK-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/GoodDayAK.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Good%20Day%20AK"
     },
     {
       "name": "Green Lantern",
@@ -63,7 +73,9 @@
         "Green Lantern Corps"
       ],
       "isHealer": true,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/GreenLantern-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/GreenLantern-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/GreenLantern.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Green%20Lantern"
     },
     {
       "name": "Hawkgirl",
@@ -76,6 +88,8 @@
       ],
       "isHealer": false,
       "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Hawkgirl-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Hawkgirl.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Hawkgirl",
       "relatedChampions": [
         "Catwoman",
         "Vixen",
@@ -93,6 +107,8 @@
       "isHealer": true,
       "baseRarity": "Limited Mythic",
       "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Starfire-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Starfire.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Starfire",
       "relatedChampions": [
         "Arsenal",
         "Poison Ivy",
@@ -111,7 +127,9 @@
       "isHealer": false,
       "canUpgrade": true,
       "upgradeSynergy": "Amazons",
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/WonderWoman-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/WonderWoman-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/WonderWoman.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Wonder%20Woman"
     },
     {
       "name": "Black Canary",
@@ -122,7 +140,9 @@
         "Metahuman"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/BlackCanary-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/BlackCanary-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/BlackCanary.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Black%20Canary"
     },
     {
       "name": "Supergirl",
@@ -134,6 +154,8 @@
         "Metahuman"
       ],
       "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Supergirl-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Supergirl.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Supergirl",
       "relatedChampions": [
         "Aquaman",
         "Shazam",
@@ -150,7 +172,9 @@
         "Arkham's Most Wanted"
       ],
       "isHealer": true,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/PoisonIvy-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/PoisonIvy-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/PoisonIvy.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Poison%20Ivy"
     },
     {
       "name": "Chop Chop",
@@ -158,7 +182,9 @@
       "class": "Assassin",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/ChopChop-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/ChopChop-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/ChopChop.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Chop%20Chop"
     },
     {
       "name": "Krypto",
@@ -167,9 +193,11 @@
         "Metahuman"
       ],
       "class": "Supporter",
-      "isHealer": false,
       "baseRarity": "Mythic",
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Krypto-card.png"
+      "isHealer": true,
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Krypto-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Krypto.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Krypto"
     },
     {
       "name": "Patrolman",
@@ -177,7 +205,9 @@
       "class": "Firepower",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Patrolman-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Patrolman-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Patrolman.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Patrolman"
     },
     {
       "name": "Red Robin",
@@ -189,7 +219,9 @@
         "Bat Family"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/RedRobin-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/RedRobin-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/RedRobin.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Red%20Robin"
     },
     {
       "name": "Deathstroke",
@@ -202,6 +234,8 @@
       ],
       "isHealer": false,
       "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Deathstroke-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Deathstroke.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Deathstroke",
       "relatedChampions": [
         "Batgirl",
         "Cyborg",
@@ -218,6 +252,8 @@
       ],
       "isHealer": false,
       "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Constantine-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Constantine.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Constantine",
       "relatedChampions": [
         "Doctor Fate",
         "Shazam",
@@ -234,6 +270,8 @@
       ],
       "isHealer": false,
       "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Sinestro-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Sinestro.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Sinestro",
       "relatedChampions": [
         "Black Canary",
         "Lex Luthor",
@@ -250,7 +288,9 @@
         "Atlanteans"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Aquaman-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Aquaman-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Aquaman.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Aquaman"
     },
     {
       "name": "Raven",
@@ -262,7 +302,9 @@
         "Justice League Dark"
       ],
       "isHealer": true,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Raven-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Raven-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Raven.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Raven"
     },
     {
       "name": "Mera",
@@ -273,7 +315,9 @@
         "Energy Wielder"
       ],
       "isHealer": true,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Mera-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Mera-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Mera.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Mera"
     },
     {
       "name": "Robin",
@@ -285,7 +329,9 @@
         "Bat Family"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Robin-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Robin-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Robin.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Robin"
     },
     {
       "name": "Red Hood",
@@ -297,7 +343,9 @@
         "Bat Family"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/RedHood-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/RedHood-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/RedHood.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Red%20Hood"
     },
     {
       "name": "Arsenal",
@@ -309,7 +357,9 @@
         "Outsiders"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Arsenal-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Arsenal-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Arsenal.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Arsenal"
     },
     {
       "name": "Martian Manhunter",
@@ -322,6 +372,8 @@
       ],
       "isHealer": false,
       "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/MartianManhunter-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/MartianManhunter.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Martian%20Manhunter",
       "relatedChampions": [
         "Atom",
         "Mera",
@@ -338,7 +390,9 @@
         "Legion of Doom"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/CaptainCold-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/CaptainCold-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/CaptainCold.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Captain%20Cold"
     },
     {
       "name": "Vixen",
@@ -349,7 +403,9 @@
         "Metahuman"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Vixen-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Vixen-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Vixen.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Vixen"
     },
     {
       "name": "Doctor Fate",
@@ -360,7 +416,9 @@
         "Energy Wielder"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/DoctorFate-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/DoctorFate-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/DoctorFate.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Doctor%20Fate"
     },
     {
       "name": "Deadshot",
@@ -371,7 +429,9 @@
         "Weapon Master"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Deadshot-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Deadshot-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Deadshot.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Deadshot"
     },
     {
       "name": "Killer Croc",
@@ -383,7 +443,9 @@
         "Legion of Doom"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/KillerCroc-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/KillerCroc-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/KillerCroc.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Killer%20Croc"
     },
     {
       "name": "Cyborg",
@@ -395,7 +457,9 @@
         "Justice League"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Cyborg-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Cyborg-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Cyborg.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Cyborg"
     },
     {
       "name": "Bazooka Bro",
@@ -403,7 +467,9 @@
       "class": "Firepower",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/BazookaBro-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/BazookaBro-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/BazookaBro.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Bazooka%20Bro"
     },
     {
       "name": "Scarecrow",
@@ -416,6 +482,8 @@
       ],
       "isHealer": false,
       "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Scarecrow-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Scarecrow.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Scarecrow",
       "relatedChampions": [
         "Aquaman",
         "Poison Ivy",
@@ -431,7 +499,9 @@
         "Weapon Master"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Two-Face-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Two-Face-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Two-Face.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Two-Face"
     },
     {
       "name": "Zatanna",
@@ -443,6 +513,8 @@
       ],
       "isHealer": false,
       "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Zatanna-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Zatanna.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Zatanna",
       "relatedChampions": [
         "Doctor Fate",
         "Raven",
@@ -458,7 +530,9 @@
         "Weapon Master"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/LexLuthor-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/LexLuthor-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/LexLuthor.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Lex%20Luthor"
     },
     {
       "name": "Batgirl",
@@ -470,7 +544,9 @@
         "Bat Family"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Batgirl-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Batgirl-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Batgirl.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Batgirl"
     },
     {
       "name": "Homefun",
@@ -478,7 +554,9 @@
       "class": "Guardian",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Homefun-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Homefun-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Homefun.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Homefun"
     },
     {
       "name": "Bane",
@@ -490,7 +568,9 @@
         "Arkham's Most Wanted"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Bane-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Bane-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Bane.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Bane"
     },
     {
       "name": "Stargirl",
@@ -501,7 +581,9 @@
         "Energy Wielder"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Stargirl-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Stargirl-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Stargirl.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Stargirl"
     },
     {
       "name": "Harley Quinn",
@@ -513,7 +595,9 @@
         "Birds of Prey"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/HarleyQuinn-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/HarleyQuinn-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/HarleyQuinn.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Harley%20Quinn"
     },
     {
       "name": "Big Boy",
@@ -521,18 +605,23 @@
       "class": "Guardian",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/BigBoy-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/BigBoy-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/BigBoy.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Big%20Boy"
     },
     {
       "name": "Superboy",
       "class": "Supporter",
       "baseRarity": "Limited Mythic",
+      "isHealer": false,
       "inherentSynergies": [
         "Superman Family",
-        "Metahuman"
+        "Metahuman",
+        "Teen Titans"
       ],
-      "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Superboy-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Superboy-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Superboy.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Superboy"
     },
     {
       "name": "Crossbar",
@@ -540,7 +629,9 @@
       "class": "Warrior",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Crossbar-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Crossbar-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Crossbar.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Crossbar"
     },
     {
       "name": "Black Adam",
@@ -551,7 +642,9 @@
         "Metahuman"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/BlackAdam-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/BlackAdam-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/BlackAdam.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Black%20Adam"
     },
     {
       "name": "Green Arrow",
@@ -562,7 +655,9 @@
         "Weapon Master"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/GreenArrow-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/GreenArrow-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/GreenArrow.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Green%20Arrow"
     },
     {
       "name": "Bang Bang",
@@ -570,7 +665,9 @@
       "class": "Supporter",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/BangBang-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/BangBang-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/BangBang.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Bang%20Bang"
     },
     {
       "name": "The Joker",
@@ -582,6 +679,8 @@
       ],
       "isHealer": false,
       "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/TheJoker-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/TheJoker.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=The%20Joker",
       "relatedChampions": [
         "Bane",
         "Harley Quinn",
@@ -599,6 +698,8 @@
       "class": "Warrior",
       "isHealer": false,
       "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Superman-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Superman.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Superman",
       "relatedChampions": [
         "Cyborg",
         "Shazam",
@@ -614,7 +715,9 @@
         "Weapon Master"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/ThePenguin-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/ThePenguin-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/ThePenguin.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=The%20Penguin"
     },
     {
       "name": "Shazam",
@@ -625,7 +728,9 @@
         "Metahuman"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Shazam-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Shazam-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Shazam.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Shazam"
     },
     {
       "name": "Shield Squad",
@@ -633,7 +738,9 @@
       "class": "Guardian",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/ShieldSquad-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/ShieldSquad-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/ShieldSquad.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Shield%20Squad"
     },
     {
       "name": "The Flash",
@@ -645,7 +752,9 @@
         "Flash Family"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/TheFlash-card.png"
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/TheFlash-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/TheFlash.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=The%20Flash"
     },
     {
       "name": "Nightwing",
@@ -658,6 +767,8 @@
       ],
       "isHealer": false,
       "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Nightwing-card.png",
+      "defaultImageUrl": "https://ogwmj.github.io/dcdl/img/champions/full/Nightwing.webp",
+      "codex": "https://ogwmj.github.io/dcdl/codex.html?search=Nightwing",
       "relatedChampions": [
         "Batgirl",
         "Red Robin",
