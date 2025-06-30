@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-06-28T21:06:34.721Z",
+  "updated_at": "2025-06-30T13:44:42.119Z",
   "champions": [
     {
       "name": "Atom",
@@ -522,6 +522,17 @@
       "inherentSynergies": [],
       "isHealer": false,
       "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/BigBoy-card.png"
+    },
+    {
+      "name": "Superboy",
+      "class": "Supporter",
+      "baseRarity": "Limited Mythic",
+      "inherentSynergies": [
+        "Superman Family",
+        "Metahuman"
+      ],
+      "isHealer": false,
+      "cardImageUrl": "https://ogwmj.github.io/dcdl/img/champions/cards/Superboy-card.png"
     },
     {
       "name": "Crossbar",
