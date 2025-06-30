@@ -486,14 +486,14 @@ async function generateAndUploadCardImage(championId) {
     const imageExistsInRepo = await checkUrlExists(githubRepoUrl);
 
     if (imageExistsInRepo) {
-        console.log('Fetching card from GitHub.');
-        dispatchNotification('Starting download...', 'success', 4000);
+        console.log('Fetching existing card from GitHub.');
+        dispatchNotification('Starting download...', 'success', 2000);
         await downloadImage(githubRepoUrl, `${cleanName}-card.png`);
         return;
     }
 
     if (champion && champion.cardImageUrl) {
-        dispatchNotification('Starting download...', 'success', 4000);
+        dispatchNotification('Starting download...', 'success', 2000);
         await downloadImage(champion.cardImageUrl, `${cleanName}-card.png`);
         return;
     }
@@ -505,31 +505,36 @@ async function generateAndUploadCardImage(championId) {
     }
 
     const downloadButton = cardElement.querySelector('.card-download-btn');
-    if (downloadButton) {
-        downloadButton.style.display = 'none';
-    }
+    if (downloadButton) downloadButton.style.display = 'none';
 
     try {
         const canvas = await html2canvas(cardElement, { useCORS: true, backgroundColor: null });
         const imageDataUrl = canvas.toDataURL('image/png');
 
         const saveImage = httpsCallable(functions, 'saveChampionCardImage');
-        const result = await saveImage({ championId, imageDataUrl });
+        const result = await saveImage({
+            championId: champion.id,
+            championName: champion.name,
+            imageDataUrl: imageDataUrl
+        });
 
         if (champion && result.data.url) {
             champion.cardImageUrl = result.data.url;
         }
 
         logAnalyticsEvent('generate_card_image', { champion_id: championId });
-        dispatchNotification('Card image created! Starting download...', 'success', 4000);
-            
-        await downloadImage(result.data.url, `${cleanName}-card.png`);
+        dispatchNotification('Card image created! Starting download...', 'success', 2000);
+        await downloadImage(result.data.imageDataUrl, `${cleanName}-card.png`);
     } catch (error) {
-        console.error("Failed to call saveChampionCardImage function:", error);
-    } finally {
-        if (downloadButton) {
-            downloadButton.style.display = 'flex';
+        if (error.code === 'functions/unauthenticated') {
+            console.warn('Guest user tried to generate an image.');
+            dispatchNotification('Please log in to generate new card images.', 'info', 5000);
+        } else {
+            console.error("Failed to call saveChampionCardImage function:", error);
+            dispatchNotification('Could not generate or save card image.', 'error');
         }
+    } finally {
+        if (downloadButton) downloadButton.style.display = 'flex';
     }
 }
 
