@@ -31,6 +31,7 @@ let activeFilters = {
     synergy: [],
     isHealer: false,
 };
+let currentViewMode = 'grid';
 
 // --- DOM ELEMENTS ---
 const DOM = {
@@ -50,6 +51,9 @@ const DOM = {
     synergyContainer: document.getElementById('synergy-multiselect-container'),
     healerFilterBtn: document.getElementById('healer-filter-btn'),
     resetFiltersBtn: document.getElementById('reset-filters-btn'),
+    grid: document.getElementById('codex-grid'),
+    viewGridBtn: document.getElementById('view-grid-btn'),
+    viewListBtn: document.getElementById('view-list-btn'),
 };
 
 // --- START: Helper & Utility Functions ---
@@ -199,7 +203,7 @@ function applyFiltersAndSort() {
         }
     });
     
-    renderGrid(filteredChampions);
+    renderChampions(filteredChampions);
     updateURL();
 }
 
@@ -542,6 +546,32 @@ async function generateAndUploadCardImage(championId) {
 
 // --- START: Modal and Grid Rendering ---
 
+function createChampionListItem(champion) {
+    const cleanName = sanitizeName(champion.name); //
+    const item = document.createElement('div');
+    const rarityClass = champion.baseRarity.replace(' ', '-');
+    item.className = `champion-list-item rarity-${rarityClass}`;
+    item.dataset.championId = champion.id;
+
+    let synergyIconsHtml = '';
+    if (champion.inherentSynergies && champion.inherentSynergies.length > 0) { //
+        synergyIconsHtml = champion.inherentSynergies.map(s => getSynergyIcon(s)).join(''); //
+    }
+
+    item.innerHTML = `
+        <div class="list-item-avatar">
+            <img src="img/champions/avatars/${cleanName}.webp" alt="${champion.name}">
+        </div>
+        <div class="list-item-name">${champion.name}</div>
+            <div class="list-item-class">${getClassIcon(champion.class) || 'N/A'}</div>
+        <div class="list-item-rarity">${champion.baseRarity || 'N/A'}</div>
+        <div class="list-item-synergies">${synergyIconsHtml}</div>
+    `;
+
+    item.addEventListener('click', () => showModal(champion.id)); //
+    return item;
+}
+
 async function showModal(championId) {
     DOM.modalBackdrop.classList.add('is-visible');
     DOM.modalBody.innerHTML = `<div class="loading-spinner"></div>`;
@@ -693,11 +723,10 @@ function createChampionCard(champion) {
     return card;
 }
 
-function renderGrid(championsToRender) {
+function renderGridView(championsToRender) {
     if (!DOM.grid) return;
     DOM.grid.innerHTML = '';
-
-    currentChampionList = championsToRender;
+    DOM.grid.classList.remove('is-list-view');
 
     if (championsToRender.length === 0) {
         DOM.grid.innerHTML = `<p class="text-center text-blue-200 col-span-full">No champions match the current filters.</p>`;
@@ -708,21 +737,63 @@ function renderGrid(championsToRender) {
         const card = createChampionCard(champion);
         DOM.grid.appendChild(card);
     });
+}
 
+function renderListView(championsToRender) {
+    if (!DOM.grid) return;
+    DOM.grid.innerHTML = '';
+    DOM.grid.classList.add('is-list-view');
+
+    if (championsToRender.length === 0) {
+        DOM.grid.innerHTML = `<p class="text-center text-blue-200 col-span-full">No champions match the current filters.</p>`;
+        return;
+    }
+
+    championsToRender.forEach(champion => {
+        const listItem = createChampionListItem(champion);
+        DOM.grid.appendChild(listItem);
+    });
+}
+
+function renderChampions(championsToRender) {
+    currentChampionList = championsToRender; //
+
+    if (currentViewMode === 'list') {
+        renderListView(championsToRender);
+    } else {
+        renderGridView(championsToRender);
+    }
+
+    // This logic for the download button needs to be re-attached after any render
+    // NOTE: Download button is part of the grid card, so it won't appear in list view
+    // unless you add it to createChampionListItem().
     document.querySelectorAll('.card-download-btn').forEach(button => {
         button.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent the modal from opening
-            
+            e.stopPropagation();
             const championId = e.currentTarget.dataset.championId;
             const icon = e.currentTarget;
-            icon.classList.add('is-loading'); // Add loading class for visual feedback
-            
-            generateAndUploadCardImage(championId).finally(() => {
+            icon.classList.add('is-loading');
+            generateAndUploadCardImage(championId).finally(() => { //
                 icon.classList.remove('is-loading');
             });
         });
     });
 }
+
+function handleViewChange(e) {
+    const selectedView = e.currentTarget.dataset.view;
+    if (selectedView === currentViewMode) return; // Do nothing if already active
+
+    currentViewMode = selectedView;
+
+    // Update button styles
+    DOM.viewGridBtn.classList.toggle('active', currentViewMode === 'grid');
+    DOM.viewListBtn.classList.toggle('active', currentViewMode === 'list');
+
+    // Re-render the champions with the new view
+    renderChampions(currentChampionList); 
+}
+
 
 // --- END: Modal and Grid Rendering ---
 
@@ -830,5 +901,7 @@ DOM.modalBody.addEventListener('click', (e) => {
         showModal(relatedCard.dataset.id);
     }
 });
+DOM.viewGridBtn.addEventListener('click', handleViewChange);
+DOM.viewListBtn.addEventListener('click', handleViewChange);
 
 // --- END: Event Listeners ---
