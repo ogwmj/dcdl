@@ -82,21 +82,17 @@
             <p class="text-lg md:text-xl text-blue-200">Your daily guide to the best deals and resource management.</p>
         </header>
 
-        <!-- Dynamic Event Hub -->
         <div id="event-hub" class="mb-8 text-center p-4 rounded-lg bg-slate-800/80 border border-slate-700 shadow-lg backdrop-blur-sm">
             <p id="event-timer" class="text-xl font-bold text-amber-400">Initializing Timers...</p>
         </div>
 
-        <!-- Best Anvil Deals Highlight Section -->
         <div class="mb-8 mt-8">
             <h2 class="text-2xl font-bold text-center mb-4 text-slate-100">Today's Best Anvil Deals</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Best Gem Deal -->
                 <div id="best-gem-deal-card" class="bg-slate-800/80 p-4 rounded-lg border border-indigo-400">
                     <h3 class="font-semibold text-indigo-300 text-lg">Best Mystery Source</h3>
                     <p class="text-slate-400">Calculating...</p>
                 </div>
-                <!-- Best Fiat Deal -->
                 <div id="best-fiat-deal-card" class="bg-slate-800/80 p-4 rounded-lg border border-green-400">
                     <h3 class="font-semibold text-green-300 text-lg">Best Fiat Source</h3>
                     <p class="text-slate-400">Calculating...</p>
@@ -104,12 +100,10 @@
             </div>
         </div>
         
-        <!-- Player Dashboard Section -->
         <div class="mt-8 mb-8">
             <h2 class="text-3xl font-bold text-center mb-6 text-slate-100">Player Dashboard</h2>
             <div class="bg-slate-800/80 backdrop-blur-sm border border-slate-700 rounded-lg p-6 shadow-xl">
                 <div id="dashboard-content" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Anvil Acquisition Planner -->
                     <div>
                         <h3 class="text-xl font-semibold mb-4 text-slate-200">Anvil Acquisition Planner</h3>
                         <div id="anvil-planner-container" class="space-y-4">
@@ -130,10 +124,6 @@
                                         <option value="high">High (~1595/day)</option>
                                     </select>
                                 </div>
-                                <div>
-                                    <label for="super-monthly-pass-quantity" class="block text-sm font-medium text-slate-300 mb-1">Super Monthly Passes:</label>
-                                    <input type="number" id="super-monthly-pass-quantity" value="0" min="0" max="5" class="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-3 text-slate-100 focus:ring-indigo-500 focus:border-indigo-500">
-                                </div>
                             </div>
                             <div class="text-center">
                                 <button id="calculate-anvil-plan-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Find Best Path</button>
@@ -143,7 +133,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Spending Strategy -->
                     <div>
                         <h3 class="text-xl font-semibold mb-4 text-slate-200">My Spending Strategy</h3>
                         <div id="strategy-view-container" class="text-slate-300 flex flex-col bg-slate-900/40 p-4 rounded-lg">
@@ -158,7 +147,6 @@
                                    <p class="text-lg">Enter a target and click "Find Best Path" to see your personalized acquisition strategy and gem breakdown.</p>
                                </div>
                             </div>
-                           <!-- Community Resource Link -->
                            <div id="instagram-widget" class="hidden mt-5 pt-4 border-t border-slate-700/50">
                                 <p class="text-xs text-slate-500 uppercase font-semibold mb-2 text-center">Community Resources</p>
                                 <a href="https://www.instagram.com/bulevoirguides/" target="_blank" rel="noopener noreferrer" class="flex items-center p-3 bg-slate-800/80 rounded-lg hover:bg-slate-700/80 transition-colors duration-300">
@@ -176,17 +164,14 @@
             </div>
         </div>
 
-        <!-- Strategy Tabs -->
         <div class="mt-8 mb-8 flex justify-center border-b border-slate-700">
             <button class="tab-btn active text-lg font-semibold py-2 px-6" data-strategy="f2p">Free-to-Play</button>
             <button class="tab-btn text-lg font-semibold py-2 px-6" data-strategy="casual">Casual Spender</button>
             <button class="tab-btn text-lg font-semibold py-2 px-6" data-strategy="effective">Cost-Effective</button>
         </div>
 
-        <!-- Main Grid for Store Sections -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
-            <!-- Column 1: Mystery Store -->
             <div class="lg:col-span-1 space-y-6">
                 <h2 class="text-2xl font-bold text-center border-b-2 border-indigo-400 pb-2 text-slate-100">Mystery Store</h2>
                 <div id="gem-store-container" class="bg-slate-800/80 backdrop-blur-sm border border-slate-700 rounded-lg p-6 space-y-4 shadow-xl">
@@ -194,7 +179,6 @@
                 </div>
             </div>
 
-            <!-- Column 2: Currency & Weekend Stores -->
             <div class="lg:col-span-2 space-y-6">
                 <div id="currency-store-section">
                     <h2 class="text-2xl font-bold text-center border-b-2 border-green-400 pb-2 text-slate-100">Currency Store</h2>

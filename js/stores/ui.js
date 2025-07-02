@@ -1,7 +1,7 @@
 /**
  * @file js/stores/ui.js
  * @fileoverview Handles UI interactions, data fetching, and rendering for the Store Analyzer.
- * @version 1.1.3 - Restored deal summaries to strategy cards and appended gem breakdown.
+ * @version 1.4.1 - Renamed F2P income to a more accurate "Activity Income".
  */
 
 import {
@@ -35,7 +35,6 @@ const DOM = {
     anvilTargetInput: document.getElementById('anvil-target-input'),
     anvilTimeframeDate: document.getElementById('anvil-timeframe-date'),
     gemIncomeLevel: document.getElementById('gem-income-level'),
-    superMonthlyPassQuantity: document.getElementById('super-monthly-pass-quantity'),
     calculateAnvilPlanBtn: document.getElementById('calculate-anvil-plan-btn'),
     anvilPlanResultContainer: document.getElementById('anvil-plan-result-container'),
     // Strategy cards
@@ -230,28 +229,41 @@ function updateStrategyDealSummaries(deals) {
     }
 }
 
-function appendGemBreakdownToStrategyCards(gemBreakdown) {
-    const { neededForPurchases, fromF2PIncome, fromPasses, fromBundles, netCost, surplus } = gemBreakdown;
+function appendBreakdownsToStrategyCards(gemBreakdown, anvilBreakdown) {
+    const { neededForPurchases, fromIncome, fromPasses, fromBundles, netCost, surplus } = gemBreakdown;
 
-    let breakdownHtml = `<div class="mt-4 pt-4 border-t border-slate-600">`;
-    breakdownHtml += `<h4 class="text-lg font-semibold text-slate-200 border-b border-slate-600 pb-2 mb-2">Gem Breakdown</h4>`;
-    breakdownHtml += `<ul class="space-y-1 text-slate-300">`;
-    breakdownHtml += `<li class="flex justify-between"><span>Gems Needed for Anvils:</span> <span class="font-semibold text-red-400">${neededForPurchases.toLocaleString()}</span></li>`;
-    breakdownHtml += `<li class="flex justify-between"><span>Generated from Income:</span> <span class="font-semibold text-green-400">+${fromF2PIncome.toLocaleString()}</span></li>`;
-    if(fromPasses > 0) breakdownHtml += `<li class="flex justify-between"><span>From Monthly Pass:</span> <span class="font-semibold text-green-400">+${fromPasses.toLocaleString()}</span></li>`;
-    if(fromBundles > 0) breakdownHtml += `<li class="flex justify-between"><span>From Bundle Purchases:</span> <span class="font-semibold text-green-400">+${fromBundles.toLocaleString()}</span></li>`;
-    breakdownHtml += `</ul>`;
-    breakdownHtml += `<div class="mt-3 pt-3 border-t border-slate-600">`;
+    let gemBreakdownHtml = `<div class="mt-4 pt-4 border-t border-slate-600">`;
+    gemBreakdownHtml += `<h4 class="text-lg font-semibold text-slate-200 border-b border-slate-600 pb-2 mb-2">Gem Breakdown</h4>`;
+    gemBreakdownHtml += `<ul class="space-y-1 text-slate-300">`;
+    gemBreakdownHtml += `<li class="flex justify-between"><span>Gems Needed for Anvils:</span> <span class="font-semibold text-red-400">${neededForPurchases.toLocaleString()}</span></li>`;
+    gemBreakdownHtml += `<li class="flex justify-between"><span>From Activity Income:</span> <span class="font-semibold text-green-400">+${fromIncome.toLocaleString()}</span></li>`;
+    if(fromPasses > 0) gemBreakdownHtml += `<li class="flex justify-between"><span>From Recommended Passes:</span> <span class="font-semibold text-green-400">+${fromPasses.toLocaleString()}</span></li>`;
+    if(fromBundles > 0) gemBreakdownHtml += `<li class="flex justify-between"><span>From Bundle Purchases:</span> <span class="font-semibold text-green-400">+${fromBundles.toLocaleString()}</span></li>`;
+    gemBreakdownHtml += `</ul>`;
+    gemBreakdownHtml += `<div class="mt-3 pt-3 border-t border-slate-600">`;
     if (surplus > 0) {
-        breakdownHtml += `<p class="flex justify-between text-lg"><span>Net Gem Surplus:</span> <span class="font-bold text-green-300">${surplus.toLocaleString()}</span></p>`;
+        gemBreakdownHtml += `<p class="flex justify-between text-lg"><span>Net Gem Surplus:</span> <span class="font-bold text-green-300">${surplus.toLocaleString()}</span></p>`;
     } else {
-        breakdownHtml += `<p class="flex justify-between text-lg"><span>Net Gem Cost:</span> <span class="font-bold text-amber-400">${netCost.toLocaleString()}</span></p>`;
+        gemBreakdownHtml += `<p class="flex justify-between text-lg"><span>Net Gem Cost:</span> <span class="font-bold text-amber-400">${netCost.toLocaleString()}</span></p>`;
     }
-    breakdownHtml += `</div></div>`;
+    gemBreakdownHtml += `</div></div>`;
     
-    DOM.f2pCard.innerHTML += breakdownHtml;
-    DOM.casualCard.innerHTML += breakdownHtml;
-    DOM.effectiveCard.innerHTML += breakdownHtml;
+    let anvilBreakdownHtml = '';
+    if (anvilBreakdown && Object.keys(anvilBreakdown).length > 0) {
+        anvilBreakdownHtml += `<div class="mt-4 pt-4 border-t border-slate-600">`;
+        anvilBreakdownHtml += `<h4 class="text-lg font-semibold text-slate-200 border-b border-slate-600 pb-2 mb-2">Anvil Breakdown</h4>`;
+        anvilBreakdownHtml += `<ul class="space-y-1 text-slate-300">`;
+        for (const [name, quantity] of Object.entries(anvilBreakdown)) {
+            anvilBreakdownHtml += `<li class="flex justify-between"><span>From ${name}:</span> <span class="font-semibold text-amber-400">+${quantity.toLocaleString()}</span></li>`;
+        }
+        anvilBreakdownHtml += `</ul></div>`;
+    }
+
+    const finalHtml = gemBreakdownHtml + anvilBreakdownHtml;
+
+    DOM.f2pCard.innerHTML += finalHtml;
+    DOM.casualCard.innerHTML += finalHtml;
+    DOM.effectiveCard.innerHTML += finalHtml;
 }
 
 
@@ -259,7 +271,6 @@ function handleAnvilPlanCalculation() {
     const target = parseInt(DOM.anvilTargetInput.value, 10);
     const timeframe = DOM.anvilTimeframeDate.value;
     const incomeLevel = DOM.gemIncomeLevel.value;
-    const passQty = parseInt(DOM.superMonthlyPassQuantity.value, 10);
 
     if (!target || target <= 0) {
         DOM.anvilPlanResultContainer.innerHTML = `<p class="text-red-400 text-center">Please enter a valid number of Anvils.</p>`;
@@ -275,7 +286,6 @@ function handleAnvilPlanCalculation() {
             target_anvils: target,
             target_date: timeframe,
             gem_income_level: incomeLevel,
-            super_pass_qty: passQty,
         });
     }
 
@@ -284,7 +294,7 @@ function handleAnvilPlanCalculation() {
     const gemStoreMasterList = gemStoreData; 
     const interstellarMasterList = interstellarVisitorData;
 
-    const result = createAnvilAcquisitionPlan(target, gemStoreMasterList, currencyStoreData, interstellarMasterList, targetDate, incomeLevel, passQty);
+    const result = createAnvilAcquisitionPlan(target, gemStoreMasterList, currencyStoreData, interstellarMasterList, targetDate, incomeLevel);
     
     if (!result.plan || result.plan.length === 0) {
         DOM.anvilPlanResultContainer.innerHTML = `<p class="text-amber-400 text-center">No acquisition plan found for the given criteria.</p>`;
@@ -292,7 +302,7 @@ function handleAnvilPlanCalculation() {
         return;
     }
 
-    const { plan, totalFiatCost, gemBreakdown } = result;
+    const { plan, totalFiatCost, gemBreakdown, anvilBreakdown } = result;
     
     let planHtml = plan.map(step => {
         if (step.startsWith('**') && step.endsWith(':**')) {
@@ -329,7 +339,7 @@ function handleAnvilPlanCalculation() {
     });
 
     updateStrategyDealSummaries(deals);
-    appendGemBreakdownToStrategyCards(gemBreakdown);
+    appendBreakdownsToStrategyCards(gemBreakdown, anvilBreakdown);
     DOM.instagramWidget.classList.remove('hidden');
 }
 
