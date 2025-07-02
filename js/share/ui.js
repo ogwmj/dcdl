@@ -76,7 +76,7 @@ async function initializePage() {
         
         const app = getApp();
         db = getFirestore(app);
-        analytics = getAnalytics(app); // Initialize Analytics
+        analytics = getAnalytics(app);
 
         const params = new URLSearchParams(window.location.search);
         const sharedTeamId = params.get('sharedTeamId');
@@ -102,14 +102,13 @@ async function initializePage() {
         console.error("Initialization Error:", error);
         if (analytics) logEvent(analytics, 'exception', { description: `share_page_init_error: ${error.message}`, fatal: true });
     } finally {
-        // This will now hide the main page loader once everything is done.
         if (DOM.pageLoader) {
             DOM.pageLoader.style.opacity = '0';
             setTimeout(() => {
                 DOM.pageLoader.style.display = 'none';
-            }, 500); // Corresponds to the transition duration in CSS
+            }, 500);
         }
-        showLoading(false); // Hides the internal loader within the card
+        showLoading(false);
     }
 }
 
@@ -185,14 +184,12 @@ async function loadAndDisplaySharedTeam(teamId) {
  * @returns {Promise<void>}
  */
 async function loadAndDisplayEnhancements(team) {
-    // Generate the social share banner in the background
     await generateShareBanner(team);
 
-    // Fetch all comic data (from Firestore and proxy) and display it
     const heroNames = team.members.map(m => m.name);
-    await fetchCharacterComics(); // Load the initial comic data from our DB
-    applyChampionCardBackgrounds(); // Apply backgrounds immediately with what we have
-    await loadComicsForHeroes(db, heroNames); // Fetch missing data and render the bottom section
+    await fetchCharacterComics();
+    applyChampionCardBackgrounds();
+    await loadComicsForHeroes(db, heroNames);
 }
 
 /**
@@ -329,7 +326,7 @@ function updateMetaTag(attribute, value, content) {
 
 /**
  * @function displayTeamResults
- * @description Displays the results of the team evaluation.
+ * @description Displays the results of the team evaluation using the new dark-theme card style.
  * @param {Object} team - The evaluated team data.
  * @returns {void}
  */
@@ -342,30 +339,33 @@ function displayTeamResults(team) {
     const scoreBreakdownHtml = getScoreBreakdownHtml(team);
 
     let html = `
-        <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+        <div class="p-6 bg-slate-900/70 backdrop-blur-sm rounded-lg border border-blue-500/20">
             <div class="text-center mb-6">
-                <h3 class="text-2xl font-bold text-accent">${team.name || 'Shared Team'}</h3>
-                <p class="text-lg">Total Score: <strong class="text-primary">${Math.round(team.totalScore)}</strong></p>
+                <h3 class="text-3xl font-bold text-blue-300">${team.name || 'Shared Team'}</h3>
+                <p class="text-xl text-slate-300">Total Score: <strong class="text-white font-bold">${Math.round(team.totalScore)}</strong></p>
             </div>
             ${scoreBreakdownHtml}
             <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mt-6">
     `;
 
     team.members.forEach((member) => {
+        const cleanName = (member.name || 'Unknown').replace(/[^a-zA-Z0-9-_]/g, "");
+        const idKey = (member.name || '').toLowerCase().replace(/\s+/g, '_');
         const starRating = getStarRatingHTML(member.starColorTier);
-        const forceLevel = member.forceLevel > 0 ? `<p class="force-level">Force: ${member.forceLevel} / 5</p>` : '';
+        const forceLevel = member.forceLevel > 0 ? `<p class="force-level">Force Lvl: ${member.forceLevel}</p>` : '';
         const synergies = (member.inherentSynergies || []).map(getSynergyIcon).join('');
-        const championImageName = (member.name || 'Unknown').replace(/[^a-zA-Z0-9-_]/g, "");
 
         html += `
-            <div class="champion-card-enhanced" data-champion-name="${championImageName}">
+            <div class="champion-card-enhanced" data-champion-name="${cleanName}" data-champion-id-key="${idKey}">
                 <div class="card-background-image"></div>
-                <img src="img/champions/avatars/${championImageName}.webp" alt="${member.name}" class="champion-avatar-center">
-                <div class="card-content-overlay">
-                    <div class="card-header">
-                        ${getClassPlaceholder(member.class)}
-                        <h4 class="champion-name">${member.name}</h4>
-                    </div>
+                <div class="card-top-info">
+                    ${getClassPlaceholder(member.class)}
+                </div>
+                <div class="card-image-container">
+                     <img src="img/champions/full/${cleanName}.webp" alt="${member.name}" class="card-avatar-top" onerror="this.src='img/champions/avatars/${cleanName}.webp'">
+                </div>
+                <div class="card-content-bottom">
+                    <h4 class="champion-name">${member.name}</h4>
                     <div class="champion-details">
                         <p>${member.baseRarity}</p>
                         ${starRating}
@@ -420,15 +420,20 @@ function getStarRatingHTML(tier) {
     if (!tier || tier === "Unlocked") return `<span class="text-slate-400">Unlocked</span>`;
     const tierParts = tier.split(' ');
     if (tierParts.length < 2) return `<span class="text-slate-400">${tier}</span>`;
-    const color = tierParts[0];
+    const color = tierParts[0].toLowerCase();
     const starCount = parseInt(tierParts[1], 10);
     if (isNaN(starCount)) return `<span class="text-slate-400">${tier}</span>`;
-    let colorClass = 'text-slate-400';
-    if (color === 'Red') colorClass = 'text-red-500';
-    else if (color === 'Gold') colorClass = 'text-yellow-400';
-    else if (color === 'Purple') colorClass = 'text-purple-500';
-    else if (color === 'Blue') colorClass = 'text-blue-500';
-    return `<div class="star-rating inline-block" title="${tier}"><span class="${colorClass}">${'★'.repeat(starCount)}</span><span class="text-slate-300">${'★'.repeat(5-starCount)}</span></div>`;
+    
+    const colorClasses = {
+        'red': 'text-red-500',
+        'gold': 'text-yellow-400',
+        'purple': 'text-purple-500',
+        'blue': 'text-blue-500',
+        'white': 'text-slate-200'
+    };
+    const colorClass = colorClasses[color] || 'text-slate-400';
+
+    return `<div class="star-rating inline-block" title="${tier}"><span class="${colorClass}">${'★'.repeat(starCount)}</span><span class="text-slate-500">${'★'.repeat(5 - starCount)}</span></div>`;
 }
 
 /**
@@ -440,8 +445,7 @@ function getStarRatingHTML(tier) {
 function getSynergyIcon(synergyName) {
     if (!synergyName) return '';
     const nameForIcon = synergyName.trim().replace(/\s+/g, '_');
-    const fallbackSpan = `<span class="icon-placeholder text-xs" style="display:none;">[${synergyName}]</span>`;
-    return `<span class="icon-wrapper" title="${synergyName}"><img src="img/factions/${nameForIcon}.png" alt="${synergyName}" class="synergy-icon" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';">${fallbackSpan}</span>`;
+    return `<span class="icon-wrapper" title="${synergyName}"><img src="img/factions/${nameForIcon}.png" alt="${synergyName}" class="synergy-icon"></span>`;
 }
 
 /**
@@ -452,10 +456,9 @@ function getSynergyIcon(synergyName) {
  */
 function getClassPlaceholder(className) {
     const cn = (className || "N/A").trim().replace(/\s+/g, '_');
-    if (cn === "N/A" || cn === "") return `<span class="icon-placeholder">[Class N/A]</span>`;
-    const fallbackSpan = `<span class="icon-placeholder" style="display:none;">[${cn.replace(/_/g, ' ')}]</span>`;
+    if (cn === "N/A" || cn === "") return ``;
     const imgSrc = `img/classes/${cn}.png`;
-    return `<span class="icon-wrapper"><img src="${imgSrc}" alt="${cn.replace(/_/g, ' ')}" title="${cn.replace(/_/g, ' ')}" class="icon-class-table" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';"/>${fallbackSpan}</span>`;
+    return `<span class="icon-wrapper"><img src="${imgSrc}" alt="${cn.replace(/_/g, ' ')}" title="${cn.replace(/_/g, ' ')}" class="icon-class-table"></span>`;
 }
 
 /**
@@ -468,15 +471,14 @@ function applyChampionCardBackgrounds() {
         const bgElement = card.querySelector('.card-background-image');
         const championName = card.dataset.championName;
         if (!bgElement || !championName) return;
-        const championId = championName.replace(/([A-Z])/g, '_$1').toLowerCase().substring(1);
-        const comicData = characterComicsData.get(championId);
-        console.log()
+
+        const characterId = championName.replace(/([A-Z])/g, '_$1').toLowerCase().substring(1);
+        const comicData = characterComicsData.get(characterId);
+        
         if (comicData && comicData.imageUrl) {
             bgElement.style.backgroundImage = `url('${comicData.imageUrl}')`;
-            card.classList.remove('is-fallback-avatar');
         } else {
-            bgElement.style.backgroundImage = `url('img/champions/avatars/${championName}.webp')`;
-            card.classList.add('is-fallback-avatar');
+            bgElement.style.backgroundColor = '#1e293b';
         }
     });
 }
@@ -634,7 +636,6 @@ function showLoading(isLoading) {
     if (isLoading) {
         DOM.loadingIndicator.classList.remove('hidden');
     } else {
-        // When loading is finished, the main container will be shown, hiding this.
         DOM.sharedTeamContainer.classList.remove('hidden');
         DOM.loadingIndicator.classList.add('hidden');
     }
@@ -649,8 +650,8 @@ function showLoading(isLoading) {
  */
 function showError(message, details = '') {
     showLoading(false);
-    DOM.sharedTeamContainer.innerHTML = ''; // Clear any partial content
-    DOM.sharedTeamContainer.classList.remove('hidden'); // Ensure the container is visible to show the error
+    DOM.sharedTeamContainer.innerHTML = '';
+    DOM.sharedTeamContainer.classList.remove('hidden');
     DOM.errorIndicator.classList.remove('hidden');
     DOM.errorIndicator.querySelector('h2').textContent = message;
     DOM.errorMessageDetails.textContent = details;

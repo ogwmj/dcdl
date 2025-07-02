@@ -26,7 +26,7 @@ const DOM = {
     step2Btn: document.getElementById('step-btn-2'),
     step1Content: document.getElementById('step-1-content'),
     step2Content: document.getElementById('step-2-content'),
-    rosterFormContainer: document.querySelector('#step-1-content > .grid'),
+    rosterFormContainer: document.getElementById('roster-form-container'),
     formModeTitle: document.getElementById('form-mode-title'),
     champSelectDb: document.getElementById('champ-select-db'),
     champStarColor: document.getElementById('champ-star-color'),
@@ -67,9 +67,11 @@ const DOM = {
     swapChampionModal: document.getElementById('swap-champion-modal'),
     toastContainer: document.getElementById('toast-container'),
     customTooltip: document.getElementById('custom-tooltip'),
-    championInfoModal: document.getElementById('champion-info-modal'),
-    championInfoModalBody: document.getElementById('champion-info-modal-body'),
-    championInfoModalClose: document.getElementById('champion-info-modal-close'),
+    customLPDropdown: document.getElementById('custom-lp-dropdown'),
+    customLPDropdownTrigger: document.getElementById('custom-lp-dropdown-trigger'),
+    customLPDropdownOptions: document.getElementById('custom-lp-dropdown-options'),
+    selectedLPName: document.getElementById('selected-lp-name'),
+    rosterSearchInput: document.getElementById('roster-search-input'),
 };
 
 /**
@@ -81,7 +83,6 @@ let dbChampions = [], dbSynergies = [], dbLegacyPieces = [];
 let playerRoster = [];
 let savedTeams = [];
 let characterComicsData = new Map();
-let rosterDataTable = null;
 let editingChampionId = null;
 let teamModalCallback = null;
 let originalBestTeam = null, currentDisplayedTeam = null;
@@ -94,6 +95,7 @@ let synergyMultiSelect = null;
 let teamExclusionMultiSelect = null;
 let activeFactionFilter = null; 
 let activeClassFilter = null;
+let activeSearchTerm = '';
 
 // =================================================================================================
 // #region INITIALIZATION
@@ -115,32 +117,6 @@ async function initializePage() {
         
         showLoading(true, "Loading Game Data...");
 
-        $.fn.dataTable.ext.search.push(
-            function(settings, data, dataIndex) {
-                // Ensure this filter only applies to the main roster table
-                if (settings.sTableId !== 'roster-table') {
-                    return true;
-                }
-                
-                // Use the provided settings to get the correct table API instance,
-                // avoiding race conditions with the global 'rosterDataTable' variable.
-                const api = new $.fn.dataTable.Api(settings);
-                const rowNode = api.row(dataIndex).node();
-
-                if (!rowNode) {
-                    return true;
-                }
-
-                const championFactions = $(rowNode).data('factions') || '';
-                const championClass = $(rowNode).data('class') || '';
-
-                const factionMatch = !activeFactionFilter || championFactions.split(',').includes(activeFactionFilter);
-                const classMatch = !activeClassFilter || championClass === activeClassFilter;
-
-                return factionMatch && classMatch;
-            }
-        );
-
         await Promise.all([
             fetchData('champions', (data) => dbChampions = data),
             fetchData('synergies', (data) => dbSynergies = data.sort((a,b) => a.name.localeCompare(b.name))),
@@ -158,7 +134,6 @@ async function initializePage() {
 
         teamExclusionMultiSelect = createTeamExclusionMultiSelect([]);
 
-        // Now that all game data is loaded, we can safely listen for auth changes and load user data.
         onAuthStateChanged(auth, handleUserSession);
 
     } catch (error) {
@@ -205,7 +180,7 @@ async function handleUserSession() {
         userId = null;
         playerRoster = [];
         savedTeams = [];
-        renderRosterTable();
+        renderRosterGrid();
         renderSavedTeams(new Map());
         populateChampionSelect();
     }
@@ -284,7 +259,6 @@ function createInteractiveGearGrid(containerId) {
     const rarityColors = { "None": "#94a3b8", "Uncommon": "#22c55e", "Rare": "#3b82f6", "Epic": "#a855f7", "Legendary": "#eab308", "Mythic": "#e84848", "Mythic Enhanced": "#b50202" };
 
     const render = () => {
-        // Build the HTML in a more robust, multi-step way to prevent rendering glitches.
         const masterPipsHtml = rarities.map(r =>
             `<div class="gear-pip" data-rarity="${r}" style="background-color: ${rarityColors[r]}">${r.charAt(0)}</div>`
         ).join('');
@@ -324,7 +298,6 @@ function createInteractiveGearGrid(containerId) {
         });
     };
 
-    // --- EVENT LISTENERS (No changes here) ---
     container.addEventListener('click', (e) => {
         if (!e.target.matches('.gear-pip')) return;
         const target = e.target;
@@ -358,7 +331,6 @@ function createInteractiveGearGrid(containerId) {
         if (!e.target.matches('.gear-grid-master .gear-pip')) return;
         DOM.customTooltip.classList.remove('visible');
     });
-    // --- END EVENT LISTENERS ---
 
     const update = (newState) => {
         if (!newState) {
@@ -510,7 +482,6 @@ function createSynergyMultiSelect() {
     };
 
     const render = () => {
-        // Render Pills
         inputWrapper.querySelectorAll('.pill').forEach(p => p.remove());
         state.selected.forEach(value => {
             const pill = document.createElement('div');
@@ -723,12 +694,19 @@ function attachEventListeners() {
         }
     });
 
-    DOM.championInfoModalClose.addEventListener('click', () => closeModal('championInfoModal'));
-    DOM.championInfoModal.addEventListener('click', (e) => {
-        if (e.target === DOM.championInfoModal) {
-            closeModal('championInfoModal');
+    DOM.customLPDropdownTrigger.addEventListener('click', toggleLPDropdown);
+
+    document.addEventListener('click', (event) => {
+        if (DOM.customChampDropdown && !DOM.customChampDropdown.contains(event.target)) {
+            DOM.customChampDropdownOptions.classList.add('hidden');
+            DOM.customChampDropdownTrigger.setAttribute('aria-expanded', 'false');
+        }
+        if (DOM.customLPDropdown && !DOM.customLPDropdown.contains(event.target)) {
+            DOM.customLPDropdownOptions.classList.add('hidden');
+            DOM.customLPDropdownTrigger.setAttribute('aria-expanded', 'false');
         }
     });
+    DOM.rosterSearchInput.addEventListener('input', handleRosterSearch);
 }
 
 /**
@@ -825,167 +803,163 @@ async function handleAddUpdateChampion() {
         logEvent(analytics, 'add_champion', { champion_name: newChampion.name, roster_size: playerRoster.length });
     }
     await saveRosterToFirestore();
-    renderRosterTable();
+    renderRosterGrid();
     populateChampionSelect();
     cancelEditMode();
 }
 
+function handleRosterSearch(e) {
+    activeSearchTerm = e.target.value.toLowerCase();
+    renderRosterGrid();
+}
+
 /**
- * @description Renders the player's champion roster into the DataTable.
+ * @description Creates the HTML for a single, enhanced champion card in the user's roster with a top-down layout.
+ * @param {object} champion - The champion object from playerRoster.
+ * @returns {HTMLElement} The fully-formed card element with event listeners.
  */
-function renderRosterTable() {
-    if (rosterDataTable) {
-        rosterDataTable.destroy();
-        rosterDataTable = null;
-    }
-    const tableElement = document.getElementById('roster-table');
-    const tbody = tableElement.querySelector('tbody');
+function createRosterCard(champion) {
+    const card = document.createElement('div');
+    const score = Math.round(TeamCalculator.calculateIndividualChampionScore(champion, GAME_CONSTANTS));
+    const cleanName = champion.name.replace(/[^a-zA-Z0-9-_]/g, "");
+    const idKey = champion.name.toLowerCase().replace(/\s+/g, '_');
+
+    card.className = 'champion-card-enhanced is-roster-card';
+    card.dataset.championName = cleanName;
+    card.dataset.championIdKey = idKey;
+
+    const starRating = getStarRatingHTML(champion.starColorTier);
+    const forceLevel = `<p class="force-level">Force Lvl: ${champion.forceLevel}</p>`;
+    const synergies = (champion.inherentSynergies || []).map(getSynergyIcon).join('');
+    const upgradeButton = (champion.baseRarity === 'Legendary' && champion.canUpgrade) 
+        ? `<button class="card-action-btn upgrade" data-action="upgrade" data-id="${champion.id}" title="Upgrade to Mythic"><i class="fas fa-arrow-up"></i></button>` : '';
+
+    card.innerHTML = `
+        <div class="card-background-image"></div>
+        <div class="card-top-info">
+            ${getClassPlaceholder(champion.class)}
+            <span class="card-score">${score}</span>
+        </div>
+        
+        <div class="card-image-container">
+            <img src="img/champions/full/${cleanName}.webp" alt="${champion.name}" class="card-avatar-top" onerror="this.src='img/champions/avatars/${cleanName}.webp'">
+        </div>
+
+        <div class="card-content-bottom">
+            <h4 class="champion-name clickable-champion" data-id="${champion.dbChampionId}">${champion.name}</h4>
+            <div class="champion-details">
+                <p>${champion.baseRarity}</p>
+                ${starRating}
+                ${forceLevel}
+            </div>
+            <div class="synergy-icons">${synergies}</div>
+        </div>
+
+        <div class="card-actions">
+            ${upgradeButton}
+            <button class="card-action-btn edit" data-action="edit" data-id="${champion.id}" title="Edit"><i class="fas fa-pencil-alt"></i></button>
+            <button class="card-action-btn remove" data-action="remove" data-id="${champion.id}" title="Remove"><i class="fas fa-trash"></i></button>
+        </div>
+    `;
+    
+    card.querySelector('[data-action="edit"]')?.addEventListener('click', (e) => { e.stopPropagation(); handleEditChampion(parseFloat(e.currentTarget.dataset.id)); });
+    card.querySelector('[data-action="remove"]')?.addEventListener('click', (e) => { e.stopPropagation(); handleRemoveChampion(parseFloat(e.currentTarget.dataset.id)); });
+    card.querySelector('[data-action="upgrade"]')?.addEventListener('click', (e) => { e.stopPropagation(); handleUpgradeChampion(parseFloat(e.currentTarget.dataset.id)); });
+
+    return card;
+}
+
+/**
+ * @description Renders the player's champion roster as a grid of cards, including filtering.
+ */
+function renderRosterGrid() {
+    const gridEl = document.getElementById('roster-grid'); 
     const factionFilterContainer = document.getElementById('roster-faction-filters-container');
     const classFilterContainer = document.getElementById('roster-class-filters-container');
 
-    if (playerRoster.length === 0) {
-        tableElement.style.display = 'none';
+    if (!playerRoster || playerRoster.length === 0) {
+        gridEl.innerHTML = '';
         factionFilterContainer.innerHTML = '';
         classFilterContainer.innerHTML = '';
         DOM.rosterEmptyMessage.classList.remove('hidden');
-        DOM.prefillRosterBtn.classList.remove('hidden');
+        gridEl.classList.add('hidden');
+        if (DOM.prefillRosterBtn) DOM.prefillRosterBtn.classList.remove('hidden');
         return;
     }
 
-    tableElement.style.display = '';
     DOM.rosterEmptyMessage.classList.add('hidden');
-    DOM.prefillRosterBtn.classList.add('hidden');
-    tbody.innerHTML = '';
+    gridEl.classList.remove('hidden');
+    
+    const allFactions = new Set(playerRoster.flatMap(c => c.inherentSynergies || []));
+    const allClasses = new Set(playerRoster.map(c => c.class).filter(Boolean));
 
-    const allFactions = new Set();
-    const allClasses = new Set();
-    playerRoster.forEach(champ => {
-        (champ.inherentSynergies || []).forEach(faction => allFactions.add(faction));
-        if (champ.class && champ.class !== "N/A") {
-            allClasses.add(champ.class);
-        }
-    });
-
-    // --- Faction Filters ---
-    factionFilterContainer.innerHTML = '<strong>Filter by Faction:</strong> ';
-    const sortedFactions = [...allFactions].sort();
-    sortedFactions.forEach(faction => {
-        const btn = document.createElement('button');
-        btn.className = 'faction-filter-btn';
-        btn.dataset.faction = faction;
-        btn.innerHTML = getSynergyIcon(faction);
-        btn.title = faction;
-        factionFilterContainer.appendChild(btn);
-    });
-
-    if (sortedFactions.length > 0) {
+    const renderFilters = (container, items, type, currentFilter, iconFn) => {
+        container.innerHTML = `<span class="filter-label">${type === 'faction' ? 'Faction' : 'Class'}:</span>`;
+        const sortedItems = [...items].sort();
+        sortedItems.forEach(item => {
+            const btn = document.createElement('button');
+            btn.className = 'filter-btn';
+            btn.dataset[type] = item;
+            btn.innerHTML = iconFn(item);
+            btn.title = item;
+            btn.classList.toggle('active', item === currentFilter);
+            container.appendChild(btn);
+        });
         const clearBtn = document.createElement('button');
-        clearBtn.className = 'btn btn-secondary btn-sm clear-filter-btn';
-        clearBtn.textContent = 'Clear';
-        factionFilterContainer.appendChild(clearBtn);
+        clearBtn.className = 'filter-btn clear';
+        clearBtn.innerHTML = '<i class="fas fa-times"></i>';
+        clearBtn.title = 'Clear Filter';
+        container.appendChild(clearBtn);
+    };
+    
+    renderFilters(factionFilterContainer, allFactions, 'faction', activeFactionFilter, getSynergyIcon);
+    renderFilters(classFilterContainer, allClasses, 'class', activeClassFilter, getClassPlaceholder);
+
+    const filteredRoster = playerRoster.filter(champ => {
+        const factionMatch = !activeFactionFilter || (champ.inherentSynergies || []).includes(activeFactionFilter);
+        const classMatch = !activeClassFilter || champ.class === activeClassFilter;
+        const searchMatch = !activeSearchTerm || champ.name.toLowerCase().includes(activeSearchTerm);
+        return factionMatch && classMatch && searchMatch;
+    });
+
+    gridEl.innerHTML = '';
+    if (filteredRoster.length > 0) {
+         filteredRoster
+            .sort((a,b) => TeamCalculator.calculateIndividualChampionScore(b, GAME_CONSTANTS) - TeamCalculator.calculateIndividualChampionScore(a, GAME_CONSTANTS))
+            .forEach(champ => {
+                const card = createRosterCard(champ);
+                gridEl.appendChild(card);
+            });
+    } else {
+         gridEl.innerHTML = '<p class="text-center text-slate-400 col-span-full py-8">No champions match the current filters.</p>';
     }
 
-    factionFilterContainer.addEventListener('click', (e) => {
-        const target = e.target.closest('button');
-        if (!target) return;
-
-        if (target.classList.contains('clear-filter-btn')) {
-            activeFactionFilter = null;
-        } else if (target.dataset.faction) {
-            const clickedFaction = target.dataset.faction;
-            activeFactionFilter = activeFactionFilter === clickedFaction ? null : clickedFaction;
-        }
-
-        factionFilterContainer.querySelectorAll('.faction-filter-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.faction === activeFactionFilter);
-        });
-
-        rosterDataTable.draw();
-    });
-
-    // --- Class Filters ---
-    classFilterContainer.innerHTML = '<strong>Filter by Class:</strong> ';
-    const sortedClasses = [...allClasses].sort();
-    sortedClasses.forEach(className => {
-        const btn = document.createElement('button');
-        btn.className = 'faction-filter-btn';
-        btn.dataset.class = className;
-        btn.innerHTML = getClassPlaceholder(className);
-        btn.title = className;
-        classFilterContainer.appendChild(btn);
-    });
-
-    if (sortedClasses.length > 0) {
-        const clearBtn = document.createElement('button');
-        clearBtn.className = 'btn btn-secondary btn-sm clear-filter-btn';
-        clearBtn.textContent = 'Clear';
-        classFilterContainer.appendChild(clearBtn);
-    }
-
-    classFilterContainer.addEventListener('click', (e) => {
-        const target = e.target.closest('button');
-        if (!target) return;
-
-        if (target.classList.contains('clear-filter-btn')) {
-            activeClassFilter = null;
-        } else if (target.dataset.class) {
-            const clickedClass = target.dataset.class;
-            activeClassFilter = activeClassFilter === clickedClass ? null : clickedClass;
-        }
-
-        classFilterContainer.querySelectorAll('.faction-filter-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.class === activeClassFilter);
-        });
-
-        rosterDataTable.draw();
-    });
-
-    playerRoster.forEach(champ => {
-        const score = Math.round(TeamCalculator.calculateIndividualChampionScore(champ, GAME_CONSTANTS));
-        let upgradeButton = (champ.baseRarity === 'Legendary' && champ.canUpgrade) ? `<button class="btn btn-secondary btn-sm" data-action="upgrade" data-id="${champ.id}">Upgrade</button>` : '';
-        const legacyPiece = champ.legacyPiece || {};
-        const legacyDisplay = (legacyPiece.id && legacyPiece.rarity && legacyPiece.rarity !== "None") ? `${legacyPiece.name} (${legacyPiece.rarity})<br><div class="text-xs">${getStarRatingHTML(legacyPiece.starColorTier || "Unlocked")}</div>` : "None";
-        const healerIconHtml = champ.isHealer ? getHealerPlaceholder() : '';
-        const tr = document.createElement('tr');
-
-        const factionsString = (champ.inherentSynergies || []).join(',');
-        tr.setAttribute('data-factions', factionsString);
-        tr.setAttribute('data-class', champ.class || "N/A");
-
-        tr.innerHTML = `
-            <td><div class="flex items-center">${healerIconHtml}<span class="clickable-champion" data-id="${champ.dbChampionId}">${champ.name}</span></div></td>
-            <td>${getClassPlaceholder(champ.class)}</td>
-            <td>${champ.baseRarity}</td>
-            <td>${getStarRatingHTML(champ.starColorTier)}</td>
-            <td>${score}</td>
-            <td>${legacyDisplay}</td>
-            <td class="actions-cell">${upgradeButton}<button class="btn btn-secondary btn-sm" data-action="edit" data-id="${champ.id}">Edit</button><button class="btn btn-secondary btn-sm" data-action="remove" data-id="${champ.id}">Remove</button></td>
-        `;
-        tbody.appendChild(tr);
-    });
-
-    tbody.querySelectorAll('[data-action="edit"]').forEach(btn => btn.addEventListener('click', (e) => handleEditChampion(parseFloat(e.target.dataset.id))));
-    tbody.querySelectorAll('[data-action="remove"]').forEach(btn => btn.addEventListener('click', (e) => handleRemoveChampion(parseFloat(e.target.dataset.id))));
-    tbody.querySelectorAll('[data-action="upgrade"]').forEach(btn => btn.addEventListener('click', (e) => handleUpgradeChampion(parseFloat(e.target.dataset.id))));
-    tbody.querySelectorAll('.clickable-champion').forEach(span => {
-        span.addEventListener('click', (e) => {
-            const championId = e.target.dataset.id;
-            if (championId) {
-                showChampionInfoModal(championId);
-            }
-        });
-    });
-
-    if (typeof $ !== 'undefined' && $.fn.DataTable) {
-        rosterDataTable = new $('#roster-table').DataTable({
-            scrollX: true,
-            order: [[4, 'desc']],
-            columnDefs: [
-                { targets: 6, orderable: false } 
-            ]
-        });
-    }
+    applyChampionCardBackgrounds();
 }
+
+document.getElementById('roster-faction-filters-container').addEventListener('click', (e) => {
+    const target = e.target.closest('button');
+    if (!target) return;
+    if (target.classList.contains('clear')) {
+        activeFactionFilter = null;
+    } else {
+        const clickedFaction = target.dataset.faction;
+        activeFactionFilter = activeFactionFilter === clickedFaction ? null : clickedFaction;
+    }
+    renderRosterGrid();
+});
+
+document.getElementById('roster-class-filters-container').addEventListener('click', (e) => {
+    const target = e.target.closest('button');
+    if (!target) return;
+    if (target.classList.contains('clear')) {
+        activeClassFilter = null;
+    } else {
+        const clickedClass = target.dataset.class;
+        activeClassFilter = activeClassFilter === clickedClass ? null : clickedClass;
+    }
+    renderRosterGrid();
+});
 
 /**
  * @description Exits champion editing mode and resets the form.
@@ -998,16 +972,14 @@ function cancelEditMode() {
     DOM.cancelEditBtn.classList.add('hidden');
     DOM.customChampDropdownTrigger.disabled = false;
 
-    // Reset standard form inputs
     DOM.champSelectDb.value = '';
     if (forceLevelControl) forceLevelControl.setValue(0);
     DOM.legacyPieceSelect.value = '';
     
-    // Reset the new interactive components using their controllers
-    if (champStarSelectorControl) { // Corrected: "window." removed
+    if (champStarSelectorControl) {
         champStarSelectorControl.setValue('Unlocked');
     }
-    if (legacyStarSelectorControl) { // Corrected: "window." removed
+    if (legacyStarSelectorControl) {
         legacyStarSelectorControl.setValue('Unlocked');
     }
     if (gearGridControl) {
@@ -1049,7 +1021,7 @@ function handleEditChampion(id) {
     updateChampionFormDisplay(champ.dbChampionId, true);
     DOM.customChampDropdownTrigger.disabled = true;
     if (DOM.rosterFormContainer) {
-        window.scrollTo({ top: DOM.rosterFormContainer.offsetTop - 125, behavior: 'smooth' });
+        window.scrollTo({ top: DOM.rosterFormContainer.getBoundingClientRect().top + window.scrollY - 125, behavior: 'smooth' });
     }
 }
 
@@ -1063,7 +1035,7 @@ function handleRemoveChampion(id) {
     openConfirmModal('Confirm Deletion', `Are you sure you want to remove ${champ.name} from your roster?`, async () => {
         playerRoster = playerRoster.filter(c => c.id !== id);
         await saveRosterToFirestore();
-        renderRosterTable();
+        renderRosterGrid();
         populateChampionSelect();
         showToast(`${champ.name} removed from roster.`, 'info');
         logEvent(analytics, 'remove_champion', { champion_name: champ.name });
@@ -1092,7 +1064,7 @@ async function handleUpgradeChampion(id) {
         playerRoster[champIndex] = upgradedChamp;
         await recalculateAndUpdateSavedTeams(upgradedChamp);
         await saveRosterToFirestore();
-        renderRosterTable();
+        renderRosterGrid();
         showToast(`${upgradedChamp.name} upgraded to Mythic!`, 'success');
         logEvent(analytics, 'upgrade_champion', { champion_name: upgradedChamp.name });
     });
@@ -1165,7 +1137,7 @@ function handlePrefillRoster() {
             };
         });
         await saveRosterToFirestore();
-        renderRosterTable();
+        renderRosterGrid();
         populateChampionSelect();
         showToast("Roster pre-filled with all champions!", "success");
         logEvent(analytics, 'prefill_roster', { roster_size: playerRoster.length });
@@ -1241,7 +1213,7 @@ function handleImportRoster(event) {
                 }
                 playerRoster = newRoster;
                 await saveRosterToFirestore();
-                renderRosterTable();
+                renderRosterGrid();
                 populateChampionSelect();
                 if (importErrors > 0) { showToast(`Roster imported with ${importErrors} champion(s) skipped.`, "warning"); }
                 else { showToast("Roster imported successfully!", "success"); }
@@ -1267,8 +1239,6 @@ async function saveRosterToFirestore() {
     DOM.saveRosterIndicator.classList.remove('hidden');
     try {
         const rosterToSave = playerRoster.map(champ => {
-            // By adding canUpgrade and upgradeSynergy to the destructuring,
-            // we effectively remove them from the '...rest' object that gets saved.
             const { individualScore, canUpgrade, upgradeSynergy, ...rest } = champ;
             return rest;
         });
@@ -1298,7 +1268,7 @@ async function loadRosterFromFirestore() {
     } else {
         playerRoster = [];
     }
-    renderRosterTable();
+    renderRosterGrid();
 }
 
 // =================================================================================================
@@ -1410,7 +1380,7 @@ async function handleFindUpgradeSuggestions() {
     }
 
     const outputContainer = document.getElementById('upgrade-suggestions-output');
-    outputContainer.innerHTML = `<div class="text-center card"><div class="loading-spinner"></div><p class="text-indigo-600 mt-2">Analyzing upgrade paths...</p></div>`;
+    outputContainer.innerHTML = `<div class="text-center p-8"><div class="loading-spinner mx-auto"></div><p class="text-blue-200 mt-4 text-lg">Analyzing upgrade paths...</p></div>`;
 
     setTimeout(() => {
         try {
@@ -1421,7 +1391,6 @@ async function handleFindUpgradeSuggestions() {
             const requiredSynergies = synergyMultiSelect.getSelectedValues();
             let excludedChampionDbIds = [];
 
-            // Build the list of excluded champion IDs from the selected teams
             if (excludeTeams && teamExclusionMultiSelect) {
                 const exclusionTeamIds = teamExclusionMultiSelect.getSelectedValues();
                 if (exclusionTeamIds.length > 0) {
@@ -1436,7 +1405,6 @@ async function handleFindUpgradeSuggestions() {
                 }
             }
             
-            // Pass the new exclusion list to the suggestions engine
             const suggestions = calculator.findUpgradeSuggestions(
                 currentDisplayedTeam, 
                 playerRoster, 
@@ -1446,13 +1414,13 @@ async function handleFindUpgradeSuggestions() {
                 requiredSynergies
             );
             
-            let html = `<div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
-                           <h3 class="text-xl font-bold text-accent mb-4">Upgrade Suggestions</h3>`;
+            let html = `<div class="p-6 bg-slate-900/70 backdrop-blur-sm rounded-lg border border-blue-500/20">
+                           <h3 class="text-2xl font-bold text-blue-300 mb-4">Upgrade Suggestions</h3>`;
 
             if (suggestions.length === 0) {
-                html += `<p class="text-slate-600">No single-step upgrade was found to improve your current best team.</p>`;
+                html += `<p class="text-slate-400">No single-step upgrade was found to improve your current best team.</p>`;
             } else {
-                html += `<p class="text-slate-600 mb-4">These are the top-ranked upgrades that would improve your team score by replacing a current member.</p>
+                html += `<p class="text-slate-400 mb-4">These are the top-ranked upgrades that would improve your team score by replacing a current member.</p>
                          <div class="space-y-3">`;
                 suggestions.slice(0, 5).forEach(sugg => {
                     let upgradeText = '';
@@ -1470,13 +1438,13 @@ async function handleFindUpgradeSuggestions() {
                             upgradeText = `${sugg.upgradeType} from ${sugg.fromValue} to ${sugg.toValue}`;
                     }
 
-                    html += `<div class="p-3 bg-white rounded-md border border-slate-200 hover:border-indigo-300 transition">
-                                <p class="font-semibold text-primary">
-                                    Upgrade <strong class="text-green-700">${sugg.championToUpgrade.name}</strong>'s ${upgradeText}.
+                    html += `<div class="p-3 bg-slate-800 rounded-md border border-slate-700 hover:border-blue-700 transition">
+                                <p class="font-semibold text-blue-300">
+                                    Upgrade <strong class="text-green-400">${sugg.championToUpgrade.name}</strong>'s ${upgradeText}.
                                 </p>
-                                <p class="text-sm text-slate-500">
-                                    This would replace <strong class="text-red-700">${sugg.displacedChampion.name}</strong> on the team,
-                                    increasing the total score by <strong class="text-green-700">+${Math.round(sugg.scoreIncrease)}</strong> 
+                                <p class="text-sm text-slate-400">
+                                    This would replace <strong class="text-red-400">${sugg.displacedChampion.name}</strong> on the team,
+                                    increasing the total score by <strong class="text-green-400">+${Math.round(sugg.scoreIncrease)}</strong> 
                                     to a new total of <strong>${Math.round(sugg.newTeamScore)}</strong>.
                                 </p>
                              </div>`;
@@ -1487,7 +1455,7 @@ async function handleFindUpgradeSuggestions() {
             outputContainer.innerHTML = html;
 
         } catch (error) {
-            outputContainer.innerHTML = `<p class="text-red-500">Could not analyze upgrades. Error: ${error.message}</p>`;
+            outputContainer.innerHTML = `<p class="text-red-400 p-4 bg-red-900/50 rounded-lg">Could not analyze upgrades. Error: ${error.message}</p>`;
             logEvent(analytics, 'exception', { description: `upgrade_suggestion_failed: ${error.message}` });
         }
     }, 50);
@@ -1566,43 +1534,78 @@ async function handleCalculate() {
 }
 
 /**
- * @description Renders the calculated team results to the page.
+ * @description Renders the calculated team results to the page using the enhanced card style.
  * @param {object} team - The final team object from the calculator.
  */
 function displayTeamResults(team) {
-    if (!team) { DOM.resultsOutput.innerHTML = '<p class="text-center text-slate-500">Could not determine an optimal team.</p>'; return; } 
+    if (!team) {
+        DOM.resultsOutput.innerHTML = '<p class="text-center text-slate-400">Could not determine an optimal team.</p>';
+        return;
+    } 
     const isModified = originalBestTeam && JSON.stringify(team.members.map(m => m.id)) !== JSON.stringify(originalBestTeam.members.map(m => m.id));
     const scoreBreakdownHtml = getScoreBreakdownHtml(team);
+
     let html = `
-        <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
-            <div class="text-center mb-6"><h3 class="text-2xl font-bold text-accent">${isModified ? 'Modified Team' : 'Optimal Team Found!'}</h3><p class="text-lg">Total Score: <strong class="text-primary">${Math.round(team.totalScore)}</strong></p></div>
+        <div class="p-6 bg-slate-900/70 backdrop-blur-sm rounded-lg border border-blue-500/20">
+            <div class="text-center mb-6">
+                <h3 class="text-3xl font-bold text-blue-300">${isModified ? 'Modified Team' : 'Optimal Team Found!'}</h3>
+                <p class="text-xl text-slate-300">Total Score: <strong class="text-white font-bold">${Math.round(team.totalScore)}</strong></p>
+            </div>
             ${scoreBreakdownHtml}
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">`;
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-8">`;
+
     team.members.forEach((member, index) => {
+        const cleanName = (member.name || 'Unknown').replace(/[^a-zA-Z0-9-_]/g, "");
+        const idKey = (member.name || '').toLowerCase().replace(/\s+/g, '_');
         const starRating = getStarRatingHTML(member.starColorTier);
-        const forceLevel = member.forceLevel > 0 ? `<p class="force-level">Force: ${member.forceLevel} / 5</p>` : '';
+        const forceLevel = `<p class="force-level">Force Lvl: ${member.forceLevel}</p>`;
         const synergies = (member.inherentSynergies || []).map(getSynergyIcon).join('');
-        const championImageName = (member.name || 'Unknown').replace(/[^a-zA-Z0-9-_]/g, "");
-        const championIdForKey = (member.name || '').toLowerCase().replace(/\s+/g, '_');
+
         html += `
-            <div class="champion-card-enhanced" data-champion-name="${championImageName}" data-champion-id-key="${championIdForKey}">
+            <div class="champion-card-enhanced" data-champion-name="${cleanName}" data-champion-id-key="${idKey}">
                 <div class="card-background-image"></div>
-                <img src="img/champions/avatars/${championImageName}.webp" alt="${member.name}" class="champion-avatar-center">
-                <div class="card-content-overlay">
-                    <div class="card-header">${getClassPlaceholder(member.class)}<h4 class="champion-name">${member.name}</h4></div>
-                    <div class="champion-details"><p>${member.baseRarity}</p>${starRating}${forceLevel}</div>
+                <div class="card-top-info">
+                    ${getClassPlaceholder(member.class)}
+                </div>
+                <div class="card-image-container">
+                     <img src="img/champions/full/${cleanName}.webp" alt="${member.name}" class="card-avatar-top" onerror="this.src='img/champions/avatars/${cleanName}.webp'">
+                </div>
+                <div class="card-content-bottom">
+                    <h4 class="champion-name">${member.name}</h4>
+                    <div class="champion-details">
+                        <p>${member.baseRarity}</p>
+                        ${starRating}
+                        ${forceLevel}
+                    </div>
                     <div class="synergy-icons">${synergies}</div>
                 </div>
-                <button class="btn btn-secondary btn-sm swap-button" data-action="swap" data-index="${index}">Swap</button>
+                <div class="card-actions">
+                     <button class="card-action-btn swap" data-action="swap" data-index="${index}" title="Swap Champion"><i class="fas fa-random"></i></button>
+                </div>
             </div>`;
     });
-    html += `</div><div class="mt-6 text-center flex justify-center items-center gap-3">
-                <button id="save-team-btn" class="btn btn-primary">Save This Team</button>
-                <button id="find-upgrades-btn" class="btn btn-secondary">Find Upgrade Suggestions</button>`;
-    if (isModified) { html += `<button id="reset-team-btn" class="btn btn-secondary">Reset to Original</button>`; }
-    html += `</div></div><div id="upgrade-suggestions-output" class="mt-6"></div>`;
+
+    html += `</div>
+        <div class="mt-8 text-center flex justify-center items-center flex-wrap gap-4">
+            <button id="save-team-btn" class="btn btn-primary">Save This Team</button>
+            <button id="find-upgrades-btn" class="btn btn-secondary">Find Upgrade Suggestions</button>`;
+    if (isModified) {
+        html += `<button id="reset-team-btn" class="btn btn-secondary">Reset to Original</button>`;
+    }
+    html += `</div>
+        </div>
+        <div id="upgrade-suggestions-output" class="mt-8"></div>`;
+
     DOM.resultsOutput.innerHTML = html;
     applyChampionCardBackgrounds();
+
+    DOM.resultsOutput.querySelectorAll('[data-action="swap"]').forEach(button => {
+        button.addEventListener('click', e => {
+            e.stopPropagation();
+            const index = parseInt(e.currentTarget.dataset.index, 10);
+            openSwapModal(index);
+        });
+    });
 }
 
 /**
@@ -1613,8 +1616,8 @@ function renderSavedTeams() {
     if (!listEl) return;
     listEl.innerHTML = '';
 
-    if (savedTeams.length === 0) {
-        listEl.innerHTML = '<p class="text-center text-slate-500">No teams saved yet.</p>';
+    if (!savedTeams || savedTeams.length === 0) {
+        listEl.innerHTML = '<p class="text-center text-slate-400 text-xl">No teams saved yet.</p>';
         if (teamExclusionMultiSelect) {
             teamExclusionMultiSelect.destroy();
             teamExclusionMultiSelect = null;
@@ -1622,34 +1625,46 @@ function renderSavedTeams() {
         return;
     }
 
-    // Re-create the exclusion component with the updated list of teams.
     if (teamExclusionMultiSelect) {
-        // If it already exists, just update its options.
         teamExclusionMultiSelect.updateOptions(savedTeams);
     } else {
-        // If it doesn't exist (was null), create it now that there are teams to show.
         teamExclusionMultiSelect = createTeamExclusionMultiSelect(savedTeams);
     }
 
-    // Render the saved team cards.
     const calculator = new TeamCalculator(dbSynergies, GAME_CONSTANTS);
     savedTeams.forEach(team => {
         const membersWithScores = ensureIndividualScores(team.members, dbChampions);
         const reEvaluatedTeam = calculator.evaluateTeam(membersWithScores);
         const teamCard = document.createElement('div');
-        teamCard.className = 'saved-team-card p-4 border rounded-lg bg-white shadow mb-4';
-        const shareButtonHtml = team.publicShareId ? `<button class="btn btn-sm btn-secondary" data-action="unshare" data-id="${team.id}" data-public-id="${team.publicShareId}">Unshare</button>` : `<button class="btn btn-sm btn-primary" data-action="share" data-id="${team.id}">Share</button>`;
+        teamCard.className = 'saved-team-card p-6 bg-slate-900/70 backdrop-blur-sm rounded-lg border border-blue-500/20';
+
+        const shareButtonHtml = team.publicShareId ? `<button class="btn btn-secondary btn-sm" data-action="unshare" data-id="${team.id}" data-public-id="${team.publicShareId}">Unshare</button>` : `<button class="btn btn-primary btn-sm" data-action="share" data-id="${team.id}">Share</button>`;
         const shareUrl = `${window.location.origin}${window.location.pathname.replace('teams.html', 'share.html')}?sharedTeamId=${team.publicShareId}`;
-        const teamNameHtml = team.publicShareId ? `<h4 class="font-bold text-lg text-accent flex items-center gap-2">${team.name}<a href="${shareUrl}" target="_blank" class="text-blue-600 hover:underline" title="View Shared Page"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" viewBox="0 0 20 20" fill="currentColor"><path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" /><path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" /></svg></a></h4>` : `<h4 class="font-bold text-lg text-accent">${team.name}</h4>`;
-        const headerHtml = `<div class="flex justify-between items-start mb-4 pb-2 border-b"><div>${teamNameHtml}<p class="text-sm text-slate-600">Total Score: <strong>${Math.round(reEvaluatedTeam.totalScore)}</strong></p></div><div class="flex items-center gap-2">${shareButtonHtml}<button class="btn btn-sm btn-secondary" data-action="rename" data-id="${team.id}" data-name="${team.name.replace(/'/g, "\\'")}">Rename</button><button class="btn btn-sm btn-secondary" data-action="delete" data-id="${team.id}">Delete</button></div></div>`;
-        const membersHtml = `<div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-3">${reEvaluatedTeam.members.map(member => {
-            const championName = member?.name || "Unknown Champion";
-            const championIdForKey = (member.name || '').toLowerCase().replace(/\s+/g, '_');
-            const championImageName = championName.replace(/[^a-zA-Z0-9-_]/g, "");
+        const teamNameHtml = team.publicShareId ? `<h4 class="font-bold text-xl text-blue-300 flex items-center gap-2">${team.name}<a href="${shareUrl}" target="_blank" class="text-blue-400 hover:underline" title="View Shared Page"><i class="fas fa-external-link-alt"></i></a></h4>` : `<h4 class="font-bold text-xl text-blue-300">${team.name}</h4>`;
+
+        const headerHtml = `<div class="flex justify-between items-start mb-4 pb-4 border-b border-blue-500/20"><div>${teamNameHtml}<p class="text-sm text-slate-400">Total Score: <strong>${Math.round(reEvaluatedTeam.totalScore)}</strong></p></div><div class="flex items-center gap-2">${shareButtonHtml}<button class="btn btn-secondary btn-sm" data-action="rename" data-id="${team.id}" data-name="${team.name.replace(/'/g, "\\'")}"><i class="fas fa-pencil-alt"></i></button><button class="btn btn-secondary btn-sm" data-action="delete" data-id="${team.id}"><i class="fas fa-trash"></i></button></div></div>`;
+
+        const membersHtml = `<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">${reEvaluatedTeam.members.map(member => {
+            const cleanName = (member.name || 'Unknown').replace(/[^a-zA-Z0-9-_]/g, "");
+            const idKey = (member.name || '').toLowerCase().replace(/\s+/g, '_');
+            const starRating = getStarRatingHTML(member.starColorTier);
+            const forceLevel = `<p class="force-level !text-xs">Force Lvl: ${member.forceLevel}</p>`;
             const synergies = (member.inherentSynergies || []).map(getSynergyIcon).join('');
-            const forceLevel = member.forceLevel > 0 ? `<p class="force-level !text-xs">Force: ${member.forceLevel} / 5</p>` : '';
-            return `<div class="champion-card-enhanced is-small" data-champion-name="${championImageName}" data-champion-id-key="${championIdForKey}"><div class="card-background-image"></div><img src="img/champions/avatars/${championImageName}.webp" alt="${championName}" class="champion-avatar-center"><div class="card-content-overlay"><div class="card-header">${getClassPlaceholder(member.class)}<h4 class="champion-name">${championName}</h4></div><div class="champion-details"><p>${member.baseRarity}</p>${getStarRatingHTML(member.starColorTier)}${forceLevel}</div><div class="synergy-icons is-small">${synergies}</div></div></div>`;
+
+            return `<div class="champion-card-enhanced is-small" data-champion-name="${cleanName}" data-champion-id-key="${idKey}">
+                        <div class="card-background-image"></div>
+                        <div class="card-top-info">${getClassPlaceholder(member.class)}</div>
+                        <div class="card-image-container"><img src="img/champions/full/${cleanName}.webp" class="card-avatar-top" onerror="this.src='img/champions/avatars/${cleanName}.webp'"></div>
+                        <div class="card-content-bottom">
+                            <h4 class="champion-name">${member.name}</h4>
+                            <div class="champion-details !text-xs">
+                                <p>${member.baseRarity}</p>${starRating}${forceLevel}
+                            </div>
+                            <div class="synergy-icons is-small">${synergies}</div>
+                        </div>
+                    </div>`;
         }).join('')}</div>`;
+
         teamCard.innerHTML = headerHtml + membersHtml;
         listEl.appendChild(teamCard);
     });
@@ -1718,42 +1733,6 @@ async function loadSavedTeamsFromFirestore() {
 // =================================================================================================
 // #region UI Helpers & Modals
 // =================================================================================================
-async function showChampionInfoModal(championId) {
-    DOM.championInfoModal.classList.remove('hidden');
-    DOM.championInfoModal.classList.add('is-open');
-    DOM.championInfoModalBody.innerHTML = `<div class="loader-spinner"></div>`;
-
-    try {
-        const rosterChampion = playerRoster.find(c => c.dbChampionId === championId);
-        if (!rosterChampion) {
-            throw new Error("Champion not found in your roster.");
-        }
-        
-        const champCleanName = rosterChampion.name.replace(/[^a-zA-Z0-9-_]/g, "");
-        const starRatingHtml = getStarRatingHTML(rosterChampion.starColorTier);
-
-        const modalHtml = `
-            <div class="comic-image-panel">
-                <img src="img/champions/full/${champCleanName}.webp" alt="${rosterChampion.name}" class="comic-featured-image" onerror="this.parentElement.style.display='none'">
-            </div>
-            <h3 class="comic-main-title">${rosterChampion.name}</h3>
-            <div class="text-center">
-                <div class="modal-star-rating">${starRatingHtml}</div>
-                <p><strong>Class:</strong> ${rosterChampion.class || 'N/A'}</p>
-                <p><strong>Rarity:</strong> ${rosterChampion.baseRarity}</p>
-                <div class="synergy-icons justify-center mt-2">
-                    ${(rosterChampion.inherentSynergies || []).map(synergyName => getSynergyIconForComic(synergyName, 'modal-synergy-icon')).join('')}
-                </div>
-            </div>
-        `;
-        
-        DOM.championInfoModalBody.innerHTML = modalHtml;
-
-    } catch (error) {
-        console.error("Error creating champion info modal:", error);
-        DOM.championInfoModalBody.innerHTML = `<p class="text-center text-red-500">Could not load champion details.</p>`;
-    }
-}
 
 function getSynergyIconForComic(synergyName, customClass = 'synergy-icon') {
     if (!synergyName) return '';
@@ -1777,7 +1756,6 @@ function createStarSelector(containerId, hiddenInputId) {
     let selectedTier = "Unlocked";
     let selectedStars = 0;
 
-    // Build the component's HTML
     container.innerHTML = `
         <div class="star-selector-tiers"></div>
         <div class="star-selector-stars"></div>
@@ -1786,7 +1764,6 @@ function createStarSelector(containerId, hiddenInputId) {
     const tiersContainer = container.querySelector('.star-selector-tiers');
     const starsContainer = container.querySelector('.star-selector-stars');
 
-    // Create tier buttons
     tiers.forEach(tier => {
         const btn = document.createElement('button');
         btn.type = 'button';
@@ -1796,34 +1773,28 @@ function createStarSelector(containerId, hiddenInputId) {
         tiersContainer.appendChild(btn);
     });
 
-    // Create star icons
     for (let i = 1; i <= 5; i++) {
         const star = document.createElement('span');
         star.className = 'star-selector-star';
         star.dataset.value = i;
-        star.innerHTML = '&#9733;'; // Star character
+        star.innerHTML = '&#9733;';
         starsContainer.appendChild(star);
     }
 
     const updateVisuals = () => {
-        // --- NEW LOGIC START ---
-        // First, remove any existing tier classes from the stars container
         tiers.forEach(t => {
             starsContainer.classList.remove(`tier-${t.toLowerCase()}`);
         });
-        // Then, add the class for the currently selected tier
         starsContainer.classList.add(`tier-${selectedTier.toLowerCase()}`);
-        // --- NEW LOGIC END ---
-
-        // Update tier buttons
+        
         tiersContainer.querySelectorAll('.star-selector-tier-btn').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.tier === selectedTier);
         });
-        // Update stars
+        
         starsContainer.querySelectorAll('.star-selector-star').forEach(star => {
             star.classList.toggle('active', parseInt(star.dataset.value, 10) <= selectedStars);
         });
-            // Hide stars if "Unlocked" is selected
+        
         starsContainer.style.display = selectedTier === 'Unlocked' ? 'none' : 'flex';
     };
 
@@ -1836,31 +1807,28 @@ function createStarSelector(containerId, hiddenInputId) {
         updateVisuals();
     };
 
-    // Event listener for tier buttons
     tiersContainer.addEventListener('click', e => {
         if (e.target.matches('.star-selector-tier-btn')) {
             selectedTier = e.target.dataset.tier;
             if (selectedTier === 'Unlocked') {
                 selectedStars = 0;
             } else if (selectedStars === 0) {
-                selectedStars = 1; // Default to 1 star when a color is chosen
+                selectedStars = 1;
             }
             updateValue();
         }
     });
 
-    // Event listener for stars
     starsContainer.addEventListener('click', e => {
         if (e.target.matches('.star-selector-star')) {
             selectedStars = parseInt(e.target.dataset.value, 10);
             if (selectedTier === 'Unlocked') {
-                selectedTier = 'White'; // Default to White if a star is clicked from Unlocked state
+                selectedTier = 'White';
             }
             updateValue();
         }
     });
 
-    // Method to programmatically set the component's value (for editing)
     const setValue = (valueString) => {
         if (!valueString || valueString === "Unlocked") {
             selectedTier = "Unlocked";
@@ -1873,7 +1841,7 @@ function createStarSelector(containerId, hiddenInputId) {
         updateValue();
     };
 
-    setValue('Unlocked'); // Initialize
+    setValue('Unlocked');
 
     return { setValue };
 }
@@ -1895,10 +1863,6 @@ function applyChampionCardBackgrounds() {
         if (data && data.imageUrl) {
             bgElement.style.backgroundImage = `url('${data.imageUrl}')`;
             card.classList.remove('is-fallback-avatar');
-        } else {
-            const avatarUrl = `img/champions/avatars/${championName}.webp`;
-            bgElement.style.backgroundImage = `url('${avatarUrl}')`;
-            card.classList.add('is-fallback-avatar');
         }
     });
 }
@@ -2025,24 +1989,59 @@ function updateChampionFormDisplay(championId, isEditing = false) {
 }
 
 /**
+ * @description Toggles the visibility of the custom Legacy Piece selection dropdown.
+ */
+function toggleLPDropdown() {
+    const isExpanded = DOM.customLPDropdownTrigger.getAttribute('aria-expanded') === 'true';
+    DOM.customLPDropdownOptions.classList.toggle('hidden', isExpanded);
+    DOM.customLPDropdownTrigger.setAttribute('aria-expanded', String(!isExpanded));
+}
+
+/**
  * @description Populates the legacy piece dropdown, filtering by the selected champion's class.
  * @param {string|null} championClass - The class of the currently selected champion.
  */
 function populateLegacyPieceSelect(championClass) {
-    const currentVal = DOM.legacyPieceSelect.value;
-    DOM.legacyPieceSelect.innerHTML = '<option value="">-- None --</option>';
+    const optionsEl = DOM.customLPDropdownOptions;
+    const hiddenInput = DOM.legacyPieceSelect;
+    const triggerName = DOM.selectedLPName;
+
+    optionsEl.innerHTML = '';
+    const currentVal = hiddenInput.value;
+
+    const noneLi = document.createElement('li');
+    noneLi.dataset.value = '';
+    noneLi.innerHTML = `<span>-- None --</span>`;
+    noneLi.addEventListener('click', () => {
+        hiddenInput.value = '';
+        triggerName.textContent = '-- None --';
+        toggleLPDropdown();
+    });
+    optionsEl.appendChild(noneLi);
+
     let filtered = dbLegacyPieces;
     if (championClass) {
         filtered = dbLegacyPieces.filter(lp => !lp.description || lp.description.toLowerCase().includes(championClass.toLowerCase()));
     }
+
     filtered.forEach(lp => {
-        const opt = document.createElement('option');
-        opt.value = lp.id;
-        opt.textContent = `${lp.name} (${lp.baseRarity})`;
-        DOM.legacyPieceSelect.appendChild(opt);
+        const li = document.createElement('li');
+        li.dataset.value = lp.id;
+        li.innerHTML = `<span>${lp.name} (${lp.baseRarity})</span>`;
+        li.addEventListener('click', () => {
+            hiddenInput.value = lp.id;
+            triggerName.textContent = `${lp.name} (${lp.baseRarity})`;
+            toggleLPDropdown();
+        });
+        optionsEl.appendChild(li);
     });
-    if (filtered.some(lp => lp.id === currentVal)) {
-        DOM.legacyPieceSelect.value = currentVal;
+
+    const selectedOption = filtered.find(lp => lp.id === currentVal);
+    if (selectedOption) {
+        triggerName.textContent = `${selectedOption.name} (${selectedOption.baseRarity})`;
+    } else {
+        hiddenInput.value = '';
+        triggerName.textContent = '-- None --';
     }
 }
 
@@ -2089,13 +2088,8 @@ function closeModal(modalId) {
         modal.classList.remove('is-open');
         setTimeout(() => {
           modal.classList.add('hidden');
-           // If the modal is one that is completely generated, clear all its content
            if (modalId === 'confirmModal' || modalId === 'teamNameModal' || modalId === 'shareTeamModal') {
                modal.innerHTML = ''; 
-          }
-          // FIX: If it's the champion info modal, only clear its body to preserve the structure
-          if (modalId === 'championInfoModal' && DOM.championInfoModalBody) {
-              DOM.championInfoModalBody.innerHTML = '';
           }
         }, 300);
     }

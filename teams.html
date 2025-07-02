@@ -5,19 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DC: Dark Legion - Optimal Team Builder</title>
+    <meta name="description" content="Build your roster and find your highest-scoring team composition using the Optimal Team Builder.">
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Russo+One&display=swap" rel="stylesheet">
     <link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
     <link href="css/teams/ui.css" rel="stylesheet">
     <link href="css/theme.css" rel="stylesheet">
     <link href="css/comic-view.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
-<body>
+<body class="text-gray-200">
     <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="ogwmj" data-description="Support me on Buy me a coffee!" data-message="" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
-
     <notification-center></notification-center>
+    <auth-ui status-container-id="auth-status-desktop"></auth-ui>
+    <feedback-widget></feedback-widget>
     <div class="background-hero"></div>
 
     <nav class="bg-slate-900 bg-opacity-80 backdrop-filter backdrop-blur-md shadow-lg sticky top-0 z-50">
@@ -47,7 +51,6 @@
                             <a href="codex.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Codex</a>
                         </div>
                     </div>
-                    
                     <div id="auth-status-desktop"><span class="text-gray-300 px-3 py-2 text-sm font-medium">Loading...</span></div>
                 </div>
                 <div class="-mr-2 flex md:hidden">
@@ -60,192 +63,168 @@
             </div>
         </div>
         <div class="md:hidden hidden" id="mobile-menu">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="index.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
-                <div class="!mt-3">
-                    <span class="px-3 pt-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Hypertime Details</span>
-                    <a href="calendar.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Bleed Calendar</a>
-                    <a href="calculator.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Anvil Calculator</a>
-                    <a href="stores.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Store Analyzer</a>
-                </div>
-                <div class="!mt-3">
-                    <span class="px-3 pt-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Champions</span>
-                    <a href="teams.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Team Builder</a>
-                    <a href="codex.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Codex</a>
-                </div>
-                <div id="auth-status-mobile" class="pt-4 mt-2 border-t border-slate-700"></div>
             </div>
-        </div>
     </nav>
-
-    <div class="container">
-        <header class="text-center mb-12">
-            <h1 class="text-4xl md:text-6xl font-extrabold mb-3 glowing-text">Optimal Team Builder</h1>
-            <p class="text-lg md:text-xl text-blue-200">Build your roster and find your highest-scoring team composition.</p>
+    
+    <main class="relative z-10 max-w-7xl mx-auto p-4 md:p-8">
+        <header class="py-8 md:py-12 text-center">
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-4 glowing-text text-white">Optimal Team Builder</h1>
+            <p class="text-xl md:text-2xl text-blue-200">Build your roster and find your highest-scoring team composition.</p>
         </header>
 
-        <div id="loading-indicator" class="text-center card">
-            <div class="loading-spinner"></div>
-            <p class="text-indigo-600 mt-2">Loading game data & your roster...</p>
+        <div id="loading-indicator" class="text-center p-8 bg-slate-800 rounded-lg">
+            <div class="loading-spinner mx-auto"></div>
+            <p class="text-blue-200 mt-4 text-lg">Loading game data & your roster...</p>
         </div>
-        <div id="error-indicator" class="text-center card hidden p-4 bg-red-100 border border-red-300 text-red-700">
-            <p>Error loading data. Please ensure Firestore is set up and populated.</p>
-            <p id="error-message-details" class="text-xs mt-1"></p>
+        <div id="error-indicator" class="hidden text-center p-8 bg-red-900/50 border border-red-500 rounded-lg">
+            <p class="text-red-300 text-xl font-bold">Error Loading Data</p>
+            <p id="error-message-details" class="text-red-400 mt-2"></p>
         </div>
 
-        <main id="main-app-content" class="card hidden">
-            <div id="stepper" class="stepper">
-                <div id="step-btn-1" class="step active" data-step="1">Manage Roster</div>
-                <div id="step-btn-2" class="step" data-step="2">Create Teams</div>
+        <div id="main-app-content" class="hidden">
+            <div id="stepper" class="stepper mb-12">
+                <div id="step-btn-1" class="step active"><span>1</span> Manage Roster</div>
+                <div id="step-btn-2" class="step"><span>2</span> Create Teams</div>
             </div>
 
             <div id="step-1-content" class="wizard-step">
-                <h2 id="form-mode-title" class="text-xl font-bold text-accent mb-6">Add Champion to Roster</h2>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 p-4 bg-slate-50 rounded-lg border border-slate-200 mb-8">
-                    <div class="input-group">
-                        <label for="custom-champ-dropdown-trigger">Select Champion</label>
-                        <div id="custom-champ-dropdown" class="relative mt-2">
-                            <input type="hidden" id="champ-select-db" name="champ-select-db">
-                            <button type="button" id="custom-champ-dropdown-trigger" aria-haspopup="listbox"
-                                aria-expanded="false" disabled>
-                                <span class="flex items-center">
-                                    <img src="" alt="Selected Champion" class="hidden" id="selected-champ-img">
-                                    <span class="ml-2 block truncate" id="selected-champ-name">-- Loading... --</span>
-                                </span>
-                                <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                    <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                        <path fill-rule="evenodd"
-                                            d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </span>
-                            </button>
-                            <ul id="custom-champ-dropdown-options" class="hidden" role="listbox"></ul>
-                        </div>
-                        <div class="input-group mt-4">
-                            <div id="champ-star-selector-container" class="star-selector-container"></div>
-                            <input type="hidden" id="champ-star-color">
-                        </div>
-                        <div class="input-group mt-4">
-                            <label for="force-level-selector">Force Level</label>
-                            <div id="force-level-selector" class="mt-1"></div>
-                            <input type="hidden" id="champ-force-level">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="font-bold text-primary mb-2 block">Gear Rarity</label>
-                        <div id="interactive-gear-grid" class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <section class="mb-12 p-6 bg-slate-900 bg-opacity-70 backdrop-blur-sm rounded-lg border border-blue-500/20">
+                    <h2 id="form-mode-title" class="text-2xl font-bold text-blue-300 mb-6">Add Champion to Roster</h2>
+                    <div id="roster-form-container" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div class="space-y-6">
+                            <div class="input-group">
+                                <label for="custom-champ-dropdown-trigger">Select Champion</label>
+                                <div id="custom-champ-dropdown" class="relative">
+                                    <input type="hidden" id="champ-select-db" name="champ-select-db">
+                                    <button type="button" id="custom-champ-dropdown-trigger" class="filter-input w-full text-left flex items-center justify-between" aria-haspopup="listbox" aria-expanded="false" disabled>
+                                        <span class="flex items-center gap-x-2">
+                                            <img src="" alt="Selected Champion" class="hidden w-6 h-6 rounded-full" id="selected-champ-img">
+                                            <span class="block truncate" id="selected-champ-name">-- Loading... --</span>
+                                        </span>
+                                        </button>
+                                    <ul id="custom-champ-dropdown-options" class="hidden"></ul>
+                                </div>
                             </div>
+                            <div class="input-group">
+                                <label>Star Color & Tier</label>
+                                <div id="champ-star-selector-container" class="star-selector-container"></div>
+                                <input type="hidden" id="champ-star-color">
+                            </div>
+                            <div class="input-group">
+                                <label for="force-level-selector">Force Level</label>
+                                <div id="force-level-selector"></div>
+                                <input type="hidden" id="champ-force-level">
+                            </div>
+                        </div>
+                        <div class="space-y-6">
+                             <div class="input-group">
+                                <label>Gear Rarity</label>
+                                <div id="interactive-gear-grid"></div>
+                            </div>
+                        </div>
+                        <div class="space-y-6">
+                            <div class="input-group">
+                                <label for="custom-lp-dropdown-trigger">Legacy Piece</label>
+                                <div id="custom-lp-dropdown" class="relative">
+                                    <input type="hidden" id="legacy-piece-select">
+                                    <button type="button" id="custom-lp-dropdown-trigger" class="w-full text-left flex items-center justify-between" aria-haspopup="listbox" aria-expanded="false">
+                                        <span id="selected-lp-name" class="block truncate">-- None --</span>
+                                        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                    </button>
+                                    <ul id="custom-lp-dropdown-options" class="hidden"></ul>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="legacy-piece-star-color">Legacy Piece Tier</label>
+                                <div id="legacy-piece-selector-container" class="star-selector-container"></div>
+                                <input type="hidden" id="legacy-piece-star-color">
+                            </div>
+                            <div class="pt-4 space-y-3">
+                                <button id="add-update-champion-btn" class="btn btn-primary w-full flex items-center justify-center gap-x-2">
+                                    Add Champion
+                                    <span id="save-roster-indicator" class="spinner hidden"></span>
+                                </button>
+                                <button id="cancel-edit-btn" class="btn btn-secondary w-full hidden">Cancel Edit</button>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <div class="input-group">
-                            <label for="legacy-piece-select">Legacy Piece</label>
-                            <select id="legacy-piece-select"></select>
+                </section>
+                
+                <section class="mb-12 p-6 bg-slate-900 bg-opacity-70 backdrop-blur-sm rounded-lg border border-blue-500/20">
+                    <h2 class="text-3xl font-bold text-blue-300 mb-6">Your Roster</h2>
+                    <div class="flex flex-col md:flex-row gap-4 mb-4 items-end">
+                        <div class="flex-grow flex flex-col md:flex-row gap-4">
+                            <div id="roster-faction-filters-container"></div>
+                            <div id="roster-class-filters-container"></div>
                         </div>
-                        <div class="input-group mt-4">
-                            <label for="legacy-piece-star-color">Legacy Piece Tier</label>
-                            <div id="legacy-piece-selector-container" class="star-selector-container"></div>
-                            <input type="hidden" id="legacy-piece-star-color">
-                        </div>
-                        <div class="mt-8 space-y-2">
-                            <button id="add-update-champion-btn" class="btn btn-primary w-full">
-                                Add Champion
-                                <span id="save-roster-indicator" class="spinner hidden"></span>
-                            </button>
-                            <button id="cancel-edit-btn" class="btn btn-secondary w-full hidden">Cancel Edit</button>
+                        <div class="input-group w-full md:w-auto md:max-w-xs">
+                            <label for="roster-search-input" class="filter-label">Search Roster</label>
+                            <input type="search" id="roster-search-input" placeholder="Enter champion name..." class="filter-input w-full">
                         </div>
                     </div>
-                </div>
-
-                <h2 class="text-xl font-bold text-accent mb-4">Your Roster</h2>
-
-                <div class="flex flex-col gap-y-2 mb-4">
-                    <div id="roster-faction-filters-container"></div>
-                    <div id="roster-class-filters-container"></div>
-                </div>
-
-                <div id="roster-table-container" class="w-full">
-                    <table id="roster-table" class="display w-full">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Class</th>
-                                <th>Rarity</th>
-                                <th>Tier</th>
-                                <th>Score</th>
-                                <th>Legacy Piece</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-                <p id="roster-empty-message" class="text-slate-500 text-center py-4 hidden">Your roster is empty. Add a
-                    champion to get started.</p>
-                <div id="roster-management-buttons" class="mt-4 flex flex-wrap gap-2">
-                    <button id="prefill-roster-btn" class="btn btn-secondary btn-sm hidden">Pre-fill Roster</button>
-                    <button id="export-roster-btn" class="btn btn-secondary btn-sm">Export Roster</button>
-                    <button id="import-roster-btn" class="btn btn-secondary btn-sm">Import Roster</button>
-                    <input type="file" id="import-roster-file" class="hidden" accept=".json">
-                </div>
+                    <div id="roster-grid" class="codex-grid">
+                        </div>
+                    <div id="roster-empty-message" class="hidden text-center py-8">
+                        <p class="text-xl text-slate-400">Your roster is empty.</p>
+                        <p class="text-slate-500">Add a champion above or pre-fill your roster to get started.</p>
+                    </div>
+                    <div id="roster-management-buttons" class="mt-4 flex flex-wrap gap-2">
+                        <button id="prefill-roster-btn" class="btn btn-secondary hidden">Pre-fill Roster</button>
+                        <button id="export-roster-btn" class="btn btn-secondary">Export Roster</button>
+                        <button id="import-roster-btn" class="btn btn-secondary">Import Roster</button>
+                        <input type="file" id="import-roster-file" class="hidden" accept=".json">
+                    </div>
+                </section>
             </div>
 
             <div id="step-2-content" class="wizard-step hidden-step">
-                <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 mb-8">
-                    <h2 class="text-xl font-bold text-accent mb-4">Find Optimal Team</h2>
+                <section class="mb-12 p-6 bg-slate-900 bg-opacity-70 backdrop-blur-sm rounded-lg border border-blue-500/20">
+                    <h2 class="text-2xl font-bold text-blue-300 mb-6">Find Optimal Team</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                        <div class="space-y-4">
-                            <h3 class="text-lg font-semibold text-primary border-b pb-2 mb-3">Filtering Options</h3>
-                            <div class="input-group">
-                                <label class="font-medium text-gray-700 block mb-2">Include Champions with these Synergies:</label>
+                        <div>
+                            <h3 class="text-lg font-semibold text-blue-200 border-b border-blue-500/20 pb-2 mb-4">Filtering Options</h3>
+                            <div class="input-group mb-4">
+                                <label for="synergy-search-input">Include Champions with these Synergies:</label>
                                 <div id="synergy-multiselect-container" class="custom-multiselect-container">
-                                    <div class="pills-input-wrapper" tabindex="0">
-                                        <input type="text" id="synergy-search-input" placeholder="Select one or more synergies...">
-                                    </div>
-                                    <div id="synergy-options-panel" class="custom-options-panel hidden">
-                                        </div>
+                                    <div class="pills-input-wrapper"><input type="text" id="synergy-search-input" placeholder="Select one or more synergies..."></div>
+                                    <div id="synergy-options-panel" class="custom-options-panel hidden"></div>
                                 </div>
                             </div>
-                            <div class="flex items-center pt-2">
-                                <input id="require-healer-checkbox" type="checkbox" class="h-5 w-5 rounded text-indigo-600 focus:ring-indigo-500 border-gray-300">
-                                <label for="require-healer-checkbox" class="ml-3 text-sm font-medium text-gray-700">Require Healer in Team?</label>
+                            <div class="flex items-center">
+                                <input id="require-healer-checkbox" type="checkbox" class="h-5 w-5 rounded bg-slate-700 border-slate-500 text-indigo-500 focus:ring-indigo-600">
+                                <label for="require-healer-checkbox" class="ml-3 checkbox-label">Require Healer in Team?</label>
                             </div>
                         </div>
-                        
-                        <div class="space-y-4">
-                             <h3 class="text-lg font-semibold text-primary border-b pb-2 mb-3">Exclusion Options</h3>
-                             <div class="flex items-center">
-                                <input id="exclude-saved-team-checkbox" type="checkbox" class="h-5 w-5 rounded text-indigo-600 focus:ring-indigo-500 border-gray-300">
-                                <label for="exclude-saved-team-checkbox" class="ml-3 text-sm font-medium text-gray-700">Exclude Champions from Saved Teams?</label>
+                        <div>
+                            <h3 class="text-lg font-semibold text-blue-200 border-b border-blue-500/20 pb-2 mb-4">Exclusion Options</h3>
+                             <div class="flex items-center mb-4">
+                                <input id="exclude-saved-team-checkbox" type="checkbox" class="h-5 w-5 rounded bg-slate-700 border-slate-500 text-indigo-500 focus:ring-indigo-600">
+                                <label for="exclude-saved-team-checkbox" class="ml-3 checkbox-label">Exclude Champions from Saved Teams?</label>
                             </div>
-                            <div class="input-group custom-multiselect-container">
+                            <div class="input-group">
                                 <label for="team-exclusion-multiselect-container" class="sr-only">Select Teams to Exclude</label>
-                                <div id="team-exclusion-multiselect-container">
-                                    </div>
-                            </div>
-                            <div class="text-center md:text-right pt-4">
-                                <button id="calculate-btn" class="btn btn-primary text-lg w-full md:w-auto">Calculate</button>
+                                <div id="team-exclusion-multiselect-container"></div>
                             </div>
                         </div>
                     </div>
-                </div>
-
+                    <div class="text-center mt-8">
+                        <button id="calculate-btn" class="btn btn-primary text-lg px-12 py-4">Calculate Optimal Team</button>
+                    </div>
+                </section>
+                
                 <div id="results-output" class="min-h-[200px]">
-                    <p class="text-center text-slate-500 pt-8">Calculate a team to see results here.</p>
+                    <p class="text-center text-slate-400 pt-8 text-xl">Calculate a team to see results here.</p>
                 </div>
 
-                <div class="mt-10">
-                    <h2 class="text-xl font-bold text-accent mb-4">Saved Teams</h2>
-                    <div id="saved-teams-list" class="space-y-6">
-                        <p class="text-center text-slate-500">No teams saved yet.</p>
+                <div class="mt-16">
+                    <h2 class="text-3xl font-bold text-blue-300 mb-6">Saved Teams</h2>
+                    <div id="saved-teams-list" class="space-y-8">
+                        <p class="text-center text-slate-400 text-xl">No teams saved yet.</p>
                     </div>
                 </div>
             </div>
-            
-        </main>
-    </div>
+        </div>
+    </main>
 
     <div id="custom-tooltip" class="hidden"></div>
     <div id="team-name-modal" class="modal-backdrop hidden"></div>
@@ -253,77 +232,10 @@
     <div id="confirm-modal" class="modal-backdrop hidden"></div>
     <div id="share-team-modal" class="modal-backdrop hidden"></div>
     <div id="swap-champion-modal" class="modal-backdrop hidden"></div>
-    <div id="champion-info-modal" class="modal-backdrop hidden">
-        <div id="champion-info-modal-content" class="modal-content">
-            <button id="champion-info-modal-close" aria-label="Close">&times;</button>
-            <div id="champion-info-modal-body"></div>
-        </div>
-    </div>
-
     <div id="toast-container"></div>
-
-    <auth-ui status-container-id="auth-status-desktop"></auth-ui>
-
+    
     <footer class="relative z-10 text-gray-500 text-sm py-8 text-center">
-        <p class="mt-2">DC: Dark Legion 2025 DC. Software code 2025 FunPlus International AG. DC LOGO and all related characters and elements &copy; &amp; &trade; DC.</p>
-        <p class="mt-2">Proud DC: Dark Legion Content Creator.</p>
-    </footer>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const desktopAuthContainer = document.getElementById('auth-status-desktop');
-            const mobileAuthContainer = document.getElementById('auth-status-mobile');
-
-            if (desktopAuthContainer && mobileAuthContainer) {
-                
-                const syncAuthStatus = () => {
-                    const logoutButton = desktopAuthContainer.querySelector('#logout-btn');
-
-                    if (logoutButton) {
-                        mobileAuthContainer.innerHTML = `
-                            <div class="space-y-1">
-                                <button id="logout-btn-mobile" class="text-gray-300 hover:bg-slate-700 hover:text-white block w-full text-left px-3 py-2 rounded-md text-base font-medium">Logout</button>
-                            </div>
-                        `;
-                        mobileAuthContainer.querySelector('#logout-btn-mobile').addEventListener('click', () => {
-                            logoutButton.click();
-                        });
-
-                    } else {
-                        mobileAuthContainer.innerHTML = desktopAuthContainer.innerHTML;
-                        const loginBtnMobile = mobileAuthContainer.querySelector('#login-btn');
-                        const loginBtnDesktop = desktopAuthContainer.querySelector('#login-btn');
-                        
-                        if (loginBtnMobile && loginBtnDesktop) {
-                            loginBtnMobile.addEventListener('click', () => {
-                                loginBtnDesktop.click();
-                            });
-                            
-                            loginBtnMobile.classList.add('block', 'w-full', 'text-left');
-                            loginBtnMobile.classList.remove('text-sm');
-                            loginBtnMobile.classList.add('text-base');
-                        }
-                    }
-                };
-
-                const observer = new MutationObserver(syncAuthStatus);
-                observer.observe(desktopAuthContainer, { childList: true, subtree: true });
-
-                syncAuthStatus();
-            }
-        });
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/dcdl/sw.js').then(registration => {
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                }, err => {
-                    console.log('ServiceWorker registration failed: ', err);
-                });
-            });
-        }
-    </script>
-    <feedback-widget></feedback-widget>
+        </footer>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/2.3.1/js/dataTables.min.js"></script>
@@ -333,7 +245,5 @@
     <script type="module" src="js/teams/core.js"></script>
     <script type="module" src="js/teams/ui.js"></script>
     <script type="text/javascript" src="js/navigation.js"></script>
-
 </body>
-
 </html>
