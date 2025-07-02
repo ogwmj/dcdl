@@ -39,6 +39,8 @@
     aspect-ratio: 4 / 3;
     position: relative;
     z-index: 2;
+    overflow: hidden;
+    min-height: 0;
 }
 
 .card-avatar-top {
