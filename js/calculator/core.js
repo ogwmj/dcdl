@@ -9,8 +9,8 @@
 // --- CONSTANTS ---
 
 const CONSTANTS = {
-    NM_GUARANTEE_THRESHOLD: 3, // Non-LM pulls before a guarantee.
-    NUM_SIM_RUNS: 10000,       // Simulation runs for probability.
+    NM_GUARANTEE_THRESHOLD: 3,
+    NUM_SIM_RUNS: 10000,
     SHARD_REQUIREMENTS: {
         "White 1-Star": 2, "White 2-Star": 5, "White 3-Star": 10, "White 4-Star": 20, "White 5-Star": 40,
         "Blue 1-Star": 60, "Blue 2-Star": 80, "Blue 3-Star": 100, "Blue 4-Star": 130, "Blue 5-Star": 160,
@@ -19,8 +19,6 @@ const CONSTANTS = {
         "Red 1-Star": 680, "Red 2-Star": 760, "Red 3-Star": 840, "Red 4-Star": 920, "Red 5-Star": 1000
     }
 };
-
-// --- HELPER FUNCTIONS ---
 
 /**
  * Memoizes a function to cache its results.
@@ -78,9 +76,6 @@ function calculateActualRateFromEffectiveRate(effectiveRate, nmGuaranteeThreshol
     return (low + high) / 2;
 }
 
-
-// --- CORE CALCULATION LOGIC ---
-
 /**
  * Calculates the expected number of draws to get a mythic item.
  * @param {number} mythicProbability - Base probability (0-1).
@@ -113,18 +108,15 @@ const calculateLmCycleMetrics = memoize((lmShardYield, nmShardYield, lmRateUpCha
     let totalExpectedShards = 0.0;
     let totalExpectedMythicPulls = 0.0;
 
-    // Direct LM hit
     totalExpectedShards += lmShardYield * lmRateUpChance;
     totalExpectedMythicPulls += 1 * lmRateUpChance;
 
-    // Sequences of NM hits -> LM
     for (let i = 1; i < nmGuaranteeThreshold; i++) {
         const p_sequence = Math.pow(nmRateUpChance, i) * lmRateUpChance;
         totalExpectedShards += ((nmShardYield * i) + lmShardYield) * p_sequence;
         totalExpectedMythicPulls += (i + 1) * p_sequence;
     }
 
-    // Guarantee hit
     const p_guarantee = Math.pow(nmRateUpChance, nmGuaranteeThreshold);
     totalExpectedShards += ((nmShardYield * nmGuaranteeThreshold) + lmShardYield) * p_guarantee;
     totalExpectedMythicPulls += (nmGuaranteeThreshold + 1) * p_guarantee;
@@ -169,7 +161,6 @@ export function calculateExpectedValue(inputs) {
     const drawsPerMythicAverage = calculateExpectedDrawsPerMythic(mythicProbability, mythicHardPity);
     if (isNaN(drawsPerMythicAverage)) return { error: 'Invalid base mythic calculation.' };
 
-    // NEW: Calculate the actual rate from the effective rate provided by the user
     const actualLmRateUpChance = calculateActualRateFromEffectiveRate(lmRateUpChance, CONSTANTS.NM_GUARANTEE_THRESHOLD);
 
     const unlockCycleMetrics = calculateLmCycleMetrics(1, 0, actualLmRateUpChance, CONSTANTS.NM_GUARANTEE_THRESHOLD);
@@ -205,9 +196,6 @@ export function calculateExpectedValue(inputs) {
     };
 }
 
-
-// --- PROBABILITY SIMULATION ---
-
 /**
  * Runs a single simulation attempt.
  * @param {object} params - Simulation parameters.
@@ -231,7 +219,6 @@ function simulateSingleRun(params) {
         totalAnvils++;
         if (mythicPityCounter >= hardPity || Math.random() < mythicProb) {
             mythicPityCounter = 0;
-            // Use the actual rate for the simulation
             const isLMPull = nmFailStreak >= nmGuarantee || Math.random() < lmRateUp;
             if (isLMPull) {
                 nmFailStreak = 0;
@@ -279,14 +266,13 @@ export function runProbabilitySimulation(inputs) {
     const targetTotalShards = CONSTANTS.SHARD_REQUIREMENTS[targetStarLevel] || 0;
     const shardsNeededForUpgrade = Math.max(0, targetTotalShards - startShards);
     
-    // NEW: Calculate the actual rate for the simulation
     const actualLmRateUpChance = calculateActualRateFromEffectiveRate(lmRateUpChance, CONSTANTS.NM_GUARANTEE_THRESHOLD);
 
     const simParams = {
         budget: anvilBudget,
         mythicProb: mythicProbability,
         hardPity: mythicHardPity,
-        lmRateUp: actualLmRateUpChance, // Use the actual rate
+        lmRateUp: actualLmRateUpChance,
         nmGuarantee: CONSTANTS.NM_GUARANTEE_THRESHOLD,
         includeUnlock: toggleUnlockCost,
         targetShardsForUpgrade: shardsNeededForUpgrade,

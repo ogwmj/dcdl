@@ -235,7 +235,65 @@
     <div id="toast-container"></div>
     
     <footer class="relative z-10 text-gray-500 text-sm py-8 text-center">
-        </footer>
+        <p class="mt-2">DC: Dark Legion 2025 DC. Software code 2025 FunPlus International AG. DC LOGO and all related characters and elements &copy; &amp; &trade; DC.</p>
+        <p class="mt-2">Proud DC: Dark Legion Content Creator.</p>
+        <p class="mt-4"><a href="info/calculator.html" class="text-blue-400 hover:text-blue-300 underline">Pull Rate Guide</a></p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const desktopAuthContainer = document.getElementById('auth-status-desktop');
+            const mobileAuthContainer = document.getElementById('auth-status-mobile');
+
+            if (desktopAuthContainer && mobileAuthContainer) {
+                
+                const syncAuthStatus = () => {
+                    const logoutButton = desktopAuthContainer.querySelector('#logout-btn');
+
+                    if (logoutButton) {
+                        mobileAuthContainer.innerHTML = `
+                            <div class="space-y-1">
+                                <button id="logout-btn-mobile" class="text-gray-300 hover:bg-slate-700 hover:text-white block w-full text-left px-3 py-2 rounded-md text-base font-medium">Logout</button>
+                            </div>
+                        `;
+                        mobileAuthContainer.querySelector('#logout-btn-mobile').addEventListener('click', () => {
+                            logoutButton.click();
+                        });
+
+                    } else {
+                        mobileAuthContainer.innerHTML = desktopAuthContainer.innerHTML;
+                        const loginBtnMobile = mobileAuthContainer.querySelector('#login-btn');
+                        const loginBtnDesktop = desktopAuthContainer.querySelector('#login-btn');
+                        
+                        if (loginBtnMobile && loginBtnDesktop) {
+                            loginBtnMobile.addEventListener('click', () => {
+                                loginBtnDesktop.click();
+                            });
+                            
+                            loginBtnMobile.classList.add('block', 'w-full', 'text-left');
+                            loginBtnMobile.classList.remove('text-sm');
+                            loginBtnMobile.classList.add('text-base');
+                        }
+                    }
+                };
+
+                const observer = new MutationObserver(syncAuthStatus);
+                observer.observe(desktopAuthContainer, { childList: true, subtree: true });
+
+                syncAuthStatus();
+            }
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/dcdl/sw.js').then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/2.3.1/js/dataTables.min.js"></script>

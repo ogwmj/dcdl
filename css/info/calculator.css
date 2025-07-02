@@ -1,0 +1,127 @@
+/**
+* @file css/info/calculator.css
+* @description Styles for the calculator infographics
+*/
+
+.card {
+    background-color: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    border-radius: 0.75rem;
+    padding: 2rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.infographic-icon {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(59, 130, 246, 0.1);
+    border: 2px solid rgba(59, 130, 246, 0.3);
+    transition: all 0.3s ease;
+}
+
+.infographic-icon svg {
+    width: 32px;
+    height: 32px;
+    color: #3b82f6;
+}
+
+.guaranteed-icon {
+        background-color: rgba(59, 130, 246, 0.3);
+        border: 2px solid #3b82f6;
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+}
+
+.guaranteed-icon svg {
+    color: #fff;
+}
+
+.arrow {
+    color: rgba(59, 130, 246, 0.4);
+    flex-shrink: 0;
+}
+
+.pity-bar-fill {
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    animation: fill-pity 3s 1s ease-in-out forwards;
+    box-shadow: 0 0 10px #3b82f6;
+    width: 0%;
+}
+
+@keyframes fill-pity {
+    from { width: 0%; }
+    to { width: 100%; }
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 20px;
+    bottom: 20px;
+    width: 4px;
+    background-color: rgba(59, 130, 246, 0.2);
+    border-radius: 2px;
+}
+.timeline-item {
+    position: relative;
+}
+.timeline-dot {
+    position: absolute;
+    left: 50%;
+    top: 20px;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #0d1226;
+    border: 4px solid #3b82f6;
+}
+.timeline-content {
+    width: calc(50% - 40px);
+}
+.timeline-item:nth-child(even) .timeline-content {
+    margin-left: auto;
+}
+
+pre[class*="language-"] {
+    padding: 1.5rem;
+    margin-top: 1rem;
+    border-radius: 0.5rem;
+    background-color: #020617;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    overflow-x: auto;
+    color: #cbd5e1; /* slate-300 */
+}
+.token.comment, .token.prolog, .token.doctype, .token.cdata {
+    color: #64748b; /* slate-500 */
+}
+.token.punctuation {
+    color: #94a3b8; /* slate-400 */
+}
+.token.property, .token.tag, .token.boolean, .token.number, .token.constant, .token.symbol, .token.deleted {
+    color: #f472b6; /* pink-400 */
+}
+.token.selector, .token.attr-name, .token.string, .token.char, .token.builtin, .token.inserted {
+    color: #a78bfa; /* violet-400 */
+}
+.token.operator, .token.entity, .token.url, .language-css .token.string, .style .token.string {
+    color: #60a5fa; /* blue-400 */
+}
+.token.atrule, .token.attr-value, .token.keyword {
+    color: #818cf8; /* indigo-400 */
+}
+.token.function, .token.class-name {
+    color: #f59e0b; /* amber-500 */
+}
+.token.regex, .token.important, .token.variable {
+    color: #eab308; /* yellow-500 */
+}

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DC: Dark Legion - Calculator Information</title>
+    <meta name="description" content="Explore the complete database of champions in DC: Dark Legion. View stats, synergies, and comic book origins for every character.">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Russo+One&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="../css/theme.css" rel="stylesheet">
+    <link href="../css/info/calculator.css" rel="stylesheet">
+</head>
+
+<body class="text-gray-200">
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="ogwmj" data-description="Support me on Buy me a coffee!" data-message="" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+
+    <notification-center></notification-center>
+    <auth-ui status-container-id="auth-status-desktop"></auth-ui>
+    <feedback-widget></feedback-widget>
+    <discord-widget></discord-widget>
+
+    <div class="background-hero"></div>
+
+    <nav class="bg-slate-900 bg-opacity-80 backdrop-filter backdrop-blur-md shadow-lg sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="../index.html" class="text-white text-2xl font-bold">DC:DL Tools</a>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="../index.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                    <div class="relative group">
+                        <button class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium inline-flex items-center" aria-haspopup="true">
+                            <span>Hypertime Details</span>
+                            <svg class="w-4 h-4 ml-1 text-gray-400 group-hover:text-white transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="absolute hidden group-hover:block bg-slate-900 bg-opacity-90 backdrop-filter backdrop-blur-md rounded-md shadow-lg py-1 w-48 z-50 top-full">
+                            <a href="../calendar.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Bleed Calendar</a>
+                            <a href="../calculator.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Anvil Calculator</a>
+                            <a href="../stores.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Store Analyzer</a>
+                        </div>
+                    </div>
+                    <div class="relative group">
+                        <button class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium inline-flex items-center" aria-haspopup="true">
+                            <span>Champions</span>
+                            <svg class="w-4 h-4 ml-1 text-gray-400 group-hover:text-white transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="absolute hidden group-hover:block bg-slate-900 bg-opacity-90 backdrop-filter backdrop-blur-md rounded-md shadow-lg py-1 w-48 z-50 top-full">
+                            <a href="../teams.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Team Builder</a>
+                            <a href="../codex.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Codex</a>
+                        </div>
+                    </div>
+                    
+                    <div id="auth-status-desktop"><span class="text-gray-300 px-3 py-2 text-sm font-medium">Loading...</span></div>
+                </div>
+                <div class="-mr-2 flex md:hidden">
+                    <button type="button" id="mobile-menu-button" class="bg-slate-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="md:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="../index.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <div class="!mt-3">
+                    <span class="px-3 pt-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Hypertime Details</span>
+                    <a href="../calendar.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Bleed Calendar</a>
+                    <a href="../calculator.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Anvil Calculator</a>
+                    <a href="../stores.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Store Analyzer</a>
+                </div>
+                <div class="!mt-3">
+                    <span class="px-3 pt-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Champions</span>
+                    <a href="../teams.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Team Builder</a>
+                    <a href="../codex.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Codex</a>
+                </div>
+                <div id="auth-status-mobile" class="pt-4 mt-2 border-t border-slate-700"></div>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="relative z-10 max-w-7xl mx-auto p-4 md:p-8">
+        <header class="py-8 md:py-12 text-center">
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-4 glowing-text text-white">Limited Mythic Pulls</h1>
+            <p class="text-xl md:text-2xl text-blue-200">A Deep Dive into the Anvil Calculator's Guarantee System.</p>
+        </header>
+
+        <!-- Section 1: The Two Layers -->
+        <section class="mb-12">
+            <div class="card">
+                <h2 class="text-2xl font-bold text-white mb-2">It's a Two-Step Process</h2>
+                <p class="text-slate-400 mb-8">Acquiring a Limited Mythic (LM) champion isn't one roll of the dice; it's two separate events that happen in sequence. You must pass both layers, each with its own "pity" mechanic.</p>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
+                    <div class="text-center p-4 rounded-lg flex-1">
+                        <div class="infographic-icon mx-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                        </div>
+                        <h3 class="mt-2 font-semibold text-white">1. Pull ANY Mythic</h3>
+                        <p class="text-sm text-slate-400">This has a base probability and a hard pity counter.</p>
+                    </div>
+                    <div class="arrow transform md:rotate-0 rotate-90">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" /></svg>
+                    </div>
+                    <div class="text-center p-4 rounded-lg flex-1">
+                        <div class="infographic-icon mx-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        </div>
+                        <h3 class="mt-2 font-semibold text-white">2. Win the LM Roll</h3>
+                        <p class="text-sm text-slate-400">This determines if the mythic is the featured LM.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Layer 1 - The Mythic Pull -->
+        <section class="mb-12">
+            <div class="card">
+                <h2 class="text-2xl font-bold text-white mb-2">Layer 1: The Mythic Pull</h2>
+                <p class="text-slate-400 mb-8">The first hurdle is to pull a mythic champion of any kind. This layer has a standard pity system. Each non-mythic pull fills up a "pity" meter toward a guaranteed mythic.</p>
+                <div class="flex flex-col lg:flex-row items-center gap-8">
+                    <div class="flex-grow w-full">
+                        <p class="text-slate-200 mb-2 font-semibold">Mythic Pity Counter</p>
+                        <div class="w-full bg-slate-700 rounded-full h-6 overflow-hidden border border-slate-600">
+                            <div class="pity-bar-fill h-full rounded-full flex items-center justify-center text-sm font-bold text-white">
+                                Hard Pity Reached!
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-2">If you don't get a mythic by chance, the counter fills and guarantees one at the `mythicHardPity` limit.</p>
+                    </div>
+                    <div class="arrow transform lg:rotate-0 rotate-90">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" /></svg>
+                    </div>
+                    <div class="text-center flex-shrink-0">
+                         <div class="infographic-icon guaranteed-icon mx-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" /></svg>
+                        </div>
+                        <h3 class="mt-2 font-semibold text-white">Guaranteed Mythic</h3>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section 3: Layer 2 - The LM Guarantee -->
+        <section class="mb-12">
+             <div class="card">
+                <h2 class="text-2xl font-bold text-white mb-2">Layer 2: The Limited Mythic Guarantee</h2>
+                <p class="text-slate-400 mb-8">Once you pull a mythic, this second pity system activates. It protects you from never getting the featured champion. You can only pull 3 Non-Mythic (NM) champions in a row. The next mythic is guaranteed to be the LM.</p>
+                <div class="flex items-center justify-center gap-2 sm:gap-4 flex-wrap">
+                    <div class="text-center p-2">
+                        <div class="infographic-icon mx-auto"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg></div>
+                        <h3 class="mt-2 text-sm font-semibold text-white">NM Pull #1</h3>
+                    </div>
+                    <div class="arrow hidden sm:block"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" /></svg></div>
+                    <div class="text-center p-2">
+                        <div class="infographic-icon mx-auto"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg></div>
+                        <h3 class="mt-2 text-sm font-semibold text-white">NM Pull #2</h3>
+                    </div>
+                    <div class="arrow hidden sm:block"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" /></svg></div>
+                    <div class="text-center p-2">
+                        <div class="infographic-icon mx-auto"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg></div>
+                        <h3 class="mt-2 text-sm font-semibold text-white">NM Pull #3</h3>
+                    </div>
+                     <div class="arrow hidden sm:block"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" /></svg></div>
+                    <div class="text-center p-2">
+                        <div class="infographic-icon guaranteed-icon mx-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" /></svg>
+                        </div>
+                        <h3 class="mt-2 text-sm font-bold text-white">GUARANTEED LM</h3>
+                    </div>
+                </div>
+             </div>
+        </section>
+
+        <!-- Section 4: Putting It All Together -->
+        <section class="mb-12">
+            <div class="card">
+                <h2 class="text-2xl font-bold text-white mb-2">Putting It All Together: A Sample Journey</h2>
+                <p class="text-slate-300 mb-8">Let's walk through a hypothetical scenario to see how both pity systems work together. In this example, we'll use the actual Mythic Hard Pity of <strong>50 pulls</strong>.</p>
+                <div class="relative timeline pt-4">
+                    <!-- Event 1 -->
+                    <div class="timeline-item flex justify-start mb-8">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content card !p-4 !bg-slate-800/70">
+                            <p class="font-bold text-white">Pull #42: Lucky Mythic!</p>
+                            <p class="text-sm text-slate-200">You pull a mythic before pity. Now Layer 2 activates.</p>
+                            <p class="text-sm mt-2 text-white">Outcome: <span class="font-semibold text-red-400">Mythic (M)</span></p>
+                            <p class="text-sm text-white">LM Pity Streak: <span class="font-bold text-white">1</span></p>
+                        </div>
+                    </div>
+                    <!-- Event 2 -->
+                    <div class="timeline-item flex justify-end mb-8">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content card !p-4 !bg-slate-800/70 text-right">
+                             <p class="font-bold text-white">Pull #92: Hard Pity Mythic</p>
+                            <p class="text-sm text-slate-200">50 pulls after the last mythic, pity guarantees another.</p>
+                            <p class="text-sm mt-2 text-white">Outcome: <span class="font-semibold text-red-400">Mythic (M)</span></p>
+                            <p class="text-sm text-white">LM Pity Streak: <span class="font-bold text-white">2</span></p>
+                        </div>
+                    </div>
+                     <!-- Event 3 -->
+                    <div class="timeline-item flex justify-start mb-8">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content card !p-4 !bg-slate-800/70">
+                            <p class="font-bold text-white">Pull #142: Hard Pity Mythic</p>
+                            <p class="text-sm text-slate-200">Another 50 pulls, another guaranteed mythic.</p>
+                            <p class="text-sm mt-2 text-white">Outcome: <span class="font-semibold text-red-400">Mythic (M)</span></p>
+                            <p class="text-sm text-white">LM Pity Streak: <span class="font-bold text-white">3</span></p>
+                        </div>
+                    </div>
+                     <!-- Event 4 -->
+                    <div class="timeline-item flex justify-end">
+                        <div class="timeline-dot !border-yellow-400 !bg-yellow-400/20"></div>
+                        <div class="timeline-content card !p-4 !bg-slate-800/70 text-right border-yellow-400/50">
+                            <p class="font-bold text-yellow-300">Pull #192: GUARANTEED LM</p>
+                            <p class="text-sm text-slate-200">A 4th mythic is pulled. Since the LM Pity streak was 3, this is a guaranteed LM.</p>
+                             <p class="text-sm mt-2 text-white">Outcome: <span class="font-semibold text-yellow-300">Limited Mythic!</span></p>
+                            <p class="text-sm text-white">LM Pity Streak resets to: <span class="font-bold text-white">0</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Anatomy of a Mythic Cycle -->
+        <section class="mb-12">
+            <div class="card">
+                <h2 class="text-2xl font-bold text-white mb-2">Anatomy of a Mythic Cycle</h2>
+                <p class="text-slate-300 mb-8">A "cycle" is complete once you obtain one Limited Mythic. This can happen on your first mythic pull of the cycle, or all the way to the fourth (the guarantee). Here's how the odds break down with a <strong>50% actual LM rate</strong>:</p>
+                <div class="space-y-6">
+                    <!-- Path 1 -->
+                    <div class="flex items-center gap-4">
+                        <div class="font-bold text-lg text-blue-300 w-16 text-center">50%</div>
+                        <div class="flex-1 p-4 bg-slate-800/70 rounded-lg border border-slate-700">
+                            <p class="font-semibold text-white">Path 1: LM on 1st Mythic</p>
+                            <p class="text-sm text-slate-300">You win the 50/50 roll immediately.</p>
+                        </div>
+                    </div>
+                    <!-- Path 2 -->
+                    <div class="flex items-center gap-4">
+                        <div class="font-bold text-lg text-blue-300 w-16 text-center">25%</div>
+                        <div class="flex-1 p-4 bg-slate-800/70 rounded-lg border border-slate-700">
+                            <p class="font-semibold text-white">Path 2: LM on 2nd Mythic</p>
+                            <p class="text-sm text-slate-300">You lose the first 50/50 (pull an NM), then win the second.</p>
+                        </div>
+                    </div>
+                    <!-- Path 3 -->
+                    <div class="flex items-center gap-4">
+                        <div class="font-bold text-lg text-blue-300 w-16 text-center">12.5%</div>
+                        <div class="flex-1 p-4 bg-slate-800/70 rounded-lg border border-slate-700">
+                            <p class="font-semibold text-white">Path 3: LM on 3rd Mythic</p>
+                            <p class="text-sm text-slate-300">You lose two 50/50s in a row, then win the third.</p>
+                        </div>
+                    </div>
+                    <!-- Path 4 -->
+                    <div class="flex items-center gap-4">
+                        <div class="font-bold text-lg text-blue-300 w-16 text-center">12.5%</div>
+                        <div class="flex-1 p-4 bg-slate-800/70 rounded-lg border border-slate-700">
+                            <p class="font-semibold text-white">Path 4: LM on 4th Mythic (Guarantee)</p>
+                            <p class="text-sm text-slate-300">You lose three 50/50s, triggering the guarantee. The fourth mythic MUST be an LM.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: Effective vs Actual Rate -->
+        <section class="mb-12">
+            <div class="card">
+                <h2 class="text-2xl font-bold text-white mb-2">The "Black Box": Effective vs. Actual Rate</h2>
+                <p class="text-slate-300 mb-8">The Anvil Calculator asks for an "Effective LM Rate," not the base rate. Because of the guarantee system, the rate you actually experience is higher than the base number. The calculator works backward to find the true base rate for its simulation.</p>
+                <div class="flex flex-col md:flex-row items-center justify-around gap-4 p-4 bg-slate-900/50 rounded-lg">
+                    <!-- Input -->
+                    <div class="text-center">
+                        <h3 class="font-semibold text-white">Your Input</h3>
+                        <p class="text-sm text-slate-400 mb-2">The "Effective Rate" you enter</p>
+                        <div class="bg-blue-500/20 text-blue-300 font-mono text-lg p-3 rounded-md border border-blue-500/30">
+                           ~53.3%
+                        </div>
+                    </div>
+                    <!-- Arrow -->
+                    <div class="arrow transform md:rotate-0 rotate-90">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" /></svg>
+                    </div>
+                    <!-- Black Box -->
+                    <div class="text-center">
+                        <div class="infographic-icon mx-auto animate-pulse">
+                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" /></svg>
+                        </div>
+                        <h3 class="mt-2 font-semibold text-white">Anvil Calculator Logic</h3>
+                    </div>
+                     <!-- Arrow -->
+                    <div class="arrow transform md:rotate-0 rotate-90">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" /></svg>
+                    </div>
+                    <!-- Output -->
+                     <div class="text-center">
+                        <h3 class="font-semibold text-white">Simulation's Rate</h3>
+                        <p class="text-sm text-slate-400 mb-2">The "Actual Rate" used in code</p>
+                        <div class="bg-purple-500/20 text-purple-300 font-mono text-lg p-3 rounded-md border border-purple-500/30">
+                           50%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 7: The Code Behind the Curtain -->
+        <section class="mb-12">
+            <div class="card">
+                <h2 class="text-2xl font-bold text-white mb-2">The Code Behind the Curtain</h2>
+                <p class="text-slate-300 mb-6">For those interested, here are simplified snippets from the calculator's core logic. This shows how the simulation determines if a pull is successful based on the interlocking pity systems.</p>
+                
+                <div>
+                    <h3 class="text-lg font-semibold text-white mb-2">Simulating a Single Pull</h3>
+                    <p class="text-slate-400 mb-2">This function simulates one anvil pull. It first checks for the hard pity on any mythic, then it checks for the LM guarantee if a mythic is pulled.</p>
+                    <pre class="language-js"><code><span class="token keyword">function</span> <span class="token function">simulateSingleRun</span><span class="token punctuation">(</span><span class="token parameter">params</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// ... (variable setup) ...</span>
+    
+    <span class="token keyword">let</span> mythicPityCounter <span class="token operator">=</span> initialMythicPity<span class="token punctuation">;</span>
+    <span class="token keyword">let</span> nmFailStreak <span class="token operator">=</span> initialLMPityStreak<span class="token punctuation">;</span>
+
+    <span class="token keyword">const</span> <span class="token function-variable function">performPull</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+        mythicPityCounter<span class="token operator">++</span><span class="token punctuation">;</span>
+
+        <span class="token comment">// LAYER 1: Did we get a mythic?</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>mythicPityCounter <span class="token operator">>=</span> hardPity <span class="token operator">||</span> Math<span class="token punctuation">.</span><span class="token function">random</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&lt;</span> mythicProb<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            mythicPityCounter <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> <span class="token comment">// Reset mythic pity</span>
+
+            <span class="token comment">// LAYER 2: Is the mythic an LM?</span>
+            <span class="token keyword">const</span> isLMPull <span class="token operator">=</span> nmFailStreak <span class="token operator">>=</span> nmGuarantee <span class="token operator">||</span> Math<span class="token punctuation">.</span><span class="token function">random</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&lt;</span> lmRateUp<span class="token punctuation">;</span>
+
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>isLMPull<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                nmFailStreak <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> <span class="token comment">// Reset LM pity on success</span>
+                <span class="token keyword">return</span> <span class="token punctuation">{</span> isLM<span class="token punctuation">:</span> <span class="token boolean">true</span> <span class="token punctuation">}</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+                nmFailStreak<span class="token operator">++</span><span class="token punctuation">;</span> <span class="token comment">// Increment LM pity on failure</span>
+                <span class="token keyword">return</span> <span class="token punctuation">{</span> isLM<span class="token punctuation">:</span> <span class="token boolean">false</span> <span class="token punctuation">}</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> <span class="token keyword">null</span><span class="token punctuation">;</span> <span class="token comment">// Not a mythic pull</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token comment">// ... (rest of simulation) ...</span>
+<span class="token punctuation">}</span></code></pre>
+                </div>
+            </div>
+        </section>
+        
+    </main>
+
+    <footer class="relative z-10 text-gray-500 text-sm py-8 text-center">
+        <p class="mt-2">DC: Dark Legion 2025 DC. Software code 2025 FunPlus International AG. DC LOGO and all related characters and elements &copy; &amp; &trade; DC.</p>
+        <p class="mt-2">Proud DC: Dark Legion Content Creator.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const desktopAuthContainer = document.getElementById('auth-status-desktop');
+            const mobileAuthContainer = document.getElementById('auth-status-mobile');
+
+            if (desktopAuthContainer && mobileAuthContainer) {
+                
+                const syncAuthStatus = () => {
+                    const logoutButton = desktopAuthContainer.querySelector('#logout-btn');
+
+                    if (logoutButton) {
+                        mobileAuthContainer.innerHTML = `
+                            <div class="space-y-1">
+                                <button id="logout-btn-mobile" class="text-gray-300 hover:bg-slate-700 hover:text-white block w-full text-left px-3 py-2 rounded-md text-base font-medium">Logout</button>
+                            </div>
+                        `;
+                        mobileAuthContainer.querySelector('#logout-btn-mobile').addEventListener('click', () => {
+                            logoutButton.click();
+                        });
+
+                    } else {
+                        mobileAuthContainer.innerHTML = desktopAuthContainer.innerHTML;
+                        const loginBtnMobile = mobileAuthContainer.querySelector('#login-btn');
+                        const loginBtnDesktop = desktopAuthContainer.querySelector('#login-btn');
+                        
+                        if (loginBtnMobile && loginBtnDesktop) {
+                            loginBtnMobile.addEventListener('click', () => {
+                                loginBtnDesktop.click();
+                            });
+                            
+                            loginBtnMobile.classList.add('block', 'w-full', 'text-left');
+                            loginBtnMobile.classList.remove('text-sm');
+                            loginBtnMobile.classList.add('text-base');
+                        }
+                    }
+                };
+
+                const observer = new MutationObserver(syncAuthStatus);
+                observer.observe(desktopAuthContainer, { childList: true, subtree: true });
+
+                syncAuthStatus();
+            }
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/dcdl/sw.js').then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+    
+    <script type="module" src="../js/auth-ui.js"></script>
+    <script type="module" src="../js/feedback-widget.js"></script>
+    <script type="module" src="../js/notification-center.js"></script>
+    <script type="text/javascript" src="../js/navigation.js"></script>
+
+    <script type="module">
+        import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+
+        function initializePageAnalytics() {
+            try {
+                const app = getApp();
+                const analytics = getAnalytics(app);
+
+                logEvent(analytics, 'page_view', {
+                    page_title: document.title,
+                    page_location: location.href,
+                    page_path: location.pathname
+                });
+
+            } catch (e) {
+                console.error("Analytics initialization failed on this page.", e);
+            }
+        }
+
+        document.addEventListener('firebase-ready', initializePageAnalytics, { once: true });
+    </script>
+</body>
+
+</html>
