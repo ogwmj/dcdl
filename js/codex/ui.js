@@ -6,9 +6,10 @@
 
 // --- Firebase & Data ---
 import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 // --- Global Variables ---
 let db, analytics, functions;
@@ -32,6 +33,7 @@ let activeFilters = {
     isHealer: false,
 };
 let currentViewMode = 'grid';
+let USER_ROSTER_IDS = new Set();
 
 // --- DOM ELEMENTS ---
 const DOM = {
@@ -138,6 +140,57 @@ function getClassIcon(className) {
 
 // --- END: Helper & Utility Functions ---
 
+// --- START: Roster Association
+
+/**
+ * Fetches the current user's roster and populates the USER_ROSTER_IDS set.
+ * @param {string} uid - The user's ID from Firebase Auth.
+ */
+async function fetchUserRoster(uid) {
+    if (!db || !uid) return;
+
+    const rosterRef = doc(db, `artifacts/dc-dark-legion-builder/users/${uid}/roster/myRoster`);
+    try {
+        const rosterSnap = await getDoc(rosterRef);
+        if (rosterSnap.exists()) {
+            const rosterData = rosterSnap.data();
+            const championIds = rosterData.champions?.map(c => c.dbChampionId) || [];
+            USER_ROSTER_IDS = new Set(championIds);
+        } else {
+            USER_ROSTER_IDS.clear();
+        }
+    } catch (error) {
+        console.error("Error fetching user roster:", error);
+        USER_ROSTER_IDS.clear();
+    }
+    
+    updateAllRosterButtons();
+}
+
+/**
+ * Iterates through all visible champion cards and updates their roster button.
+ */
+function updateAllRosterButtons() {
+    document.querySelectorAll('.roster-button-placeholder').forEach(placeholder => {
+        const championId = placeholder.dataset.championId;
+        const championName = placeholder.dataset.championName;
+        
+        const rosterButton = document.createElement('a');
+        rosterButton.className = 'card-action-btn';
+
+        if (USER_ROSTER_IDS.has(championId)) {
+            rosterButton.href = `teams.html?search=${championName}`;
+            rosterButton.textContent = 'View in Roster';
+        } else {
+            rosterButton.href = `teams.html?addChampion=${championId}`;
+            rosterButton.textContent = 'Add to Roster';
+        }
+        
+        placeholder.replaceWith(rosterButton);
+    });
+}
+
+// --- END: Roster Association
 
 // --- START: URL and Filter Logic ---
 
@@ -710,8 +763,9 @@ function createChampionCard(champion) {
             </div>
             <div class="card-back">
                 <div class="card-actions-container">
-                    <button class="card-action-btn" data-action="details">View Details</button>
-                    <button class="card-action-btn" data-action="download">Download Card</button>
+                    <div class="roster-button-placeholder" data-champion-id="${champion.id}" data-champion-name="${encodeURIComponent(champion.name)}"></div>
+                    <button class="card-action-btn" data-action="details">Overview</button>
+                    <button class="card-action-btn" data-action="download">Download</button>
                 </div>
             </div>
         </div>
@@ -881,6 +935,16 @@ document.addEventListener('firebase-ready', () => {
         db = getFirestore(app);
         analytics = getAnalytics(app);
         functions = getFunctions(app);
+        
+        const auth = getAuth(app);
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                fetchUserRoster(user.uid);
+            } else {
+                USER_ROSTER_IDS.clear();
+                updateAllRosterButtons();
+            }
+        });
 
         logAnalyticsEvent('page_view', { page_title: document.title, page_path: '/codex.html' });
         

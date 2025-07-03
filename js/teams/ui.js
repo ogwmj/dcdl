@@ -96,6 +96,8 @@ let teamExclusionMultiSelect = null;
 let activeFactionFilter = null; 
 let activeClassFilter = null;
 let activeSearchTerm = '';
+let shouldScrollToRoster = false;
+let urlParamsHandled = false;
 
 // =================================================================================================
 // #region INITIALIZATION
@@ -135,7 +137,6 @@ async function initializePage() {
         teamExclusionMultiSelect = createTeamExclusionMultiSelect([]);
 
         onAuthStateChanged(auth, handleUserSession);
-
     } catch (error) {
         showError("Initialization failed. Please refresh.", error.message);
         logEvent(analytics, 'exception', { description: `init_error: ${error.message}`, fatal: true });
@@ -176,13 +177,18 @@ async function handleUserSession() {
             await loadUserData();
             loadComicEnhancements();
         }
-    } else { // User logged out
+    } else {
         userId = null;
         playerRoster = [];
         savedTeams = [];
         renderRosterGrid();
         renderSavedTeams(new Map());
         populateChampionSelect();
+    }
+
+    if (!urlParamsHandled) {
+        handleUrlParameters(); //
+        urlParamsHandled = true;
     }
 }
 
@@ -935,6 +941,10 @@ function renderRosterGrid() {
     }
 
     applyChampionCardBackgrounds();
+    if (shouldScrollToRoster) {
+        gridEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        shouldScrollToRoster = false;
+    }
 }
 
 document.getElementById('roster-faction-filters-container').addEventListener('click', (e) => {
@@ -1734,11 +1744,40 @@ async function loadSavedTeamsFromFirestore() {
 // #region UI Helpers & Modals
 // =================================================================================================
 
-function getSynergyIconForComic(synergyName, customClass = 'synergy-icon') {
-    if (!synergyName) return '';
-    const nameForIcon = synergyName.trim().replace(/\s+/g, '_');
-    const fallbackSpan = `<span class="icon-placeholder text-xs" style="display:none;">[${synergyName}]</span>`;
-    return `<span class="icon-wrapper" title="${synergyName}"><img src="img/factions/${nameForIcon}.png" alt="${synergyName}" class="${customClass}" onerror="this.style.display='none'; const fb = this.parentElement.querySelector('.icon-placeholder'); if (fb) fb.style.display='inline-block';">${fallbackSpan}</span>`;
+/**
+ * @description Checks for and handles specific URL parameters on page load.
+ * Handles 'addChampion' to pre-fill the form and 'search' to filter the roster.
+ */
+function handleUrlParameters() {
+    const params = new URLSearchParams(window.location.search);
+    const championIdToAdd = params.get('addChampion');
+    const championNameToSearch = params.get('search');
+
+    if (championIdToAdd) {
+        const isChampionInRoster = playerRoster.some(c => c.dbChampionId === championIdToAdd);
+        
+        if (isChampionInRoster) {
+            const champion = dbChampions.find(c => c.id === championIdToAdd);
+            if (champion) {
+                DOM.rosterSearchInput.value = decodeURIComponent(championNameToSearch);
+                shouldScrollToRoster = true; 
+                DOM.rosterSearchInput.dispatchEvent(new Event('input', { bubbles: true }));
+                
+                showToast(`${champion.name} is already in your roster.`, 'info');
+            }
+        } else {
+            DOM.champSelectDb.value = championIdToAdd;
+            DOM.champSelectDb.dispatchEvent(new Event('change'));
+            showToast('Champion ready to be added!', 'success');
+            if (DOM.step1Content) {
+                DOM.step1Content.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    } else if (championNameToSearch) {
+        DOM.rosterSearchInput.value = decodeURIComponent(championNameToSearch);
+        shouldScrollToRoster = true; 
+        DOM.rosterSearchInput.dispatchEvent(new Event('input', { bubbles: true }));
+    }
 }
 
 /**
