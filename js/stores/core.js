@@ -16,15 +16,15 @@ const ANVIL_GEM_VALUE = 60;
 
 // --- Gem & Anvil Income Tiers ---
 const GEM_INCOME_TIERS = {
-    low: { daily: 65, weekly: 870, monthly: 220 },
-    medium: { daily: 250, weekly: 1800, monthly: 400 },
-    high: { daily: 1000, weekly: 4000, monthly: 720 },
+    low: { daily: 130, weekly: 880, monthly: 220 },
+    medium: { daily: 365, weekly: 1875, monthly: 400 },
+    high: { daily: 1210, weekly: 4075, monthly: 720 },
 };
 
 const ANVIL_INCOME_TIERS = {
-    low: { daily: 2, weekly: 12, monthly: 5 },
-    medium: { daily: 30, weekly: 25, monthly: 15 },
-    high: { daily: 54, weekly: 42, monthly: 25 },
+    low: { daily: 2, weekly: 12, monthly: 7 },
+    medium: { daily: 30, weekly: 25, monthly: 25 },
+    high: { daily: 54, weekly: 42, monthly: 40 },
 };
 
 const SUPER_MONTHLY_PASS = {
