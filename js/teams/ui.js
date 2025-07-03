@@ -72,6 +72,7 @@ const DOM = {
     customLPDropdownOptions: document.getElementById('custom-lp-dropdown-options'),
     selectedLPName: document.getElementById('selected-lp-name'),
     rosterSearchInput: document.getElementById('roster-search-input'),
+    rosterFiltersWrapper: document.getElementById('roster-filters-wrapper'),
 };
 
 /**
@@ -95,6 +96,7 @@ let synergyMultiSelect = null;
 let teamExclusionMultiSelect = null;
 let activeFactionFilter = null; 
 let activeClassFilter = null;
+let activeHealerFilter = false; 
 let activeSearchTerm = '';
 let shouldScrollToRoster = false;
 let urlParamsHandled = false;
@@ -713,6 +715,29 @@ function attachEventListeners() {
         }
     });
     DOM.rosterSearchInput.addEventListener('input', handleRosterSearch);
+
+    if (DOM.rosterFiltersWrapper) {
+        DOM.rosterFiltersWrapper.addEventListener('click', (e) => {
+            const button = e.target.closest('button');
+            if (!button) return;
+
+            const { action, faction, class: className, filter } = button.dataset;
+
+            if (action === 'clear-faction') {
+                activeFactionFilter = null;
+            } else if (action === 'clear-class') {
+                activeClassFilter = null;
+            } else if (faction) {
+                activeFactionFilter = activeFactionFilter === faction ? null : faction;
+            } else if (className) {
+                activeClassFilter = activeClassFilter === className ? null : className;
+            } else if (filter === 'healer') {
+                activeHealerFilter = !activeHealerFilter;
+            }
+
+            renderRosterGrid();
+        });
+    }
 }
 
 /**
@@ -834,6 +859,7 @@ function createRosterCard(champion) {
     card.dataset.championName = cleanName;
     card.dataset.championIdKey = idKey;
 
+    const healerIcon = champion.isHealer ? getHealerPlaceholder() : '';
     const starRating = getStarRatingHTML(champion.starColorTier);
     const forceLevel = `<p class="force-level">Force Lvl: ${champion.forceLevel}</p>`;
     const synergies = (champion.inherentSynergies || []).map(getSynergyIcon).join('');
@@ -843,7 +869,10 @@ function createRosterCard(champion) {
     card.innerHTML = `
         <div class="card-background-image"></div>
         <div class="card-top-info">
-            ${getClassPlaceholder(champion.class)}
+            <div class="flex items-center gap-2">
+                ${getClassPlaceholder(champion.class)}
+                ${healerIcon}
+            </div>
             <span class="card-score">${score}</span>
         </div>
         
@@ -875,29 +904,50 @@ function createRosterCard(champion) {
     return card;
 }
 
+// --- js/teams/ui.js ---
+
 /**
  * @description Renders the player's champion roster as a grid of cards, including filtering.
  */
 function renderRosterGrid() {
     const gridEl = document.getElementById('roster-grid'); 
-    const factionFilterContainer = document.getElementById('roster-faction-filters-container');
-    const classFilterContainer = document.getElementById('roster-class-filters-container');
+    const filtersContainer = document.getElementById('dynamic-filter-groups');
 
     if (!playerRoster || playerRoster.length === 0) {
-        gridEl.innerHTML = '';
-        factionFilterContainer.innerHTML = '';
-        classFilterContainer.innerHTML = '';
+        if (gridEl) gridEl.innerHTML = '';
+        if (filtersContainer) filtersContainer.innerHTML = ''; // Clear the main wrapper
+        
         DOM.rosterEmptyMessage.classList.remove('hidden');
-        gridEl.classList.add('hidden');
+        if (gridEl) gridEl.classList.add('hidden');
         if (DOM.prefillRosterBtn) DOM.prefillRosterBtn.classList.remove('hidden');
         return;
     }
 
     DOM.rosterEmptyMessage.classList.add('hidden');
-    gridEl.classList.remove('hidden');
+    if (gridEl) gridEl.classList.remove('hidden');
     
+    // Clear previous filters before re-rendering
+    if(filtersContainer) filtersContainer.innerHTML = '';
+
     const allFactions = new Set(playerRoster.flatMap(c => c.inherentSynergies || []));
     const allClasses = new Set(playerRoster.map(c => c.class).filter(Boolean));
+
+    // --- Dynamically create and populate filter groups ---
+    
+    // Faction Group
+    const factionGroup = document.createElement('div');
+    factionGroup.className = 'filter-group';
+    filtersContainer.appendChild(factionGroup);
+
+    // Class Group
+    const classGroup = document.createElement('div');
+    classGroup.className = 'filter-group';
+    filtersContainer.appendChild(classGroup);
+
+    // Utility Group
+    const utilityGroup = document.createElement('div');
+    utilityGroup.className = 'filter-group';
+    filtersContainer.appendChild(utilityGroup);
 
     const renderFilters = (container, items, type, currentFilter, iconFn) => {
         container.innerHTML = `<span class="filter-label">${type === 'faction' ? 'Faction' : 'Class'}:</span>`;
@@ -915,61 +965,51 @@ function renderRosterGrid() {
         clearBtn.className = 'filter-btn clear';
         clearBtn.innerHTML = '<i class="fas fa-times"></i>';
         clearBtn.title = 'Clear Filter';
+        clearBtn.dataset.action = `clear-${type}`;
         container.appendChild(clearBtn);
     };
     
-    renderFilters(factionFilterContainer, allFactions, 'faction', activeFactionFilter, getSynergyIcon);
-    renderFilters(classFilterContainer, allClasses, 'class', activeClassFilter, getClassPlaceholder);
-
+    renderFilters(factionGroup, allFactions, 'faction', activeFactionFilter, getSynergyIcon);
+    renderFilters(classGroup, allClasses, 'class', activeClassFilter, getClassPlaceholder);
+    
+    utilityGroup.innerHTML = `<span class="filter-label">Utility:</span>`;
+    const healerBtn = document.createElement('button');
+    healerBtn.className = 'filter-btn';
+    healerBtn.dataset.filter = 'healer';
+    healerBtn.innerHTML = getHealerPlaceholder();
+    healerBtn.title = 'Show Only Healers';
+    healerBtn.classList.toggle('active', activeHealerFilter);
+    utilityGroup.appendChild(healerBtn);
+    
     const filteredRoster = playerRoster.filter(champ => {
         const factionMatch = !activeFactionFilter || (champ.inherentSynergies || []).includes(activeFactionFilter);
         const classMatch = !activeClassFilter || champ.class === activeClassFilter;
         const searchMatch = !activeSearchTerm || champ.name.toLowerCase().includes(activeSearchTerm);
-        return factionMatch && classMatch && searchMatch;
+        const healerMatch = !activeHealerFilter || champ.isHealer === true;
+        return factionMatch && classMatch && searchMatch && healerMatch;
     });
 
-    gridEl.innerHTML = '';
-    if (filteredRoster.length > 0) {
-         filteredRoster
-            .sort((a,b) => TeamCalculator.calculateIndividualChampionScore(b, GAME_CONSTANTS) - TeamCalculator.calculateIndividualChampionScore(a, GAME_CONSTANTS))
-            .forEach(champ => {
-                const card = createRosterCard(champ);
-                gridEl.appendChild(card);
-            });
-    } else {
-         gridEl.innerHTML = '<p class="text-center text-slate-400 col-span-full py-8">No champions match the current filters.</p>';
+    if (gridEl) {
+        gridEl.innerHTML = '';
+        if (filteredRoster.length > 0) {
+             filteredRoster
+                .sort((a,b) => TeamCalculator.calculateIndividualChampionScore(b, GAME_CONSTANTS) - TeamCalculator.calculateIndividualChampionScore(a, GAME_CONSTANTS))
+                .forEach(champ => {
+                    const card = createRosterCard(champ);
+                    gridEl.appendChild(card);
+                });
+        } else {
+             gridEl.innerHTML = '<p class="text-center text-slate-400 col-span-full py-8">No champions match the current filters.</p>';
+        }
     }
 
     applyChampionCardBackgrounds();
+
     if (shouldScrollToRoster) {
-        gridEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (gridEl) gridEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
         shouldScrollToRoster = false;
     }
 }
-
-document.getElementById('roster-faction-filters-container').addEventListener('click', (e) => {
-    const target = e.target.closest('button');
-    if (!target) return;
-    if (target.classList.contains('clear')) {
-        activeFactionFilter = null;
-    } else {
-        const clickedFaction = target.dataset.faction;
-        activeFactionFilter = activeFactionFilter === clickedFaction ? null : clickedFaction;
-    }
-    renderRosterGrid();
-});
-
-document.getElementById('roster-class-filters-container').addEventListener('click', (e) => {
-    const target = e.target.closest('button');
-    if (!target) return;
-    if (target.classList.contains('clear')) {
-        activeClassFilter = null;
-    } else {
-        const clickedClass = target.dataset.class;
-        activeClassFilter = activeClassFilter === clickedClass ? null : clickedClass;
-    }
-    renderRosterGrid();
-});
 
 /**
  * @description Exits champion editing mode and resets the form.

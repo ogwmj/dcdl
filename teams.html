@@ -152,12 +152,11 @@
                 
                 <section class="mb-12 p-6 bg-slate-900 bg-opacity-70 backdrop-blur-sm rounded-lg border border-blue-500/20">
                     <h2 class="text-3xl font-bold text-blue-300 mb-6">Your Roster</h2>
-                    <div class="flex flex-col md:flex-row gap-4 mb-4 items-end">
-                        <div class="flex-grow flex flex-col md:flex-row gap-4">
-                            <div id="roster-faction-filters-container"></div>
-                            <div id="roster-class-filters-container"></div>
-                        </div>
-                        <div class="input-group w-full md:w-auto md:max-w-xs">
+                    <div id="roster-filters-wrapper" class="flex flex-col md:flex-row gap-4 mb-4">
+                        <div id="dynamic-filter-groups" class="flex-grow flex flex-col md:flex-row gap-4">
+                            </div>
+
+                        <div id="roster-search-group" class="input-group">
                             <label for="roster-search-input" class="filter-label">Search Roster</label>
                             <input type="search" id="roster-search-input" placeholder="Enter champion name..." class="filter-input w-full">
                         </div>
