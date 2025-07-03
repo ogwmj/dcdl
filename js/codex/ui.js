@@ -471,7 +471,6 @@ async function checkUrlExists(url) {
     console.log('File exists in repository: ', response.ok)
     return response.ok;
   } catch (error) {
-    // This catches network errors, etc.
     console.warn(`Could not check URL ${url}:`, error.message);
     return false;
   }
@@ -587,7 +586,6 @@ async function showModal(championId) {
         champion_name: champion.name,
     });
     
-    // --- Navigation Logic ---
     const currentIndex = currentChampionList.findIndex(c => c.id === championId);
     DOM.modalPrevBtn.disabled = currentIndex <= 0;
     DOM.modalNextBtn.disabled = currentIndex >= currentChampionList.length - 1;
@@ -614,17 +612,14 @@ async function showModal(championId) {
     let mainImageHtml = '';
     let imagePanelCaption = '';
 
-    // --- MODIFIED LOGIC FOR IMAGE LAYERING ---
     if (comic && comic.imageUrl) {
         const comicYear = comic.coverDate ? `(${new Date(comic.coverDate).getFullYear()})` : '';
-        // Create two images: a blurred background comic and a crisp foreground portrait
         mainImageHtml = `
             <img src="${comic.imageUrl}" alt="Cover of ${comic.title}" class="comic-featured-image is-background-image" onerror="this.style.display='none'">
             <img src="img/champions/full/${cleanName}.webp" alt="${champion.name}" class="comic-featured-image is-foreground-image">
         `;
         imagePanelCaption = `First Appearance: ${comic.title} #${comic.issueNumber} ${comicYear}`;
     } else {
-        // Fallback remains the same
         mainImageHtml = `<img src="img/champions/full/${cleanName}.webp" alt="Artwork of ${champion.name}" class="comic-featured-image" onerror="this.style.display='none'">`;
         imagePanelCaption = `Codex Image`;
     }
@@ -690,36 +685,66 @@ function hideModal() {
 }
 
 function createChampionCard(champion) {
-    const cleanName = sanitizeName(champion.name);
     const card = document.createElement('div');
     const rarityBgClass = `rarity-bg-${champion.baseRarity.replace(' ', '-')}`;
     card.className = `champion-card ${rarityBgClass}`;
     card.dataset.championId = champion.id;
-    
+
+    const cleanName = sanitizeName(champion.name);
     const classIconHtml = champion.class ? `<div class="card-class-icon" title="${champion.class}">${getClassIcon(champion.class)}</div>` : '';
     let synergyIconsHtml = '';
-    if (champion.inherentSynergies && champion.inherentSynergies.length > 0) {
-        synergyIconsHtml = `<div class="card-synergy-icons">${champion.inherentSynergies.map(s => getSynergyIcon(s)).join('')}</div>`;
+    if (champion.inherentSynergies && champion.inherentSynergies.length > 0) { //
+        synergyIconsHtml = `<div class="card-synergy-icons">${champion.inherentSynergies.map(s => getSynergyIcon(s)).join('')}</div>`; //
     }
-    
-    const downloadBtnHtml = `
-        <button class="card-download-btn" data-champion-id="${champion.id}" title="Generate or Download Card Image">
-            <svg><use xlink:href="#icon-download"></use></svg>
-        </button>
-    `;
-    
+
     card.innerHTML = `
-        <div class="avatar-bg" style="background-image: url('img/champions/avatars/${cleanName}.webp')"></div>
-        ${classIconHtml}
-        ${synergyIconsHtml}
-        ${downloadBtnHtml} 
-        <div class="card-content">
-            <div class="name">${champion.name}</div>
-            <div class="class">${champion.class || 'N/A'}</div>
+        <div class="card-inner">
+            <div class="card-front">
+                <div class="avatar-bg" style="background-image: url('img/champions/avatars/${cleanName}.webp')"></div>
+                ${classIconHtml}
+                ${synergyIconsHtml}
+                <div class="card-content">
+                    <div class="name">${champion.name}</div>
+                    <div class="class">${champion.class || 'N/A'}</div>
+                </div>
+            </div>
+            <div class="card-back">
+                <div class="card-actions-container">
+                    <button class="card-action-btn" data-action="details">View Details</button>
+                    <button class="card-action-btn" data-action="download">Download Card</button>
+                </div>
+            </div>
         </div>
     `;
-    
-    card.addEventListener('click', () => showModal(champion.id));
+
+    const innerCard = card.querySelector('.card-inner');
+
+    const flipToFront = () => {
+        innerCard.style.transform = '';
+    };
+
+    const viewDetailsBtn = card.querySelector('[data-action="details"]');
+    const downloadBtn = card.querySelector('[data-action="download"]');
+
+    viewDetailsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showModal(champion.id);
+        flipToFront();
+    });
+
+    downloadBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const button = e.currentTarget;
+        button.textContent = 'Generating...';
+        button.disabled = true;
+        
+        generateAndUploadCardImage(champion.id).finally(() => {
+            button.textContent = 'Download Card';
+            button.disabled = false;
+            flipToFront();
+        });
+    });
+
     return card;
 }
 
@@ -763,34 +788,17 @@ function renderChampions(championsToRender) {
     } else {
         renderGridView(championsToRender);
     }
-
-    // This logic for the download button needs to be re-attached after any render
-    // NOTE: Download button is part of the grid card, so it won't appear in list view
-    // unless you add it to createChampionListItem().
-    document.querySelectorAll('.card-download-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const championId = e.currentTarget.dataset.championId;
-            const icon = e.currentTarget;
-            icon.classList.add('is-loading');
-            generateAndUploadCardImage(championId).finally(() => { //
-                icon.classList.remove('is-loading');
-            });
-        });
-    });
 }
 
 function handleViewChange(e) {
     const selectedView = e.currentTarget.dataset.view;
-    if (selectedView === currentViewMode) return; // Do nothing if already active
+    if (selectedView === currentViewMode) return;
 
     currentViewMode = selectedView;
 
-    // Update button styles
     DOM.viewGridBtn.classList.toggle('active', currentViewMode === 'grid');
     DOM.viewListBtn.classList.toggle('active', currentViewMode === 'list');
 
-    // Re-render the champions with the new view
     renderChampions(currentChampionList); 
 }
 

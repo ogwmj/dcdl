@@ -564,38 +564,6 @@
     height: calc(100% - 20px);
     object-position: center top;
 }
-.card-download-btn {
-    position: absolute;
-    bottom: 0.75rem;
-    right: 0.75rem;
-    z-index: 3;
-    width: 36px;
-    height: 36px;
-    background-color: rgba(13, 18, 38, 0.7);
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    color: #e2e8f0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-}
-
-.card-download-btn:hover {
-    background-color: #3b82f6;
-    color: white;
-}
-
-.card-download-btn svg {
-    width: 20px;
-    height: 20px;
-}
-
-.card-download-btn.is-loading svg {
-    animation: spin 1s linear infinite;
-}
 
 #view-switcher-container .filter-btn {
     flex: 1;
@@ -795,4 +763,98 @@
         justify-content: flex-end;
         margin-left: auto;
     }
+}
+
+.champion-card {
+    perspective: 1000px;
+    background-color: transparent;
+}
+
+.card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.champion-card:hover .card-inner {
+    transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.card-front {
+    background-color: var(--base-bg-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.card-back {
+    background: linear-gradient(rgba(13, 18, 38, 0.95), rgba(13, 18, 38, 0.95)), url('../../img/bg/portrait_1.webp');
+    background-size: cover;
+    background-blend-mode: multiply;
+    transform: rotateY(180deg) translateZ(1px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.card-actions-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.card-action-btn {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.5);
+    color: #e2e8f0;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    text-align: center;
+}
+
+.card-action-btn:hover {
+    background-color: rgba(59, 130, 246, 0.4);
+    transform: scale(1.05);
+}
+
+.champion-card:hover {
+    transform: none;
+    box-shadow: 0 0 25px -5px var(--glow-color, #fff);
+}
+
+.card-front::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at 50% 120%, var(--glow-color, transparent) 0%, transparent 60%);
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+}
+.champion-card:hover .card-front::before {
+    opacity: 0.6;
+}
+
+.champion-card:hover .card-front {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
 }
