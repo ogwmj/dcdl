@@ -542,9 +542,9 @@ function displayResults(inputs, evResults, simResults) {
         worst: evResults.upgradeCost.worst + (inputs.toggleUnlockCost ? evResults.unlockCost.worst : 0),
     };
 
-    drawCostCard('average-case-display', totalCosts.avg, '#4338ca');
-    drawCostCard('best-case-display', totalCosts.best, '#059669');
-    drawCostCard('worst-case-display', totalCosts.worst, '#dc2626');
+    drawCostCard('average-case-display', totalCosts.avg, '#818cf8');
+    drawCostCard('best-case-display', totalCosts.best, '#4ade80');
+    drawCostCard('worst-case-display', totalCosts.worst, '#f87171');
     
     DOM.budgetDisplay.textContent = inputs.anvilBudget.toLocaleString();
     DOM.probabilitySummary.textContent = `Your success rate is ${simResults.successRate.toFixed(1)}%. This chart shows the cost distribution of the successful attempts.`;
