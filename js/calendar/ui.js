@@ -1,7 +1,7 @@
 /**
  * @file js/calendar/ui.js
  * @description Fetches and renders the Limited Mythic champion rotation calendar.
- * @version 2.0.0 - Displays Owner's Roster data instead of recommendations.
+ * @version 3.0.0 - Displays Community Average data.
  */
 
 // Import necessary functions from the Firebase SDK
@@ -19,13 +19,13 @@ const comicModalBackdrop = document.getElementById('comic-modal-backdrop');
 const comicModalBody = document.getElementById('comic-modal-body');
 const comicModalClose = document.getElementById('comic-modal-close');
 const championDetailsCache = new Map();
-let ownerRosterCache = new Map(); // <-- NEW: Cache for owner's roster
 
 // --- HELPER & COMIC VIEW FUNCTIONS (No changes here) ---
 async function fetchChampionDetails(relatedIds) {
     const championsToFetch = relatedIds.filter(id => !championDetailsCache.has(id));
     if (championsToFetch.length > 0) {
-        const championsRef = collection(db, `artifacts/dc-dark-legion-builder/public/data/champions`);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'dc-dark-legion-builder';
+        const championsRef = collection(db, `artifacts/${appId}/public/data/champions`);
         const q = query(championsRef, where('__name__', 'in', championsToFetch));
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach(doc => championDetailsCache.set(doc.id, { id: doc.id, ...doc.data() }));
@@ -37,11 +37,12 @@ async function showComicModal(championId) {
     comicModalBackdrop.classList.add('is-visible');
     comicModalBody.innerHTML = `<div class="loader-spinner" style="animation: spin 1.5s linear infinite;"></div>`;
     try {
-        const championDocRef = doc(db, `artifacts/dc-dark-legion-builder/public/data/champions`, championId);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'dc-dark-legion-builder';
+        const championDocRef = doc(db, `artifacts/${appId}/public/data/champions`, championId);
         const championSnap = await getDoc(championDocRef);
         if (!championSnap.exists()) throw new Error("Main champion not found.");
         const mainChampion = { id: championSnap.id, ...championSnap.data() };
-        const relatedSubcollectionRef = collection(db, `artifacts/dc-dark-legion-builder/public/data/champions/${championId}/relatedChampions`);
+        const relatedSubcollectionRef = collection(db, `artifacts/${appId}/public/data/champions/${championId}/relatedChampions`);
         const relatedQuerySnapshot = await getDocs(relatedSubcollectionRef);
         let relatedChampionIds = relatedQuerySnapshot.empty ? [] : (relatedQuerySnapshot.docs[0].data().championIds || []);
         let relatedChampionsHtml = '';
@@ -83,8 +84,8 @@ function createSchedule() {
  * @returns {string} The complete HTML for the star display.
  */
 function createStarRatingHtml(ratingString) {
-    if (!ratingString || typeof ratingString !== 'string' || ratingString === 'N/A') {
-        return '<span class="roster-value">N/A</span>';
+    if (!ratingString || typeof ratingString !== 'string' || ratingString === 'N/A' || ratingString === 'Unlocked') {
+        return '<span class="roster-value not-on-roster">N/A</span>';
     }
 
     const parts = ratingString.split(' ');
@@ -113,31 +114,21 @@ function renderTimeline(schedule, currentWeek) {
             statusClass = 'is-past';
         }
 
-        let rosterHtml = '';
+        let communityAvgHtml = '';
         if (event.id !== 'TBA') {
-            const rosterInfo = ownerRosterCache.get(event.id);
-            let rosterDetails = '<span class="roster-value not-on-roster">Not Unlocked</span>';
-
-            if (rosterInfo) {
-                // Use the new helper function for starColorTier
-                const starRatingHtml = createStarRatingHtml(rosterInfo.starColorTier);
-                
-                rosterDetails = `
-                    <div class="roster-detail">
-                        <span class="roster-label">Star Tier</span>
-                        ${starRatingHtml}
+            const communityLevel = event.communityAverageLevel || 'N/A';
+            const communityStarsHtml = createStarRatingHtml(communityLevel);
+            communityAvgHtml = `
+                <div class="roster-container">
+                    <h4>Community Average</h4>
+                    <div class="roster-details-wrapper">
+                        ${communityStarsHtml}
                     </div>
-                    <div class="roster-detail">
-                        <span class="roster-label">Force</span>
-                        <span class="roster-value">${rosterInfo.forceLevel} of 5</span>
-                    </div>
-                `;
-            }
-            rosterHtml = `<div class="roster-container"><h4>OG's Roster</h4><div class="roster-details-wrapper">${rosterDetails}</div></div>`;
+                </div>`;
         }
 
         const championName = event.name || "To Be Announced";
-        const championLink = event.id === 'TBA' ? championName : `<a href="calculator.html?champion=${event.id}" class="champion-link">${championName}</a>`;
+        const championLink = event.id === 'TBA' ? championName : `<a href="calculator.html?addChampion=${event.id}" class="champion-link">${championName}</a>`;
 
         timelineHtml += `
             <div id="event-${index}" class="timeline-event ${rowClass} ${statusClass}" role="button" tabindex="0" data-champion-id="${event.id}" style="grid-column-start: ${index + 1};">
@@ -150,7 +141,7 @@ function renderTimeline(schedule, currentWeek) {
                              <span class="duration-tag">4 Week Cycle</span>
                         </div>
                     </div>
-                    ${rosterHtml}
+                    ${communityAvgHtml}
                 </div>
             </div>`;
     });
@@ -160,38 +151,16 @@ function renderTimeline(schedule, currentWeek) {
 async function initializeCalendar(analytics) {
     showTimelineMessage('Loading calendar data...');
     try {
-        const OWNER_ID = '7F7TOqE1mjbXIzOqW8NzBMrWXbK2';
         const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'dc-dark-legion-builder';
-        const rosterDocPath = `artifacts/${APP_ID}/users/${OWNER_ID}/roster/myRoster`;
-
+        
         const championsRef = collection(db, `artifacts/${APP_ID}/public/data/champions`);
         const rotationConfigRef = doc(db, `artifacts/${APP_ID}/public/data/siteConfig/championRotation`);
-        const rosterDocRef = doc(db, rosterDocPath);
 
-        const [rotationConfigSnap, championsQuerySnap, rosterDocSnap] = await Promise.all([
+        const [rotationConfigSnap, championsQuerySnap] = await Promise.all([
             getDoc(rotationConfigRef),
-            getDocs(query(championsRef, where("baseRarity", "==", "Limited Mythic"))),
-            getDoc(rosterDocRef)
+            getDocs(query(championsRef, where("baseRarity", "==", "Limited Mythic")))
         ]);
         
-        if (rosterDocSnap.exists()) {
-            const rosterData = rosterDocSnap.data();
-            const rosterChampions = rosterData.champions || [];
-            rosterChampions.forEach(member => {
-                const champId = member.dbChampionId;
-                if (champId) {
-                    const currentScore = member.individualScore || 0;
-                    if (!ownerRosterCache.has(champId) || currentScore > ownerRosterCache.get(champId).individualScore) {
-                        ownerRosterCache.set(champId, {
-                            starColorTier: member.starColorTier || 'N/A',
-                            forceLevel: member.forceLevel !== undefined ? member.forceLevel : 'N/A',
-                            individualScore: currentScore
-                        });
-                    }
-                }
-            });
-        }
-
         if (championsQuerySnap.empty) {
             showTimelineMessage('No "Limited Mythic" champions found.');
             return;
@@ -204,6 +173,10 @@ async function initializeCalendar(analytics) {
                 id: doc.id,
                 name: champ.name,
                 avatar: `img/champions/avatars/${(champ.name || "").replace(/[^a-zA-Z0-9-_]/g, "")}.webp`,
+                // === MODIFICATION START ===
+                // Fetch the community average level for each champion
+                communityAverageLevel: champ.communityAverageLevel || 'N/A'
+                // === MODIFICATION END ===
             });
         });
 

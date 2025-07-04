@@ -60,6 +60,32 @@ const DOM = {
 
 // --- START: Helper & Utility Functions ---
 
+/**
+ * Creates HTML for a visual star rating display.
+ * @param {string} levelString - The star level string (e.g., "Blue 4-Star").
+ * @returns {string} The HTML for the star display.
+ */
+function createStarDisplayHTML(levelString) {
+    if (!levelString || levelString === 'N/A' || levelString === 'Unlocked') {
+        // Return 5 empty stars for N/A or Unlocked status
+        return `<div class="star-display tier-unlocked" title="Community Average: Not Available">
+            ${[...Array(5)].map(() => '<span>☆</span>').join('')}
+        </div>`;
+    }
+
+    const parts = levelString.split(' ');
+    const tier = parts[0].toLowerCase(); // e.g., 'blue'
+    const starCount = parseInt(parts[1], 10) || 0;
+
+    let starsHTML = '';
+    for (let i = 1; i <= 5; i++) {
+        // Use a filled star (★) for active stars, and an outline (☆) for inactive ones.
+        starsHTML += `<span>${i <= starCount ? '★' : '☆'}</span>`;
+    }
+
+    return `<div class="star-display tier-${tier}" title="Community Average: ${levelString}">${starsHTML}</div>`;
+}
+
 function dispatchNotification(message, type = 'info', duration = 3000) {
     const event = new CustomEvent('show-notification', {
         detail: { message, type, duration },
@@ -537,7 +563,7 @@ async function generateAndUploadCardImage(championId) {
 
     const championFileNameBase = champion.name.replace(/\s+/g, '');
     const cardImageFileName = `${championFileNameBase}-card.png`;
-    const githubRepoUrl = `https://ogwmj.github.io/dcdl/img/champions/cards/${cardImageFileName}`;
+    const githubRepoUrl = `https://dcdl-companion.com/img/champions/cards/${cardImageFileName}`;
 
     const imageExistsInRepo = await checkUrlExists(githubRepoUrl);
 
@@ -747,8 +773,10 @@ function createChampionCard(champion) {
     const classIconHtml = champion.class ? `<div class="card-class-icon" title="${champion.class}">${getClassIcon(champion.class)}</div>` : '';
     let synergyIconsHtml = '';
     if (champion.inherentSynergies && champion.inherentSynergies.length > 0) { //
-        synergyIconsHtml = `<div class="card-synergy-icons">${champion.inherentSynergies.map(s => getSynergyIcon(s)).join('')}</div>`; //
+        synergyIconsHtml = `<div class="card-synergy-icons">${champion.inherentSynergies.map(s => getSynergyIcon(s)).join('')}</div>`;
     }
+    const communityLevel = champion.communityAverageLevel || 'N/A';
+    const communityStarsHTML = createStarDisplayHTML(communityLevel);
 
     card.innerHTML = `
         <div class="card-inner">
@@ -759,6 +787,9 @@ function createChampionCard(champion) {
                 <div class="card-content">
                     <div class="name">${champion.name}</div>
                     <div class="class">${champion.class || 'N/A'}</div>
+                    <div class="community-average">
+                        ${communityStarsHTML}
+                    </div>
                 </div>
             </div>
             <div class="card-back">

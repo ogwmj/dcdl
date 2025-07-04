@@ -2,7 +2,7 @@
  * @file js/calculator/ui.js
  * @fileoverview Handles UI interactions, event listeners, and data flow
  * for the redesigned Anvil Calculator.
- * @version 2.2.0
+ * @version 2.3.0 - Community Average Feature
  */
 
 import { calculateExpectedValue, runProbabilitySimulation } from './core.js';
@@ -41,10 +41,11 @@ const DOM = {
     selectedChampionImg: document.getElementById('selected-champion-img'),
     selectedChampionName: document.getElementById('selected-champion-name'),
     
-    // Guidance Buttons
+    // === MODIFICATION START ===
+    // Reference the new button
     guidanceButtons: document.getElementById('guidanceButtons'),
-    f2pRecBtn: document.getElementById('f2pRecBtn'),
-    minRecBtn: document.getElementById('minRecBtn'),
+    applyCommunityAvgBtn: document.getElementById('applyCommunityAvgBtn'),
+    // === MODIFICATION END ===
 
     // Results
     resultsContainer: document.getElementById('results-container'),
@@ -82,11 +83,8 @@ function handleUrlParameters() {
     const championIdFromUrl = urlParams.get('champion');
 
     if (championIdFromUrl) {
-        // Find the corresponding list item in our custom dropdown
         const championOption = DOM.customDropdownOptions.querySelector(`li[data-value="${championIdFromUrl}"]`);
-
         if (championOption) {
-            // Programmatically click the option to trigger all selection logic
             championOption.click();
         } else {
             console.warn(`Champion with ID '${championIdFromUrl}' not found in the dropdown.`);
@@ -131,8 +129,11 @@ async function fetchAndPopulateChampions() {
                 const imgSrc = `img/champions/avatars/${sanitizedName}.webp`;
 
                 optionEl.dataset.value = doc.id;
-                optionEl.dataset.recF2p = champ.recommendationF2P || 'not set';
-                optionEl.dataset.recMin = champ.recommendationMin || 'not set';
+                
+                // === MODIFICATION START ===
+                // Store the community average level on the element itself for easy access.
+                optionEl.dataset.communityLevel = champ.communityAverageLevel || 'not set';
+                // === MODIFICATION END ===
 
                 optionEl.innerHTML = `
                     <div class="flex items-center">
@@ -205,7 +206,6 @@ function createStarSelector(containerId, hiddenInputId, allowBase = true) {
         btn.type = 'button';
         btn.className = 'star-selector-tier-btn';
         btn.dataset.tier = tier;
-        // Use a more descriptive name for the Base tier button
         btn.textContent = tier === 'Base' ? 'Base (0*)' : tier;
         tiersContainer.appendChild(btn);
     });
@@ -292,7 +292,6 @@ function initializeDropdowns() {
 
 /**
  * Handles wizard step navigation.
- * @param {number} stepNum - The step number to navigate to.
  */
 function navigateToStep(stepNum) {
     const fromStep = DOM.stepper.classList.contains('step-2') ? 2 : 1;
@@ -321,11 +320,12 @@ function navigateToStep(stepNum) {
     }
 }
 
+// === MODIFICATION START ===
 /**
- * Handles applying a star level recommendation from the Champion Guidance section.
- * @param {Event} event - The event that triggered the handler (e.g., button click).
+ * Handles applying the community average star level recommendation.
+ * @param {Event} event - The button click event.
  */
-function handleChampionGuidance(event) {
+function handleCommunityGuidance(event) {
     const selectedValue = DOM.lmChampionSelect.value;
     if (!selectedValue || selectedValue === 'default') {
         alert("Please select a champion first.");
@@ -334,40 +334,36 @@ function handleChampionGuidance(event) {
     const selectedOptionEl = DOM.customDropdownOptions.querySelector(`li[data-value="${selectedValue}"]`);
     if (!selectedOptionEl) return;
 
-    const triggerId = event.target.id;
-    let targetLevel;
-    let guidanceType = 'Unknown';
-    
-    if (triggerId === 'f2pRecBtn') {
-        targetLevel = selectedOptionEl.dataset.recF2p;
-        guidanceType = 'F2P';
-    } else if (triggerId === 'minRecBtn') {
-        targetLevel = selectedOptionEl.dataset.recMin;
-        guidanceType = 'Minimum';
-    } else {
-        return;
-    }
-    
+    const targetLevel = selectedOptionEl.dataset.communityLevel;
+
     if (analytics) {
         logEvent(analytics, 'guidance_used', {
             champion_id: selectedValue,
             champion_name: DOM.selectedChampionName.textContent,
-            guidance_type: guidanceType,
+            guidance_type: 'Community Average',
             target_level: targetLevel
         });
     }
 
     if (targetLevel && targetLevel !== 'not set') {
-        if (startStarSelectorControl) startStarSelectorControl.setValue('0_shards');
-        if (targetStarSelectorControl) targetStarSelectorControl.setValue(targetLevel);
-
+        if (targetStarSelectorControl) {
+            targetStarSelectorControl.setValue(targetLevel);
+        }
+        if (startStarSelectorControl) {
+            startStarSelectorControl.setValue('0_shards');
+        }
         DOM.toggleUnlockCost.checked = true;
+        
+        // Use the notification center to provide feedback
+        document.dispatchEvent(new CustomEvent('show-notification', {
+            detail: { message: 'Community average level applied.', type: 'success' }
+        }));
 
-        handleCalculation();
     } else {
-        alert(`Recommendation for the selected champion is not set.`);
+        alert(`Community average data is not available for this champion yet.`);
     }
 }
+// === MODIFICATION END ===
 
 /**
  * Attaches all event listeners for the page.
@@ -394,15 +390,20 @@ function attachEventListeners() {
         const selectedValue = DOM.lmChampionSelect.value;
         const selectedOptionEl = DOM.customDropdownOptions.querySelector(`li[data-value="${selectedValue}"]`);
 
-        if (selectedOptionEl && selectedOptionEl.dataset.recF2p !== 'not set') {
+        // Show the guidance button if the community level is set
+        if (selectedOptionEl && selectedOptionEl.dataset.communityLevel && selectedOptionEl.dataset.communityLevel !== 'not set') {
             DOM.guidanceButtons.classList.remove('hidden');
         } else {
             DOM.guidanceButtons.classList.add('hidden');
         }
     });
-
-    DOM.f2pRecBtn.addEventListener('click', handleChampionGuidance);
-    DOM.minRecBtn.addEventListener('click', handleChampionGuidance);
+    
+    // === MODIFICATION START ===
+    // Replaced the old listeners with the new one.
+    if(DOM.applyCommunityAvgBtn) {
+        DOM.applyCommunityAvgBtn.addEventListener('click', handleCommunityGuidance);
+    }
+    // === MODIFICATION END ===
 
     DOM.lmShardsYield.addEventListener('input', updateShardRequirementSummary);
     DOM.toggleUnlockCost.addEventListener('change', updateShardRequirementSummary);
@@ -415,48 +416,43 @@ function updateShardRequirementSummary() {
     const startValue = DOM.startStarLevel.value;
     const targetValue = DOM.targetStarLevel.value;
 
-    const startShards = startValue === '0_shards' ? 0 : SHARD_REQUIREMENTS[startValue] || 0; //
-    const targetShards = SHARD_REQUIREMENTS[targetValue] || 0; //
+    const startShards = startValue === '0_shards' ? 0 : SHARD_REQUIREMENTS[startValue] || 0;
+    const targetShards = SHARD_REQUIREMENTS[targetValue] || 0;
 
-    if (!targetValue || !SHARD_REQUIREMENTS[targetValue]) { //
+    if (!targetValue || !SHARD_REQUIREMENTS[targetValue]) {
         DOM.shardRequirementSummary.classList.add('hidden');
         return;
     }
 
-    const shardsNeeded = targetShards - startShards; //
-    const lmShardsYield = parseInt(DOM.lmShardsYield.value, 10) || 40; //
-    const includeUnlock = DOM.toggleUnlockCost.checked; //
+    const shardsNeeded = targetShards - startShards;
+    const lmShardsYield = parseInt(DOM.lmShardsYield.value, 10) || 40;
+    const includeUnlock = DOM.toggleUnlockCost.checked;
 
-    // Determine the number of pulls needed just for shards
     const pullsForShards = (shardsNeeded > 0 && lmShardsYield > 0) ? Math.ceil(shardsNeeded / lmShardsYield) : 0;
-
-    // The cost to unlock is 1 successful pull, if checked.
     const unlockPullCost = includeUnlock ? 1 : 0;
     const totalEstimatedPulls = pullsForShards + unlockPullCost;
 
     if (totalEstimatedPulls > 0) {
-        // Create a dynamic message based on what the user has selected.
         let primaryMessage, secondaryMessage;
 
         if (pullsForShards > 0 && includeUnlock) {
-            primaryMessage = `Shards to Goal: <strong class="text-indigo-600">${shardsNeeded.toLocaleString()}</strong>`;
-            secondaryMessage = `Requires an estimated <strong class="text-indigo-600">${totalEstimatedPulls}</strong> successful LM pulls (${pullsForShards} for shards + 1 for unlock).`;
+            primaryMessage = `Shards to Goal: <strong class="text-indigo-400">${shardsNeeded.toLocaleString()}</strong>`;
+            secondaryMessage = `Requires an estimated <strong class="text-indigo-400">${totalEstimatedPulls}</strong> successful LM pulls (${pullsForShards} for shards + 1 for unlock).`;
         } else if (pullsForShards > 0) {
-            primaryMessage = `Shards to Goal: <strong class="text-indigo-600">${shardsNeeded.toLocaleString()}</strong>`;
-            secondaryMessage = `Requires an estimated <strong class="text-indigo-600">${totalEstimatedPulls}</strong> successful LM pull(s).`;
+            primaryMessage = `Shards to Goal: <strong class="text-indigo-400">${shardsNeeded.toLocaleString()}</strong>`;
+            secondaryMessage = `Requires an estimated <strong class="text-indigo-400">${totalEstimatedPulls}</strong> successful LM pull(s).`;
         } else if (includeUnlock) {
             primaryMessage = 'No shards needed for upgrade.';
-            secondaryMessage = 'Requires an estimated <strong class="text-indigo-600">1</strong> successful LM pull for the unlock.';
+            secondaryMessage = 'Requires an estimated <strong class="text-indigo-400">1</strong> successful LM pull for the unlock.';
         }
 
         DOM.shardRequirementSummary.innerHTML = `
-            <p class="text-sm font-medium text-slate-700">${primaryMessage}</p>
-            <p class="text-xs text-slate-500 mt-1">${secondaryMessage}</p>
+            <p class="text-sm font-medium text-slate-300">${primaryMessage}</p>
+            <p class="text-xs text-slate-400 mt-1">${secondaryMessage}</p>
         `;
         DOM.shardRequirementSummary.classList.remove('hidden');
 
     } else {
-        // Hide the summary box if no action is required.
         DOM.shardRequirementSummary.classList.add('hidden');
     }
 }
@@ -466,7 +462,6 @@ function updateShardRequirementSummary() {
  * @returns {object|null} An object with all input values, or null if validation fails.
  */
 function gatherInputs() {
-    // Basic validation could be added here
     return {
         lmChampionSelect: DOM.lmChampionSelect.value,
         startStarLevel: DOM.startStarLevel.value,

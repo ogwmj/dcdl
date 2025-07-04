@@ -109,7 +109,7 @@
     align-self: flex-start;
 }
 
-/* --- NEW: Styling for OG's Roster Section --- */
+/* --- Styling for Community Average Section --- */
 .roster-container {
     padding-top: 0.75rem;
     border-top: 1px solid rgba(59, 130, 246, 0.2);
@@ -127,7 +127,8 @@
 
 .roster-details-wrapper {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
+    align-items: center;
     gap: 1rem;
 }
 
@@ -154,7 +155,6 @@
     font-size: 0.9rem;
     width: 100%;
 }
-/* --- END OF NEW STYLING --- */
 
 
 @media screen and (max-width: 768px) {
