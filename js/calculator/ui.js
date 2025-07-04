@@ -41,11 +41,9 @@ const DOM = {
     selectedChampionImg: document.getElementById('selected-champion-img'),
     selectedChampionName: document.getElementById('selected-champion-name'),
     
-    // === MODIFICATION START ===
     // Reference the new button
     guidanceButtons: document.getElementById('guidanceButtons'),
     applyCommunityAvgBtn: document.getElementById('applyCommunityAvgBtn'),
-    // === MODIFICATION END ===
 
     // Results
     resultsContainer: document.getElementById('results-container'),
@@ -80,7 +78,7 @@ let targetStarSelectorControl = null;
  */
 function handleUrlParameters() {
     const urlParams = new URLSearchParams(window.location.search);
-    const championIdFromUrl = urlParams.get('champion');
+    const championIdFromUrl = urlParams.get('addChampion');
 
     if (championIdFromUrl) {
         const championOption = DOM.customDropdownOptions.querySelector(`li[data-value="${championIdFromUrl}"]`);
