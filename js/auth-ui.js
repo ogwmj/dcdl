@@ -6,7 +6,8 @@ import {
     signInWithEmailAndPassword,
     signOut,
     setPersistence,
-    browserLocalPersistence
+    browserLocalPersistence,
+    sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 const AUTH_TEMPLATE = `
@@ -123,15 +124,23 @@ const AUTH_TEMPLATE = `
         cursor: not-allowed;
     }
 
-    #auth-error-message {
-        background-color: #4a0404;
-        color: #fecaca;
+    #auth-error-message, #auth-success-message {
         padding: 0.75rem;
         border-radius: 6px;
         text-align: center;
         font-size: 0.9rem;
         margin-top: 1.5rem;
-        display: none; /* Hidden by default */
+        display: none;
+    }
+
+    #auth-error-message {
+        background-color: #4a0404;
+        color: #fecaca;
+    }
+
+    #auth-success-message {
+        background-color: #052e16;
+        color: #bbf7d0;
     }
     
     .switch-form-link {
@@ -183,6 +192,7 @@ const AUTH_TEMPLATE = `
                 <input type="password" id="login-password" name="password" required>
             </div>
             <button type="submit" id="login-submit-btn">Login</button>
+            <a href="#" id="goto-reset" class="switch-form-link" style="margin-top: 1rem; margin-bottom: -1rem;">Forgot Password?</a>
             <a href="#" id="goto-signup" class="switch-form-link">Need an account? Sign Up</a>
         </form>
 
@@ -200,7 +210,18 @@ const AUTH_TEMPLATE = `
             <a href="#" id="goto-login" class="switch-form-link">Already have an account? Login</a>
         </form>
         
+        <form id="reset-form" class="hidden">
+            <h3>Reset Password</h3>
+            <div class="form-group">
+                <label for="reset-email">Email</label>
+                <input type="email" id="reset-email" name="email" required placeholder="Enter your account email">
+            </div>
+            <button type="submit" id="reset-submit-btn">Send Reset Link</button>
+            <a href="#" id="goto-login-from-reset" class="switch-form-link">Back to Login</a>
+        </form>
+
         <div id="auth-error-message"></div>
+        <div id="auth-success-message"></div>
     </div>
 </div>
 `;
@@ -222,7 +243,6 @@ class AuthUI extends HTMLElement {
         };
 
         this.auth = null;
-        // NEW: Get the ID of the container from the component's attribute
         this.statusContainerId = this.getAttribute('status-container-id');
     }
 
@@ -263,23 +283,29 @@ class AuthUI extends HTMLElement {
     _getElements() {
         const sRoot = this.shadowRoot;
         this.elements = {
-            // REMOVED: statusContainer is no longer in the shadow DOM
             modalBackdrop: sRoot.getElementById('auth-modal-backdrop'),
             closeModalBtn: sRoot.getElementById('close-modal-btn'),
+            
             loginForm: sRoot.getElementById('login-form'),
             signupForm: sRoot.getElementById('signup-form'),
+            resetForm: sRoot.getElementById('reset-form'),
+            
             loginSubmitBtn: sRoot.getElementById('login-submit-btn'),
             signupSubmitBtn: sRoot.getElementById('signup-submit-btn'),
+            resetSubmitBtn: sRoot.getElementById('reset-submit-btn'),
+
             gotoSignupLink: sRoot.getElementById('goto-signup'),
             gotoLoginLink: sRoot.getElementById('goto-login'),
+            gotoResetLink: sRoot.getElementById('goto-reset'),
+            gotoLoginFromResetLink: sRoot.getElementById('goto-login-from-reset'),
+
             errorMessage: sRoot.getElementById('auth-error-message'),
+            successMessage: sRoot.getElementById('auth-success-message'),
         };
-        // NEW: Get a reference to the external container on the main page
         this.statusContainer = document.getElementById(this.statusContainerId);
     }
 
     _attachEventListeners() {
-        // NEW: Attach listener to the external container
         if (this.statusContainer) {
             this.statusContainer.addEventListener('click', (e) => {
                 if (e.target && e.target.id === 'logout-btn') this._handleLogout();
@@ -294,24 +320,18 @@ class AuthUI extends HTMLElement {
 
         this.elements.loginForm.addEventListener('submit', (e) => this._handleLogin(e));
         this.elements.signupForm.addEventListener('submit', (e) => this._handleSignup(e));
+        this.elements.resetForm.addEventListener('submit', (e) => this._handlePasswordReset(e));
 
-        this.elements.gotoSignupLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            this._toggleForms();
-        });
-        this.elements.gotoLoginLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            this._toggleForms();
-        });
+        this.elements.gotoSignupLink.addEventListener('click', (e) => { e.preventDefault(); this._showView('signup'); });
+        this.elements.gotoLoginLink.addEventListener('click', (e) => { e.preventDefault(); this._showView('login'); });
+        this.elements.gotoResetLink.addEventListener('click', (e) => { e.preventDefault(); this._showView('reset'); });
+        this.elements.gotoLoginFromResetLink.addEventListener('click', (e) => { e.preventDefault(); this._showView('login'); });
     }
 
     _updateAuthState(user) {
         if (!this.statusContainer) return;
 
         if (user) {
-            // User is signed in.
-            // Generate HTML with Tailwind classes that match your other nav items.
-            // We use flex to keep the email and logout button on the same line for desktop.
             this.statusContainer.innerHTML = `
                 <div class="flex items-center space-x-4">
                     <button id="logout-btn" class="text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Logout</button>
@@ -319,18 +339,15 @@ class AuthUI extends HTMLElement {
             `;
             this.closeModal();
         } else {
-            // User is signed out.
-            // This button gets the same classes as your other nav links.
             this.statusContainer.innerHTML = `
                 <button id="login-btn" class="text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Login / Sign Up</button>
             `;
         }
     }
 
-    // ... The rest of the functions (_handleLogin, _handleSignup, _handleLogout, etc.) remain unchanged ...
     async _handleLogin(e) {
         e.preventDefault();
-        this._showError('', false);
+        this._showMessage(); // Clear messages
         this.elements.loginSubmitBtn.disabled = true;
 
         const email = this.elements.loginForm.email.value;
@@ -339,7 +356,7 @@ class AuthUI extends HTMLElement {
         try {
             await signInWithEmailAndPassword(this.auth, email, password);
         } catch (error) {
-            this._showError(this._getFriendlyErrorMessage(error.code));
+            this._showMessage(this._getFriendlyErrorMessage(error.code), 'error');
         } finally {
             this.elements.loginSubmitBtn.disabled = false;
         }
@@ -347,7 +364,7 @@ class AuthUI extends HTMLElement {
 
     async _handleSignup(e) {
         e.preventDefault();
-        this._showError('', false);
+        this._showMessage(); // Clear messages
         this.elements.signupSubmitBtn.disabled = true;
 
         const email = this.elements.signupForm.email.value;
@@ -356,9 +373,27 @@ class AuthUI extends HTMLElement {
         try {
             await createUserWithEmailAndPassword(this.auth, email, password);
         } catch (error) {
-            this._showError(this._getFriendlyErrorMessage(error.code));
+            this._showMessage(this._getFriendlyErrorMessage(error.code), 'error');
         } finally {
             this.elements.signupSubmitBtn.disabled = false;
+        }
+    }
+    
+    async _handlePasswordReset(e) {
+        e.preventDefault();
+        this._showMessage(); // Clear messages
+        this.elements.resetSubmitBtn.disabled = true;
+
+        const email = this.elements.resetForm.email.value;
+        
+        try {
+            await sendPasswordResetEmail(this.auth, email);
+            this._showMessage("Password reset link sent! Please check your email inbox.", 'success');
+            this.elements.resetForm.reset();
+        } catch (error) {
+            this._showMessage(this._getFriendlyErrorMessage(error.code), 'error');
+        } finally {
+            this.elements.resetSubmitBtn.disabled = false;
         }
     }
 
@@ -367,25 +402,52 @@ class AuthUI extends HTMLElement {
             await signOut(this.auth);
         } catch (error) {
             console.error("Logout failed:", error);
-            this._showError("Could not log out. Please try again.");
+            // This error is less critical to show in the main UI, but could be dispatched to a notification center
         }
     }
 
-    _toggleForms() {
-        this.elements.loginForm.classList.toggle('hidden');
-        this.elements.signupForm.classList.toggle('hidden');
-        this._showError('', false);
-    }
+    _showView(viewToShow) {
+        this.elements.loginForm.classList.add('hidden');
+        this.elements.signupForm.classList.add('hidden');
+        this.elements.resetForm.classList.add('hidden');
+        this._showMessage(); // Hide all messages
 
-    _showError(message, show = true) {
-        this.elements.errorMessage.textContent = message;
-        this.elements.errorMessage.style.display = show ? 'block' : 'none';
+        const viewMap = {
+            login: this.elements.loginForm,
+            signup: this.elements.signupForm,
+            reset: this.elements.resetForm,
+        };
+
+        if (viewMap[viewToShow]) {
+            viewMap[viewToShow].classList.remove('hidden');
+        }
+    }
+    
+    _showMessage(message = '', type = 'error') {
+        const errorEl = this.elements.errorMessage;
+        const successEl = this.elements.successMessage;
+
+        // Hide both first
+        errorEl.style.display = 'none';
+        errorEl.textContent = '';
+        successEl.style.display = 'none';
+        successEl.textContent = '';
+
+        if (message) {
+            if (type === 'error') {
+                errorEl.textContent = message;
+                errorEl.style.display = 'block';
+            } else if (type === 'success') {
+                successEl.textContent = message;
+                successEl.style.display = 'block';
+            }
+        }
     }
 
     _getFriendlyErrorMessage(errorCode) {
         switch (errorCode) {
             case 'auth/invalid-email': return 'Please enter a valid email address.';
-            case 'auth/user-not-found':
+            case 'auth/user-not-found': return 'No account found with this email.';
             case 'auth/wrong-password': return 'Invalid credentials. Please check your email and password.';
             case 'auth/email-already-in-use': return 'An account with this email already exists.';
             case 'auth/weak-password': return 'Password should be at least 6 characters long.';
@@ -394,12 +456,13 @@ class AuthUI extends HTMLElement {
     }
 
     openModal() {
+        this._showView('login'); // Default to login view when opening
         this.elements.modalBackdrop.classList.add('is-open');
     }
 
     closeModal() {
         this.elements.modalBackdrop.classList.remove('is-open');
-        this._showError('', false);
+        this._showMessage(); // Clear any lingering messages
     }
 }
 
