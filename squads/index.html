@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO and Page Information -->
+    <title>DC: Dark Legion - Squads</title>
+    <link rel="canonical" href="https://dcdl-companion.com/squads/index.html">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Russo+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <link href="/css/theme.css" rel="stylesheet">
+    <link href="/css/squads/ui.css" rel="stylesheet">
+</head>
+<body class="text-gray-200">
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="ogwmj" data-description="Support me on Buy me a coffee!" data-message="" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+    <notification-center></notification-center>
+    <auth-ui status-container-id="auth-status-desktop"></auth-ui>
+    <feedback-widget></feedback-widget>
+    <div class="background-hero"></div>
+    <navigation-widget></navigation-widget>
+    
+    <main class="relative z-10 max-w-7xl mx-auto p-4 md:p-8" data-squad-name="All Squads">
+        <header class="py-8 md:py-12 text-center">
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-4 glowing-text text-white">Ultimate Squads Guide</h1>
+            <p class="text-2xl md:text-3xl text-amber-400 font-semibold">Your guide to squad builds and strategies.</p>
+        </header>
+
+        <!-- Team Roster Section -->
+        <section class="mb-12">
+            <h2 class="guide-section-title"><a href="krypton_energy_ramp.html">Krypton Energy Ramp</a></h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div class="champion-card-enhanced is-small"><div class="card-image-container"><img src="/img/champions/cards/Superman-card.png" class="card-avatar-top"></div><div class="card-content-bottom"><h4 class="champion-name">Superman</h4><p class="champion-class">Warrior</p></div></div>
+                <div class="champion-card-enhanced is-small"><div class="card-image-container"><img src="/img/champions/cards/Supergirl-card.png" class="card-avatar-top"></div><div class="card-content-bottom"><h4 class="champion-name">Supergirl</h4><p class="champion-class">Warrior</p></div></div>
+                <div class="champion-card-enhanced is-small"><div class="card-image-container"><img src="/img/champions/cards/Superboy-card.png" class="card-avatar-top"></div><div class="card-content-bottom"><h4 class="champion-name">Superboy</h4><p class="champion-class">Supporter</p></div></div>
+                <div class="champion-card-enhanced is-small"><div class="card-image-container"><img src="/img/champions/cards/Krypto-card.png" class="card-avatar-top"></div><div class="card-content-bottom"><h4 class="champion-name">Krypto</h4><p class="champion-class">Supporter</p></div></div>
+                <div class="champion-card-enhanced is-small"><div class="card-image-container"><img src="/img/champions/cards/TheFlash-card.png" class="card-avatar-top"></div><div class="card-content-bottom"><h4 class="champion-name">The Flash</h4><p class="champion-class">Supporter</p></div></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="relative z-10 text-gray-500 text-sm py-8 text-center">
+        <p class="mt-2">DC: Dark Legion 2025 DC. Software code 2025 FunPlus International AG. DC LOGO and all related characters and elements &copy; &amp; &trade; DC.</p>
+        <p class="mt-2">Proud DC: Dark Legion Content Creator.</p>
+    </footer>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+
+    <script type="module" src="/js/squads/ui.js"></script>
+    <script type="module" src="/js/auth-ui.js"></script>
+    <script type="module" src="/js/feedback-widget.js"></script>
+    <script type="text/javascript" src="/js/navigation-wdget.js"></script>
+</body>
+</html>
