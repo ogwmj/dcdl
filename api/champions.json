@@ -2913,7 +2913,7 @@
         },
         {
           "name": "Hope Restored",
-          "description": "Increases all Champions' HP and [Warrior Champions' ATK.",
+          "description": "Increases all Champions' HP and [Warrior] Champions' ATK.",
           "type": "Passive",
           "effects": [
             "Passive"
@@ -2974,7 +2974,7 @@
           "type": "Spiritual"
         },
         {
-          "description": "When taking melee attacks, The Penguin immediately moves backward/ Can be triggered once per skill level per battle. An additional Penguin Commando is summoned with each Ultimate cast.",
+          "description": "When taking melee attacks, The Penguin immediately moves backward. Can be triggered once per skill level per battle. An additional Penguin Commando is summoned with each Ultimate cast.",
           "isUltimate": false,
           "effects": [
             "Buff",

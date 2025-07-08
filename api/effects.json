@@ -1,0 +1,129 @@
+{
+  "updated_at": "2025-07-08T15:25:21.794Z",
+  "synergies": [
+    {
+      "name": "Stunning",
+      "description": "The targeted Champion's are affected by control and cannot take any action."
+    },
+    {
+      "name": "Ivy Thorn",
+      "description": "Deals Physical DMG based on the attacker's ATK per second. Stackable up to 3 times."
+    },
+    {
+      "name": "Divine Shield",
+      "description": "Absorbs damage at a percetage of Wonder Woman's Max HP."
+    },
+    {
+      "name": "Vulnerability",
+      "description": "Increases Physical DMG taken. Cannot be dispelled."
+    },
+    {
+      "name": "Joker Venom",
+      "description": "Deals Spiritual DMG per second, for 20 seconds, stacking up to 100 time(s)."
+    },
+    {
+      "name": "Mind Ward",
+      "description": "When the target is hit by a skill other than a basic attack, summoner performs a counterattack on the attacker, dealing Spiritual DMG."
+    },
+    {
+      "name": "Taunted",
+      "description": "Forces the affected target to attack the summoner with basic attacks."
+    },
+    {
+      "name": "Shield",
+      "description": "Blocks a certain amount of DMG."
+    },
+    {
+      "name": "Krypton Energy",
+      "description": "At 4, 12, and 27 Krypton Energy Points all [Superman Family] allies ATK is increase by 25%, 50%, and 75% respectively."
+    },
+    {
+      "name": "Engine Oil",
+      "description": "Each stack slows the target, stacking up to 5 times. Cannot be dispelled."
+    },
+    {
+      "name": "Bewitch",
+      "description": "Causes the target to slowly move towards summoner."
+    },
+    {
+      "name": "Speed Force Resonance",
+      "description": "Increases Dodge."
+    },
+    {
+      "name": "Robustness",
+      "description": "Increases the target's Physical DEF for 20 seconds."
+    },
+    {
+      "name": "Taunt",
+      "description": "Forces the affected target to attack the summoner with basic attacks."
+    },
+    {
+      "name": "Taunts",
+      "description": "Forces the affected target to attack the summoner with basic attacks."
+    },
+    {
+      "name": "Emergency Repair",
+      "description": "Restores a percentage of Max HP per second. Cannot be dispelled."
+    },
+    {
+      "name": "Silence",
+      "description": "Prevents the use of active skills."
+    },
+    {
+      "name": "Holographic Decoy",
+      "description": "The decoy emits electromagnetic interference every second to disrupt enemies, reducing their Crit RES, stacking up to 8 times(s)."
+    },
+    {
+      "name": "Freezing",
+      "description": "Incapaciates the target for 3 seconds."
+    },
+    {
+      "name": "Panic",
+      "description": "The target's Spiritual DEF reduces."
+    },
+    {
+      "name": "Frostbite",
+      "description": "Increases the target's Physical DMG taken."
+    },
+    {
+      "name": "Memtal Breakdown",
+      "description": "Incapacitates and slightly shrinks the target, and reduces their MEN."
+    },
+    {
+      "name": "Deadly Mark",
+      "description": "Increases target's Counterattack DMG taken, stacking up to 10 times."
+    },
+    {
+      "name": "Solar Energy",
+      "description": "Increases ATJ, stacking up to 3 time(s)."
+    },
+    {
+      "name": "Burn",
+      "description": "Deals Spiritual DMG based on summoner's ATK, per second."
+    },
+    {
+      "name": "Scare",
+      "description": "Reduces the target's DMG dealt, stacking up to 4 time(s)."
+    },
+    {
+      "name": "Ivy Bloom",
+      "description": "Heals by 1% of the summoner's ATK per second. Stackable up to 3 times."
+    },
+    {
+      "name": "Shockwave",
+      "description": "Reduces the target's Physical DEF."
+    },
+    {
+      "name": "Bleeding",
+      "description": "Deals Physical DMG per second, for 5 seconds."
+    },
+    {
+      "name": "Frozen",
+      "description": "Incapacitates the target."
+    },
+    {
+      "name": "Self-Actualization",
+      "description": "Increases ATK and enhances attacks to deal AoE damage in a small area."
+    }
+  ]
+}
