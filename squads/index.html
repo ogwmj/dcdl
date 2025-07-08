@@ -23,7 +23,7 @@
     <div class="background-hero"></div>
     <navigation-widget></navigation-widget>
     
-    <main class="relative z-10 max-w-7xl mx-auto p-4 md:p-8">
+    <main class="relative z-10 max-w-7xl mx-auto p-4 md:p-8" data-squad-name="All Squads">
         <header class="py-8 md:py-12 text-center">
             <h1 class="text-5xl md:text-7xl font-extrabold mb-4 glowing-text text-white">Ultimate Squads Guide</h1>
             <p class="text-2xl md:text-3xl text-amber-400 font-semibold">Your guide to squad builds and strategies.</p>
@@ -48,31 +48,6 @@
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const skillContainers = document.querySelectorAll('.skill-tabs-container');
-
-            skillContainers.forEach(container => {
-                const tabs = container.querySelectorAll('.skill-tab-btn');
-                const contents = container.querySelectorAll('.skill-tab-content');
-
-                tabs.forEach(tab => {
-                    tab.addEventListener('click', () => {
-                        // Deactivate all tabs and content within this container
-                        tabs.forEach(t => t.classList.remove('active'));
-                        contents.forEach(c => c.classList.remove('active'));
-
-                        // Activate the clicked tab and its corresponding content
-                        tab.classList.add('active');
-                        const skillId = tab.dataset.skill;
-                        const contentToShow = container.querySelector(`#${skillId}`);
-                        if (contentToShow) {
-                            contentToShow.classList.add('active');
-                        }
-                    });
-                });
-            });
-        });
-    
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js').then(registration => {
@@ -84,6 +59,7 @@
         }
     </script>
 
+    <script type="module" src="/js/squads/ui.js"></script>
     <script type="module" src="/js/auth-ui.js"></script>
     <script type="module" src="/js/feedback-widget.js"></script>
     <script type="text/javascript" src="/js/navigation-wdget.js"></script>

@@ -37,7 +37,7 @@
     <div class="background-hero"></div>
     <navigation-widget></navigation-widget>
     
-    <main class="relative z-10 max-w-7xl mx-auto p-4 md:p-8">
+    <main class="relative z-10 max-w-7xl mx-auto p-4 md:p-8" data-squad-name="Krypton Energy Ramp">
         <header class="py-8 md:py-12 text-center">
             <h1 class="text-5xl md:text-7xl font-extrabold mb-4 glowing-text text-white">Superman Family</h1>
             <p class="text-2xl md:text-3xl text-amber-400 font-semibold">Krypton Energy Ramp</p>
@@ -110,7 +110,7 @@
                             <button class="skill-tab-btn" data-skill="supergirl-skill-2">Passive</button>
                         </div>
                         <div class="skill-content">
-                            <div class="skill-tab-content active" id="supergirl-skill-0"><strong>Solar Battery:</strong> Supergirl channels her power, dealing Physical DMG to enemies in a circular area. At [Krypton Energy] Lv. 1, she absorbs solar energy increasing this skill's Crit Rate. At [Krypton Energy] Lv. 3, solar energy enhances her might even more, increasing this skill's DMG.</div>
+                            <div class="skill-tab-content active" id="supergirl-skill-0"><strong>Solar Battery:</strong> Supergirl channels her power, dealing Physical DMG to enemies in a circular area. At [Krypton Energy] Lv. 1, she absorbs solar energy increasing this skill's Crit Rate. At [Krypton Energy] Lv. 3, solar energy enhances her might even more, increasing this skill's DMG to a staggering 2000% of her ATK.</div>
                             <div class="skill-tab-content" id="supergirl-skill-1"><strong>Artic Breath:</strong> Supergirl draws in freezing air and exhales an icy blast, dealing Physical DMG to enemies in a fan-shaped area.</div>
                             <div class="skill-tab-content" id="supergirl-skill-2"><strong>Family Ties:</strong> Increases ATK. At the start of battle, for each [Superman Family] ally present, Supergirl's Ultimate DMG is increased, stacking up to 5 time(s).</div>
                         </div>
@@ -177,31 +177,6 @@
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const skillContainers = document.querySelectorAll('.skill-tabs-container');
-
-            skillContainers.forEach(container => {
-                const tabs = container.querySelectorAll('.skill-tab-btn');
-                const contents = container.querySelectorAll('.skill-tab-content');
-
-                tabs.forEach(tab => {
-                    tab.addEventListener('click', () => {
-                        // Deactivate all tabs and content within this container
-                        tabs.forEach(t => t.classList.remove('active'));
-                        contents.forEach(c => c.classList.remove('active'));
-
-                        // Activate the clicked tab and its corresponding content
-                        tab.classList.add('active');
-                        const skillId = tab.dataset.skill;
-                        const contentToShow = container.querySelector(`#${skillId}`);
-                        if (contentToShow) {
-                            contentToShow.classList.add('active');
-                        }
-                    });
-                });
-            });
-        });
-    
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js').then(registration => {
@@ -213,6 +188,7 @@
         }
     </script>
 
+    <script type="module" src="/js/squads/ui.js"></script>
     <script type="module" src="/js/auth-ui.js"></script>
     <script type="module" src="/js/feedback-widget.js"></script>
     <script type="text/javascript" src="/js/navigation-wdget.js"></script>
