@@ -1,6 +1,6 @@
 {
-  "updated_at": "2025-07-08T15:25:21.794Z",
-  "synergies": [
+  "updated_at": "2025-07-09T12:14:56.025Z",
+  "effects": [
     {
       "name": "Stunning",
       "description": "The targeted Champion's are affected by control and cannot take any action."
@@ -63,7 +63,7 @@
     },
     {
       "name": "Emergency Repair",
-      "description": "Restores a percentage of Max HP per second. Cannot be dispelled."
+      "description": "Champion restores a percentage of Max HP per second. Cannot be dispelled."
     },
     {
       "name": "Silence",
