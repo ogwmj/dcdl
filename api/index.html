@@ -55,10 +55,8 @@
                 <p class="mb-6 text-gray-600 dark:text-gray-400">This endpoint returns a list of all champions, including their rarity, class, synergies, and skills.</p>
                 
                 <div class="flex items-center space-x-4 mb-6">
-                    <span class="text-sm font-semibold inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
-                        GET
-                    </span>
-                    <code class="text-sm md:text-base p-2 bg-gray-100 dark:bg-gray-700 rounded-md text-gray-700 dark:text-gray-300 mono">https://dcdl-companion.com/api/champions.json</code>
+                    <span class="text-sm font-semibold inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-green-300">GET</span>
+                    <code class="text-sm md:text-base p-2 bg-gray-100 dark:bg-gray-700 rounded-md text-gray-700 dark:text-gray-300 mono">https://dcdl-companion/api/champions.json</code>
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-8">
@@ -81,7 +79,7 @@
                     </div>
                     <div>
                         <h3 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Example Response</h3>
-                        <pre class="bg-gray-900 text-white p-4 rounded-lg text-xs overflow-x-auto h-96"><code id="champions-json-example" class="mono"></code></pre>
+                        <pre class="bg-gray-900 text-white p-4 rounded-lg text-xs overflow-x-auto h-96"><code id="champions-json-example" class="mono">Loading...</code></pre>
                     </div>
                 </div>
             </section>
@@ -92,10 +90,8 @@
                 <p class="mb-6 text-gray-600 dark:text-gray-400">This endpoint provides details about all synergies (factions/classes), including their descriptions and tiered bonuses.</p>
 
                 <div class="flex items-center space-x-4 mb-6">
-                    <span class="text-sm font-semibold inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
-                        GET
-                    </span>
-                    <code class="text-sm md:text-base p-2 bg-gray-100 dark:bg-gray-700 rounded-md text-gray-700 dark:text-gray-300 mono">https://dcdl-companion.com/api/synergies.json</code>
+                    <span class="text-sm font-semibold inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-green-300">GET</span>
+                    <code class="text-sm md:text-base p-2 bg-gray-100 dark:bg-gray-700 rounded-md text-gray-700 dark:text-gray-300 mono">https://dcdl-companion/api/synergies.json</code>
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-8">
@@ -112,7 +108,7 @@
                     </div>
                     <div>
                         <h3 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Example Response</h3>
-                        <pre class="bg-gray-900 text-white p-4 rounded-lg text-xs overflow-x-auto h-96"><code id="synergies-json-example" class="mono"></code></pre>
+                        <pre class="bg-gray-900 text-white p-4 rounded-lg text-xs overflow-x-auto h-96"><code id="synergies-json-example" class="mono">Loading...</code></pre>
                     </div>
                 </div>
             </section>
@@ -123,10 +119,8 @@
                 <p class="mb-6 text-gray-600 dark:text-gray-400">This endpoint lists all possible status effects and keywords found in skill descriptions.</p>
 
                 <div class="flex items-center space-x-4 mb-6">
-                    <span class="text-sm font-semibold inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
-                        GET
-                    </span>
-                    <code class="text-sm md:text-base p-2 bg-gray-100 dark:bg-gray-700 rounded-md text-gray-700 dark:text-gray-300 mono">https://dcdl-companion.com/api/effects.json</code>
+                    <span class="text-sm font-semibold inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-green-300">GET</span>
+                    <code class="text-sm md:text-base p-2 bg-gray-100 dark:bg-gray-700 rounded-md text-gray-700 dark:text-gray-300 mono">https://dcdl-companion/api/effects.json</code>
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-8">
@@ -139,7 +133,7 @@
                     </div>
                     <div>
                         <h3 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Example Response</h3>
-                        <pre class="bg-gray-900 text-white p-4 rounded-lg text-xs overflow-x-auto h-96"><code id="effects-json-example" class="mono"></code></pre>
+                        <pre class="bg-gray-900 text-white p-4 rounded-lg text-xs overflow-x-auto h-96"><code id="effects-json-example" class="mono">Loading...</code></pre>
                     </div>
                 </div>
             </section>
@@ -151,17 +145,18 @@
     </div>
 
     <script>
-        // Function to fetch JSON, format it, and display it
-        async function fetchAndDisplayJSON(url, elementId, dataKey) {
+        // Function to fetch JSON from a local file, format it, and display it
+        async function fetchAndDisplayJSON(filePath, elementId, dataKey) {
             try {
-                // Using a proxy to bypass potential CORS issues in a browser environment
-                const proxyUrl = 'https://api.allorigins.win/get?url=';
-                const response = await fetch(`${proxyUrl}${encodeURIComponent(url)}`);
+                // Fetch the local JSON file.
+                const response = await fetch(filePath);
+                
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                const data = await response.json();
-                const jsonData = JSON.parse(data.contents);
+                
+                // The response is the JSON data itself.
+                const jsonData = await response.json();
 
                 // Access the correct part of the JSON data using the provided key
                 const dataArray = jsonData[dataKey] || [];
@@ -188,16 +183,16 @@
 
                 document.getElementById(elementId).innerHTML = formattedJson;
             } catch (error) {
-                document.getElementById(elementId).innerText = `Failed to fetch data: ${error.message}\n\nPlease note: This may be due to CORS policy restrictions. The API may not be designed for direct browser access.`;
-                console.error("Error fetching data for " + url, error);
+                document.getElementById(elementId).innerText = `Failed to load local file: ${error.message}\n\nMake sure the file '${filePath}' is in the same directory as this HTML file.`;
+                console.error(`Error fetching local file ${filePath}`, error);
             }
         }
 
         // Fetch data for all endpoints on page load
         document.addEventListener('DOMContentLoaded', () => {
-            fetchAndDisplayJSON('https://dcdl-companion.com/api/champions.json', 'champions-json-example', 'champions');
-            fetchAndDisplayJSON('https://dcdl-companion.com/api/synergies.json', 'synergies-json-example', 'synergies');
-            fetchAndDisplayJSON('https://dcdl-companion.com/api/effects.json', 'effects-json-example', 'effects');
+            fetchAndDisplayJSON('./champions.json', 'champions-json-example', 'champions');
+            fetchAndDisplayJSON('./synergies.json', 'synergies-json-example', 'synergies');
+            fetchAndDisplayJSON('./effects.json', 'effects-json-example', 'effects'); 
         });
     </script>
 
