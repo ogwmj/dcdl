@@ -34,6 +34,18 @@
         <p class="mt-2">Proud DC: Dark Legion Content Creator.</p>
     </footer>
 
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+
     <script type="module" src="/js/squads/ui.js"></script>
     <script type="module" src="/js/auth-ui.js"></script>
     <script type="module" src="/js/feedback-widget.js"></script>

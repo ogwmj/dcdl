@@ -7,7 +7,6 @@ class NavigationWidget extends HTMLElement {
                   <a href="index.html" class="text-white text-2xl font-bold">DC:DL Tools</a>
                   <div class="hidden md:flex items-center space-x-4">
                       <a href="https://dcdl-companion.com/index.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
-                      <a href="https://dcdl-companion.com/squads.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Squads</a>
                       <div class="relative group">
                           <button class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium inline-flex items-center" aria-haspopup="true">
                               <span>Hypertime Details</span>
@@ -27,10 +26,20 @@ class NavigationWidget extends HTMLElement {
                           <div class="absolute hidden group-hover:block bg-slate-900 bg-opacity-90 backdrop-filter backdrop-blur-md rounded-md shadow-lg py-1 w-48 z-50 top-full">
                               <a href="https://dcdl-companion.com/teams.html" class="nav-link block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Team Builder</a>
                               <a href="https://dcdl-companion.com/codex.html" class="nav-link block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Codex</a>
+                              <a href="https://dcdl-companion.com/squads.html" class="nav-link block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Squads</a>
                           </div>
                       </div>
                       
-                      <div id="auth-status-desktop"><span class="text-gray-300 px-3 py-2 text-sm font-medium">Loading...</span></div>
+                      <!-- Account Dropdown -->
+                      <div class="relative group">
+                          <button class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium inline-flex items-center" aria-haspopup="true">
+                              <span>Account</span>
+                              <svg class="w-4 h-4 ml-1 text-gray-400 group-hover:text-white transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                          </button>
+                          <div id="auth-status-desktop" class="absolute hidden group-hover:block bg-slate-900 bg-opacity-90 backdrop-filter backdrop-blur-md rounded-md shadow-lg py-1 w-48 z-50 top-full right-0">
+                              <span class="block px-4 py-2 text-sm text-gray-400">Loading...</span>
+                          </div>
+                      </div>
                   </div>
                   <div class="-mr-2 flex md:hidden">
                       <button type="button" id="mobile-menu-button" class="bg-slate-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
@@ -44,7 +53,6 @@ class NavigationWidget extends HTMLElement {
           <div class="md:hidden hidden" id="mobile-menu">
               <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                   <a href="https://dcdl-companion.com/index.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
-                  <a href="https://dcdl-companion.com/squads.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Squads</a>
                   <div class="!mt-3">
                       <span class="px-3 pt-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Hypertime Details</span>
                       <a href="https://dcdl-companion.com/calendar.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Bleed Calendar</a>
@@ -55,6 +63,7 @@ class NavigationWidget extends HTMLElement {
                       <span class="px-3 pt-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Champions</span>
                       <a href="https://dcdl-companion.com/teams.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Team Builder</a>
                       <a href="https://dcdl-companion.com/codex.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Codex</a>
+                      <a href="https://dcdl-companion.com/squads.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Squads</a>
                   </div>
                   <div id="auth-status-mobile" class="pt-4 mt-2 border-t border-slate-700"></div>
               </div>
@@ -66,7 +75,7 @@ class NavigationWidget extends HTMLElement {
     const currentPath = window.location.pathname.split("/").pop();
     const navLinks = this.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
-      const linkPath = link.getAttribute('href');
+      const linkPath = link.getAttribute('href').split("/").pop();
       if (linkPath === currentPath || (currentPath === '' && linkPath === 'index.html')) {
         link.classList.add('active');
       }
@@ -93,27 +102,33 @@ class NavigationWidget extends HTMLElement {
     const mobileAuthContainer = this.querySelector('#auth-status-mobile');
     if (desktopAuthContainer && mobileAuthContainer) {
       const syncAuthStatus = () => {
-        const logoutButton = desktopAuthContainer.querySelector('#logout-btn');
-        if (logoutButton) {
-          mobileAuthContainer.innerHTML = `
-            <div class="space-y-1">
-                <button id="logout-btn-mobile" class="text-gray-300 hover:bg-slate-700 hover:text-white block w-full text-left px-3 py-2 rounded-md text-base font-medium">Logout</button>
-            </div>
-          `;
-          mobileAuthContainer.querySelector('#logout-btn-mobile').addEventListener('click', () => {
-            logoutButton.click();
-          });
-        } else {
-          mobileAuthContainer.innerHTML = desktopAuthContainer.innerHTML;
-          const loginBtnMobile = mobileAuthContainer.querySelector('#login-btn');
-          const loginBtnDesktop = desktopAuthContainer.querySelector('#login-btn');
-          if (loginBtnMobile && loginBtnDesktop) {
-            loginBtnMobile.addEventListener('click', () => loginBtnDesktop.click());
-            loginBtnMobile.classList.add('block', 'w-full', 'text-left');
-            loginBtnMobile.classList.remove('text-sm');
-            loginBtnMobile.classList.add('text-base');
+        const desktopItems = desktopAuthContainer.querySelectorAll('a, button');
+        let mobileHtml = '<div class="space-y-1">';
+        
+        desktopItems.forEach(item => {
+          const mobileItem = item.cloneNode(true);
+          mobileItem.classList.remove('text-sm');
+          mobileItem.classList.add('text-base', 'block', 'w-full', 'text-left', 'px-3', 'py-2', 'rounded-md', 'hover:bg-slate-700', 'hover:text-white');
+          
+          if (item.tagName === 'BUTTON' && item.id) {
+            mobileItem.id = `${item.id}-mobile`;
           }
-        }
+          mobileHtml += mobileItem.outerHTML;
+        });
+        
+        mobileHtml += '</div>';
+        mobileAuthContainer.innerHTML = mobileHtml;
+
+        const newMobileItems = mobileAuthContainer.querySelectorAll('a, button');
+        newMobileItems.forEach(mobileItem => {
+            if (mobileItem.tagName === 'BUTTON' && mobileItem.id.endsWith('-mobile')) {
+                const originalId = mobileItem.id.replace('-mobile', '');
+                const originalButton = desktopAuthContainer.querySelector(`#${originalId}`);
+                if (originalButton) {
+                    mobileItem.addEventListener('click', () => originalButton.click());
+                }
+            }
+        });
       };
 
       const observer = new MutationObserver(syncAuthStatus);

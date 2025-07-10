@@ -11,7 +11,7 @@ template.innerHTML = `
             right: 1.5rem;
             z-index: 1000;
             width: 100%;
-            max-width: 420px;
+            max-width: 380px;
             pointer-events: none;
         }
         .notification-container {
@@ -20,31 +20,34 @@ template.innerHTML = `
             gap: 1rem;
         }
         .notification-banner {
+            color: white;
             padding: 1rem;
-            border-radius: 0.75rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-weight: 600;
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+            pointer-events: auto;
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            background-color: #ffffff;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e2e8f0;
-            pointer-events: auto;
             opacity: 0;
-            transform: translateX(100%);
-            animation: slideIn 0.4s ease-out forwards;
+            transform: translateX(calc(100% + 20px));
+            animation: slideIn 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
         .notification-banner.removing {
             animation: slideOut 0.4s ease-in forwards;
         }
         .message {
-            font-weight: 500;
-            line-height: 1.5;
-            color: #374151;
             margin-right: 1rem;
+            line-height: 1.5;
         }
-        .notification-banner.info .message { color: #4338ca; }
-        .notification-banner.success .message { color: #166534; }
-        .notification-banner.warning .message { color: #b45309; }
+        .notification-banner.success { background-color: rgba(16, 185, 129, 0.9); }
+        .notification-banner.error { background-color: rgba(239, 68, 68, 0.9); }
+        .notification-banner.info { background-color: rgba(59, 130, 246, 0.9); }
+        .notification-banner.warning { background-color: rgba(245, 158, 11, 0.9); }
+        
         .close-btn {
             flex-shrink: 0;
             padding: 0.25rem;
@@ -54,11 +57,11 @@ template.innerHTML = `
             cursor: pointer;
             font-size: 1.25rem;
             line-height: 1;
-            color: #6b7280;
+            color: rgba(255, 255, 255, 0.7);
         }
         .close-btn:hover {
-            color: #111827;
-            background-color: rgba(0,0,0,0.05);
+            color: #fff;
+            background-color: rgba(0,0,0,0.2);
         }
         @keyframes slideIn {
             to { opacity: 1; transform: translateX(0); }
@@ -69,6 +72,7 @@ template.innerHTML = `
         }
         @media (max-width: 768px) {
             :host {
+                top: auto;
                 left: 1rem;
                 right: 1rem;
                 bottom: 1rem;
@@ -97,6 +101,10 @@ class NotificationCenter extends HTMLElement {
             this.initializeAuthObserver();
         }, { once: true });
 
+        document.addEventListener('show-toast', (e) => {
+            const { message, type, duration } = e.detail;
+            this.displayTemporaryNotification(message, type, duration);
+        });
         document.addEventListener('show-notification', (e) => {
             const { message, type, duration } = e.detail;
             this.displayTemporaryNotification(message, type, duration);
@@ -115,7 +123,7 @@ class NotificationCenter extends HTMLElement {
         });
     }
 
-async fetchAndDisplayNotifications() {
+    async fetchAndDisplayNotifications() {
         if (!this.userId || !this.db) return;
         this.clearNotifications();
 
@@ -171,15 +179,8 @@ async fetchAndDisplayNotifications() {
         const notifElement = this.shadowRoot.getElementById(`notification-${notificationId}`);
         if (!notifElement) return;
 
-        // Add class to trigger removal animation
-        notifElement.classList.add('removing');
+        this.removeNotificationElement(notifElement);
         
-        // Wait for animation to finish before removing from DOM
-        notifElement.addEventListener('animationend', () => {
-            notifElement.remove();
-        });
-        
-        // Asynchronously update Firestore in the background
         try {
             const dismissalRef = doc(this.db, `notifications/${notificationId}/dismissals`, this.userId);
             await setDoc(dismissalRef, { dismissedAt: serverTimestamp() });
@@ -197,16 +198,13 @@ async fetchAndDisplayNotifications() {
         notifElement.className = `notification-banner ${type}`;
         notifElement.innerHTML = `<p class="message">${message}</p><button class="close-btn" title="Dismiss">&times;</button>`;
         
-        // The close button calls a simple removal function, NOT the Firestore one
         notifElement.querySelector('.close-btn').addEventListener('click', () => {
             this.removeNotificationElement(notifElement);
         });
 
         container.appendChild(notifElement);
 
-        // Automatically remove the notification after the specified duration
         setTimeout(() => {
-            // Check if the element hasn't already been closed by the user
             const elToRemove = this.shadowRoot.getElementById(tempId);
             if (elToRemove) {
                 this.removeNotificationElement(elToRemove);

@@ -275,7 +275,7 @@ class AuthUI extends HTMLElement {
             console.error("Auth UI: Firebase initialization failed.", e);
             const container = document.getElementById(this.statusContainerId);
             if (container) {
-                container.innerHTML = `<span style="color: #fecaca;">Auth Failed</span>`;
+                container.innerHTML = `<span class="block px-4 py-2 text-sm text-red-400">Auth Failed</span>`;
             }
         }
     }
@@ -302,16 +302,13 @@ class AuthUI extends HTMLElement {
             errorMessage: sRoot.getElementById('auth-error-message'),
             successMessage: sRoot.getElementById('auth-success-message'),
         };
+        // This needs to be a live lookup since the nav widget might not be ready when this runs.
         this.statusContainer = document.getElementById(this.statusContainerId);
     }
 
     _attachEventListeners() {
-        if (this.statusContainer) {
-            this.statusContainer.addEventListener('click', (e) => {
-                if (e.target && e.target.id === 'logout-btn') this._handleLogout();
-                if (e.target && e.target.id === 'login-btn') this.openModal();
-            });
-        }
+        // Event listeners for login/logout are now attached dynamically in _updateAuthState
+        // to ensure they are correctly bound to the elements inside the dropdown.
 
         this.elements.closeModalBtn.addEventListener('click', () => this.closeModal());
         this.elements.modalBackdrop.addEventListener('click', (e) => {
@@ -329,25 +326,30 @@ class AuthUI extends HTMLElement {
     }
 
     _updateAuthState(user) {
-        if (!this.statusContainer) return;
+        // The status container might not exist on the page when this is first called.
+        const container = document.getElementById(this.statusContainerId);
+        if (!container) return;
 
-        if (user) {
-            this.statusContainer.innerHTML = `
-                <div class="flex items-center space-x-4">
-                    <button id="logout-btn" class="text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Logout</button>
-                </div>
+        // Check if user is logged in and not anonymous
+        if (user && !user.isAnonymous) {
+            container.innerHTML = `
+                <a href="https://dcdl-companion.com/profile.html" class="nav-link block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">My Profile</a>
+                <button id="logout-btn" class="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Logout</button>
             `;
+            container.querySelector('#logout-btn').addEventListener('click', () => this._handleLogout());
             this.closeModal();
         } else {
-            this.statusContainer.innerHTML = `
-                <button id="login-btn" class="text-gray-300 hover:bg-slate-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Login / Sign Up</button>
+            // User is logged out or anonymous
+            container.innerHTML = `
+                <button id="login-btn" class="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Login / Sign Up</button>
             `;
+            container.querySelector('#login-btn').addEventListener('click', () => this.openModal());
         }
     }
 
     async _handleLogin(e) {
         e.preventDefault();
-        this._showMessage(); // Clear messages
+        this._showMessage();
         this.elements.loginSubmitBtn.disabled = true;
 
         const email = this.elements.loginForm.email.value;
@@ -364,7 +366,7 @@ class AuthUI extends HTMLElement {
 
     async _handleSignup(e) {
         e.preventDefault();
-        this._showMessage(); // Clear messages
+        this._showMessage();
         this.elements.signupSubmitBtn.disabled = true;
 
         const email = this.elements.signupForm.email.value;
@@ -381,7 +383,7 @@ class AuthUI extends HTMLElement {
     
     async _handlePasswordReset(e) {
         e.preventDefault();
-        this._showMessage(); // Clear messages
+        this._showMessage();
         this.elements.resetSubmitBtn.disabled = true;
 
         const email = this.elements.resetForm.email.value;
@@ -402,7 +404,6 @@ class AuthUI extends HTMLElement {
             await signOut(this.auth);
         } catch (error) {
             console.error("Logout failed:", error);
-            // This error is less critical to show in the main UI, but could be dispatched to a notification center
         }
     }
 
@@ -410,7 +411,7 @@ class AuthUI extends HTMLElement {
         this.elements.loginForm.classList.add('hidden');
         this.elements.signupForm.classList.add('hidden');
         this.elements.resetForm.classList.add('hidden');
-        this._showMessage(); // Hide all messages
+        this._showMessage();
 
         const viewMap = {
             login: this.elements.loginForm,
@@ -427,7 +428,6 @@ class AuthUI extends HTMLElement {
         const errorEl = this.elements.errorMessage;
         const successEl = this.elements.successMessage;
 
-        // Hide both first
         errorEl.style.display = 'none';
         errorEl.textContent = '';
         successEl.style.display = 'none';
@@ -456,13 +456,13 @@ class AuthUI extends HTMLElement {
     }
 
     openModal() {
-        this._showView('login'); // Default to login view when opening
+        this._showView('login');
         this.elements.modalBackdrop.classList.add('is-open');
     }
 
     closeModal() {
         this.elements.modalBackdrop.classList.remove('is-open');
-        this._showMessage(); // Clear any lingering messages
+        this._showMessage();
     }
 }
 
