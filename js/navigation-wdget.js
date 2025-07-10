@@ -7,7 +7,7 @@ class NavigationWidget extends HTMLElement {
                   <a href="index.html" class="text-white text-2xl font-bold">DC:DL Tools</a>
                   <div class="hidden md:flex items-center space-x-4">
                       <a href="https://dcdl-companion.com/index.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
-                      <a href="https://dcdl-companion.com/squads/index.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Squads</a>
+                      <a href="https://dcdl-companion.com/squads.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Squads</a>
                       <div class="relative group">
                           <button class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium inline-flex items-center" aria-haspopup="true">
                               <span>Hypertime Details</span>
@@ -44,7 +44,7 @@ class NavigationWidget extends HTMLElement {
           <div class="md:hidden hidden" id="mobile-menu">
               <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                   <a href="https://dcdl-companion.com/index.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
-                  <a href="https://dcdl-companion.com/squads/index.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Squads</a>
+                  <a href="https://dcdl-companion.com/squads.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Squads</a>
                   <div class="!mt-3">
                       <span class="px-3 pt-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Hypertime Details</span>
                       <a href="https://dcdl-companion.com/calendar.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Bleed Calendar</a>
