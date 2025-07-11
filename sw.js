@@ -1,10 +1,7 @@
 // sw.js
 
 const CACHE_NAME = 'dcdl-cache-v1';
-const urlsToCache = [
-  '/',
-  '/index.html',
-];
+const urlsToCache = [];
 
 const imageDirs = [
     '/img/champions/',
