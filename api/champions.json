@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-07-08T14:21:23.530Z",
+  "updated_at": "2025-07-11T22:56:48.845Z",
   "champions": [
     {
       "name": "Atom",
@@ -11,8 +11,6 @@
         "Justice League"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Atom-card.png",
-      "communityAverageLevel": "Purple 2-Star",
       "skills": [
         {
           "name": "Small Target",
@@ -65,6 +63,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "Gold 1-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Atom-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Atom.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Atom"
     },
@@ -78,8 +78,6 @@
         "Arkham's Most Wanted"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Catwoman-card.png",
-      "communityAverageLevel": "Purple 2-Star",
       "skills": [
         {
           "effects": [
@@ -132,6 +130,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "Gold 2-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Catwoman-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Catwoman.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Catwoman"
     },
@@ -141,8 +141,6 @@
       "class": "Firepower",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/GatlingGirl-card.png",
-      "communityAverageLevel": "Unlocked",
       "skills": [
         {
           "name": "Make it Rain",
@@ -155,6 +153,8 @@
           "isUltimate": true
         }
       ],
+      "communityAverageLevel": "White 3-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/GatlingGirl-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/GatlingGirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Gatling%20Girl"
     },
@@ -168,8 +168,6 @@
         "Justice League"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Batman-card.png",
-      "communityAverageLevel": "White 5-Star",
       "skills": [
         {
           "name": "Dark Knight Detective",
@@ -220,6 +218,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "Blue 2-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Batman-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Batman.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Batman"
     },
@@ -229,8 +229,6 @@
       "class": "Firepower",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/GoodDayAK-card.png",
-      "communityAverageLevel": "Unlocked",
       "skills": [
         {
           "name": "Light 'Em Up",
@@ -242,6 +240,8 @@
           "isUltimate": true
         }
       ],
+      "communityAverageLevel": "White 3-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/GoodDayAK-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/GoodDayAK.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Good%20Day%20AK"
     },
@@ -255,8 +255,6 @@
         "Green Lantern Corps"
       ],
       "isHealer": true,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/GreenLantern-card.png",
-      "communityAverageLevel": "White 2-Star",
       "skills": [
         {
           "name": "Emerald Armory",
@@ -306,6 +304,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "White 5-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/GreenLantern-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/GreenLantern.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Green%20Lantern"
     },
@@ -319,8 +319,6 @@
         "Justice League"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Hawkgirl-card.png",
-      "communityAverageLevel": "White 1-Star",
       "skills": [
         {
           "name": "Hurricane Force",
@@ -374,6 +372,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "Purple 2-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Hawkgirl-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Hawkgirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Hawkgirl",
       "relatedChampions": [
@@ -392,8 +392,6 @@
       ],
       "isHealer": true,
       "baseRarity": "Limited Mythic",
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Starfire-card.png",
-      "communityAverageLevel": "White 1-Star",
       "skills": [
         {
           "effects": [
@@ -445,6 +443,8 @@
           "name": "Empathic Perception"
         }
       ],
+      "communityAverageLevel": "Blue 1-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Starfire-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Starfire.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Starfire",
       "relatedChampions": [
@@ -465,8 +465,6 @@
       "isHealer": false,
       "canUpgrade": true,
       "upgradeSynergy": "Amazons",
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/WonderWoman-card.png",
-      "communityAverageLevel": "Purple 1-Star",
       "skills": [
         {
           "name": "Amazonian Shield",
@@ -518,6 +516,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "Purple 5-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/WonderWoman-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/WonderWoman.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Wonder%20Woman"
     },
@@ -530,8 +530,6 @@
         "Metahuman"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BlackCanary-card.png",
-      "communityAverageLevel": "White 3-Star",
       "skills": [
         {
           "name": "Throw Your Voice",
@@ -584,6 +582,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "White 5-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BlackCanary-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BlackCanary.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Black%20Canary"
     },
@@ -596,8 +596,6 @@
         "Superman Family",
         "Metahuman"
       ],
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Supergirl-card.png",
-      "communityAverageLevel": "White 2-Star",
       "skills": [
         {
           "name": "Artic Breath",
@@ -649,6 +647,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "Gold 3-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Supergirl-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Supergirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Supergirl",
       "relatedChampions": [
@@ -667,8 +667,6 @@
         "Arkham's Most Wanted"
       ],
       "isHealer": true,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png",
-      "communityAverageLevel": "White 5-Star",
       "skills": [
         {
           "name": "Poison Embrace",
@@ -720,6 +718,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "Blue 1-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/PoisonIvy.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Poison%20Ivy"
     },
@@ -729,8 +729,6 @@
       "class": "Assassin",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/ChopChop-card.png",
-      "communityAverageLevel": "Unlocked",
       "skills": [
         {
           "name": "Look Sharp",
@@ -742,6 +740,8 @@
           "isUltimate": true
         }
       ],
+      "communityAverageLevel": "White 3-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/ChopChop-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/ChopChop.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Chop%20Chop"
     },
@@ -754,7 +754,6 @@
       "class": "Supporter",
       "baseRarity": "Mythic",
       "isHealer": true,
-      "communityAverageLevel": "Unlocked",
       "skills": [
         {
           "name": "Good Boy!",
@@ -806,6 +805,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Krypto-card.png",
+      "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Krypto.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Krypto"
     },
@@ -815,8 +815,6 @@
       "class": "Firepower",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Patrolman-card.png",
-      "communityAverageLevel": "Unlocked",
       "skills": [
         {
           "name": "Grenade Toss",
@@ -829,6 +827,8 @@
           "isUltimate": true
         }
       ],
+      "communityAverageLevel": "White 2-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Patrolman-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Patrolman.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Patrolman"
     },
@@ -842,8 +842,6 @@
         "Bat Family"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/RedRobin-card.png",
-      "communityAverageLevel": "White 3-Star",
       "skills": [
         {
           "name": "Spin Cycle",
@@ -898,6 +896,8 @@
           "isUltimate": false
         }
       ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/RedRobin-card.png",
+      "communityAverageLevel": "White 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/RedRobin.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Red%20Robin"
     },
@@ -911,8 +911,6 @@
         "Legion of Doom"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Deathstroke-card.png",
-      "communityAverageLevel": "White 4-Star",
       "skills": [
         {
           "name": "Eye on You",
@@ -960,6 +958,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "Blue 3-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Deathstroke-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Deathstroke.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Deathstroke",
       "relatedChampions": [
@@ -977,7 +977,6 @@
         "Energy Wielder"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Constantine-card.png",
       "skills": [
         {
           "name": "Exorcism Blast",
@@ -1029,7 +1028,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "White 5-Star",
+      "communityAverageLevel": "Blue 4-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Constantine-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Constantine.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Constantine",
       "relatedChampions": [
@@ -1047,8 +1047,6 @@
         "Energy Wielder"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Sinestro-card.png",
-      "communityAverageLevel": "White 5-Star",
       "skills": [
         {
           "name": "Bondage of Fear",
@@ -1097,6 +1095,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "Blue 3-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Sinestro-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Sinestro.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Sinestro",
       "relatedChampions": [
@@ -1115,8 +1115,6 @@
         "Atlanteans"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Aquaman-card.png",
-      "communityAverageLevel": "White 3-Star",
       "skills": [
         {
           "effects": [
@@ -1168,6 +1166,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "White 5-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Aquaman-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Aquaman.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Aquaman"
     },
@@ -1181,8 +1181,6 @@
         "Justice League Dark"
       ],
       "isHealer": true,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Raven-card.png",
-      "communityAverageLevel": "White 4-Star",
       "skills": [
         {
           "name": "Flock Together",
@@ -1232,6 +1230,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "White 5-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Raven-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Raven.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Raven"
     },
@@ -1244,8 +1244,6 @@
         "Energy Wielder"
       ],
       "isHealer": true,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Mera-card.png",
-      "communityAverageLevel": "Purple 1-Star",
       "skills": [
         {
           "name": "Healing Waters",
@@ -1293,6 +1291,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "Gold 1-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Mera-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Mera.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Mera"
     },
@@ -1306,8 +1306,6 @@
         "Bat Family"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Robin-card.png",
-      "communityAverageLevel": "White 3-Star",
       "skills": [
         {
           "name": "Vengeance is Mine",
@@ -1358,6 +1356,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "White 5-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Robin-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Robin.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Robin"
     },
@@ -1371,8 +1371,6 @@
         "Bat Family"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/RedHood-card.png",
-      "communityAverageLevel": "Purple 3-Star",
       "skills": [
         {
           "name": "Blow the Hood",
@@ -1424,6 +1422,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "Gold 3-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/RedHood-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/RedHood.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Red%20Hood"
     },
@@ -1437,8 +1437,6 @@
         "Outsiders"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Arsenal-card.png",
-      "communityAverageLevel": "White 2-Star",
       "skills": [
         {
           "name": "On Target",
@@ -1488,6 +1486,8 @@
           ]
         }
       ],
+      "communityAverageLevel": "White 3-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Arsenal-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Arsenal.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Arsenal"
     },
@@ -1501,8 +1501,6 @@
         "Outsiders"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/MartianManhunter-card.png",
-      "communityAverageLevel": "White 1-Star",
       "skills": [
         {
           "effects": [
@@ -1552,6 +1550,8 @@
           ]
         }
       ],
+      "communityAverageLevel": "Blue 4-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/MartianManhunter-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/MartianManhunter.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Martian%20Manhunter",
       "relatedChampions": [
@@ -1570,8 +1570,6 @@
         "Legion of Doom"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/CaptainCold-card.png",
-      "communityAverageLevel": "Purple 1-Star",
       "skills": [
         {
           "name": "Frozen Stiff",
@@ -1625,6 +1623,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "Gold 1-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/CaptainCold-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/CaptainCold.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Captain%20Cold"
     },
@@ -1637,8 +1637,6 @@
         "Metahuman"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Vixen-card.png",
-      "communityAverageLevel": "Purple 1-Star",
       "skills": [
         {
           "name": "Familiar",
@@ -1686,6 +1684,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "Gold 2-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Vixen-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Vixen.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Vixen"
     },
@@ -1698,8 +1698,6 @@
         "Energy Wielder"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png",
-      "communityAverageLevel": "White 4-Star",
       "skills": [
         {
           "name": "Mystic Shield",
@@ -1749,6 +1747,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "White 5-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/DoctorFate.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Doctor%20Fate"
     },
@@ -1761,8 +1761,6 @@
         "Weapon Master"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Deadshot-card.png",
-      "communityAverageLevel": "White 3-Star",
       "skills": [
         {
           "name": "Maximum Damage",
@@ -1813,6 +1811,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "White 4-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Deadshot-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Deadshot.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Deadshot"
     },
@@ -1826,8 +1826,6 @@
         "Legion of Doom"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/KillerCroc-card.png",
-      "communityAverageLevel": "Purple 2-Star",
       "skills": [
         {
           "name": "Crocodile Wrestling",
@@ -1881,6 +1879,8 @@
           "isUltimate": false
         }
       ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/KillerCroc-card.png",
+      "communityAverageLevel": "Gold 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/KillerCroc.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Killer%20Croc"
     },
@@ -1894,8 +1894,6 @@
         "Justice League"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Cyborg-card.png",
-      "communityAverageLevel": "White 3-Star",
       "skills": [
         {
           "effects": [
@@ -1945,6 +1943,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "White 5-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Cyborg-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Cyborg.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Cyborg"
     },
@@ -1954,8 +1954,6 @@
       "class": "Firepower",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BazookaBro-card.png",
-      "communityAverageLevel": "Unlocked",
       "skills": [
         {
           "name": "Incoming!",
@@ -1968,6 +1966,8 @@
           "description": "Bazooka Bro fires a rocket, dealing Physical DMG to enemies within range."
         }
       ],
+      "communityAverageLevel": "White 3-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BazookaBro-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BazookaBro.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Bazooka%20Bro"
     },
@@ -1981,8 +1981,6 @@
         "Arkham's Most Wanted"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Scarecrow-card.png",
-      "communityAverageLevel": "White 4-Star",
       "skills": [
         {
           "name": "Terror Strike",
@@ -2038,6 +2036,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "Blue 2-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Scarecrow-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Scarecrow.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Scarecrow",
       "relatedChampions": [
@@ -2055,8 +2055,6 @@
         "Weapon Master"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Two-Face-card.png",
-      "communityAverageLevel": "White 3-Star",
       "skills": [
         {
           "name": "Shoot You Twice",
@@ -2108,6 +2106,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "White 5-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Two-Face-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Two-Face.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Two-Face"
     },
@@ -2120,8 +2120,6 @@
         "Energy Wielder"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Zatanna-card.png",
-      "communityAverageLevel": "White 3-Star",
       "skills": [
         {
           "name": "Elbuod Elbuort",
@@ -2172,6 +2170,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "Blue 2-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Zatanna-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Zatanna.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Zatanna",
       "relatedChampions": [
@@ -2189,8 +2189,6 @@
         "Weapon Master"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/LexLuthor-card.png",
-      "communityAverageLevel": "White 4-Star",
       "skills": [
         {
           "name": "Ability Analysis",
@@ -2240,6 +2238,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "White 5-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/LexLuthor-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/LexLuthor.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Lex%20Luthor"
     },
@@ -2253,8 +2253,6 @@
         "Bat Family"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Batgirl-card.png",
-      "communityAverageLevel": "White 3-Star",
       "skills": [
         {
           "effects": [
@@ -2304,6 +2302,8 @@
           "type": "Passive"
         }
       ],
+      "communityAverageLevel": "White 5-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Batgirl-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Batgirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Batgirl"
     },
@@ -2313,8 +2313,6 @@
       "class": "Guardian",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Homefun-card.png",
-      "communityAverageLevel": "Unlocked",
       "skills": [
         {
           "name": "Grand Slam",
@@ -2328,6 +2326,8 @@
           "isUltimate": true
         }
       ],
+      "communityAverageLevel": "White 2-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Homefun-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Homefun.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Homefun"
     },
@@ -2341,7 +2341,6 @@
         "Arkham's Most Wanted"
       ],
       "isHealer": false,
-      "communityAverageLevel": "White 3-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Bane-card.png",
       "skills": [
         {
@@ -2393,6 +2392,7 @@
           ]
         }
       ],
+      "communityAverageLevel": "White 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Bane.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Bane"
     },
@@ -2405,8 +2405,6 @@
         "Energy Wielder"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Stargirl-card.png",
-      "communityAverageLevel": "White 3-Star",
       "skills": [
         {
           "name": "Star Shield",
@@ -2458,6 +2456,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "White 5-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Stargirl-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Stargirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Stargirl"
     },
@@ -2471,8 +2471,6 @@
         "Birds of Prey"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png",
-      "communityAverageLevel": "White 4-Star",
       "skills": [
         {
           "name": "Manic Episode",
@@ -2524,6 +2522,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "White 5-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/HarleyQuinn.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Harley%20Quinn"
     },
@@ -2533,8 +2533,6 @@
       "class": "Guardian",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BigBoy-card.png",
-      "communityAverageLevel": "Unlocked",
       "skills": [
         {
           "isUltimate": true,
@@ -2547,6 +2545,8 @@
           ]
         }
       ],
+      "communityAverageLevel": "White 3-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BigBoy-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BigBoy.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Big%20Boy"
     },
@@ -2559,7 +2559,6 @@
         "Superman Family",
         "Metahuman"
       ],
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Superboy-card.png",
       "communityAverageLevel": "Unlocked",
       "skills": [
         {
@@ -2610,6 +2609,7 @@
           "isUltimate": false
         }
       ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Superboy-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Superboy.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Superboy",
       "relatedChampions": [
@@ -2624,8 +2624,6 @@
       "class": "Warrior",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Crossbar-card.png",
-      "communityAverageLevel": "Unlocked",
       "skills": [
         {
           "name": "Bell Ring",
@@ -2638,6 +2636,8 @@
           "isUltimate": true
         }
       ],
+      "communityAverageLevel": "White 3-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Crossbar-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Crossbar.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Crossbar"
     },
@@ -2650,8 +2650,6 @@
         "Metahuman"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BlackAdam-card.png",
-      "communityAverageLevel": "Purple 1-Star",
       "skills": [
         {
           "name": "Wrath",
@@ -2702,6 +2700,8 @@
           "isUltimate": false
         }
       ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BlackAdam-card.png",
+      "communityAverageLevel": "Gold 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BlackAdam.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Black%20Adam"
     },
@@ -2714,8 +2714,6 @@
         "Weapon Master"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/GreenArrow-card.png",
-      "communityAverageLevel": "Purple 2-Star",
       "skills": [
         {
           "name": "Boxing Glove Arrow",
@@ -2765,6 +2763,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "Gold 1-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/GreenArrow-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/GreenArrow.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Green%20Arrow"
     },
@@ -2774,8 +2774,6 @@
       "class": "Supporter",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BangBang-card.png",
-      "communityAverageLevel": "Unlocked",
       "skills": [
         {
           "isUltimate": true,
@@ -2785,6 +2783,8 @@
           "name": "YEE-HA!"
         }
       ],
+      "communityAverageLevel": "White 3-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BangBang-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BangBang.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Bang%20Bang"
     },
@@ -2797,8 +2797,6 @@
         "Weapon Master"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TheJoker-card.png",
-      "communityAverageLevel": "White 5-Star",
       "skills": [
         {
           "name": "What a Gas",
@@ -2850,6 +2848,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "Blue 3-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TheJoker-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TheJoker.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=The%20Joker",
       "relatedChampions": [
@@ -2868,38 +2868,36 @@
       ],
       "class": "Warrior",
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Superman-card.png",
-      "communityAverageLevel": "Blue 1-Star",
       "skills": [
         {
-          "name": "Heat Vision",
-          "description": "Superman shoots a heat laser, dealing Physical DMG to an enemy.",
-          "type": "Physical",
           "effects": [
             "DMG",
             "Debuff"
           ],
-          "isUltimate": false
+          "description": "Superman shoots a heat laser, dealing Physical DMG to an enemy.",
+          "isUltimate": false,
+          "name": "Heat Vision",
+          "type": "Physical"
         },
         {
           "name": "Freeze Breath",
-          "description": "Superman inhales deeply before exhaling a freezing breath, dealing Physical DMG to an enemy and [Freezing] them.",
           "type": "Control",
+          "isUltimate": false,
           "effects": [
             "Control",
             "DMG"
           ],
-          "isUltimate": false
+          "description": "Superman inhales deeply before exhaling a freezing breath, dealing Physical DMG to an enemy and [Freezing] them."
         },
         {
-          "name": "Under a Yellow Sun",
           "description": "Superman soars into space, gaining 1 permanent stack of [Solar Energy] before dealing Physical DMG to an enemy.",
           "type": "Physical",
+          "isUltimate": true,
+          "name": "Under a Yellow Sun",
           "effects": [
             "DMG",
             "Buff"
-          ],
-          "isUltimate": true
+          ]
         },
         {
           "name": "Man of Steel",
@@ -2912,15 +2910,17 @@
           "isUltimate": false
         },
         {
-          "name": "Hope Restored",
           "description": "Increases all Champions' HP and [Warrior] Champions' ATK.",
-          "type": "Passive",
           "effects": [
             "Passive"
           ],
-          "isUltimate": false
+          "isUltimate": false,
+          "name": "Hope Restored",
+          "type": "Passive"
         }
       ],
+      "communityAverageLevel": "Blue 4-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Superman-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Superman.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Superman",
       "relatedChampions": [
@@ -2938,61 +2938,61 @@
         "Weapon Master"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png",
-      "communityAverageLevel": "White 3-Star",
       "skills": [
         {
+          "isUltimate": false,
+          "type": "Spiritual",
+          "description": "The Pengiun deals Spiritual DMG to enemies within a circular area in front of him, with a 50% chance to inflict 1 stack of [Engine Oil].",
           "effects": [
             "Control",
             "DMG",
             "AoE DMG",
             "Debuff"
           ],
-          "isUltimate": false,
-          "type": "Spiritual",
-          "description": "The Pengiun deals Spiritual DMG to enemies within a circular area in front of him, with a 50% chance to inflict 1 stack of [Engine Oil].",
           "name": "Oil Spill"
         },
         {
           "isUltimate": false,
-          "type": "Spiritual",
-          "description": "The Penguin summons a Penguin Commando around him, which automatically seeks out targets and explodes on impact, dealing Spiritual DMG to nearby enemied.",
-          "name": "Bird of Prey",
-          "effects": [
-            "DMG",
-            "AoE DMG"
-          ]
-        },
-        {
-          "isUltimate": true,
           "effects": [
             "DMG",
             "AoE DMG"
           ],
-          "name": "For the Birds",
-          "description": "The Penguin summons Penguin Commandos in front of him, which automatically seek out targets and explode upon impact, dealing Spiritual DMG to nmearby enemies.",
-          "type": "Spiritual"
+          "description": "The Penguin summons a Penguin Commando around him, which automatically seeks out targets and explodes on impact, dealing Spiritual DMG to nearby enemied.",
+          "type": "Spiritual",
+          "name": "Bird of Prey"
         },
         {
-          "description": "When taking melee attacks, The Penguin immediately moves backward. Can be triggered once per skill level per battle. An additional Penguin Commando is summoned with each Ultimate cast.",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "type": "Spiritual",
+          "description": "The Penguin summons Penguin Commandos in front of him, which automatically seek out targets and explode upon impact, dealing Spiritual DMG to nmearby enemies.",
+          "name": "For the Birds",
+          "isUltimate": true
+        },
+        {
           "isUltimate": false,
           "effects": [
             "Buff",
             "Defense"
           ],
-          "name": "Umbrella Retreat",
-          "type": "Defense"
+          "description": "When taking melee attacks, The Penguin immediately moves backward. Can be triggered once per skill level per battle. An additional Penguin Commando is summoned with each Ultimate cast.",
+          "type": "Defense",
+          "name": "Umbrella Retreat"
         },
         {
-          "description": "Increases all Champions' MEN.",
           "effects": [
             "Passive"
           ],
           "isUltimate": false,
           "type": "Passive",
-          "name": "Keen Analysis"
+          "name": "Keen Analysis",
+          "description": "Increases all Champions' MEN."
         }
       ],
+      "communityAverageLevel": "White 4-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/ThePenguin.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=The%20Penguin"
     },
@@ -3005,8 +3005,6 @@
         "Metahuman"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Shazam-card.png",
-      "communityAverageLevel": "White 3-Star",
       "skills": [
         {
           "effects": [
@@ -3060,6 +3058,8 @@
           ]
         }
       ],
+      "communityAverageLevel": "White 5-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Shazam-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Shazam.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Shazam"
     },
@@ -3069,8 +3069,6 @@
       "class": "Guardian",
       "inherentSynergies": [],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/ShieldSquad-card.png",
-      "communityAverageLevel": "Unlocked",
       "skills": [
         {
           "name": "Crowd Control",
@@ -3083,6 +3081,8 @@
           "isUltimate": true
         }
       ],
+      "communityAverageLevel": "White 3-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/ShieldSquad-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/ShieldSquad.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Shield%20Squad"
     },
@@ -3096,8 +3096,6 @@
         "Flash Family"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TheFlash-card.png",
-      "communityAverageLevel": "White 4-Star",
       "skills": [
         {
           "name": "What a Rush",
@@ -3147,6 +3145,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "White 5-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TheFlash-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TheFlash.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=The%20Flash"
     },
@@ -3160,8 +3160,6 @@
         "Bat Family"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Nightwing-card.png",
-      "communityAverageLevel": "White 2-Star",
       "skills": [
         {
           "name": "Shadow Flip",
@@ -3211,6 +3209,8 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "Blue 2-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Nightwing-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Nightwing.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Nightwing",
       "relatedChampions": [
