@@ -24,7 +24,7 @@
     <div class="background-hero"></div>
     <navigation-widget></navigation-widget>
     
-    <main class="relative z-10 max-w-4xl mx-auto p-4 md:p-8">
+    <main class="relative z-10 max-w-7xl mx-auto p-4 md:p-8">
         <header class="py-8 md:py-12 text-center">
             <h1 class="text-5xl md:text-7xl font-extrabold mb-4 glowing-text text-white">My Profile</h1>
             <p class="text-xl md:text-2xl text-blue-200">Manage your account settings.</p>
@@ -34,18 +34,23 @@
         <section id="profile-content" class="mb-12 hidden">
             <!-- User Info Display -->
             <div class="user-info-card mb-8">
-                <h2 class="guide-section-title !text-left !border-b-0 !pb-0 !mb-4">User Information</h2>
-                <div class="info-grid">
-                    <div>
-                        <p class="info-label">Email Address</p>
-                        <p id="user-email-display" class="info-value">Loading...</p>
-                    </div>
-                    <div>
-                        <p class="info-label">Username</p>
-                        <p id="username-display" class="info-value">Not set</p>
+                    <h2 class="guide-section-title !text-left !border-b-0 !pb-0 !mb-4">User Information</h2>
+                    <div class="info-grid">
+                        <div>
+                            <p class="info-label">Email Address</p>
+                            <p id="user-email-display" class="info-value">Loading...</p>
+                        </div>
+                        <div>
+                            <p class="info-label">Username</p>
+                            <p id="username-display" class="info-value"></p>
+                        </div>
+                        <div>
+                            <p class="info-label">Roles</p>
+                            <div id="user-roles-container" class="flex flex-wrap gap-2 items-center">
+                                </div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
             <!-- Account Management Section -->
             <div class="bg-slate-900/70 backdrop-blur-sm rounded-lg border border-blue-500/20 p-6 md:p-8">

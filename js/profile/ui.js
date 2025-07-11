@@ -17,6 +17,7 @@ const DOM = {
     usernameInput: document.getElementById('username-input'),
     userEmailDisplay: document.getElementById('user-email-display'),
     usernameDisplay: document.getElementById('username-display'),
+    userRolesContainer: document.getElementById('user-roles-container'),
     currentPasswordInput: document.getElementById('current-password'),
     newPasswordInput: document.getElementById('new-password'),
     confirmPasswordInput: document.getElementById('confirm-password'),
@@ -124,6 +125,31 @@ async function handleProfileUpdate(e) {
 }
 
 /**
+ * @function renderRoleBadges
+ * @description Renders badges for the user's roles, or a default 'Member' badge.
+ */
+function renderRoleBadges(roles = []) {
+    if (!DOM.userRolesContainer) return;
+    DOM.userRolesContainer.innerHTML = ''; // Clear existing badges
+
+    if (roles && roles.length > 0) {
+        roles.forEach(role => {
+            const badge = document.createElement('span');
+            badge.className = `role-badge role-${role.toLowerCase()}`;
+            badge.textContent = role;
+            DOM.userRolesContainer.appendChild(badge);
+        });
+    } else {
+        // Display a default "Member" badge if no roles are found
+        const badge = document.createElement('span');
+        badge.className = 'role-badge role-member';
+        badge.textContent = 'Member';
+        DOM.userRolesContainer.appendChild(badge);
+    }
+}
+
+
+/**
  * @function setupPageForUser
  * @description Configures the page based on the user's authentication state and provider.
  * This version specifically blocks anonymous users.
@@ -138,12 +164,15 @@ async function setupPageForUser(user) {
         try {
             const userProfileRef = doc(db, "artifacts", appId, "users", user.uid);
             const docSnap = await getDoc(userProfileRef);
-            if (docSnap.exists() && docSnap.data().username) {
-                const username = docSnap.data().username;
-                DOM.usernameDisplay.textContent = username;
-                DOM.usernameInput.value = username;
+            if (docSnap.exists() && docSnap.data()) {
+                const userData = docSnap.data();
+                const username = userData.username;
+                DOM.usernameDisplay.textContent = username || "Not set";
+                DOM.usernameInput.value = username || "";
+                renderRoleBadges(userData.roles);
             } else {
                 DOM.usernameDisplay.textContent = "Not set";
+                renderRoleBadges([]);
             }
         } catch (error) {
             console.error("Error fetching user profile:", error);

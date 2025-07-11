@@ -5,18 +5,21 @@
 
 // --- MODULES & GLOBALS ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, doc, runTransaction, getDoc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 // --- CONFIG & SETUP ---
 const SQUADS_PER_PAGE = 6;
 const CACHE_KEY = 'squads_data_cache';
 const CACHE_DURATION_MS = 60 * 60 * 1000 * 24;
 let ALL_DATA = {};
-let db, analytics;
+let db, analytics, auth, currentUser, userRoles = [];
 
 const listContainer = document.getElementById('squad-list-container');
 const detailContainer = document.getElementById('squad-detail-container');
+const adminControlsContainer = document.getElementById('admin-controls-container');
+const createSquadModal = document.getElementById('create-squad-modal');
 
 // --- FIREBASE INITIALIZATION ---
 // This section runs immediately when the script is loaded.
@@ -33,7 +36,7 @@ try {
     const app = initializeApp(firebaseConfig);
     db = getFirestore(app);
     analytics = getAnalytics(app);
-    // Dispatch event for other components that might need it (like auth-ui)
+    auth = getAuth(app);
     document.dispatchEvent(new CustomEvent('firebase-ready', { detail: { app } }));
 } catch (e) {
     console.error("Firebase initialization failed in ui.js:", e);
@@ -60,37 +63,33 @@ async function fetchCollection(collectionName) {
  * The cache is set to expire after 1 hour.
  */
 async function loadAllDataFromFirestore() {
-    // 1. Check for cached data in localStorage
+    const CACHE_KEY = 'squads_data_cache';
+    const CACHE_DURATION_MS = 60 * 60 * 1000 * 24;
+    
     const cachedItem = localStorage.getItem(CACHE_KEY);
     if (cachedItem) {
         try {
             const cachedData = JSON.parse(cachedItem);
-            const cacheTimestamp = cachedData.timestamp || 0;
-            const isCacheValid = (Date.now() - cacheTimestamp) < CACHE_DURATION_MS;
-
-            if (isCacheValid && cachedData.data) {
-                console.log("Loading data from cache.");
+            const isCacheValid = (Date.now() - (cachedData.timestamp || 0)) < CACHE_DURATION_MS;
+            if (isCacheValid && cachedData.data && cachedData.data.legacyPieces) { // Also check for new data
                 ALL_DATA = cachedData.data;
-                return; // Exit if cache is valid
+                return;
             }
-        } catch (e) {
-            console.error("Failed to parse cache, fetching fresh data.", e);
-        }
+        } catch (e) { console.error("Failed to parse cache, fetching fresh data.", e); }
     }
-
-    // 2. If cache is invalid or doesn't exist, fetch from Firestore
+    
     console.log("Cache invalid or not found. Fetching data from Firestore.");
     try {
-        const [squads, champions, synergies, effects] = await Promise.all([
+        const [squads, champions, synergies, effects, legacyPieces] = await Promise.all([
             fetchCollection('squads'),
             fetchCollection('champions'),
             fetchCollection('synergies'),
-            fetchCollection('effects')
+            fetchCollection('effects'),
+            fetchCollection('legacyPieces')
         ]);
         
-        ALL_DATA = { squads, champions, synergies, effects };
+        ALL_DATA = { squads, champions, synergies, effects, legacyPieces };
 
-        // 3. Store the newly fetched data and a timestamp in localStorage
         const cachePayload = {
             timestamp: Date.now(),
             data: ALL_DATA
@@ -99,12 +98,8 @@ async function loadAllDataFromFirestore() {
 
     } catch (error) {
         console.error("Failed to load data from Firestore:", error);
-        if (listContainer) {
-            listContainer.innerHTML = `<p class="text-center text-red-400">Failed to load core data from Firestore. Please try again later.</p>`;
-        }
     }
 }
-
 
 // --- SEO HANDLING ---
 
@@ -173,7 +168,7 @@ function renderListView(page = 1) {
     if (!listContainer || !detailContainer) return;
     detailContainer.style.display = 'none';
     listContainer.style.display = 'block';
-    resetSeoTags(); // Reset SEO for the list view
+    resetSeoTags();
 
     const squads = ALL_DATA.squads;
     if (!squads || squads.length === 0) {
@@ -203,6 +198,19 @@ function renderListView(page = 1) {
             `;
         }).join('');
 
+        const ratingsHtml = `
+            <div class="squad-card-ratings">
+                <span class="rating-display" title="${squad.thumbsUp || 0} up-votes">
+                    <i class="fas fa-thumbs-up text-green-400"></i>
+                    <span>${squad.thumbsUp || 0}</span>
+                </span>
+                <span class="rating-display" title="${squad.thumbsDown || 0} down-votes">
+                    <i class="fas fa-thumbs-down text-red-400"></i>
+                    <span>${squad.thumbsDown || 0}</span>
+                </span>
+            </div>
+        `;
+
         return `
             <a href="?id=${squad.id}" class="squad-list-card">
                 <div>
@@ -212,7 +220,10 @@ function renderListView(page = 1) {
                     </div>
                     <div class="squad-card-members">${memberPortraits}</div>
                 </div>
-                <div class="squad-card-synergies mt-auto pt-4">${synergyBadges}</div>
+                <div class="squad-card-footer mt-auto pt-4">
+                    <div class="squad-card-synergies">${synergyBadges}</div>
+                    ${ratingsHtml}
+                </div>
             </a>
         `;
     }).join('');
@@ -245,13 +256,23 @@ function renderListView(page = 1) {
             main();
         });
     });
+
+    adminControlsContainer.innerHTML = '';
+    if (userRoles.includes('creator') || userRoles.includes('admin')) {
+        const createBtn = document.createElement('button');
+        createBtn.id = 'open-create-modal-btn';
+        createBtn.className = 'btn-primary';
+        createBtn.textContent = 'Create New Squad';
+        adminControlsContainer.appendChild(createBtn);
+        createBtn.addEventListener('click', openCreateModal);
+    }
 }
 
 /**
  * Renders the detailed view for a single squad.
  * @param {string} squadId - The ID of the squad to display.
  */
-function renderDetailView(squadId) {
+async function renderDetailView(squadId) {
     if (!listContainer || !detailContainer) return;
     listContainer.style.display = 'none';
     detailContainer.style.display = 'block';
@@ -262,7 +283,32 @@ function renderDetailView(squadId) {
         return;
     }
     
-    updateSeoTags(squad); // Update SEO for the detail view
+    updateSeoTags(squad);
+
+    let userVote = null;
+    if (currentUser && !currentUser.isAnonymous) {
+        const ratingDocRef = doc(db, `artifacts/dc-dark-legion-builder/public/data/squads/${squadId}/ratings`, currentUser.uid);
+        const ratingDocSnap = await getDoc(ratingDocRef);
+        if (ratingDocSnap.exists()) {
+            userVote = ratingDocSnap.data().vote;
+        }
+    }
+    
+    const thumbsUp = squad.thumbsUp || 0;
+    const thumbsDown = squad.thumbsDown || 0;
+    const canVote = currentUser && !currentUser.isAnonymous;
+    const ratingHtml = `
+        <div id="squad-rating-widget" class="flex items-center gap-4" ${currentUser ? '' : 'title="You must be logged in to vote"'}>
+            <button class="rating-btn ${userVote === 1 ? 'active' : ''}" data-vote="1" ${!currentUser ? 'disabled' : ''}>
+                <i class="fas fa-thumbs-up"></i>
+                <span id="thumbs-up-count">${thumbsUp}</span>
+            </button>
+            <button class="rating-btn ${userVote === -1 ? 'active' : ''}" data-vote="-1" ${!currentUser ? 'disabled' : ''}>
+                <i class="fas fa-thumbs-down"></i>
+                <span id="thumbs-down-count">${thumbsDown}</span>
+            </button>
+        </div>
+    `;
 
     const lineupHtml = squad.members.map(member => {
         const champion = ALL_DATA.champions.find(c => c.id === member.dbChampionId);
@@ -332,6 +378,7 @@ function renderDetailView(squadId) {
         <header class="py-8 md:py-12 text-center">
             <h1 class="text-5xl md:text-7xl font-extrabold mb-4 glowing-text text-white">${squad.name}</h1>
             <p class="text-xl md:text-2xl text-blue-200">${squad.shortDescription}</p>
+            <div class="flex justify-center mt-4">${ratingHtml}</div>
         </header>
         <section class="mb-12">
             <h2 class="guide-section-title">The Lineup</h2>
@@ -352,11 +399,300 @@ function renderDetailView(squadId) {
         </section>
         <div class="text-center py-20"><a href="/squads.html" class="mt-4 inline-block pagination-btn">Back to List</a></div>
     `;
+
+    document.getElementById('squad-rating-widget').addEventListener('click', (e) => {
+        const button = e.target.closest('.rating-btn');
+        if (button && !button.disabled) {
+            handleSquadRating(squadId, parseInt(button.dataset.vote));
+        }
+    });
     
     setupSkillTabs();
 }
 
+/**
+ * Handles a user's rating action for a squad using a Firestore transaction.
+ * @param {string} squadId The ID of the squad being rated.
+ * @param {number} newVote The new vote value (1 for up, -1 for down).
+ */
+async function handleSquadRating(squadId, newVote) {
+    if (!currentUser || currentUser.isAnonymous) {
+        document.dispatchEvent(new CustomEvent('show-toast', {
+            detail: { message: 'Please log in to rate squads.', type: 'error' }
+        }));
+        return;
+    }
+
+    const squadDocRef = doc(db, `artifacts/dc-dark-legion-builder/public/data/squads`, squadId);
+    const ratingDocRef = doc(squadDocRef, 'ratings', currentUser.uid);
+
+    try {
+        const finalVoteValue = await runTransaction(db, async (transaction) => {
+            const squadDoc = await transaction.get(squadDocRef);
+            const ratingDoc = await transaction.get(ratingDocRef);
+
+            if (!squadDoc.exists()) { throw "Squad document does not exist!"; }
+
+            const currentVote = ratingDoc.exists() ? ratingDoc.data().vote : 0;
+            let squadData = squadDoc.data();
+            squadData.thumbsUp = squadData.thumbsUp || 0;
+            squadData.thumbsDown = squadData.thumbsDown || 0;
+            
+            let voteChange = 0;
+
+            // If user clicks the same vote button again, they are toggling it off.
+            if (currentVote === newVote) {
+                transaction.delete(ratingDocRef);
+                voteChange = 0; // The new vote will be 0 (none)
+            } else {
+                transaction.set(ratingDocRef, { userId: currentUser.uid, vote: newVote });
+                voteChange = newVote;
+            }
+
+            // Decrement the old vote count if it exists
+            if (currentVote === 1) squadData.thumbsUp -= 1;
+            if (currentVote === -1) squadData.thumbsDown -= 1;
+
+            // Increment the new vote count if it's a new vote
+            if (voteChange === 1) squadData.thumbsUp += 1;
+            if (voteChange === -1) squadData.thumbsDown += 1;
+            
+            transaction.update(squadDocRef, {
+                thumbsUp: squadData.thumbsUp,
+                thumbsDown: squadData.thumbsDown
+            });
+            
+            return voteChange;
+        });
+
+        // Optimistically update the UI after successful transaction
+        const finalSquad = (await getDoc(squadDocRef)).data();
+        
+        document.getElementById('thumbs-up-count').textContent = finalSquad.thumbsUp || 0;
+        document.getElementById('thumbs-down-count').textContent = finalSquad.thumbsDown || 0;
+        
+        document.querySelectorAll('.rating-btn').forEach(btn => btn.classList.remove('active'));
+        if (finalVoteValue !== 0) {
+            document.querySelector(`.rating-btn[data-vote="${finalVoteValue}"]`).classList.add('active');
+        }
+
+        if(analytics) logEvent(analytics, 'rate_squad', { squad_name: finalSquad.name, rating: finalVoteValue });
+
+    } catch (e) {
+        console.error("Rating transaction failed: ", e);
+        document.dispatchEvent(new CustomEvent('show-toast', {
+            detail: { message: 'Could not save your rating. Please try again.', type: 'error' }
+        }));
+    }
+}
+
+// --- MODAL AND FORM HANDLING ---
+
+/**
+ * Initializes the TinyMCE WYSIWYG editor on the textarea.
+ */
+function initWysiwygEditor() {
+    tinymce.init({
+        selector: 'textarea#squad-long-desc',
+        plugins: 'lists link image media table code help wordcount',
+        toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image media | code | help',
+        skin: 'oxide-dark',
+        content_css: 'dark',
+        height: 300,
+        // Security: Allow iframe for YouTube/Vimeo embeds, but nothing else dangerous
+        extended_valid_elements: 'iframe[src|title|width|height|allowfullscreen|frameborder]',
+        // Automatically convert video URLs into embed codes
+        media_live_embeds: true,
+    });
+}
+
+function openCreateModal() {
+    if (!createSquadModal) return;
+    populateCreateFormSelectors();
+    initWysiwygEditor(); 
+    createSquadModal.classList.remove('hidden');
+    createSquadModal.classList.add('flex');
+}
+
+function closeCreateModal() {
+    if (!createSquadModal) return;
+    tinymce.remove('textarea#squad-long-desc');
+    createSquadModal.classList.add('hidden');
+    createSquadModal.classList.remove('flex');
+    document.getElementById('create-squad-form').reset();
+}
+
+function populateCreateFormSelectors() {
+    const { champions, legacyPieces } = ALL_DATA;
+
+    if (!champions || !Array.isArray(champions) || !legacyPieces || !Array.isArray(legacyPieces)) {
+        console.error("Champion or Legacy Piece data is not loaded correctly.", ALL_DATA);
+        return;
+    }
+
+    const membersContainer = document.getElementById('squad-members-container');
+    membersContainer.innerHTML = ''; // Clear previous
+
+    for (let i = 1; i <= 5; i++) {
+        const memberDiv = document.createElement('div');
+        memberDiv.className = 'grid grid-cols-1 md:grid-cols-2 gap-4 border-b border-slate-700 pb-4';
+        
+        // Champion Selector
+        let championOptions = '<option value="">-- Select Champion --</option>';
+        champions.sort((a, b) => a.name.localeCompare(b.name)).forEach(champ => {
+            championOptions += `<option value="${champ.id}">${champ.name}</option>`;
+        });
+
+        // Legacy Piece Selector
+        let legacyOptions = '<option value="">-- No Legacy Piece --</option>';
+        legacyPieces.sort((a, b) => a.name.localeCompare(b.name)).forEach(piece => {
+            legacyOptions += `<option value="${piece.id}">${piece.name}</option>`;
+        });
+
+        memberDiv.innerHTML = `
+            <div>
+                <label class="form-label">Member ${i}</label>
+                <select name="champion${i}" class="form-select" required>${championOptions}</select>
+            </div>
+            <div>
+                <label class="form-label">Legacy Piece</label>
+                <select name="legacyPiece${i}" class="form-select">${legacyOptions}</select>
+            </div>
+        `;
+        membersContainer.appendChild(memberDiv);
+    }
+}
+
+async function handleCreateSquadSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+
+    // 1. Validate Short Description for HTML
+    const shortDescription = formData.get('shortDescription');
+    const htmlTagRegex = /<[a-z][\s\S]*>/i;
+    if (htmlTagRegex.test(shortDescription)) {
+        showNotification('Short Description cannot contain HTML tags.', 'error');
+        return;
+    }
+
+    // 2. Gather selections to check for duplicates
+    const selectedChampionIds = [];
+    const selectedLegacyPieceIds = [];
+
+    for (let i = 1; i <= 5; i++) {
+        const championId = formData.get(`champion${i}`);
+        const legacyPieceId = formData.get(`legacyPiece${i}`);
+        
+        if (championId) {
+            selectedChampionIds.push(championId);
+        }
+        // Only check for duplicate legacy pieces if one was actually selected
+        if (legacyPieceId) {
+            selectedLegacyPieceIds.push(legacyPieceId);
+        }
+    }
+
+    // 3. Check for duplicate champions
+    const uniqueChampions = new Set(selectedChampionIds);
+    if (uniqueChampions.size !== selectedChampionIds.length) {
+        showNotification('Each champion can only be used once per squad.', 'error');
+        return;
+    }
+
+    // 4. Check for duplicate legacy pieces
+    const uniqueLegacyPieces = new Set(selectedLegacyPieceIds);
+    if (uniqueLegacyPieces.size !== selectedLegacyPieceIds.length) {
+        showNotification('Each legacy piece can only be equipped by one champion.', 'error');
+        return;
+    }
+
+    const rawHtmlContent = tinymce.get('squad-long-desc').getContent();
+
+    if (!rawHtmlContent.trim()) {
+        showNotification('The "Long Description" cannot be empty.', 'error');
+        tinymce.get('squad-long-desc').focus();
+        return; // Stop the function
+    }
+
+    // Sanitize the HTML content with DOMPurify to prevent XSS attacks
+    const sanitizedHtmlContent = DOMPurify.sanitize(rawHtmlContent, {
+        USE_PROFILES: { html: true }, // Allows common HTML tags
+        ALLOWED_TAGS: ['p', 'b', 'i', 'u', 'strong', 'em', 'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'a', 'img', 'iframe', 'br'],
+        ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'width', 'height', 'allowfullscreen', 'frameborder', 'style', 'class']
+    });
+
+    const members = [];
+    for (let i = 1; i <= 5; i++) {
+        const championId = formData.get(`champion${i}`);
+        const legacyPieceId = formData.get(`legacyPiece${i}`);
+        if (!championId) continue;
+
+        const championData = ALL_DATA.champions.find(c => c.id === championId);
+        const legacyPieceData = ALL_DATA.legacyPieces.find(lp => lp.id === legacyPieceId);
+
+        members.push({
+            dbChampionId: championId,
+            name: championData.name,
+            class: championData.class,
+            legacyPiece: legacyPieceData ? { id: legacyPieceId, name: legacyPieceData.name } : null
+        });
+    }
+
+    if (members.length !== 5) {
+        showNotification("Please select all 5 squad members.", "error");
+        return;
+    }
+
+    // --- Synergy Calculation (Simplified) ---
+    const memberSynergies = members.flatMap(m => ALL_DATA.champions.find(c => c.id === m.dbChampionId)?.inherentSynergies || []);
+    const synergyCounts = memberSynergies.reduce((acc, syn) => {
+        acc[syn] = (acc[syn] || 0) + 1;
+        return acc;
+    }, {});
+    
+    const activeSynergies = Object.entries(synergyCounts).map(([name, count]) => {
+        const synergyInfo = ALL_DATA.synergies.find(s => s.name === name);
+        const applicableTier = synergyInfo?.tiers.filter(t => t.countRequired <= count).pop();
+        return applicableTier ? { name, appliedAtMemberCount: applicableTier.countRequired } : null;
+    }).filter(Boolean);
+
+
+    const newSquad = {
+        name: formData.get('name'),
+        shortDescription: formData.get('shortDescription'),
+        longDescription: sanitizedHtmlContent,
+        members: members,
+        activeSynergies: activeSynergies,
+        originalOwnerId: currentUser.uid,
+        createdAt: serverTimestamp(),
+        thumbsUp: 0,
+        thumbsDown: 0,
+    };
+
+    try {
+        const squadCollection = collection(db, 'artifacts/dc-dark-legion-builder/public/data/squads');
+        await addDoc(squadCollection, newSquad);
+        document.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'Squad created successfully!', type: 'success' } }));
+        closeCreateModal();
+        localStorage.removeItem('squads_data_cache'); // Invalidate cache
+        setTimeout(() => window.location.reload(), 1000); // Reload to show new squad
+    } catch (error) {
+        console.error("Error creating squad:", error);
+        document.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'Failed to create squad.', type: 'error' } }));
+    }
+}
+
 // --- UI INTERACTIONS ---
+
+/**
+ * @function showNotification
+ * @description A helper to dispatch toast notifications.
+ */
+function showNotification(message, type) {
+    const event = new CustomEvent('show-toast', { detail: { message, type } });
+    document.dispatchEvent(event);
+}
 
 function setupSkillTabs() {
     const skillContainers = document.querySelectorAll('.champion-role-card');
@@ -386,6 +722,26 @@ function setupSkillTabs() {
 }
 
 // --- INITIALIZATION & ROUTING ---
+
+async function initializeAppAndRender() {
+    onAuthStateChanged(auth, async (user) => {
+        currentUser = user;
+        if (user && !user.isAnonymous) {
+            // User is logged in, fetch their roles
+            const userDocRef = doc(db, "artifacts/dc-dark-legion-builder/users", user.uid);
+            const userDocSnap = await getDoc(userDocRef);
+            if (userDocSnap.exists()) {
+                userRoles = userDocSnap.data().roles || [];
+            } else {
+                userRoles = [];
+            }
+        } else {
+            // User is logged out or anonymous
+            userRoles = [];
+        }
+        await main();
+    });
+}
 
 async function main() {
     if (!db) {
@@ -417,5 +773,7 @@ async function main() {
 // Listen for browser back/forward navigation
 window.addEventListener('popstate', main);
 
-// Initial load, waits for DOM to be ready.
-document.addEventListener('DOMContentLoaded', main);
+document.addEventListener('DOMContentLoaded', initializeAppAndRender);
+document.getElementById('create-squad-form').addEventListener('submit', handleCreateSquadSubmit);
+document.getElementById('close-modal-btn').addEventListener('click', closeCreateModal);
+document.getElementById('cancel-create-btn').addEventListener('click', closeCreateModal);
