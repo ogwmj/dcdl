@@ -206,15 +206,15 @@ function renderListView(page = 1) {
     listContainer.style.display = 'block';
     resetSeoTags();
 
-    const squads = ALL_DATA.squads || [];
-    if (!squads || squads.length === 0) {
-        listContainer.innerHTML = `<p class="text-center text-yellow-400">No squads found.</p>`;
+    const activeSquads = (ALL_DATA.squads || []).filter(s => s.isActive === true);
+
+    if (activeSquads.length === 0) {
+        listContainer.innerHTML = `<p class="text-center text-yellow-400">No active squads found.</p>`;
         return;
     }
 
-    const totalPages = Math.ceil(squads.length / SQUADS_PER_PAGE);
-    const startIndex = (page - 1) * SQUADS_PER_PAGE;
-    const pagedSquads = squads.slice(startIndex, startIndex + SQUADS_PER_PAGE);
+    const totalPages = Math.ceil(activeSquads.length / SQUADS_PER_PAGE);
+    const pagedSquads = activeSquads.slice((page - 1) * SQUADS_PER_PAGE, page * SQUADS_PER_PAGE);
 
     const cardsHtml = pagedSquads.map(squad => {
         const memberPortraits = squad.members.map(member => {
@@ -452,22 +452,51 @@ async function renderDetailView(squadId) {
         <div class="text-center py-20"><a href="/squads.html" class="mt-4 inline-block pagination-btn">Back to List</a></div>
     `;
 
-    const header = detailContainer.querySelector('header');
-    if (header && currentUser && squad.originalOwnerId === currentUser.uid) {
-        const editBtn = document.createElement('button');
-        editBtn.id = 'edit-squad-btn';
-        editBtn.className = 'btn-primary';
-        editBtn.textContent = 'Edit Squad';
-        
-        const ratingWidgetContainer = header.querySelector('.flex.justify-center.mt-4');
+    let ownerControlsHtml = '';
+    if (currentUser && squad.originalOwnerId === currentUser.uid) {
+        const isChecked = squad.isActive === true ? 'checked' : '';
+        const statusLabel = squad.isActive === true ? 'Active' : 'Inactive';
+        const statusClass = squad.isActive === true ? 'active' : 'inactive';
+
+        ownerControlsHtml = `
+            <div class="owner-controls">
+                <button id="edit-squad-btn" class="btn-primary">Edit Squad</button>
+                <div class="status-toggle-container">
+                    <span class="status-toggle-label">Squad Status:</span>
+                    <label class="switch">
+                        <input type="checkbox" id="is-active-toggle" ${isChecked}>
+                        <span class="slider round"></span>
+                    </label>
+                    <span id="status-text" class="${statusClass}">${statusLabel}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    // Replace the previous edit button logic with the new ownerControlsHtml
+    const headerElement = detailContainer.querySelector('header');
+    if (headerElement) {
+        const ratingWidgetContainer = headerElement.querySelector('.flex.justify-center.mt-4');
         if (ratingWidgetContainer) {
-            editBtn.style.marginLeft = '1rem';
-            ratingWidgetContainer.appendChild(editBtn);
+            // Detach the rating widget to re-insert it later
+            ratingWidgetContainer.remove();
+            // Add the owner controls, then add the rating widget back
+            headerElement.innerHTML += ownerControlsHtml;
+            headerElement.appendChild(ratingWidgetContainer);
         } else {
-            header.appendChild(editBtn);
+             headerElement.innerHTML += ownerControlsHtml;
         }
-        
+    }
+
+    // --- Attach event listeners at the end of the function ---
+    const editBtn = document.getElementById('edit-squad-btn');
+    if (editBtn) {
         editBtn.addEventListener('click', () => openEditModal(squad));
+    }
+
+    const activeToggle = document.getElementById('is-active-toggle');
+    if (activeToggle) {
+        activeToggle.addEventListener('change', () => handleToggleActiveStatus(squad, activeToggle));
     }
 
     document.getElementById('squad-rating-widget').addEventListener('click', (e) => {
@@ -802,22 +831,16 @@ async function handleCreateSquadSubmit(e) {
             await updateDoc(squadDocRef, updatePayload);
             showNotification('Squad updated successfully!', 'success');
 
-            // 1. Update the in-memory data using the still-valid ID
             const squadIndex = ALL_DATA.squads.findIndex(s => s.id === currentEditingSquadId);
             if (squadIndex > -1) {
                 ALL_DATA.squads[squadIndex] = { ...ALL_DATA.squads[squadIndex], ...updatePayload };
             }
-
-            // 2. Update the browser's local storage cache
             localStorage.setItem(CACHE_KEY, JSON.stringify({
                 timestamp: Date.now(),
                 data: ALL_DATA
             }));
 
-            // 3. Re-render the view with the correct ID BEFORE the modal is closed
             renderDetailView(currentEditingSquadId);
-
-            // 4. Finally, close the modal and reset the state as the last step
             closeCreateModal();
         } catch (error) {
             console.error("Error updating squad:", error);
@@ -830,6 +853,7 @@ async function handleCreateSquadSubmit(e) {
             longDescription: sanitizedHtmlContent,
             members: members,
             activeSynergies: activeSynergies,
+            isActive: true,
             originalOwnerId: currentUser.uid,
             createdAt: serverTimestamp(),
             thumbsUp: 0,
@@ -850,7 +874,41 @@ async function handleCreateSquadSubmit(e) {
     }
 }
 
+// --- HELPERS ---
+
+async function handleToggleActiveStatus(squad, checkbox) {
+    const newStatus = checkbox.checked;
+    const statusText = document.getElementById('status-text');
+    checkbox.disabled = true;
+
+    try {
+        const squadDocRef = doc(db, 'artifacts/dc-dark-legion-builder/public/data/squads', squad.id);
+        await updateDoc(squadDocRef, { isActive: newStatus });
+
+        // Update local data to avoid re-fetch
+        const squadIndex = ALL_DATA.squads.findIndex(s => s.id === squad.id);
+        if (squadIndex > -1) {
+            ALL_DATA.squads[squadIndex].isActive = newStatus;
+        }
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data: ALL_DATA }));
+
+        // Update UI
+        statusText.textContent = newStatus ? 'Active' : 'Inactive';
+        statusText.className = newStatus ? 'active' : 'inactive';
+        showNotification(`Squad status updated to ${newStatus ? 'Active' : 'Inactive'}.`, 'success');
+
+    } catch (error) {
+        console.error("Error updating squad status:", error);
+        showNotification('Failed to update status.', 'error');
+        // Revert checkbox on failure
+        checkbox.checked = !newStatus;
+    } finally {
+        checkbox.disabled = false;
+    }
+}
+
 // --- UI INTERACTIONS ---
+
 
 /**
  * @function showNotification
