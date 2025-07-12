@@ -12,7 +12,8 @@ import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/
 // --- CONFIG & SETUP ---
 const SQUADS_PER_PAGE = 6;
 const CACHE_KEY = 'squads_data_cache';
-const CACHE_DURATION_MS = 60 * 60 * 1000 * 24;
+const CACHE_KEY_HOURS = 24;
+const CACHE_DURATION_MS = CACHE_KEY_HOURS * 60 * 60 * 1000;
 let ALL_DATA = {};
 let db, analytics, auth, currentUser, userRoles = [];
 
@@ -71,7 +72,7 @@ async function loadAllDataFromFirestore() {
         try {
             const cachedData = JSON.parse(cachedItem);
             const isCacheValid = (Date.now() - (cachedData.timestamp || 0)) < CACHE_DURATION_MS;
-            if (isCacheValid && cachedData.data && cachedData.data.legacyPieces) { // Also check for new data
+            if (isCacheValid && cachedData.data && cachedData.data.legacyPieces) {
                 ALL_DATA = cachedData.data;
                 return;
             }
