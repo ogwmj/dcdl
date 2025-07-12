@@ -8,11 +8,9 @@ const urlsToCache = [];
 
 // --- INSTALL: Fired when the new Service Worker is first installed. ---
 self.addEventListener('install', event => {
-  console.log('Service Worker: Installing...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Service Worker: Caching app shell');
         return cache.addAll(urlsToCache);
       })
       .then(() => {
@@ -24,14 +22,12 @@ self.addEventListener('install', event => {
 
 // --- ACTIVATE: Fired when the new Service Worker takes control. ---
 self.addEventListener('activate', event => {
-  console.log('Service Worker: Activating...');
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cacheName => {
           // If the cache name is old (i.e., not our current CACHE_NAME), delete it.
           if (cacheName !== CACHE_NAME) {
-            console.log('Service Worker: Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
