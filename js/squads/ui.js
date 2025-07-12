@@ -181,14 +181,10 @@ function createCustomSelect({ container, options, selectedValue, onChange }) {
 
 /**
  * Creates an interactive pillbox multi-select component.
+ * Supports displaying icons for synergies.
  * @param {Object} config - Configuration object.
- * @param {HTMLElement} config.container - The element to populate.
- * @param {Array<Object>} config.options - Array of { value, label } for the dropdown.
- * @param {Array<string>} config.selected - Array of selected values from activeFilters.
- * @param {string} config.placeholder - Placeholder text for the input.
- * @param {Function} config.onChange - Callback function when selections change.
  */
-function createPillbox({ container, options, selected, placeholder, onChange }) {
+function createPillbox({ container, options, selected, placeholder, onChange, iconType }) {
     container.innerHTML = `
         <div class="pills-input-wrapper">
             <div class="pills-container" style="display: contents;"></div>
@@ -203,32 +199,36 @@ function createPillbox({ container, options, selected, placeholder, onChange }) 
     const renderPills = () => {
         pillsContainer.innerHTML = selected.map(value => {
             const option = options.find(opt => opt.value === value);
-            const label = option ? option.label : value; 
-            return `<div class="pill" data-value="${value}">${label}<button class="pill-remove">&times;</button></div>`;
+            const label = option ? option.label : value;
+            const iconHtml = iconType === 'synergy' ? getSynergyIcon(label) : '';
+            return `<div class="pill" data-value="${value}">${iconHtml}<span>${label}</span><button class="pill-remove">&times;</button></div>`;
         }).join('');
     };
 
     const renderOptions = (filter = '') => {
         optionsPanel.innerHTML = options
             .filter(opt => !selected.includes(opt.value) && opt.label.toLowerCase().includes(filter.toLowerCase()))
-            .map(opt => `<div class="custom-option" data-value="${opt.value}">${opt.label}</div>`)
+            .map(opt => {
+                const iconHtml = iconType === 'synergy' ? getSynergyIcon(opt.label) : '';
+                return `<div class="custom-option" data-value="${opt.value}">${iconHtml}<span>${opt.label}</span></div>`;
+            })
             .join('');
     };
 
-    // --- CORRECTED EVENT LISTENERS ---
-
+    // Event listener for ADDING a pill
     optionsPanel.addEventListener('click', e => {
-        if (e.target.matches('.custom-option')) {
-            const value = e.target.dataset.value;
+        if (e.target.closest('.custom-option')) {
+            const value = e.target.closest('.custom-option').dataset.value;
             selected.push(value);
             onChange(selected);
-
+            
             renderPills();
             input.value = '';
             optionsPanel.style.display = 'none';
         }
     });
 
+    // Event listener for REMOVING a pill
     pillsContainer.addEventListener('click', e => {
         if (e.target.matches('.pill-remove')) {
             const valueToRemove = e.target.parentElement.dataset.value;
@@ -240,6 +240,7 @@ function createPillbox({ container, options, selected, placeholder, onChange }) 
         }
     });
 
+    // Other listeners
     input.addEventListener('focus', () => { renderOptions(); optionsPanel.style.display = 'block'; });
     input.addEventListener('input', () => renderOptions(input.value));
     document.addEventListener('click', e => {
@@ -248,6 +249,7 @@ function createPillbox({ container, options, selected, placeholder, onChange }) 
         }
     });
 
+    // Initial render
     renderPills();
 }
 
@@ -314,7 +316,6 @@ function applyFiltersAndSort() {
 }
 
 function populateAndAttachFilterHandlers() {
-    // 1. Sort Dropdown
     const sortOptions = [
         { value: 'newest', label: 'Sort: Newest First' },
         { value: 'popularity', label: 'Sort: Most Popular' },
@@ -355,11 +356,14 @@ function populateAndAttachFilterHandlers() {
         }
     });
     
-    const synergyOptions = ALL_DATA.synergies.map(s => ({ value: s.name, label: s.name })).sort((a,b) => a.label.localeCompare(b.label));
+const synergyOptions = ALL_DATA.synergies.map(s => ({ value: s.name, label: s.name })).sort((a,b) => a.label.localeCompare(b.label));
     createPillbox({
-        container: synergyContainer, options: synergyOptions, selected: activeFilters.synergies,
+        container: synergyContainer,
+        options: synergyOptions,
+        selected: activeFilters.synergies,
         placeholder: "Search for a synergy...",
-        onChange: newSelection => { activeFilters.synergies = newSelection; applyFiltersAndSort(); }
+        onChange: newSelection => { activeFilters.synergies = newSelection; applyFiltersAndSort(); },
+        iconType: 'synergy'
     });
 
     const championOptions = ALL_DATA.champions.map(c => ({ value: c.id, label: c.name })).sort((a,b) => a.label.localeCompare(b.label));
@@ -1094,6 +1098,18 @@ async function handleCreateSquadSubmit(e) {
 }
 
 // --- HELPERS ---
+
+/**
+ * Generates an HTML img tag for a given synergy name.
+ * @param {string} synergyName - The name of the synergy.
+ * @returns {string} The complete HTML for the icon.
+ */
+function getSynergyIcon(synergyName) {
+    if (!synergyName) return '';
+    const nameForIcon = synergyName.trim().replace(/\s+/g, '_');
+    // Assumes icons are located in /img/factions/ and named like 'Superman_Family.png'
+    return `<img src="/img/factions/${nameForIcon}.png" alt="${synergyName}" class="synergy-icon" onerror="this.style.display='none';">`;
+}
 
 async function handleToggleActiveStatus(squad, checkbox) {
     const newStatus = checkbox.checked;

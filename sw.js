@@ -1,7 +1,7 @@
 // sw.js
 
 // A version number for your cache. Change this every time you deploy major updates.
-const CACHE_NAME = 'dcdl-cache-v2';
+const CACHE_NAME = 'dcdl-cache-v3';
 
 // A list of essential files to cache when the service worker installs.
 const urlsToCache = [];
