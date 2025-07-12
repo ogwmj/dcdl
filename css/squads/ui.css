@@ -587,3 +587,191 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+
+.custom-multiselect-container,
+.custom-select-container {
+    position: relative;
+}
+.pills-input-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 6px;
+    background-color: #0d1226;
+    cursor: text;
+}
+.pills-input-wrapper:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+.pills-input-wrapper input {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    padding: 0.25rem;
+    background-color: transparent;
+    color: #e2e8f0;
+    min-width: 150px;
+}
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #3b82f6;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+.pill .synergy-icon {
+    width: 16px;
+    height: 16px;
+}
+.pill-remove {
+    margin-left: 0.5rem;
+    width: 1rem;
+    height: 1rem;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    line-height: 1;
+}
+.pill-remove:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.custom-select-trigger {
+    position: relative;
+    width: 100%;
+    background-color: #0d1226;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: #e2e8f0;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.custom-select-trigger:focus,
+.custom-select-container.is-open .custom-select-trigger {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+.custom-select-trigger::after {
+    content: '';
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 6px;
+    height: 6px;
+    border: solid #94a3b8;
+    border-width: 0 2px 2px 0;
+    transition: transform 0.2s ease;
+}
+.custom-select-container.is-open .custom-select-trigger::after {
+    transform: translateY(-25%) rotate(225deg);
+}
+
+.custom-options-panel,
+.custom-select-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    margin-top: 0.25rem;
+    width: 100%;
+    background-color: rgba(17, 24, 39, 0.95);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    max-height: 15rem;
+    border-radius: 0.5rem;
+    overflow-y: auto;
+}
+.custom-option,
+.custom-select-option {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #e2e8f0;
+}
+.custom-option:hover,
+.custom-select-option:hover {
+    background-color: rgba(59, 130, 246, 0.3);
+}
+.custom-option .synergy-icon {
+    width: 20px;
+    height: 20px;
+}
+.custom-select-option.selected {
+    font-weight: 700;
+    color: #fff;
+    background-color: rgba(59, 130, 246, 0.5);
+}
+
+.filter-label {
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.filter-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background-color: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: #e2e8f0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    font-size: 0.8rem;
+}
+.filter-btn:hover {
+    background-color: rgba(51, 65, 85, 1);
+    border-color: rgba(59, 130, 246, 0.7);
+}
+.filter-btn.active {
+    background-color: #3b82f6;
+    color: white;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+    border-color: #60a5fa;
+}
+
+.filter-input,
+.filter-select {
+    width: 100%;
+    background-color: #0d1226;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: #e2e8f0;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.filter-input:focus,
+.filter-select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}

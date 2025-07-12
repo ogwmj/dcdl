@@ -1,6 +1,7 @@
 /**
  * @file js/squads/ui.js
- * @description Handles all UI interactions, rendering, and analytics for the dynamic squads page by fetching data from Firestore.
+ * @description Handles all UI interactions, rendering, and analytics for the dynamic squads page.
+ * @version 2.0.0 (With Filtering & Sorting)
  */
 
 // --- MODULES & GLOBALS ---
@@ -15,14 +16,33 @@ const CACHE_KEY = 'squads_data_cache';
 const CACHE_KEY_HOURS = 24;
 const CACHE_DURATION_MS = CACHE_KEY_HOURS * 60 * 60 * 1000;
 let ALL_DATA = {};
-let db, analytics, auth, currentUser, userRoles = [];
+let db, analytics, auth, currentUser, userRoles = [], currentUsername;
 let isEditMode = false;
 let currentEditingSquadId = null;
 
+// --- NEW: FILTER STATE & DATA ---
+let activeFilters = {
+    search: '',
+    sort: 'newest',
+    creator: '',
+    synergies: [],
+    champions: [],
+};
+let currentSquadList = []; // This will hold the filtered & sorted list
+
 const listContainer = document.getElementById('squad-list-container');
 const detailContainer = document.getElementById('squad-detail-container');
-const adminControlsContainer = document.getElementById('admin-controls-container');
 const createSquadModal = document.getElementById('create-squad-modal');
+
+// --- FILTER CONTROL DOM ELEMENTS ---
+const filterControlsContainer = document.getElementById('filter-controls');
+const searchInput = document.getElementById('search-input');
+const sortSelectContainer = document.getElementById('sort-select-container');
+const creatorSelectContainer = document.getElementById('creator-select-container');
+const synergyContainer = document.getElementById('synergy-multiselect-container');
+const championContainer = document.getElementById('champion-multiselect-container');
+const resetFiltersBtn = document.getElementById('reset-filters-btn');
+const createSquadBtnContainer = document.getElementById('create-squad-btn-container'); // New container for the button
 
 // --- FIREBASE INITIALIZATION ---
 // This section runs immediately when the script is loaded.
@@ -63,47 +83,28 @@ async function fetchCollection(collectionName) {
 
 /**
  * Fetches all necessary data from Firestore, using a localStorage cache to avoid frequent reads.
- * The cache is set to expire after 1 hour.
+ * Now includes fetching all user data for creator filters.
  */
 async function loadAllDataFromFirestore() {
-    const CACHE_KEY = 'squads_data_cache';
-    const CACHE_DURATION_MS = 60 * 60 * 1000 * 24;
-    
     const cachedItem = localStorage.getItem(CACHE_KEY);
     if (cachedItem) {
         try {
             const cachedData = JSON.parse(cachedItem);
-            const isCacheValid = (Date.now() - (cachedData.timestamp || 0)) < CACHE_DURATION_MS;
-            if (isCacheValid && cachedData.data && cachedData.data.legacyPieces) {
+            if ((Date.now() - (cachedData.timestamp || 0)) < CACHE_DURATION_MS && cachedData.data) {
                 ALL_DATA = cachedData.data;
                 return;
             }
-        } catch (e) { console.error("Failed to parse cache, fetching fresh data.", e); }
+        } catch (e) { console.error("Cache parse failed:", e); }
     }
-    
-    console.log("Cache invalid or not found. Fetching data from Firestore.");
     try {
         const [squads, champions, synergies, effects, legacyPieces] = await Promise.all([
-            fetchCollection('squads'),
-            fetchCollection('champions'),
-            fetchCollection('synergies'),
-            fetchCollection('effects'),
-            fetchCollection('legacyPieces')
+            fetchCollection('squads'), fetchCollection('champions'), fetchCollection('synergies'),
+            fetchCollection('effects'), fetchCollection('legacyPieces')
         ]);
-        
         ALL_DATA = { squads, champions, synergies, effects, legacyPieces };
-
-        const cachePayload = {
-            timestamp: Date.now(),
-            data: ALL_DATA
-        };
-        localStorage.setItem(CACHE_KEY, JSON.stringify(cachePayload));
-
-    } catch (error) {
-        console.error("Failed to load data from Firestore:", error);
-    }
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data: ALL_DATA }));
+    } catch (error) { console.error("Failed to load data from Firestore:", error); }
 }
-
 // --- SEO HANDLING ---
 
 /**
@@ -160,6 +161,224 @@ function resetSeoTags() {
     if (canonicalLink) canonicalLink.setAttribute('href', url);
 }
 
+// --- NEW: CUSTOM UI COMPONENT FACTORIES ---
+
+/**
+ * Creates a fully styled, custom select dropdown component.
+ * @param {Object} config - Configuration object.
+ */
+function createCustomSelect({ container, options, selectedValue, onChange }) {
+    const selectedOption = options.find(opt => opt.value === selectedValue) || options[0];
+    container.innerHTML = `
+        <button type="button" class="custom-select-trigger">${selectedOption.label}</button>
+        <div class="custom-select-options" style="display: none;"></div>
+    `;
+    const trigger = container.querySelector('.custom-select-trigger');
+    const optionsPanel = container.querySelector('.custom-select-options');
+
+    const renderOptions = () => {
+        optionsPanel.innerHTML = options.map(opt => 
+            `<div class="custom-select-option ${opt.value === selectedValue ? 'selected' : ''}" data-value="${opt.value}">${opt.label}</div>`
+        ).join('');
+    };
+
+    trigger.addEventListener('click', () => {
+        const isVisible = optionsPanel.style.display === 'block';
+        optionsPanel.style.display = isVisible ? 'none' : 'block';
+        if (!isVisible) renderOptions();
+    });
+
+    optionsPanel.addEventListener('click', e => {
+        if (e.target.matches('.custom-select-option')) {
+            const value = e.target.dataset.value;
+            onChange(value); // Let the parent handle state change
+            trigger.textContent = e.target.textContent; // Update UI
+            optionsPanel.style.display = 'none'; // Close
+        }
+    });
+
+    document.addEventListener('click', e => {
+        if (!container.contains(e.target)) optionsPanel.style.display = 'none';
+    });
+}
+
+// --- FILTERING AND SORTING LOGIC ---
+
+/**
+ * Creates an interactive pillbox multi-select component.
+ * @param {Object} config - Configuration object.
+ * @param {HTMLElement} config.container - The element to populate.
+ * @param {Array<Object>} config.options - Array of { value, label } for the dropdown.
+ * @param {Array<string>} config.selected - Array of selected values from activeFilters.
+ * @param {string} config.placeholder - Placeholder text for the input.
+ * @param {Function} config.onChange - Callback function when selections change.
+ */
+function createPillbox({ container, options, selected, placeholder, onChange }) {
+    container.innerHTML = `
+        <div class="pills-input-wrapper">
+            <div class="pills-container" style="display: contents;"></div>
+            <input type="text" placeholder="${placeholder}" class="pill-input">
+        </div>
+        <div class="custom-options-panel" style="display: none;"></div>
+    `;
+    const pillsContainer = container.querySelector('.pills-container');
+    const input = container.querySelector('.pill-input');
+    const optionsPanel = container.querySelector('.custom-options-panel');
+
+    const renderPills = () => {
+        pillsContainer.innerHTML = selected.map(value => {
+            const option = options.find(opt => opt.value === value);
+            // Fallback to the value itself if the label isn't found, to prevent errors
+            const label = option ? option.label : value; 
+            return `<div class="pill" data-value="${value}">${label}<button class="pill-remove">&times;</button></div>`;
+        }).join('');
+    };
+
+    const renderOptions = (filter = '') => {
+        optionsPanel.innerHTML = options
+            .filter(opt => !selected.includes(opt.value) && opt.label.toLowerCase().includes(filter.toLowerCase()))
+            .map(opt => `<div class="custom-option" data-value="${opt.value}">${opt.label}</div>`)
+            .join('');
+    };
+
+    // --- CORRECTED EVENT LISTENERS ---
+
+    // Listener for ADDING a pill
+    optionsPanel.addEventListener('click', e => {
+        if (e.target.matches('.custom-option')) {
+            const value = e.target.dataset.value;
+            selected.push(value); // 1. Update the local 'selected' array
+            onChange(selected);   // 2. Notify the main app to filter the data
+
+            // 3. Update the component's UI
+            renderPills();
+            input.value = '';
+            optionsPanel.style.display = 'none'; // Close the dropdown
+        }
+    });
+
+    // Listener for REMOVING a pill
+    pillsContainer.addEventListener('click', e => {
+        if (e.target.matches('.pill-remove')) {
+            const valueToRemove = e.target.parentElement.dataset.value;
+            // Create a new array without the removed item
+            const newSelected = selected.filter(item => item !== valueToRemove);
+            onChange(newSelected); // 1. Notify the main app
+            
+            // 2. To fix a stale closure issue, we now re-render based on the new array
+            selected = newSelected;
+            renderPills();
+        }
+    });
+
+    // Other listeners
+    input.addEventListener('focus', () => { renderOptions(); optionsPanel.style.display = 'block'; });
+    input.addEventListener('input', () => renderOptions(input.value));
+    document.addEventListener('click', e => {
+        if (!container.contains(e.target)) {
+            optionsPanel.style.display = 'none';
+        }
+    });
+
+    // Initial render
+    renderPills();
+}
+
+/**
+ * Applies all active filters and sorting to the master squad list,
+ * then triggers a re-render of the list view.
+ */
+function applyFiltersAndSort() {
+    if (!ALL_DATA.squads) return;
+    let filteredSquads = (ALL_DATA.squads || []).filter(squad => {
+        if (!squad.isActive) return false;
+        const creatorName = (squad.creatorUsername || '').toLowerCase();
+        const searchVal = activeFilters.search.toLowerCase();
+        const searchMatch = !searchVal || squad.name.toLowerCase().includes(searchVal) || creatorName.includes(searchVal);
+        const creatorMatch = !activeFilters.creator || squad.creatorUsername === activeFilters.creator;
+        const synergyMatch = activeFilters.synergies.length === 0 || activeFilters.synergies.every(synName => squad.activeSynergies.some(sSyn => sSyn.name === synName));
+        const championMatch = activeFilters.champions.length === 0 || activeFilters.champions.every(champId => squad.members.some(m => m.dbChampionId === champId));
+        return searchMatch && creatorMatch && synergyMatch && championMatch;
+    });
+    // ... sorting logic ...
+    currentSquadList = filteredSquads;
+    updateURL();
+    renderListView(1);
+}
+
+function populateAndAttachFilterHandlers() {
+    // 1. Sort Dropdown
+    const sortOptions = [
+        { value: 'newest', label: 'Sort: Newest First' }, { value: 'popularity', label: 'Sort: Most Popular' },
+        { value: 'name_asc', label: 'Sort: Name (A-Z)' }, { value: 'name_desc', label: 'Sort: Name (Z-A)' },
+    ];
+    createCustomSelect({
+        container: sortSelectContainer,
+        options: sortOptions,
+        selectedValue: activeFilters.sort,
+        onChange: newValue => { activeFilters.sort = newValue; applyFiltersAndSort(); }
+    });
+
+    // 2. Creator Dropdown
+    const creators = [{ value: '', label: 'All Creators' }, ...[...new Set(ALL_DATA.squads.map(s => s.creatorUsername).filter(Boolean))]
+        .sort((a, b) => a.localeCompare(b))
+        .map(c => ({ value: c, label: c }))
+    ];
+    createCustomSelect({
+        container: creatorSelectContainer,
+        options: creators,
+        selectedValue: activeFilters.creator,
+        onChange: newValue => { activeFilters.creator = newValue; applyFiltersAndSort(); }
+    });
+    
+    // 3. Synergy Pillbox
+    const synergyOptions = ALL_DATA.synergies.map(s => ({ value: s.name, label: s.name })).sort((a,b) => a.label.localeCompare(b.label));
+    createPillbox({
+        container: synergyContainer, options: synergyOptions, selected: activeFilters.synergies,
+        placeholder: "Search for a synergy...",
+        onChange: newSelection => { activeFilters.synergies = newSelection; applyFiltersAndSort(); }
+    });
+
+    // 4. Champion Pillbox
+    const championOptions = ALL_DATA.champions.map(c => ({ value: c.id, label: c.name })).sort((a,b) => a.label.localeCompare(b.label));
+    createPillbox({
+        container: championContainer, options: championOptions, selected: activeFilters.champions,
+        placeholder: "Search for a champion...",
+        onChange: newSelection => { activeFilters.champions = newSelection; applyFiltersAndSort(); }
+    });
+
+    // 5. Search Input & Reset Button
+    searchInput.value = activeFilters.search;
+    searchInput.addEventListener('input', () => { activeFilters.search = searchInput.value; applyFiltersAndSort(); });
+    resetFiltersBtn.addEventListener('click', () => { window.history.pushState({}, '', window.location.pathname); location.reload(); });
+}
+
+/**
+ * Updates the URL's query parameters based on the active filters.
+ */
+function updateURL() {
+    const params = new URLSearchParams();
+    if (activeFilters.search) params.set('search', activeFilters.search);
+    if (activeFilters.sort !== 'newest') params.set('sort', activeFilters.sort);
+    if (activeFilters.creator) params.set('creator', activeFilters.creator);
+    if (activeFilters.synergies.length > 0) params.set('synergies', activeFilters.synergies.join(','));
+    if (activeFilters.champions.length > 0) params.set('champions', activeFilters.champions.join(','));
+    
+    const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+    window.history.replaceState({ path: newUrl }, '', newUrl);
+}
+
+/**
+ * Reads the filters from the current URL on page load.
+ */
+function readFiltersFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    activeFilters.search = params.get('search') || '';
+    activeFilters.sort = params.get('sort') || 'newest';
+    activeFilters.creator = params.get('creator') || '';
+    activeFilters.synergies = params.get('synergies')?.split(',') || [];
+    activeFilters.champions = params.get('champions')?.split(',') || [];
+}
 
 // --- UI RENDERING ---
 
@@ -206,15 +425,23 @@ function renderListView(page = 1) {
     listContainer.style.display = 'block';
     resetSeoTags();
 
-    const activeSquads = (ALL_DATA.squads || []).filter(s => s.isActive === true);
+    createSquadBtnContainer.innerHTML = '';
+    if (userRoles.includes('creator')) {
+        const createBtn = document.createElement('button');
+        createBtn.id = 'open-create-modal-btn';
+        createBtn.className = 'btn-primary text-sm';
+        createBtn.textContent = 'Create New Squad';
+        createSquadBtnContainer.appendChild(createBtn);
+        createBtn.addEventListener('click', openCreateModal);
+    }
 
-    if (activeSquads.length === 0) {
-        listContainer.innerHTML = `<p class="text-center text-yellow-400">No active squads found.</p>`;
+    if (currentSquadList.length === 0) {
+        listContainer.innerHTML = `<div class="text-center py-16"><p class="text-xl text-slate-400">No squads match the current filters.</p></div>`;
         return;
     }
 
-    const totalPages = Math.ceil(activeSquads.length / SQUADS_PER_PAGE);
-    const pagedSquads = activeSquads.slice((page - 1) * SQUADS_PER_PAGE, page * SQUADS_PER_PAGE);
+    const totalPages = Math.ceil(currentSquadList.length / SQUADS_PER_PAGE);
+    const pagedSquads = currentSquadList.slice((page - 1) * SQUADS_PER_PAGE, page * SQUADS_PER_PAGE);
 
     const cardsHtml = pagedSquads.map(squad => {
         const memberPortraits = squad.members.map(member => {
@@ -272,10 +499,6 @@ function renderListView(page = 1) {
         </div>`;
 
     listContainer.innerHTML = `
-        <header class="py-8 md:py-12 text-center">
-            <h1 class="text-5xl md:text-7xl font-extrabold mb-4 glowing-text text-white">Ultimate Squads Guide</h1>
-            <p class="text-xl md:text-2xl text-blue-200">Your guide to squad builds and strategies.</p>
-        </header>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">${cardsHtml}</div>
         ${paginationHtml}
     `;
@@ -292,16 +515,6 @@ function renderListView(page = 1) {
             main();
         });
     });
-
-    adminControlsContainer.innerHTML = '';
-    if (userRoles.includes('creator')) {
-        const createBtn = document.createElement('button');
-        createBtn.id = 'open-create-modal-btn';
-        createBtn.className = 'btn-primary';
-        createBtn.textContent = 'Create New Squad';
-        adminControlsContainer.appendChild(createBtn);
-        createBtn.addEventListener('click', openCreateModal);
-    }
 }
 
 /**
@@ -855,6 +1068,7 @@ async function handleCreateSquadSubmit(e) {
             activeSynergies: activeSynergies,
             isActive: true,
             originalOwnerId: currentUser.uid,
+            creatorUsername: currentUsername,
             createdAt: serverTimestamp(),
             thumbsUp: 0,
             thumbsDown: 0,
@@ -952,22 +1166,25 @@ async function initializeAppAndRender() {
     onAuthStateChanged(auth, async (user) => {
         currentUser = user;
         if (user && !user.isAnonymous) {
-            // User is logged in, fetch their roles
             const userDocRef = doc(db, "artifacts/dc-dark-legion-builder/users", user.uid);
             const userDocSnap = await getDoc(userDocRef);
             if (userDocSnap.exists()) {
-                userRoles = userDocSnap.data().roles || [];
+                const userData = userDocSnap.data();
+                userRoles = userData.roles || [];
+                currentUsername = userData.username || ''; // <-- ADD THIS LINE
             } else {
                 userRoles = [];
+                currentUsername = ''; // <-- ADD THIS LINE
             }
         } else {
-            // User is logged out or anonymous
             userRoles = [];
+            currentUsername = ''; // <-- ADD THIS LINE
         }
         await main();
     });
 }
 
+// Replace your existing main function with this one
 async function main() {
     if (!db) {
         console.error("Firestore DB not available. Aborting main execution.");
@@ -978,20 +1195,22 @@ async function main() {
     
     const urlParams = new URLSearchParams(window.location.search);
     const squadId = urlParams.get('id');
-    const page = parseInt(urlParams.get('page')) || 1;
+    const listViewHeader = document.getElementById('list-view-header');
 
     if (squadId) {
+        // We are on the detail view: HIDE list header and filters
+        filterControlsContainer.style.display = 'none';
+        if (listViewHeader) listViewHeader.style.display = 'none';
+        
         renderDetailView(squadId);
     } else {
-        renderListView(page);
-    }
-
-    if (analytics) {
-        logEvent(analytics, 'page_view', {
-            page_title: document.title,
-            page_location: location.href,
-            squad_id: squadId || `list_view_page_${page}`
-        });
+        // We are on the list view: SHOW list header and filters
+        filterControlsContainer.style.display = 'block';
+        if (listViewHeader) listViewHeader.style.display = 'block';
+        
+        readFiltersFromURL();
+        populateAndAttachFilterHandlers();
+        applyFiltersAndSort();
     }
 }
 
