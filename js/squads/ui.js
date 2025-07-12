@@ -20,7 +20,7 @@ let db, analytics, auth, currentUser, userRoles = [], currentUsername;
 let isEditMode = false;
 let currentEditingSquadId = null;
 
-// --- NEW: FILTER STATE & DATA ---
+// --- FILTER STATE & DATA ---
 let activeFilters = {
     search: '',
     sort: 'newest',
@@ -28,7 +28,7 @@ let activeFilters = {
     synergies: [],
     champions: [],
 };
-let currentSquadList = []; // This will hold the filtered & sorted list
+let currentSquadList = [];
 
 const listContainer = document.getElementById('squad-list-container');
 const detailContainer = document.getElementById('squad-detail-container');
@@ -94,7 +94,6 @@ function updateSeoTags(squad) {
 
     document.title = title;
     
-    // Helper to update a meta tag's content
     const updateMeta = (selector, content) => {
         const el = document.querySelector(selector);
         if (el) el.setAttribute('content', content);
@@ -137,7 +136,7 @@ function resetSeoTags() {
     if (canonicalLink) canonicalLink.setAttribute('href', url);
 }
 
-// --- NEW: CUSTOM UI COMPONENT FACTORIES ---
+// --- CUSTOM UI COMPONENT FACTORIES ---
 
 /**
  * Creates a fully styled, custom select dropdown component.
@@ -167,9 +166,9 @@ function createCustomSelect({ container, options, selectedValue, onChange }) {
     optionsPanel.addEventListener('click', e => {
         if (e.target.matches('.custom-select-option')) {
             const value = e.target.dataset.value;
-            onChange(value); // Let the parent handle state change
-            trigger.textContent = e.target.textContent; // Update UI
-            optionsPanel.style.display = 'none'; // Close
+            onChange(value);
+            trigger.textContent = e.target.textContent;
+            optionsPanel.style.display = 'none';
         }
     });
 
@@ -204,7 +203,6 @@ function createPillbox({ container, options, selected, placeholder, onChange }) 
     const renderPills = () => {
         pillsContainer.innerHTML = selected.map(value => {
             const option = options.find(opt => opt.value === value);
-            // Fallback to the value itself if the label isn't found, to prevent errors
             const label = option ? option.label : value; 
             return `<div class="pill" data-value="${value}">${label}<button class="pill-remove">&times;</button></div>`;
         }).join('');
@@ -219,35 +217,29 @@ function createPillbox({ container, options, selected, placeholder, onChange }) 
 
     // --- CORRECTED EVENT LISTENERS ---
 
-    // Listener for ADDING a pill
     optionsPanel.addEventListener('click', e => {
         if (e.target.matches('.custom-option')) {
             const value = e.target.dataset.value;
-            selected.push(value); // 1. Update the local 'selected' array
-            onChange(selected);   // 2. Notify the main app to filter the data
+            selected.push(value);
+            onChange(selected);
 
-            // 3. Update the component's UI
             renderPills();
             input.value = '';
-            optionsPanel.style.display = 'none'; // Close the dropdown
+            optionsPanel.style.display = 'none';
         }
     });
 
-    // Listener for REMOVING a pill
     pillsContainer.addEventListener('click', e => {
         if (e.target.matches('.pill-remove')) {
             const valueToRemove = e.target.parentElement.dataset.value;
-            // Create a new array without the removed item
             const newSelected = selected.filter(item => item !== valueToRemove);
-            onChange(newSelected); // 1. Notify the main app
+            onChange(newSelected);
             
-            // 2. To fix a stale closure issue, we now re-render based on the new array
             selected = newSelected;
             renderPills();
         }
     });
 
-    // Other listeners
     input.addEventListener('focus', () => { renderOptions(); optionsPanel.style.display = 'block'; });
     input.addEventListener('input', () => renderOptions(input.value));
     document.addEventListener('click', e => {
@@ -256,7 +248,6 @@ function createPillbox({ container, options, selected, placeholder, onChange }) 
         }
     });
 
-    // Initial render
     renderPills();
 }
 
@@ -266,17 +257,16 @@ function createPillbox({ container, options, selected, placeholder, onChange }) 
  * @returns {Date} A valid JavaScript Date object.
  */
 function normalizeDate(timestamp) {
-    if (!timestamp) return new Date(0); // Return a default epoch date if null/undefined
+    if (!timestamp) return new Date(0);
 
-    // Case 1: It's a true Firestore Timestamp object.
     if (typeof timestamp.toDate === 'function') {
         return timestamp.toDate();
     }
-    // Case 2: It's a plain object from the cache with a 'seconds' property.
+
     if (timestamp.seconds) {
         return new Date(timestamp.seconds * 1000);
     }
-    // Case 3: It's already a date string or another parsable format.
+
     return new Date(timestamp);
 }
 
@@ -309,7 +299,6 @@ function applyFiltersAndSort() {
                 const scoreB = (b.thumbsUp || 0) - (b.thumbsDown || 0);
                 return scoreB - scoreA;
             
-            // Now using the robust normalizeDate helper function
             case 'oldest':
                 return normalizeDate(a.createdAt) - normalizeDate(b.createdAt);
             
@@ -331,7 +320,7 @@ function populateAndAttachFilterHandlers() {
         { value: 'popularity', label: 'Sort: Most Popular' },
         { value: 'name_asc', label: 'Sort: Name (A-Z)' },
         { value: 'name_desc', label: 'Sort: Name (Z-A)' },
-        { value: 'oldest', label: 'Sort: Oldest First' } // This option was missing
+        { value: 'oldest', label: 'Sort: Oldest First' }
     ];
     createCustomSelect({
         container: sortSelectContainer,
@@ -340,7 +329,6 @@ function populateAndAttachFilterHandlers() {
         onChange: newValue => { activeFilters.sort = newValue; applyFiltersAndSort(); }
     });
 
-    // 2. Creator Dropdown (This section is updated)
     const creatorOptions = [...new Set(ALL_DATA.squads.map(s => s.creatorUsername).filter(Boolean))]
         .sort((a, b) => a.localeCompare(b))
         .map(c => ({ value: c, label: c }));
@@ -348,7 +336,6 @@ function populateAndAttachFilterHandlers() {
     const finalCreatorOptions = [
         { value: '', label: 'All Creators' },
         ...creatorOptions,
-        // Add a visual separator and the special option at the end
         { value: 'separator', label: '─────────────────', disabled: true },
         { value: 'apply-to-be-creator', label: '➡️ Become a Creator...' }
     ];
@@ -358,21 +345,16 @@ function populateAndAttachFilterHandlers() {
         options: finalCreatorOptions,
         selectedValue: activeFilters.creator,
         onChange: newValue => {
-            // Check for the special value
             if (newValue === 'apply-to-be-creator') {
-                // Dispatch a custom event for the feedback widget to hear
                 document.dispatchEvent(new CustomEvent('open-creator-application'));
-                // Reset the dropdown visually without triggering a filter
                 creatorSelectContainer.querySelector('.custom-select-trigger').textContent = 'All Creators';
             } else {
-                // Otherwise, perform the filter as usual
                 activeFilters.creator = newValue;
                 applyFiltersAndSort();
             }
         }
     });
     
-    // 3. Synergy Pillbox
     const synergyOptions = ALL_DATA.synergies.map(s => ({ value: s.name, label: s.name })).sort((a,b) => a.label.localeCompare(b.label));
     createPillbox({
         container: synergyContainer, options: synergyOptions, selected: activeFilters.synergies,
@@ -380,7 +362,6 @@ function populateAndAttachFilterHandlers() {
         onChange: newSelection => { activeFilters.synergies = newSelection; applyFiltersAndSort(); }
     });
 
-    // 4. Champion Pillbox
     const championOptions = ALL_DATA.champions.map(c => ({ value: c.id, label: c.name })).sort((a,b) => a.label.localeCompare(b.label));
     createPillbox({
         container: championContainer, options: championOptions, selected: activeFilters.champions,
@@ -388,7 +369,6 @@ function populateAndAttachFilterHandlers() {
         onChange: newSelection => { activeFilters.champions = newSelection; applyFiltersAndSort(); }
     });
 
-    // 5. Search Input & Reset Button
     searchInput.value = activeFilters.search;
     searchInput.addEventListener('input', () => { activeFilters.search = searchInput.value; applyFiltersAndSort(); });
     resetFiltersBtn.addEventListener('click', () => { window.history.pushState({}, '', window.location.pathname); location.reload(); });
@@ -437,7 +417,7 @@ function generateCreatorProfileHtml(creatorData) {
     ];
 
     const socialsHtml = socialLinks
-        .filter(link => link.url) // Only include socials that have a URL
+        .filter(link => link.url)
         .map(link => `<a href="${link.url}" target="_blank" rel="noopener noreferrer" title="${link.key.charAt(0).toUpperCase() + link.key.slice(1)}"><i class="${link.icon}"></i></a>`)
         .join('');
 
@@ -727,14 +707,11 @@ async function renderDetailView(squadId) {
         `;
     }
 
-    // Replace the previous edit button logic with the new ownerControlsHtml
     const headerElement = detailContainer.querySelector('header');
     if (headerElement) {
         const ratingWidgetContainer = headerElement.querySelector('.flex.justify-center.mt-4');
         if (ratingWidgetContainer) {
-            // Detach the rating widget to re-insert it later
             ratingWidgetContainer.remove();
-            // Add the owner controls, then add the rating widget back
             headerElement.innerHTML += ownerControlsHtml;
             headerElement.appendChild(ratingWidgetContainer);
         } else {
@@ -742,7 +719,6 @@ async function renderDetailView(squadId) {
         }
     }
 
-    // --- Attach event listeners at the end of the function ---
     const editBtn = document.getElementById('edit-squad-btn');
     if (editBtn) {
         editBtn.addEventListener('click', () => openEditModal(squad));
@@ -793,20 +769,17 @@ async function handleSquadRating(squadId, newVote) {
             
             let voteChange = 0;
 
-            // If user clicks the same vote button again, they are toggling it off.
             if (currentVote === newVote) {
                 transaction.delete(ratingDocRef);
-                voteChange = 0; // The new vote will be 0 (none)
+                voteChange = 0;
             } else {
                 transaction.set(ratingDocRef, { userId: currentUser.uid, vote: newVote });
                 voteChange = newVote;
             }
 
-            // Decrement the old vote count if it exists
             if (currentVote === 1) squadData.thumbsUp -= 1;
             if (currentVote === -1) squadData.thumbsDown -= 1;
 
-            // Increment the new vote count if it's a new vote
             if (voteChange === 1) squadData.thumbsUp += 1;
             if (voteChange === -1) squadData.thumbsDown += 1;
             
@@ -818,7 +791,6 @@ async function handleSquadRating(squadId, newVote) {
             return voteChange;
         });
 
-        // Optimistically update the UI after successful transaction
         const finalSquad = (await getDoc(squadDocRef)).data();
         
         document.getElementById('thumbs-up-count').textContent = finalSquad.thumbsUp || 0;
@@ -924,19 +896,17 @@ function populateCreateFormSelectors() {
     }
 
     const membersContainer = document.getElementById('squad-members-container');
-    membersContainer.innerHTML = ''; // Clear previous
+    membersContainer.innerHTML = '';
 
     for (let i = 1; i <= 5; i++) {
         const memberDiv = document.createElement('div');
         memberDiv.className = 'grid grid-cols-1 md:grid-cols-2 gap-4 border-b border-slate-700 pb-4';
         
-        // Champion Selector
         let championOptions = '<option value="">-- Select Champion --</option>';
         champions.sort((a, b) => a.name.localeCompare(b.name)).forEach(champ => {
             championOptions += `<option value="${champ.id}">${champ.name}</option>`;
         });
 
-        // Legacy Piece Selector
         let legacyOptions = '<option value="">-- No Legacy Piece --</option>';
         legacyPieces.sort((a, b) => a.name.localeCompare(b.name)).forEach(piece => {
             legacyOptions += `<option value="${piece.id}">${piece.name}</option>`;
@@ -961,7 +931,6 @@ async function handleCreateSquadSubmit(e) {
     const form = e.target;
     const formData = new FormData(form);
 
-    // 1. Validate Short Description for HTML
     const shortDescription = formData.get('shortDescription');
     const htmlTagRegex = /<[a-z][\s\S]*>/i;
     if (htmlTagRegex.test(shortDescription)) {
@@ -969,7 +938,6 @@ async function handleCreateSquadSubmit(e) {
         return;
     }
 
-    // 2. Gather selections to check for duplicates
     const selectedChampionIds = [];
     const selectedLegacyPieceIds = [];
 
@@ -980,20 +948,18 @@ async function handleCreateSquadSubmit(e) {
         if (championId) {
             selectedChampionIds.push(championId);
         }
-        // Only check for duplicate legacy pieces if one was actually selected
+
         if (legacyPieceId) {
             selectedLegacyPieceIds.push(legacyPieceId);
         }
     }
 
-    // 3. Check for duplicate champions
     const uniqueChampions = new Set(selectedChampionIds);
     if (uniqueChampions.size !== selectedChampionIds.length) {
         showNotification('Each champion can only be used once per squad.', 'error');
         return;
     }
 
-    // 4. Check for duplicate legacy pieces
     const uniqueLegacyPieces = new Set(selectedLegacyPieceIds);
     if (uniqueLegacyPieces.size !== selectedLegacyPieceIds.length) {
         showNotification('Each legacy piece can only be equipped by one champion.', 'error');
@@ -1005,12 +971,11 @@ async function handleCreateSquadSubmit(e) {
     if (!rawHtmlContent.trim()) {
         showNotification('The "Long Description" cannot be empty.', 'error');
         tinymce.get('squad-long-desc').focus();
-        return; // Stop the function
+        return;
     }
 
-    // Sanitize the HTML content with DOMPurify to prevent XSS attacks
     const sanitizedHtmlContent = DOMPurify.sanitize(rawHtmlContent, {
-        USE_PROFILES: { html: true }, // Allows common HTML tags
+        USE_PROFILES: { html: true },
         ALLOWED_TAGS: ['p', 'b', 'i', 'u', 'strong', 'em', 'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'a', 'img', 'iframe', 'br'],
         ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'width', 'height', 'allowfullscreen', 'frameborder', 'style', 'class']
     });
@@ -1037,7 +1002,6 @@ async function handleCreateSquadSubmit(e) {
         return;
     }
 
-    // --- Synergy Calculation (Simplified) ---
     const memberSynergies = members.flatMap(m => ALL_DATA.champions.find(c => c.id === m.dbChampionId)?.inherentSynergies || []);
     const synergyCounts = memberSynergies.reduce((acc, syn) => {
         acc[syn] = (acc[syn] || 0) + 1;
@@ -1120,8 +1084,8 @@ async function handleCreateSquadSubmit(e) {
             await addDoc(squadCollection, newSquad);
             document.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'Squad created successfully!', type: 'success' } }));
             closeCreateModal();
-            localStorage.removeItem('squads_data_cache'); // Invalidate cache
-            setTimeout(() => window.location.reload(), 1000); // Reload to show new squad
+            localStorage.removeItem('squads_data_cache');
+            setTimeout(() => window.location.reload(), 1000);
         } catch (error) {
             console.error("Error creating squad:", error);
             document.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'Failed to create squad.', type: 'error' } }));
@@ -1140,14 +1104,12 @@ async function handleToggleActiveStatus(squad, checkbox) {
         const squadDocRef = doc(db, 'artifacts/dc-dark-legion-builder/public/data/squads', squad.id);
         await updateDoc(squadDocRef, { isActive: newStatus });
 
-        // Update local data to avoid re-fetch
         const squadIndex = ALL_DATA.squads.findIndex(s => s.id === squad.id);
         if (squadIndex > -1) {
             ALL_DATA.squads[squadIndex].isActive = newStatus;
         }
         localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data: ALL_DATA }));
 
-        // Update UI
         statusText.textContent = newStatus ? 'Active' : 'Inactive';
         statusText.className = newStatus ? 'active' : 'inactive';
         showNotification(`Squad status updated to ${newStatus ? 'Active' : 'Inactive'}.`, 'success');
@@ -1155,7 +1117,6 @@ async function handleToggleActiveStatus(squad, checkbox) {
     } catch (error) {
         console.error("Error updating squad status:", error);
         showNotification('Failed to update status.', 'error');
-        // Revert checkbox on failure
         checkbox.checked = !newStatus;
     } finally {
         checkbox.disabled = false;
@@ -1203,7 +1164,6 @@ function setupSkillTabs() {
 
 // --- INITIALIZATION & ROUTING ---
 
-// Replace your existing main function with this one
 async function main() {
     if (!db) {
         console.error("Firestore DB not available. Aborting main execution.");
@@ -1217,13 +1177,11 @@ async function main() {
     const listViewHeader = document.getElementById('list-view-header');
 
     if (squadId) {
-        // We are on the detail view: HIDE list header and filters
         filterControlsContainer.style.display = 'none';
         if (listViewHeader) listViewHeader.style.display = 'none';
         
         renderDetailView(squadId);
     } else {
-        // We are on the list view: SHOW list header and filters
         filterControlsContainer.style.display = 'block';
         if (listViewHeader) listViewHeader.style.display = 'block';
         
@@ -1233,7 +1191,6 @@ async function main() {
     }
 }
 
-// Listen for browser back/forward navigation
 window.addEventListener('popstate', main);
 
 document.getElementById('create-squad-form').addEventListener('submit', handleCreateSquadSubmit);
@@ -1241,10 +1198,7 @@ document.getElementById('close-modal-btn').addEventListener('click', closeCreate
 document.getElementById('cancel-create-btn').addEventListener('click', closeCreateModal);
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. First, listen for the 'firebase-ready' event from auth-ui.js
     document.addEventListener('firebase-ready', () => {
-        
-        // 2. Once Firebase is ready, get the shared services
         try {
             const app = getApp();
             db = getFirestore(app);
@@ -1252,10 +1206,9 @@ document.addEventListener('DOMContentLoaded', () => {
             auth = getAuth(app);
         } catch (e) {
             console.error("Squads UI: Failed to get Firebase services.", e);
-            return; // Stop if we can't connect
+            return;
         }
 
-        // 3. Now that 'auth' is defined, set up the auth state listener
         onAuthStateChanged(auth, async (user) => {
             currentUser = user;
             if (user && !user.isAnonymous) {
@@ -1272,7 +1225,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 userRoles = []; currentUsername = '';
             }
             
-            // 4. Finally, run the main logic for the page
             await main();
         });
     });
