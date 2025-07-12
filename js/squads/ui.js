@@ -5,7 +5,7 @@
 
 // --- MODULES & GLOBALS ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, runTransaction, getDoc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, doc, runTransaction, getDoc, addDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
@@ -16,6 +16,8 @@ const CACHE_KEY_HOURS = 24;
 const CACHE_DURATION_MS = CACHE_KEY_HOURS * 60 * 60 * 1000;
 let ALL_DATA = {};
 let db, analytics, auth, currentUser, userRoles = [];
+let isEditMode = false;
+let currentEditingSquadId = null;
 
 const listContainer = document.getElementById('squad-list-container');
 const detailContainer = document.getElementById('squad-detail-container');
@@ -171,7 +173,7 @@ function renderListView(page = 1) {
     listContainer.style.display = 'block';
     resetSeoTags();
 
-    const squads = ALL_DATA.squads;
+    const squads = ALL_DATA.squads || [];
     if (!squads || squads.length === 0) {
         listContainer.innerHTML = `<p class="text-center text-yellow-400">No squads found.</p>`;
         return;
@@ -259,7 +261,7 @@ function renderListView(page = 1) {
     });
 
     adminControlsContainer.innerHTML = '';
-    if (userRoles.includes('creator') || userRoles.includes('admin')) {
+    if (userRoles.includes('creator')) {
         const createBtn = document.createElement('button');
         createBtn.id = 'open-create-modal-btn';
         createBtn.className = 'btn-primary';
@@ -401,6 +403,24 @@ async function renderDetailView(squadId) {
         <div class="text-center py-20"><a href="/squads.html" class="mt-4 inline-block pagination-btn">Back to List</a></div>
     `;
 
+    const header = detailContainer.querySelector('header');
+    if (header && currentUser && squad.originalOwnerId === currentUser.uid) {
+        const editBtn = document.createElement('button');
+        editBtn.id = 'edit-squad-btn';
+        editBtn.className = 'btn-primary';
+        editBtn.textContent = 'Edit Squad';
+        
+        const ratingWidgetContainer = header.querySelector('.flex.justify-center.mt-4');
+        if (ratingWidgetContainer) {
+            editBtn.style.marginLeft = '1rem';
+            ratingWidgetContainer.appendChild(editBtn);
+        } else {
+            header.appendChild(editBtn);
+        }
+        
+        editBtn.addEventListener('click', () => openEditModal(squad));
+    }
+
     document.getElementById('squad-rating-widget').addEventListener('click', (e) => {
         const button = e.target.closest('.rating-btn');
         if (button && !button.disabled) {
@@ -492,7 +512,8 @@ async function handleSquadRating(squadId, newVote) {
 /**
  * Initializes the TinyMCE WYSIWYG editor on the textarea.
  */
-function initWysiwygEditor() {
+function initWysiwygEditor(initialContent = '') {
+    tinymce.remove('textarea#squad-long-desc');
     tinymce.init({
         selector: 'textarea#squad-long-desc',
         plugins: 'lists link image media table code help wordcount',
@@ -500,17 +521,51 @@ function initWysiwygEditor() {
         skin: 'oxide-dark',
         content_css: 'dark',
         height: 300,
-        // Security: Allow iframe for YouTube/Vimeo embeds, but nothing else dangerous
         extended_valid_elements: 'iframe[src|title|width|height|allowfullscreen|frameborder]',
-        // Automatically convert video URLs into embed codes
         media_live_embeds: true,
+        setup: function(editor) {
+            editor.on('init', function() {
+                this.setContent(initialContent);
+            });
+        }
     });
 }
 
 function openCreateModal() {
     if (!createSquadModal) return;
+    isEditMode = false;
     populateCreateFormSelectors();
     initWysiwygEditor(); 
+    createSquadModal.classList.remove('hidden');
+    createSquadModal.classList.add('flex');
+}
+
+function openEditModal(squad) {
+    if (!createSquadModal) return;
+    isEditMode = true;
+    currentEditingSquadId = squad.id;
+
+    createSquadModal.querySelector('h2').textContent = 'Edit Squad';
+    createSquadModal.querySelector('#submit-create-btn').textContent = 'Update Squad';
+    
+    populateCreateFormSelectors();
+    
+    const form = document.getElementById('create-squad-form');
+    form.querySelector('#squad-name').value = squad.name;
+    form.querySelector('#squad-short-desc').value = squad.shortDescription;
+    
+    for (let i = 0; i < 5; i++) {
+        const member = squad.members[i];
+        if (member) {
+            form.querySelector(`select[name="champion${i+1}"]`).value = member.dbChampionId;
+            if (member.legacyPiece) {
+                form.querySelector(`select[name="legacyPiece${i+1}"]`).value = member.legacyPiece.id;
+            }
+        }
+    }
+    
+    initWysiwygEditor(squad.longDescription || '');
+    
     createSquadModal.classList.remove('hidden');
     createSquadModal.classList.add('flex');
 }
@@ -521,6 +576,11 @@ function closeCreateModal() {
     createSquadModal.classList.add('hidden');
     createSquadModal.classList.remove('flex');
     document.getElementById('create-squad-form').reset();
+    
+    isEditMode = false;
+    currentEditingSquadId = null;
+    createSquadModal.querySelector('h2').textContent = 'Create New Squad';
+    createSquadModal.querySelector('#submit-create-btn').textContent = 'Create Squad';
 }
 
 function populateCreateFormSelectors() {
@@ -658,29 +718,86 @@ async function handleCreateSquadSubmit(e) {
         return applicableTier ? { name, appliedAtMemberCount: applicableTier.countRequired } : null;
     }).filter(Boolean);
 
-
-    const newSquad = {
-        name: formData.get('name'),
-        shortDescription: formData.get('shortDescription'),
+    const squadData = {
+        name: form.querySelector('#squad-name').value,
+        shortDescription: form.querySelector('#squad-short-desc').value,
         longDescription: sanitizedHtmlContent,
         members: members,
         activeSynergies: activeSynergies,
-        originalOwnerId: currentUser.uid,
-        createdAt: serverTimestamp(),
-        thumbsUp: 0,
-        thumbsDown: 0,
     };
 
-    try {
-        const squadCollection = collection(db, 'artifacts/dc-dark-legion-builder/public/data/squads');
-        await addDoc(squadCollection, newSquad);
-        document.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'Squad created successfully!', type: 'success' } }));
-        closeCreateModal();
-        localStorage.removeItem('squads_data_cache'); // Invalidate cache
-        setTimeout(() => window.location.reload(), 1000); // Reload to show new squad
-    } catch (error) {
-        console.error("Error creating squad:", error);
-        document.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'Failed to create squad.', type: 'error' } }));
+    if (isEditMode) {
+        const originalSquad = ALL_DATA.squads.find(s => s.id === currentEditingSquadId);
+        if (!originalSquad) {
+            showNotification("Error: Original squad data not found.", "error");
+            return;
+        }
+
+        const updatePayload = {};
+        const allowedKeys = ['name', 'shortDescription', 'longDescription', 'members', 'activeSynergies'];
+
+        for (const key of allowedKeys) {
+            if (JSON.stringify(originalSquad[key]) !== JSON.stringify(squadData[key])) {
+                updatePayload[key] = squadData[key];
+            }
+        }
+
+        if (Object.keys(updatePayload).length === 0) {
+            showNotification("No changes were detected.", "info");
+            closeCreateModal();
+            return;
+        }
+
+        try {
+            const squadDocRef = doc(db, 'artifacts/dc-dark-legion-builder/public/data/squads', currentEditingSquadId);
+            await updateDoc(squadDocRef, updatePayload);
+            showNotification('Squad updated successfully!', 'success');
+
+            // 1. Update the in-memory data using the still-valid ID
+            const squadIndex = ALL_DATA.squads.findIndex(s => s.id === currentEditingSquadId);
+            if (squadIndex > -1) {
+                ALL_DATA.squads[squadIndex] = { ...ALL_DATA.squads[squadIndex], ...updatePayload };
+            }
+
+            // 2. Update the browser's local storage cache
+            localStorage.setItem(CACHE_KEY, JSON.stringify({
+                timestamp: Date.now(),
+                data: ALL_DATA
+            }));
+
+            // 3. Re-render the view with the correct ID BEFORE the modal is closed
+            renderDetailView(currentEditingSquadId);
+
+            // 4. Finally, close the modal and reset the state as the last step
+            closeCreateModal();
+        } catch (error) {
+            console.error("Error updating squad:", error);
+            showNotification('Failed to update squad. Please check console.', 'error');
+        }
+    } else {
+        const newSquad = {
+            name: formData.get('name'),
+            shortDescription: formData.get('shortDescription'),
+            longDescription: sanitizedHtmlContent,
+            members: members,
+            activeSynergies: activeSynergies,
+            originalOwnerId: currentUser.uid,
+            createdAt: serverTimestamp(),
+            thumbsUp: 0,
+            thumbsDown: 0,
+        };
+
+        try {
+            const squadCollection = collection(db, 'artifacts/dc-dark-legion-builder/public/data/squads');
+            await addDoc(squadCollection, newSquad);
+            document.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'Squad created successfully!', type: 'success' } }));
+            closeCreateModal();
+            localStorage.removeItem('squads_data_cache'); // Invalidate cache
+            setTimeout(() => window.location.reload(), 1000); // Reload to show new squad
+        } catch (error) {
+            console.error("Error creating squad:", error);
+            document.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'Failed to create squad.', type: 'error' } }));
+        }
     }
 }
 
