@@ -190,6 +190,7 @@ const WIDGET_TEMPLATE = `
                         <option value="suggestion">Suggestion / Feature Request</option>
                         <option value="bug">Bug Report</option>
                         <option value="ui_ux">UI/UX Comment</option>
+                        <option value="creator_submission">Become a Creator</option>
                         <option value="general">General Feedback</option>
                     </select>
                 </div>
@@ -242,27 +243,31 @@ class FeedbackWidget extends HTMLElement {
     }
 
     connectedCallback() {
-        this.initFirebase();
+        document.addEventListener('firebase-ready', () => {
+            this.initFirebase();
+        }, { once: true });
+
         this.elements = this.getElements();
         this.attachEventListeners();
+        document.addEventListener('open-creator-application', () => this.openForCreatorApplication());
+    }
+
+    openForCreatorApplication() {
+        const feedbackTypeSelect = this.shadowRoot.getElementById('feedback-type');
+        if (feedbackTypeSelect) {
+            feedbackTypeSelect.value = 'creator_submission';
+        }
+
+        if (!this.elements.container.classList.contains('is-open')) {
+            this.toggleForm();
+        }
     }
 
     initFirebase() {
         try {
-            let feedbackApp;
-            const appName = 'feedbackWidgetApp';
-            if (getApps().some(app => app.name === appName)) {
-                feedbackApp = getApp(appName);
-            } else {
-                feedbackApp = initializeApp(this.firebaseConfig, appName);
-            }
-            this.db = getFirestore(feedbackApp);
-            this.auth = getAuth(feedbackApp);
-            onAuthStateChanged(this.auth, (user) => {
-                if (!user) {
-                    signInAnonymously(this.auth).catch(error => console.error("Anonymous sign-in failed", error));
-                }
-            });
+            const app = getApp(); 
+            this.db = getFirestore(app);
+            this.auth = getAuth(app);
         } catch (e) {
             console.error("Feedback Widget: Firebase initialization failed.", e);
         }

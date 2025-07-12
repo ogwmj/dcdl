@@ -5,7 +5,7 @@
  */
 
 // --- MODULES & GLOBALS ---
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getFirestore, collection, getDocs, doc, runTransaction, getDoc, addDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -42,31 +42,7 @@ const creatorSelectContainer = document.getElementById('creator-select-container
 const synergyContainer = document.getElementById('synergy-multiselect-container');
 const championContainer = document.getElementById('champion-multiselect-container');
 const resetFiltersBtn = document.getElementById('reset-filters-btn');
-const createSquadBtnContainer = document.getElementById('create-squad-btn-container'); // New container for the button
-
-// --- FIREBASE INITIALIZATION ---
-// This section runs immediately when the script is loaded.
-try {
-    const firebaseConfig = {
-        apiKey: "AIzaSyAzSQbS4LtAz20syWI2HREPR7UnYh6ldbI",
-        authDomain: "dc-dark-legion-tools.firebaseapp.com",
-        projectId: "dc-dark-legion-tools",
-        storageBucket: "dc-dark-legion-tools.appspot.com",
-        messagingSenderId: "786517074225",
-        appId: "1:786517074225:web:9f14dc4dcae0705fcfd010",
-        measurementId: "G-FTF00DHGV6"
-    };
-    const app = initializeApp(firebaseConfig);
-    db = getFirestore(app);
-    analytics = getAnalytics(app);
-    auth = getAuth(app);
-    document.dispatchEvent(new CustomEvent('firebase-ready', { detail: { app } }));
-} catch (e) {
-    console.error("Firebase initialization failed in ui.js:", e);
-    if (listContainer) {
-        listContainer.innerHTML = `<p class="text-center text-red-400">Critical error: Could not initialize application services.</p>`;
-    }
-}
+const createSquadBtnContainer = document.getElementById('create-squad-btn-container');
 
 // --- DATA HANDLING ---
 
@@ -285,22 +261,64 @@ function createPillbox({ container, options, selected, placeholder, onChange }) 
 }
 
 /**
+ * Safely converts a Firestore Timestamp, a plain object, or a date string into a JS Date object.
+ * @param {object|string} timestamp - The value to convert.
+ * @returns {Date} A valid JavaScript Date object.
+ */
+function normalizeDate(timestamp) {
+    if (!timestamp) return new Date(0); // Return a default epoch date if null/undefined
+
+    // Case 1: It's a true Firestore Timestamp object.
+    if (typeof timestamp.toDate === 'function') {
+        return timestamp.toDate();
+    }
+    // Case 2: It's a plain object from the cache with a 'seconds' property.
+    if (timestamp.seconds) {
+        return new Date(timestamp.seconds * 1000);
+    }
+    // Case 3: It's already a date string or another parsable format.
+    return new Date(timestamp);
+}
+
+/**
  * Applies all active filters and sorting to the master squad list,
  * then triggers a re-render of the list view.
  */
 function applyFiltersAndSort() {
     if (!ALL_DATA.squads) return;
+
     let filteredSquads = (ALL_DATA.squads || []).filter(squad => {
         if (!squad.isActive) return false;
         const creatorName = (squad.creatorUsername || '').toLowerCase();
         const searchVal = activeFilters.search.toLowerCase();
         const searchMatch = !searchVal || squad.name.toLowerCase().includes(searchVal) || creatorName.includes(searchVal);
-        const creatorMatch = !activeFilters.creator || squad.creatorUsername === activeFilters.creator;
+        const creatorMatch = !activeFilters.creator || (squad.creatorUsername === activeFilters.creator);
         const synergyMatch = activeFilters.synergies.length === 0 || activeFilters.synergies.every(synName => squad.activeSynergies.some(sSyn => sSyn.name === synName));
         const championMatch = activeFilters.champions.length === 0 || activeFilters.champions.every(champId => squad.members.some(m => m.dbChampionId === champId));
         return searchMatch && creatorMatch && synergyMatch && championMatch;
     });
-    // ... sorting logic ...
+
+    filteredSquads.sort((a, b) => {
+        switch (activeFilters.sort) {
+            case 'name_asc':
+                return a.name.localeCompare(b.name);
+            case 'name_desc':
+                return b.name.localeCompare(a.name);
+            case 'popularity':
+                const scoreA = (a.thumbsUp || 0) - (a.thumbsDown || 0);
+                const scoreB = (b.thumbsUp || 0) - (b.thumbsDown || 0);
+                return scoreB - scoreA;
+            
+            // Now using the robust normalizeDate helper function
+            case 'oldest':
+                return normalizeDate(a.createdAt) - normalizeDate(b.createdAt);
+            
+            case 'newest':
+            default:
+                return normalizeDate(b.createdAt) - normalizeDate(a.createdAt);
+        }
+    });
+
     currentSquadList = filteredSquads;
     updateURL();
     renderListView(1);
@@ -309,8 +327,11 @@ function applyFiltersAndSort() {
 function populateAndAttachFilterHandlers() {
     // 1. Sort Dropdown
     const sortOptions = [
-        { value: 'newest', label: 'Sort: Newest First' }, { value: 'popularity', label: 'Sort: Most Popular' },
-        { value: 'name_asc', label: 'Sort: Name (A-Z)' }, { value: 'name_desc', label: 'Sort: Name (Z-A)' },
+        { value: 'newest', label: 'Sort: Newest First' },
+        { value: 'popularity', label: 'Sort: Most Popular' },
+        { value: 'name_asc', label: 'Sort: Name (A-Z)' },
+        { value: 'name_desc', label: 'Sort: Name (Z-A)' },
+        { value: 'oldest', label: 'Sort: Oldest First' } // This option was missing
     ];
     createCustomSelect({
         container: sortSelectContainer,
@@ -319,16 +340,36 @@ function populateAndAttachFilterHandlers() {
         onChange: newValue => { activeFilters.sort = newValue; applyFiltersAndSort(); }
     });
 
-    // 2. Creator Dropdown
-    const creators = [{ value: '', label: 'All Creators' }, ...[...new Set(ALL_DATA.squads.map(s => s.creatorUsername).filter(Boolean))]
+    // 2. Creator Dropdown (This section is updated)
+    const creatorOptions = [...new Set(ALL_DATA.squads.map(s => s.creatorUsername).filter(Boolean))]
         .sort((a, b) => a.localeCompare(b))
-        .map(c => ({ value: c, label: c }))
+        .map(c => ({ value: c, label: c }));
+
+    const finalCreatorOptions = [
+        { value: '', label: 'All Creators' },
+        ...creatorOptions,
+        // Add a visual separator and the special option at the end
+        { value: 'separator', label: '─────────────────', disabled: true },
+        { value: 'apply-to-be-creator', label: '➡️ Become a Creator...' }
     ];
+
     createCustomSelect({
         container: creatorSelectContainer,
-        options: creators,
+        options: finalCreatorOptions,
         selectedValue: activeFilters.creator,
-        onChange: newValue => { activeFilters.creator = newValue; applyFiltersAndSort(); }
+        onChange: newValue => {
+            // Check for the special value
+            if (newValue === 'apply-to-be-creator') {
+                // Dispatch a custom event for the feedback widget to hear
+                document.dispatchEvent(new CustomEvent('open-creator-application'));
+                // Reset the dropdown visually without triggering a filter
+                creatorSelectContainer.querySelector('.custom-select-trigger').textContent = 'All Creators';
+            } else {
+                // Otherwise, perform the filter as usual
+                activeFilters.creator = newValue;
+                applyFiltersAndSort();
+            }
+        }
     });
     
     // 3. Synergy Pillbox
@@ -1162,28 +1203,6 @@ function setupSkillTabs() {
 
 // --- INITIALIZATION & ROUTING ---
 
-async function initializeAppAndRender() {
-    onAuthStateChanged(auth, async (user) => {
-        currentUser = user;
-        if (user && !user.isAnonymous) {
-            const userDocRef = doc(db, "artifacts/dc-dark-legion-builder/users", user.uid);
-            const userDocSnap = await getDoc(userDocRef);
-            if (userDocSnap.exists()) {
-                const userData = userDocSnap.data();
-                userRoles = userData.roles || [];
-                currentUsername = userData.username || ''; // <-- ADD THIS LINE
-            } else {
-                userRoles = [];
-                currentUsername = ''; // <-- ADD THIS LINE
-            }
-        } else {
-            userRoles = [];
-            currentUsername = ''; // <-- ADD THIS LINE
-        }
-        await main();
-    });
-}
-
 // Replace your existing main function with this one
 async function main() {
     if (!db) {
@@ -1217,7 +1236,44 @@ async function main() {
 // Listen for browser back/forward navigation
 window.addEventListener('popstate', main);
 
-document.addEventListener('DOMContentLoaded', initializeAppAndRender);
 document.getElementById('create-squad-form').addEventListener('submit', handleCreateSquadSubmit);
 document.getElementById('close-modal-btn').addEventListener('click', closeCreateModal);
 document.getElementById('cancel-create-btn').addEventListener('click', closeCreateModal);
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. First, listen for the 'firebase-ready' event from auth-ui.js
+    document.addEventListener('firebase-ready', () => {
+        
+        // 2. Once Firebase is ready, get the shared services
+        try {
+            const app = getApp();
+            db = getFirestore(app);
+            analytics = getAnalytics(app);
+            auth = getAuth(app);
+        } catch (e) {
+            console.error("Squads UI: Failed to get Firebase services.", e);
+            return; // Stop if we can't connect
+        }
+
+        // 3. Now that 'auth' is defined, set up the auth state listener
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+            if (user && !user.isAnonymous) {
+                const userDocRef = doc(db, "artifacts/dc-dark-legion-builder/users", user.uid);
+                const userDocSnap = await getDoc(userDocRef);
+                if (userDocSnap.exists()) {
+                    const userData = userDocSnap.data();
+                    userRoles = userData.roles || [];
+                    currentUsername = userData.username || '';
+                } else {
+                    userRoles = []; currentUsername = '';
+                }
+            } else {
+                userRoles = []; currentUsername = '';
+            }
+            
+            // 4. Finally, run the main logic for the page
+            await main();
+        });
+    });
+});
