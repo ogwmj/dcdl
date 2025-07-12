@@ -183,19 +183,17 @@ async function handleCreatorProfileUpdate(e) {
         const isNewLogo = logoUrl.startsWith('data:image');
 
         if (isNewLogo) {
-            // A new logo was selected as a Base64 string, so upload it to Storage.
-            // Using a consistent file name will overwrite the previous logo.
-            const storageRef = ref(storage, `users/${user.uid}/logo.png`);
-            // We need to strip the Data URL prefix before uploading.
+            // A new logo was selected. Upload it to the *temporary* path to be moderated.
+            const tempStoragePath = `temp_uploads/${user.uid}/logo.png`;
+            const storageRef = ref(storage, tempStoragePath);
             const base64String = logoUrl.split(',')[1];
             
-            showNotification('Uploading new logo...', 'info');
-            const snapshot = await uploadString(storageRef, base64String, 'base64');
-            logoUrl = await getDownloadURL(snapshot.ref);
+            await uploadString(storageRef, base64String, 'base64');
+            // The Cloud Function will handle moving it and updating Firestore.
         }
 
+        // Save the other text-based profile info immediately.
         const creatorProfileData = {
-            logo: logoUrl, // This will be a permanent https:// firebasestorage URL
             description: DOM.creatorDescriptionInput.value.trim(),
             socials: {
                 youtube: DOM.creatorYoutubeInput.value.trim(),
@@ -212,9 +210,10 @@ async function handleCreatorProfileUpdate(e) {
         });
 
         const userProfileRef = doc(db, "artifacts", appId, "users", user.uid);
+        // Note: We are NOT saving the logo URL here anymore.
         await setDoc(userProfileRef, { creatorProfile: creatorProfileData }, { merge: true });
 
-        showNotification("Creator profile updated successfully!", "success");
+        showNotification("Profile info saved! Your new logo is being processed and will appear shortly.", "success");
 
     } catch (error) {
         console.error("Creator profile update error:", error);
