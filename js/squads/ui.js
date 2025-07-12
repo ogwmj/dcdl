@@ -163,6 +163,39 @@ function resetSeoTags() {
 
 // --- UI RENDERING ---
 
+function generateCreatorProfileHtml(creatorData) {
+    const profile = creatorData.creatorProfile || {};
+    const socials = profile.socials || {};
+
+    const socialLinks = [
+        { key: 'discord', icon: 'fab fa-discord', url: socials.discord },
+        { key: 'youtube', icon: 'fab fa-youtube', url: socials.youtube },
+        { key: 'twitch', icon: 'fab fa-twitch', url: socials.twitch },
+        { key: 'x', icon: 'fab fa-twitter', url: socials.x },
+        { key: 'tiktok', icon: 'fab fa-tiktok', url: socials.tiktok },
+        { key: 'instagram', icon: 'fab fa-instagram', url: socials.instagram }
+    ];
+
+    const socialsHtml = socialLinks
+        .filter(link => link.url) // Only include socials that have a URL
+        .map(link => `<a href="${link.url}" target="_blank" rel="noopener noreferrer" title="${link.key.charAt(0).toUpperCase() + link.key.slice(1)}"><i class="${link.icon}"></i></a>`)
+        .join('');
+
+    return `
+        <section class="guide-section mt-8">
+            <h2 class="guide-section-title">Squad Creator</h2>
+            <div class="creator-card">
+                <div class="creator-header">
+                    <img src="${profile.logo || '/img/dcdl_logo.png'}" alt="Creator Logo" class="creator-logo" onerror="this.onerror=null;this.src='/img/dcdl_logo.png';">
+                    <span class="creator-username">${creatorData.username || 'Anonymous'}</span>
+                </div>
+                ${profile.description ? `<p class="creator-description">"${profile.description}"</p>` : ''}
+                ${socialsHtml ? `<div class="creator-socials">${socialsHtml}</div>` : ''}
+            </div>
+        </section>
+    `;
+}
+
 /**
  * Renders the list of all squads with pagination.
  * @param {number} page - The current page number to display.
@@ -288,6 +321,19 @@ async function renderDetailView(squadId) {
     
     updateSeoTags(squad);
 
+    let creatorData = null;
+    if (squad.originalOwnerId) {
+        try {
+            const userDocRef = doc(db, `artifacts/dc-dark-legion-builder/users`, squad.originalOwnerId);
+            const userDocSnap = await getDoc(userDocRef);
+            if (userDocSnap.exists()) {
+                creatorData = userDocSnap.data();
+            }
+        } catch (error) {
+            console.error("Could not fetch creator profile:", error);
+        }
+    }
+
     let userVote = null;
     if (currentUser && !currentUser.isAnonymous) {
         const ratingDocRef = doc(db, `artifacts/dc-dark-legion-builder/public/data/squads/${squadId}/ratings`, currentUser.uid);
@@ -377,6 +423,8 @@ async function renderDetailView(squadId) {
             </div>`;
     }).join('');
 
+    const creatorHtml = creatorData ? generateCreatorProfileHtml(creatorData) : '';
+
     detailContainer.innerHTML = `
         <header class="py-8 md:py-12 text-center">
             <h1 class="text-5xl md:text-7xl font-extrabold mb-4 glowing-text text-white">${squad.name}</h1>
@@ -400,6 +448,7 @@ async function renderDetailView(squadId) {
             <h2 class="guide-section-title mt-8">Role & Skill Analysis</h2>
             <div class="space-y-8">${rolesHtml}</div>
         </section>
+        ${creatorHtml}
         <div class="text-center py-20"><a href="/squads.html" class="mt-4 inline-block pagination-btn">Back to List</a></div>
     `;
 

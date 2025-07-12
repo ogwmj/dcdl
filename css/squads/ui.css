@@ -3,8 +3,6 @@
  * @description Styles for the squads list and detail pages.
  */
 
-/* --- LIST VIEW STYLES --- */
-
 .squad-list-card {
     background-color: rgba(15, 23, 42, 0.7);
     border: 1px solid #334155;
@@ -93,8 +91,6 @@
     font-weight: 600;
     color: #cbd5e1;
 }
-
-/* --- DETAIL VIEW STYLES (re-using from your previous files) --- */
 
 .guide-section-title {
     font-family: 'Russo One', sans-serif;
@@ -287,7 +283,6 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- RATING WIDGET STYLES --- */
 .rating-btn {
     background-color: #334155; /* slate-700 */
     color: #94a3b8; /* slate-400 */
@@ -353,7 +348,6 @@
     gap: 0.35rem;
 }
 
-/* --- FORM & MODAL STYLES --- */
 .form-label {
     display: block;
     margin-bottom: 0.5rem;
@@ -439,4 +433,65 @@
 .tooltip-container:hover .tooltip-text {
   visibility: visible;
   opacity: 1;
+}
+
+.creator-card {
+    background: rgba(15, 23, 42, 0.7); /* slate-900 with opacity */
+    border: 1px solid #3b82f6; /* blue-500 */
+    border-radius: 0.75rem; /* 12px */
+    padding: 2rem;
+    margin-top: 1rem;
+    text-align: center;
+    box-shadow: 0 0 25px rgba(59, 130, 246, 0.1);
+}
+
+.creator-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.creator-logo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 3px solid #4f46e5; /* indigo-600 */
+    object-fit: cover;
+    background-color: #0d1226;
+    box-shadow: 0 0 15px rgba(79, 70, 229, 0.5);
+}
+
+.creator-username {
+    font-family: 'Russo One', sans-serif;
+    font-size: 2rem;
+    color: #e2e8f0;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+.creator-description {
+    color: #cbd5e1; /* slate-300 */
+    font-style: italic;
+    max-width: 42rem; /* 672px */
+    margin: 0 auto 1.5rem auto;
+    line-height: 1.6;
+}
+
+.creator-socials {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.25rem; /* 20px */
+}
+
+.creator-socials a {
+    color: #94a3b8; /* slate-400 */
+    font-size: 1.75rem; /* 28px */
+    transition: all 0.2s ease-in-out;
+}
+
+.creator-socials a:hover {
+    color: #fff;
+    transform: translateY(-3px) scale(1.05);
 }
