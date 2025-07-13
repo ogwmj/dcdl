@@ -515,10 +515,6 @@ function populateFilters() {
     sortDropdown = createSortDropdown();
 }
 
-// --- END: URL and Filter Logic ---
-
-// --- START: Image Generation ---
-
 async function downloadImage(imageUrl, filename) {
     try {
         const response = await fetch(imageUrl);
@@ -619,10 +615,6 @@ async function generateAndUploadCardImage(championId) {
         if (downloadButton) downloadButton.style.display = 'flex';
     }
 }
-
-// --- END: Image Generation ---
-
-// --- START: Modal and Grid Rendering ---
 
 function createChampionListItem(champion) {
     const cleanName = sanitizeName(champion.name); //

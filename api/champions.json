@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-07-11T22:56:48.845Z",
+  "updated_at": "2025-07-13T14:27:24.129Z",
   "champions": [
     {
       "name": "Atom",
@@ -63,8 +63,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Gold 1-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Atom-card.png",
+      "communityAverageLevel": "Gold 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Atom.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Atom"
     },
@@ -647,8 +647,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Gold 3-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Supergirl-card.png",
+      "communityAverageLevel": "Purple 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Supergirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Supergirl",
       "relatedChampions": [
@@ -805,7 +805,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Krypto-card.png",
-      "communityAverageLevel": "Blue 2-Star",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Krypto.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Krypto"
     },
