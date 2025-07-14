@@ -1,7 +1,7 @@
 /**
  * @file js/codex/ui.js
- * @description Adds Related Champions to Dossier.
- * @version 7.9.0
+ * @description Restricts community features to 'creator' role.
+ * @version 8.0.0
  */
 
 // --- Firebase & Data ---
@@ -35,6 +35,7 @@ let activeFilters = {
 let currentViewMode = 'grid';
 let USER_ROSTER_IDS = new Set();
 let currentUserId = null;
+let currentUserRoles = []; // <-- NEW: To store user roles
 
 // --- DOM ELEMENTS ---
 const DOM = {
@@ -409,6 +410,7 @@ async function populateCommunityTab(champion) {
     const pane = document.getElementById('dossier-tab-community');
     pane.innerHTML = `<div class="loading-spinner mx-auto"></div>`;
 
+    const isCreator = currentUserRoles.includes('creator');
     const ratingsCategories = ['Meta', 'Training Simulator', 'Combat Cycle', 'All Around'];
     let ratingsHtml = '<div class="community-ratings-grid">';
     for (const category of ratingsCategories) {
@@ -428,10 +430,16 @@ async function populateCommunityTab(champion) {
             <div id="player-tips-list">
                 <p class="text-gray-400">Loading tips...</p>
             </div>
+            ${isCreator ? `
             <form id="add-tip-form" class="mt-6">
-                <textarea name="tip" placeholder="Share a tip, build, or strategy... (Requires login)" rows="3" ${!currentUserId ? 'disabled' : ''}></textarea>
-                <button type="submit" ${!currentUserId ? 'disabled' : ''}>Submit Tip</button>
+                <textarea name="tip" placeholder="Share a tip, build, or strategy..." rows="3"></textarea>
+                <button type="submit">Submit Tip</button>
             </form>
+            ` : `
+            <div class="dossier-placeholder-text mt-6">
+                Only users with the 'Creator' role can submit ratings and tips.
+            </div>
+            `}
         </div>
     `;
 
@@ -441,10 +449,15 @@ async function populateCommunityTab(champion) {
         ${tipsHtml}
     `;
 
-    pane.querySelectorAll('.rating-stars span').forEach(star => {
-        star.addEventListener('click', (e) => handleRatingSubmit(e, champion.id));
-    });
-    pane.querySelector('#add-tip-form').addEventListener('submit', (e) => handleTipSubmit(e, champion.id));
+    if (isCreator) {
+        pane.querySelectorAll('.rating-stars span').forEach(star => {
+            star.addEventListener('click', (e) => handleRatingSubmit(e, champion.id));
+        });
+        const tipForm = pane.querySelector('#add-tip-form');
+        if (tipForm) {
+            tipForm.addEventListener('submit', (e) => handleTipSubmit(e, champion.id));
+        }
+    }
 
     renderCommunityRatings(champion.id);
     renderPlayerTips(champion.id);
@@ -484,7 +497,7 @@ function populateLoreTab(champion) {
             <h3 class="dossier-section-title">Biography</h3>
             ${biographyHtml}
         </div>
-        <div>
+        <div id="related-champions-section">
             <h3 class="dossier-section-title">Boosted Odds</h3>
             <div id="related-champions-container" class="related-champions-grid">
                 <div class="loading-spinner-small mx-auto"></div>
@@ -496,13 +509,9 @@ function populateLoreTab(champion) {
 
 async function renderRelatedChampions(championId) {
     const container = document.getElementById('related-champions-container');
-    if (!container) return;
+    const section = document.getElementById('related-champions-section');
+    if (!container || !section) return;
 
-    // Get the parent element which contains both the title and the grid
-    const section = container.parentElement;
-    if (!section) return;
-
-    // Hide the section by default. It will only be shown if data is found.
     section.style.display = 'none';
     container.innerHTML = `<div class="loading-spinner-small mx-auto"></div>`;
 
@@ -510,25 +519,17 @@ async function renderRelatedChampions(championId) {
         const relatedChampsQuery = query(collection(db, `artifacts/dc-dark-legion-builder/public/data/champions/${championId}/relatedChampions`));
         const relatedSnap = await getDocs(relatedChampsQuery);
 
-        // If the query returns no documents, keep the section hidden and exit.
-        if (relatedSnap.empty) {
-            return;
-        }
+        if (relatedSnap.empty) { return; }
 
         const relatedDocData = relatedSnap.docs[0].data();
         const relatedIds = relatedDocData.championIds;
 
-        // If there are no IDs in the document, keep the section hidden.
-        if (!relatedIds || relatedIds.length === 0) {
-            return;
-        }
+        if (!relatedIds || relatedIds.length === 0) { return; }
 
         const relatedChampsData = relatedIds.map(id => ALL_CHAMPIONS.find(c => c.id === id)).filter(Boolean);
 
-        // If we found matching champion data, show the section and render them.
         if (relatedChampsData.length > 0) {
-            section.style.display = 'block'; // Show the section
-
+            section.style.display = 'block';
             container.innerHTML = relatedChampsData.map(rc => `
                 <div class="related-champion-item" data-id="${rc.id}" title="View ${rc.name}'s Dossier">
                     <img src="img/champions/avatars/${sanitizeName(rc.name)}.webp" alt="${rc.name}">
@@ -536,8 +537,6 @@ async function renderRelatedChampions(championId) {
                 </div>
             `).join('');
 
-            // Use event delegation on the container to handle clicks
-            // This is safer than adding listeners to each item individually
             const newContainer = container.cloneNode(true);
             container.parentNode.replaceChild(newContainer, container);
             
@@ -548,16 +547,12 @@ async function renderRelatedChampions(championId) {
                 }
             });
         }
-        // If relatedChampsData is empty (e.g., bad IDs), the section remains hidden.
-
     } catch (error) {
         console.error("Failed to fetch related champions:", error);
-        // Optionally, you could show the section with an error message
         section.style.display = 'block';
         container.innerHTML = '<p class="text-red-500 text-sm">Could not load related champions.</p>';
     }
 }
-
 
 // --- END: Modal Logic ---
 
@@ -569,17 +564,19 @@ async function renderCommunityRatings(championId) {
     const ratingsSnap = await getDocs(ratingsRef);
 
     const ratingsData = {};
+    const ratingsCategories = ['Meta', 'Training Simulator', 'Combat Cycle', 'All Around'];
+    ratingsCategories.forEach(cat => ratingsData[cat] = { total: 0, count: 0 });
+
     ratingsSnap.forEach(doc => {
         const data = doc.data();
-        if (!ratingsData[data.category]) {
-            ratingsData[data.category] = { total: 0, count: 0 };
+        if (ratingsData[data.category]) {
+            ratingsData[data.category].total += data.rating;
+            ratingsData[data.category].count++;
         }
-        ratingsData[data.category].total += data.rating;
-        ratingsData[data.category].count++;
     });
 
     for (const category in ratingsData) {
-        const avgRating = ratingsData[category].total / ratingsData[category].count;
+        const avgRating = ratingsData[category].count > 0 ? ratingsData[category].total / ratingsData[category].count : 0;
         const starsContainer = document.getElementById(`rating-${sanitizeName(category)}`);
         if (starsContainer) {
             starsContainer.querySelectorAll('span').forEach((star, i) => {
@@ -630,8 +627,8 @@ async function renderPlayerTips(championId) {
 }
 
 async function handleRatingSubmit(event, championId) {
-    if (!currentUserId) {
-        dispatchNotification('Please log in to submit a rating.', 'info');
+    if (!currentUserRoles.includes('creator')) {
+        dispatchNotification("Only Creators can submit ratings.", "warning");
         return;
     }
     const star = event.currentTarget;
@@ -657,8 +654,8 @@ async function handleRatingSubmit(event, championId) {
 
 async function handleTipSubmit(event, championId) {
     event.preventDefault();
-    if (!currentUserId) {
-        dispatchNotification('Please log in to submit a tip.', 'info');
+    if (!currentUserRoles.includes('creator')) {
+        dispatchNotification("Only Creators can submit tips.", "warning");
         return;
     }
 
@@ -1002,7 +999,23 @@ async function init() {
 
 // --- END: Data Fetching and Initialization ---
 
-// --- START: Roster Association ---
+// --- START: Roster and Role Association ---
+
+async function fetchUserRoles(uid) {
+    if (!db || !uid) return;
+    const userDocRef = doc(db, `artifacts/dc-dark-legion-builder/users/${uid}`);
+    try {
+        const docSnap = await getDoc(userDocRef);
+        if (docSnap.exists() && docSnap.data().roles) {
+            currentUserRoles = docSnap.data().roles;
+        } else {
+            currentUserRoles = [];
+        }
+    } catch (error) {
+        console.error("Error fetching user roles:", error);
+        currentUserRoles = [];
+    }
+}
 
 async function fetchUserRoster(uid) {
     if (!db || !uid) return;
@@ -1040,7 +1053,7 @@ function updateAllRosterButtons() {
     });
 }
 
-// --- END: Roster Association ---
+// --- END: Roster and Role Association ---
 
 // --- START: Grid/List View Rendering ---
 
@@ -1104,12 +1117,14 @@ document.addEventListener('firebase-ready', () => {
         functions = getFunctions(app);
         auth = getAuth(app);
         
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             currentUserId = user ? user.uid : null;
             if (user && !user.isAnonymous) {
+                await fetchUserRoles(user.uid);
                 fetchUserRoster(user.uid);
             } else {
                 USER_ROSTER_IDS.clear();
+                currentUserRoles = [];
                 updateAllRosterButtons();
             }
         });
