@@ -1,7 +1,7 @@
 /**
  * @file js/codex/ui.js
- * @description Corrects Firestore paths for community features.
- * @version 7.8.0
+ * @description Adds Related Champions to Dossier.
+ * @version 7.9.0
  */
 
 // --- Firebase & Data ---
@@ -480,12 +480,84 @@ function populateLoreTab(champion) {
             <h3 class="dossier-section-title">First Appearance</h3>
             ${firstAppearanceHtml}
         </div>
-        <div>
+        <div class="mb-6">
             <h3 class="dossier-section-title">Biography</h3>
             ${biographyHtml}
         </div>
+        <div>
+            <h3 class="dossier-section-title">Boosted Odds</h3>
+            <div id="related-champions-container" class="related-champions-grid">
+                <div class="loading-spinner-small mx-auto"></div>
+            </div>
+        </div>
     `;
+    renderRelatedChampions(champion.id);
 }
+
+async function renderRelatedChampions(championId) {
+    const container = document.getElementById('related-champions-container');
+    if (!container) return;
+
+    // Get the parent element which contains both the title and the grid
+    const section = container.parentElement;
+    if (!section) return;
+
+    // Hide the section by default. It will only be shown if data is found.
+    section.style.display = 'none';
+    container.innerHTML = `<div class="loading-spinner-small mx-auto"></div>`;
+
+    try {
+        const relatedChampsQuery = query(collection(db, `artifacts/dc-dark-legion-builder/public/data/champions/${championId}/relatedChampions`));
+        const relatedSnap = await getDocs(relatedChampsQuery);
+
+        // If the query returns no documents, keep the section hidden and exit.
+        if (relatedSnap.empty) {
+            return;
+        }
+
+        const relatedDocData = relatedSnap.docs[0].data();
+        const relatedIds = relatedDocData.championIds;
+
+        // If there are no IDs in the document, keep the section hidden.
+        if (!relatedIds || relatedIds.length === 0) {
+            return;
+        }
+
+        const relatedChampsData = relatedIds.map(id => ALL_CHAMPIONS.find(c => c.id === id)).filter(Boolean);
+
+        // If we found matching champion data, show the section and render them.
+        if (relatedChampsData.length > 0) {
+            section.style.display = 'block'; // Show the section
+
+            container.innerHTML = relatedChampsData.map(rc => `
+                <div class="related-champion-item" data-id="${rc.id}" title="View ${rc.name}'s Dossier">
+                    <img src="img/champions/avatars/${sanitizeName(rc.name)}.webp" alt="${rc.name}">
+                    <span>${rc.name}</span>
+                </div>
+            `).join('');
+
+            // Use event delegation on the container to handle clicks
+            // This is safer than adding listeners to each item individually
+            const newContainer = container.cloneNode(true);
+            container.parentNode.replaceChild(newContainer, container);
+            
+            newContainer.addEventListener('click', (e) => {
+                const relatedItem = e.target.closest('.related-champion-item');
+                if (relatedItem && relatedItem.dataset.id) {
+                    showDossierModal(relatedItem.dataset.id);
+                }
+            });
+        }
+        // If relatedChampsData is empty (e.g., bad IDs), the section remains hidden.
+
+    } catch (error) {
+        console.error("Failed to fetch related champions:", error);
+        // Optionally, you could show the section with an error message
+        section.style.display = 'block';
+        container.innerHTML = '<p class="text-red-500 text-sm">Could not load related champions.</p>';
+    }
+}
+
 
 // --- END: Modal Logic ---
 
