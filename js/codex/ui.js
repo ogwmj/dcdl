@@ -1,18 +1,18 @@
 /**
  * @file js/codex/ui.js
- * @description Final version with card-based image generation.
- * @version 6.0.0
+ * @description Adds Champion Dossier modal with community features and fixes tab functionality.
+ * @version 7.4.0
  */
 
 // --- Firebase & Data ---
 import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, doc, getDoc, setDoc, addDoc, serverTimestamp, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 // --- Global Variables ---
-let db, analytics, functions;
+let db, analytics, functions, auth;
 let ALL_CHAMPIONS = [];
 let ALL_SYNERGIES = {};
 let COMICS_DATA = {};
@@ -34,17 +34,26 @@ let activeFilters = {
 };
 let currentViewMode = 'grid';
 let USER_ROSTER_IDS = new Set();
+let currentUserId = null;
 
 // --- DOM ELEMENTS ---
 const DOM = {
     loadingIndicator: document.getElementById('loading-indicator'),
     codexMainContent: document.getElementById('codex-main-content'),
     grid: document.getElementById('codex-grid'),
-    modalBackdrop: document.getElementById('comic-modal-backdrop'),
-    modalBody: document.getElementById('comic-modal-body'),
-    modalClose: document.getElementById('comic-modal-close'),
+    // Comic Modal
+    comicModalBackdrop: document.getElementById('comic-modal-backdrop'),
+    comicModalBody: document.getElementById('comic-modal-body'),
+    comicModalClose: document.getElementById('comic-modal-close'),
     modalPrevBtn: document.getElementById('modal-prev-btn'),
     modalNextBtn: document.getElementById('modal-next-btn'),
+    // Dossier Modal
+    dossierModalBackdrop: document.getElementById('dossier-modal-backdrop'),
+    dossierModalBody: document.getElementById('dossier-modal-body'),
+    dossierModalClose: document.getElementById('dossier-modal-close'),
+    dossierLeftColumn: document.getElementById('dossier-left-column'),
+    dossierRightColumn: document.getElementById('dossier-right-column'),
+    // Filters
     filterControls: document.getElementById('filter-controls'),
     searchInput: document.getElementById('search-input'),
     sortSelectContainer: document.getElementById('sort-select-container'),
@@ -53,36 +62,25 @@ const DOM = {
     synergyContainer: document.getElementById('synergy-multiselect-container'),
     healerFilterBtn: document.getElementById('healer-filter-btn'),
     resetFiltersBtn: document.getElementById('reset-filters-btn'),
-    grid: document.getElementById('codex-grid'),
     viewGridBtn: document.getElementById('view-grid-btn'),
     viewListBtn: document.getElementById('view-list-btn'),
 };
 
 // --- START: Helper & Utility Functions ---
 
-/**
- * Creates HTML for a visual star rating display.
- * @param {string} levelString - The star level string (e.g., "Blue 4-Star").
- * @returns {string} The HTML for the star display.
- */
 function createStarDisplayHTML(levelString) {
     if (!levelString || levelString === 'N/A' || levelString === 'Unlocked') {
-        // Return 5 empty stars for N/A or Unlocked status
         return `<div class="star-display tier-unlocked" title="Community Average: Not Available">
             ${[...Array(5)].map(() => '<span>☆</span>').join('')}
         </div>`;
     }
-
     const parts = levelString.split(' ');
-    const tier = parts[0].toLowerCase(); // e.g., 'blue'
+    const tier = parts[0].toLowerCase();
     const starCount = parseInt(parts[1], 10) || 0;
-
     let starsHTML = '';
     for (let i = 1; i <= 5; i++) {
-        // Use a filled star (★) for active stars, and an outline (☆) for inactive ones.
         starsHTML += `<span>${i <= starCount ? '★' : '☆'}</span>`;
     }
-
     return `<div class="star-display tier-${tier}" title="Community Average: ${levelString}">${starsHTML}</div>`;
 }
 
@@ -95,10 +93,6 @@ function dispatchNotification(message, type = 'info', duration = 3000) {
     document.dispatchEvent(event);
 }
 
-/**
- * Shows or hides the skeleton loader for the page.
- * @param {boolean} isLoading - Whether to show the loading indicator.
- */
 function showLoading(isLoading) {
     if (isLoading) {
         if (DOM.loadingIndicator) {
@@ -135,7 +129,6 @@ function sanitizeName(name) {
 function getCachedData() {
     const cachedItem = localStorage.getItem(CACHE_KEY);
     if (!cachedItem) return null;
-
     const { timestamp, data } = JSON.parse(cachedItem);
     if (Date.now() - timestamp > CACHE_DURATION_MS) {
         localStorage.removeItem(CACHE_KEY);
@@ -145,10 +138,7 @@ function getCachedData() {
 }
 
 function setCachedData(data) {
-    const item = {
-        timestamp: Date.now(),
-        data: data
-    };
+    const item = { timestamp: Date.now(), data: data };
     localStorage.setItem(CACHE_KEY, JSON.stringify(item));
 }
 
@@ -166,72 +156,596 @@ function getClassIcon(className) {
 
 // --- END: Helper & Utility Functions ---
 
-// --- START: Roster Association
+// --- START: Champion Card & List Item Creation ---
 
-/**
- * Fetches the current user's roster and populates the USER_ROSTER_IDS set.
- * @param {string} uid - The user's ID from Firebase Auth.
- */
-async function fetchUserRoster(uid) {
-    if (!db || !uid) return;
+function createChampionCard(champion) {
+    const card = document.createElement('div');
+    const rarityBgClass = `rarity-bg-${champion.baseRarity.replace(' ', '-')}`;
+    card.className = `champion-card ${rarityBgClass}`;
+    card.dataset.championId = champion.id;
 
-    const rosterRef = doc(db, `artifacts/dc-dark-legion-builder/users/${uid}/roster/myRoster`);
-    try {
-        const rosterSnap = await getDoc(rosterRef);
-        if (rosterSnap.exists()) {
-            const rosterData = rosterSnap.data();
-            const championIds = rosterData.champions?.map(c => c.dbChampionId) || [];
-            USER_ROSTER_IDS = new Set(championIds);
-        } else {
-            USER_ROSTER_IDS.clear();
-        }
-    } catch (error) {
-        console.error("Error fetching user roster:", error);
-        USER_ROSTER_IDS.clear();
+    const cleanName = sanitizeName(champion.name);
+    const classIconHtml = champion.class ? `<div class="card-class-icon" title="${champion.class}">${getClassIcon(champion.class)}</div>` : '';
+    let synergyIconsHtml = '';
+    if (champion.inherentSynergies && champion.inherentSynergies.length > 0) {
+        synergyIconsHtml = `<div class="card-synergy-icons">${champion.inherentSynergies.map(s => getSynergyIcon(s)).join('')}</div>`;
     }
-    
-    updateAllRosterButtons();
+    const communityLevel = champion.communityAverageLevel || 'N/A';
+    const communityStarsHTML = createStarDisplayHTML(communityLevel);
+
+    card.innerHTML = `
+        <div class="card-inner">
+            <div class="card-front">
+                <div class="avatar-bg" style="background-image: url('img/champions/avatars/${cleanName}.webp')"></div>
+                ${classIconHtml}
+                ${synergyIconsHtml}
+                <div class="card-content">
+                    <div class="name">${champion.name}</div>
+                    <div class="class">${champion.class || 'N/A'}</div>
+                    <div class="community-average">
+                        ${communityStarsHTML}
+                    </div>
+                </div>
+            </div>
+            <div class="card-back">
+                <div class="card-actions-container">
+                    <button class="card-action-btn" data-action="dossier">Full Dossier</button>
+                    <button class="card-action-btn" data-action="comic">Comic View</button>
+                    <button class="card-action-btn" data-action="download">Download Card</button>
+                    <div class="roster-button-placeholder" data-champion-id="${champion.id}" data-champion-name="${encodeURIComponent(champion.name)}"></div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    card.querySelector('[data-action="dossier"]').addEventListener('click', (e) => {
+        e.stopPropagation();
+        showDossierModal(champion.id);
+    });
+
+    card.querySelector('[data-action="comic"]').addEventListener('click', (e) => {
+        e.stopPropagation();
+        showComicModal(champion.id);
+    });
+
+    card.querySelector('[data-action="download"]').addEventListener('click', (e) => {
+        e.stopPropagation();
+        const button = e.currentTarget;
+        button.textContent = 'Generating...';
+        button.disabled = true;
+        
+        generateAndUploadCardImage(champion.id).finally(() => {
+            button.textContent = 'Download Card';
+            button.disabled = false;
+        });
+    });
+
+    return card;
 }
 
-/**
- * Iterates through all visible champion cards and updates their roster button.
- */
-function updateAllRosterButtons() {
-    document.querySelectorAll('.roster-button-placeholder').forEach(placeholder => {
-        const championId = placeholder.dataset.championId;
-        const championName = placeholder.dataset.championName;
-        
-        const rosterButton = document.createElement('a');
-        rosterButton.className = 'card-action-btn';
+function createChampionListItem(champion) {
+    const cleanName = sanitizeName(champion.name);
+    const item = document.createElement('div');
+    const rarityClass = champion.baseRarity.replace(' ', '-');
+    item.className = `champion-list-item rarity-${rarityClass}`;
+    item.dataset.championId = champion.id;
 
-        if (USER_ROSTER_IDS.has(championId)) {
-            rosterButton.href = `teams.html?search=${championName}`;
-            rosterButton.textContent = 'View in Roster';
-        } else {
-            rosterButton.href = `teams.html?addChampion=${championId}`;
-            rosterButton.textContent = 'Add to Roster';
-        }
-        
-        placeholder.replaceWith(rosterButton);
+    let synergyIconsHtml = '';
+    if (champion.inherentSynergies && champion.inherentSynergies.length > 0) {
+        synergyIconsHtml = champion.inherentSynergies.map(s => getSynergyIcon(s)).join('');
+    }
+
+    item.innerHTML = `
+        <div class="list-item-avatar">
+            <img src="img/champions/avatars/${cleanName}.webp" alt="${champion.name}">
+        </div>
+        <div class="list-item-name">${champion.name}</div>
+        <div class="list-item-class">${getClassIcon(champion.class) || 'N/A'}</div>
+        <div class="list-item-rarity">${champion.baseRarity || 'N/A'}</div>
+        <div class="list-item-synergies">${synergyIconsHtml}</div>
+    `;
+
+    item.addEventListener('click', () => showDossierModal(champion.id));
+    return item;
+}
+
+// --- END: Champion Card & List Item Creation ---
+
+// --- START: Modal Logic (Comic and Dossier) ---
+
+function showComicModal(championId) {
+    DOM.comicModalBackdrop.classList.add('is-visible');
+    DOM.comicModalBody.innerHTML = `<div class="loading-spinner"></div>`;
+
+    const champion = ALL_CHAMPIONS.find(c => c.id === championId);
+    if (!champion) {
+        DOM.comicModalBody.innerHTML = `<p class="text-center text-red-500">Champion not found.</p>`;
+        return;
+    }
+    
+    const currentIndex = currentChampionList.findIndex(c => c.id === championId);
+    DOM.modalPrevBtn.disabled = currentIndex <= 0;
+    DOM.modalNextBtn.disabled = currentIndex >= currentChampionList.length - 1;
+    
+    const newPrev = DOM.modalPrevBtn.cloneNode(true);
+    DOM.modalPrevBtn.parentNode.replaceChild(newPrev, DOM.modalPrevBtn);
+    DOM.modalPrevBtn = newPrev;
+    
+    const newNext = DOM.modalNextBtn.cloneNode(true);
+    DOM.modalNextBtn.parentNode.replaceChild(newNext, DOM.modalNextBtn);
+    DOM.modalNextBtn = newNext;
+
+    if (currentIndex > 0) {
+        DOM.modalPrevBtn.addEventListener('click', () => showComicModal(currentChampionList[currentIndex - 1].id));
+    }
+    if (currentIndex < currentChampionList.length - 1) {
+        DOM.modalNextBtn.addEventListener('click', () => showComicModal(currentChampionList[currentIndex + 1].id));
+    }
+
+    const comicId = champion.name.toLowerCase().replace(/\s+/g, '_').replace('two-face', 'two_face');
+    const comic = COMICS_DATA[comicId];
+    const cleanName = sanitizeName(champion.name);
+    
+    let mainImageHtml = `<img src="img/champions/full/${cleanName}.webp" alt="Artwork of ${champion.name}" class="comic-featured-image" onerror="this.style.display='none'">`;
+    let imagePanelCaption = `Codex Image`;
+
+    if (comic && comic.imageUrl) {
+        const comicYear = comic.coverDate ? `(${new Date(comic.coverDate).getFullYear()})` : '';
+        mainImageHtml = `
+            <img src="${comic.imageUrl}" alt="Cover of ${comic.title}" class="comic-featured-image is-background-image" onerror="this.style.display='none'">
+            <img src="img/champions/full/${cleanName}.webp" alt="${champion.name}" class="comic-featured-image is-foreground-image">
+        `;
+        imagePanelCaption = `First Appearance: ${comic.title} #${comic.issueNumber} ${comicYear}`;
+    }
+    
+    DOM.comicModalBody.innerHTML = `
+        <div class="comic-header"><img src="img/logo_white.webp" alt="Logo" class="comic-header-logo"></div>
+        <div class="comic-image-panel">${mainImageHtml}</div>
+        <div class="comic-featuring-title">${imagePanelCaption}</div>
+        <h3 class="comic-main-title">${champion.name}</h3>
+    `;
+}
+
+function hideComicModal() {
+    DOM.comicModalBackdrop.classList.remove('is-visible');
+    DOM.comicModalBody.innerHTML = '';
+}
+
+async function showDossierModal(championId) {
+    DOM.dossierModalBackdrop.classList.add('is-visible');
+    DOM.dossierModalBody.scrollTop = 0;
+
+    const champion = ALL_CHAMPIONS.find(c => c.id === championId);
+    if (!champion) {
+        DOM.dossierLeftColumn.innerHTML = `<p class="text-red-500">Champion not found.</p>`;
+        DOM.dossierRightColumn.innerHTML = '';
+        return;
+    }
+
+    logAnalyticsEvent('view_dossier', { champion_id: champion.id, champion_name: champion.name });
+
+    const cleanName = sanitizeName(champion.name);
+    const dossierImageSrc = champion.cardImageUrl || `img/champions/full/${cleanName}.webp`;
+    
+    DOM.dossierLeftColumn.innerHTML = `
+        <img src="${dossierImageSrc}" alt="${champion.name}" class="dossier-image" onerror="this.onerror=null;this.src='img/champions/full/${cleanName}.webp';">
+        <h2 class="dossier-name">${champion.name}</h2>
+        <p class="dossier-class">${champion.class || 'Class Unknown'}</p>
+    `;
+
+    handleTabClick(null, 'overview');
+
+    populateOverviewTab(champion);
+    populateCommunityTab(champion);
+    populateLoreTab(champion);
+}
+
+function hideDossierModal() {
+    DOM.dossierModalBackdrop.classList.remove('is-visible');
+}
+
+function handleTabClick(event, tabNameToActivate) {
+    const tabName = tabNameToActivate || (event ? event.currentTarget.dataset.tab : null);
+    
+    if (!tabName) return;
+
+    DOM.dossierRightColumn.querySelectorAll('.dossier-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabName);
+    });
+
+    DOM.dossierRightColumn.querySelectorAll('.dossier-tab-pane').forEach(pane => {
+        pane.classList.toggle('active', pane.id === `dossier-tab-${tabName}`);
     });
 }
 
-// --- END: Roster Association
+function populateOverviewTab(champion) {
+    const pane = document.getElementById('dossier-tab-overview');
+    
+    const synergiesHtml = champion.inherentSynergies?.length > 0
+        ? champion.inherentSynergies.map(synName => {
+            const synergyData = Object.values(ALL_SYNERGIES).find(s => s.name === synName);
+            const description = synergyData ? synergyData.description : 'No description available.';
+            return `<div class="stat-box">
+                        <div class="label">${synName}</div>
+                        <div class="value" style="font-size: 0.9rem; color: #d1d5db;">${description}</div>
+                    </div>`;
+        }).join('')
+        : '<p>No inherent synergies.</p>';
 
-// --- START: URL and Filter Logic ---
+    const skillsHtml = `
+        <div class="skill-item">
+            <div class="dossier-placeholder-text">
+                Detailed skill information, including damage multipliers and upgrade paths, is being compiled and will be added soon.
+            </div>
+        </div>
+    `;
 
-function updateURL() {
-    const params = new URLSearchParams();
-    if (activeFilters.search) params.set('search', activeFilters.search);
-    if (activeFilters.sort !== 'name_asc') params.set('sort', activeFilters.sort);
-    if (activeFilters.isHealer) params.set('healer', 'true');
-    if (activeFilters.class.size > 0) params.set('class', [...activeFilters.class].join(','));
-    if (activeFilters.rarity.size > 0) params.set('rarity', [...activeFilters.rarity].join(','));
-    if (activeFilters.synergy.length > 0) params.set('synergy', activeFilters.synergy.join(','));
-
-    const newUrl = `${window.location.pathname}?${params.toString()}`;
-    history.pushState({}, '', newUrl);
+    pane.innerHTML = `
+        <div class="mb-6">
+            <h3 class="dossier-section-title">Known Information</h3>
+            <div class="overview-grid">
+                <div class="stat-box">
+                    <div class="label">Base Rarity</div>
+                    <div class="value">${champion.baseRarity || 'N/A'}</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Class</div>
+                    <div class="value">${champion.class || 'N/A'}</div>
+                </div>
+            </div>
+        </div>
+        <div class="mb-6">
+            <h3 class="dossier-section-title">Inherent Synergies</h3>
+            <div class="overview-grid">${synergiesHtml}</div>
+        </div>
+        <div>
+            <h3 class="dossier-section-title">Skills</h3>
+            ${skillsHtml}
+        </div>
+    `;
 }
+
+async function populateCommunityTab(champion) {
+    const pane = document.getElementById('dossier-tab-community');
+    pane.innerHTML = `<div class="loading-spinner mx-auto"></div>`;
+
+    const ratingsCategories = ['Meta', 'Training Simulator', 'Combat Cycle', 'All Around'];
+    let ratingsHtml = '<div class="community-ratings-grid">';
+    for (const category of ratingsCategories) {
+        ratingsHtml += `
+            <div class="rating-category">
+                <div class="rating-category-name">${category}</div>
+                <div class="rating-stars" data-category="${category}" id="rating-${sanitizeName(category)}">
+                    ${[...Array(5)].map((_, i) => `<span data-value="${i + 1}">☆</span>`).join('')}
+                </div>
+            </div>`;
+    }
+    ratingsHtml += '</div>';
+
+    const tipsHtml = `
+        <div>
+            <h3 class="dossier-section-title">Player Tips & Strategies</h3>
+            <div id="player-tips-list">
+                <p class="text-gray-400">Loading tips...</p>
+            </div>
+            <form id="add-tip-form" class="mt-6">
+                <textarea name="tip" placeholder="Share a tip, build, or strategy... (Requires login)" rows="3" ${!currentUserId ? 'disabled' : ''}></textarea>
+                <button type="submit" ${!currentUserId ? 'disabled' : ''}>Submit Tip</button>
+            </form>
+        </div>
+    `;
+
+    pane.innerHTML = `
+        <h3 class="dossier-section-title">Community Ratings</h3>
+        ${ratingsHtml}
+        ${tipsHtml}
+    `;
+
+    pane.querySelectorAll('.rating-stars span').forEach(star => {
+        star.addEventListener('click', (e) => handleRatingSubmit(e, champion.id));
+    });
+    pane.querySelector('#add-tip-form').addEventListener('submit', (e) => handleTipSubmit(e, champion.id));
+
+    renderCommunityRatings(champion.id);
+    renderPlayerTips(champion.id);
+}
+
+function populateLoreTab(champion) {
+    const pane = document.getElementById('dossier-tab-lore');
+    const comicId = champion.name.toLowerCase().replace(/\s+/g, '_').replace('two-face', 'two_face');
+    const comic = COMICS_DATA[comicId];
+    
+    let firstAppearanceHtml = `
+        <div class="dossier-placeholder-text">
+            First appearance information is not yet available for this character.
+        </div>`;
+
+    if (comic && comic.imageUrl) {
+        const comicYear = comic.coverDate ? `(${new Date(comic.coverDate).getFullYear()})` : '';
+        firstAppearanceHtml = `
+            <div class="lore-first-appearance">
+                <img src="${comic.imageUrl}" alt="Cover of ${comic.title}" class="lore-cover-image">
+                <div>
+                    <h4 class="lore-comic-title">${comic.title} #${comic.issueNumber}</h4>
+                    <p class="lore-comic-details">${comicYear}</p>
+                </div>
+            </div>
+        `;
+    }
+    
+    const biographyHtml = `<p class="lore-biography">${champion.bio || 'A detailed biography is not yet available.'}</p>`;
+
+    pane.innerHTML = `
+        <div class="mb-6">
+            <h3 class="dossier-section-title">First Appearance</h3>
+            ${firstAppearanceHtml}
+        </div>
+        <div>
+            <h3 class="dossier-section-title">Biography</h3>
+            ${biographyHtml}
+        </div>
+    `;
+}
+
+// --- END: Modal Logic ---
+
+// --- START: Community Hub Data Functions ---
+
+async function renderCommunityRatings(championId) {
+    if (!db) return;
+    const ratingsRef = collection(db, `champions/${championId}/communityRatings`);
+    const ratingsSnap = await getDocs(ratingsRef);
+
+    const ratingsData = {};
+    ratingsSnap.forEach(doc => {
+        const data = doc.data();
+        if (!ratingsData[data.category]) {
+            ratingsData[data.category] = { total: 0, count: 0 };
+        }
+        ratingsData[data.category].total += data.rating;
+        ratingsData[data.category].count++;
+    });
+
+    for (const category in ratingsData) {
+        const avgRating = ratingsData[category].total / ratingsData[category].count;
+        const starsContainer = document.getElementById(`rating-${sanitizeName(category)}`);
+        if (starsContainer) {
+            starsContainer.querySelectorAll('span').forEach((star, i) => {
+                star.innerHTML = (i < avgRating) ? '★' : '☆';
+                star.classList.toggle('filled', i < avgRating);
+            });
+        }
+    }
+
+    if (currentUserId) {
+        const userRatingsQuery = query(ratingsRef, where('userId', '==', currentUserId));
+        const userRatingsSnap = await getDocs(userRatingsQuery);
+        userRatingsSnap.forEach(doc => {
+            const data = doc.data();
+            const starsContainer = document.getElementById(`rating-${sanitizeName(data.category)}`);
+            if (starsContainer) {
+                starsContainer.querySelectorAll('span').forEach((star, i) => {
+                    star.classList.toggle('user-rated', i < data.rating);
+                });
+            }
+        });
+    }
+}
+
+async function renderPlayerTips(championId) {
+    if (!db) return;
+    const tipsContainer = document.getElementById('player-tips-list');
+    const tipsQuery = query(collection(db, `champions/${championId}/playerTips`));
+    const tipsSnap = await getDocs(tipsQuery);
+
+    if (tipsSnap.empty) {
+        tipsContainer.innerHTML = '<p class="text-gray-500">No tips yet. Be the first to share one!</p>';
+        return;
+    }
+
+    let tipsHtml = '';
+    tipsSnap.forEach(doc => {
+        const tip = doc.data();
+        const date = tip.createdAt?.toDate().toLocaleDateString() || 'A while ago';
+        tipsHtml += `
+            <div class="tip-card">
+                <p class="tip-meta">Shared on ${date}</p>
+                <p class="tip-text">${tip.text}</p>
+            </div>
+        `;
+    });
+    tipsContainer.innerHTML = tipsHtml;
+}
+
+async function handleRatingSubmit(event, championId) {
+    if (!currentUserId) {
+        dispatchNotification('Please log in to submit a rating.', 'info');
+        return;
+    }
+    const star = event.currentTarget;
+    const rating = parseInt(star.dataset.value, 10);
+    const category = star.parentElement.dataset.category;
+
+    const ratingDocRef = doc(db, `champions/${championId}/communityRatings`, `${currentUserId}_${category}`);
+    
+    try {
+        await setDoc(ratingDocRef, {
+            userId: currentUserId,
+            rating: rating,
+            category: category,
+            createdAt: serverTimestamp()
+        });
+        dispatchNotification('Rating saved!', 'success');
+        renderCommunityRatings(championId);
+    } catch (error) {
+        console.error("Error saving rating:", error);
+        dispatchNotification('Could not save rating.', 'error');
+    }
+}
+
+async function handleTipSubmit(event, championId) {
+    event.preventDefault();
+    if (!currentUserId) {
+        dispatchNotification('Please log in to submit a tip.', 'info');
+        return;
+    }
+
+    const form = event.currentTarget;
+    const textarea = form.querySelector('textarea');
+    const button = form.querySelector('button');
+    const tipText = textarea.value.trim();
+
+    if (!tipText) {
+        dispatchNotification('Please enter a tip before submitting.', 'warning');
+        return;
+    }
+
+    button.disabled = true;
+    button.textContent = 'Submitting...';
+
+    try {
+        await addDoc(collection(db, `champions/${championId}/playerTips`), {
+            userId: currentUserId,
+            text: tipText,
+            createdAt: serverTimestamp(),
+            upvotes: 0
+        });
+        dispatchNotification('Tip submitted successfully!', 'success');
+        form.reset();
+        renderPlayerTips(championId);
+    } catch (error) {
+        console.error("Error submitting tip:", error);
+        dispatchNotification('Failed to submit tip.', 'error');
+    } finally {
+        button.disabled = false;
+        button.textContent = 'Submit Tip';
+    }
+}
+
+// --- END: Community Hub Data Functions ---
+
+// --- START: Image Generation & Download ---
+
+async function downloadImage(imageUrl, filename) {
+    try {
+        const response = await fetch(imageUrl);
+        if (!response.ok) throw new Error('Network response was not ok.');
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+    } catch (error) {
+        console.error('Error downloading image:', error);
+        dispatchNotification('Could not download image.', 'error');
+    }
+}
+
+async function generateAndUploadCardImage(championId) {
+    dispatchNotification('Preparing card...', 'info', 4000);
+
+    const champion = ALL_CHAMPIONS.find(c => c.id === championId);
+    const cleanName = sanitizeName(champion.name);
+
+    // First, check if a URL already exists and just download that.
+    if (champion && champion.cardImageUrl) {
+        dispatchNotification('Starting download...', 'success', 2000);
+        await downloadImage(champion.cardImageUrl, `${cleanName}-card.png`);
+        return;
+    }
+
+    const originalCardElement = document.querySelector(`.champion-card[data-champion-id="${championId}"]`);
+    if (!originalCardElement) {
+        dispatchNotification('Error finding champion card on page.', 'error', 4000);
+        return;
+    }
+
+    // --- Start of Corrected Cloning Logic ---
+
+    // Create a clone of the card to manipulate for the screenshot
+    const clone = originalCardElement.cloneNode(true);
+    const rect = originalCardElement.getBoundingClientRect();
+
+    // Style the clone to be rendered off-screen with correct dimensions.
+    // This is the most reliable method for html2canvas.
+    clone.style.position = 'absolute';
+    clone.style.top = `${window.scrollY}px`; // Position relative to the viewport top
+    clone.style.left = '-9999px'; // Move it far off the left side of the screen
+    clone.style.width = `${rect.width}px`;
+    clone.style.height = `${rect.height}px`;
+    // No need for z-index or visibility:hidden, as it's already off-screen.
+
+    document.body.appendChild(clone);
+
+    // Find elements within the clone to manipulate
+    const cardInner = clone.querySelector('.card-inner');
+    const communityAverageEl = clone.querySelector('.community-average');
+    const cardBack = clone.querySelector('.card-back');
+
+    // Prepare the clone for a perfect screenshot
+    if (communityAverageEl) {
+        communityAverageEl.style.display = 'none'; // Hide ratings
+    }
+    if (cardInner) {
+        cardInner.style.transform = 'rotateY(0deg)'; // Ensure front is showing
+    }
+    if (cardBack) {
+        cardBack.style.display = 'none'; // Hide the back to prevent any bleed-through
+    }
+    
+    // --- End of Corrected Cloning Logic ---
+
+    try {
+        // Take the screenshot of the prepared clone
+        const canvas = await html2canvas(clone, { 
+            useCORS: true, 
+            backgroundColor: null,
+            width: rect.width, // Explicitly set width and height for html2canvas
+            height: rect.height,
+        });
+        const imageDataUrl = canvas.toDataURL('image/png');
+
+        // Call the Firebase function to save the image
+        const saveImage = httpsCallable(functions, 'saveChampionCardImage');
+        const result = await saveImage({
+            championId: champion.id,
+            championName: champion.name,
+            imageDataUrl: imageDataUrl
+        });
+
+        // Update the local champion data with the new URL
+        if (champion && result.data.url) {
+            champion.cardImageUrl = result.data.url;
+        }
+
+        logAnalyticsEvent('generate_card_image', { champion_id: championId });
+        dispatchNotification('Card image created! Starting download...', 'success', 2000);
+        
+        // Download the newly created image
+        await downloadImage(result.data.imageDataUrl, `${cleanName}-card.png`);
+
+    } catch (error) {
+        if (error.code === 'functions/unauthenticated') {
+            console.warn('Guest user tried to generate an image.');
+            dispatchNotification('Please log in to generate new card images.', 'info', 5000);
+        } else {
+            console.error("Failed to call saveChampionCardImage function:", error);
+            dispatchNotification('Could not generate or save card image.', 'error');
+        }
+    } finally {
+        // Always remove the clone from the DOM when done
+        document.body.removeChild(clone);
+    }
+}
+
+// --- END: Image Generation & Download ---
+
+// --- START: Filter & Sort Logic ---
 
 function readFiltersFromURL() {
     const params = new URLSearchParams(window.location.search);
@@ -259,9 +773,26 @@ function updateFilterControlsFromState() {
 }
 
 function applyFiltersAndSort() {
+    const params = new URLSearchParams();
+
     activeFilters.search = DOM.searchInput.value.toLowerCase();
-    activeFilters.sort = sortDropdown ? sortDropdown.getValue() : 'name_asc';
-    activeFilters.synergy = synergyPillbox ? synergyPillbox.getSelectedValues() : [];
+    if (activeFilters.search) params.set('search', activeFilters.search);
+    
+    if (sortDropdown) {
+        activeFilters.sort = sortDropdown.getValue();
+        if(activeFilters.sort !== 'name_asc') params.set('sort', activeFilters.sort);
+    }
+    
+    if (synergyPillbox) {
+        activeFilters.synergy = synergyPillbox.getSelectedValues();
+        if (activeFilters.synergy.length > 0) params.set('synergy', activeFilters.synergy.join(','));
+    }
+
+    if (activeFilters.isHealer) params.set('healer', 'true');
+    if (activeFilters.class.size > 0) params.set('class', [...activeFilters.class].join(','));
+    if (activeFilters.rarity.size > 0) params.set('rarity', [...activeFilters.rarity].join(','));
+
+    history.pushState({}, '', `${window.location.pathname}?${params.toString()}`);
 
     let filteredChampions = ALL_CHAMPIONS.filter(c => {
         const searchMatch = !activeFilters.search || c.name.toLowerCase().includes(activeFilters.search);
@@ -283,7 +814,6 @@ function applyFiltersAndSort() {
     });
     
     renderChampions(filteredChampions);
-    updateURL();
 }
 
 function handleFilterClick(e) {
@@ -311,11 +841,7 @@ function handleFilterClick(e) {
             activeFilters[group].add(value);
             button.classList.add('active');
         }
-        logAnalyticsEvent('filter_change', {
-            filter_group: group,
-            filter_value: value,
-            is_active: activeFilters[group].has(value)
-        });
+        logAnalyticsEvent('filter_change', { filter_group: group, filter_value: value, is_active: activeFilters[group].has(value) });
     }
     
     applyFiltersAndSort();
@@ -328,177 +854,6 @@ function resetAllFilters() {
     logAnalyticsEvent('reset_filters');
 }
 
-function createSynergyPillbox() {
-    const container = DOM.synergyContainer;
-    container.innerHTML = `<div class="pills-input-wrapper" tabindex="0">
-                                <input type="text" id="synergy-search-input" placeholder="Select synergies...">
-                           </div>
-                           <div class="custom-options-panel hidden"></div>`;
-    
-    const inputWrapper = container.querySelector('.pills-input-wrapper');
-    const searchInput = container.querySelector('#synergy-search-input');
-    const optionsPanel = container.querySelector('.custom-options-panel');
-
-    const synergyNames = Object.values(ALL_SYNERGIES).map(s => s.name).sort();
-    let state = { available: [...synergyNames], selected: [] };
-
-    const render = () => {
-        inputWrapper.querySelectorAll('.pill').forEach(p => p.remove());
-        state.selected.forEach(value => {
-            const pill = document.createElement('div');
-            pill.className = 'pill';
-            pill.innerHTML = `${getSynergyIcon(value)}<span>${value}</span>`;
-            const removeBtn = document.createElement('button');
-            removeBtn.className = 'pill-remove';
-            removeBtn.innerHTML = '&times;';
-            removeBtn.onclick = (e) => { e.stopPropagation(); deselect(value); };
-            pill.appendChild(removeBtn);
-            inputWrapper.insertBefore(pill, searchInput);
-        });
-
-        optionsPanel.innerHTML = '';
-        const filteredOptions = state.available.filter(opt => opt.toLowerCase().includes(searchInput.value.toLowerCase()));
-        
-        filteredOptions.forEach(value => {
-            const optionEl = document.createElement('div');
-            optionEl.className = 'custom-option';
-            optionEl.innerHTML = `${getSynergyIcon(value)}<span>${value}</span>`;
-            optionEl.onclick = () => select(value);
-            optionsPanel.appendChild(optionEl);
-        });
-    };
-
-    const select = (value) => {
-        state.selected.push(value);
-        state.available = state.available.filter(v => v !== value);
-        searchInput.value = '';
-        render();
-        logAnalyticsEvent('filter_change', { filter_group: 'synergy', filter_value: value, is_active: true });
-        applyFiltersAndSort();
-        searchInput.focus();
-    };
-
-    const deselect = (value) => {
-        state.selected = state.selected.filter(v => v !== value);
-        state.available.push(value);
-        state.available.sort();
-        render();
-        logAnalyticsEvent('filter_change', { filter_group: 'synergy', filter_value: value, is_active: false });
-        applyFiltersAndSort();
-    };
-
-    inputWrapper.addEventListener('click', () => {
-        optionsPanel.classList.remove('hidden');
-        searchInput.focus();
-    });
-    searchInput.addEventListener('input', render);
-    document.addEventListener('click', (e) => {
-        if (!container.contains(e.target)) {
-            optionsPanel.classList.add('hidden');
-        }
-    });
-
-    render();
-
-    return {
-        getSelectedValues: () => state.selected,
-        reset: () => {
-            state = { available: [...synergyNames], selected: [] };
-            render();
-        },
-        setSelected: (selectedValues) => {
-            state.selected = selectedValues.filter(v => synergyNames.includes(v));
-            state.available = synergyNames.filter(v => !state.selected.includes(v));
-            render();
-        }
-    };
-}
-
-function createSortDropdown() {
-    const container = DOM.sortSelectContainer;
-    container.innerHTML = ''; 
-
-    const options = [
-        { value: 'name_asc', label: 'Name (A-Z)' },
-        { value: 'name_desc', label: 'Name (Z-A)' },
-        { value: 'rarity_desc', label: 'Rarity (Highest First)' },
-        { value: 'rarity_asc', label: 'Rarity (Lowest First)' },
-    ];
-    let state = {
-        isOpen: false,
-        selectedValue: activeFilters.sort,
-    };
-
-    const trigger = document.createElement('button');
-    trigger.className = 'custom-select-trigger';
-
-    const optionsPanel = document.createElement('div');
-    optionsPanel.className = 'custom-select-options hidden';
-
-    const updateTriggerText = () => {
-        const selectedOption = options.find(opt => opt.value === state.selectedValue);
-        trigger.textContent = selectedOption ? selectedOption.label : 'Select...';
-    };
-
-    const updateSelectedOptionClass = () => {
-        optionsPanel.querySelectorAll('.custom-select-option').forEach(opt => {
-            opt.classList.toggle('selected', opt.dataset.value === state.selectedValue);
-        });
-    };
-    
-    const select = (value) => {
-        state.selectedValue = value;
-        state.isOpen = false;
-        container.classList.remove('is-open');
-        optionsPanel.classList.add('hidden');
-        
-        updateTriggerText();
-        updateSelectedOptionClass();
-
-        logAnalyticsEvent('sort_change', { sort_by: value });
-        applyFiltersAndSort();
-    };
-
-    const toggle = () => {
-        state.isOpen = !state.isOpen;
-        container.classList.toggle('is-open', state.isOpen);
-        optionsPanel.classList.toggle('hidden', !state.isOpen);
-    };
-
-    options.forEach(opt => {
-        const optionEl = document.createElement('div');
-        optionEl.className = 'custom-select-option';
-        optionEl.dataset.value = opt.value;
-        optionEl.textContent = opt.label;
-        optionEl.addEventListener('click', () => select(opt.value));
-        optionsPanel.appendChild(optionEl);
-    });
-    
-    trigger.addEventListener('click', toggle);
-    
-    container.appendChild(trigger);
-    container.appendChild(optionsPanel);
-
-    document.addEventListener('click', (e) => {
-        if (!container.contains(e.target) && state.isOpen) {
-            toggle();
-        }
-    });
-
-    updateTriggerText();
-    updateSelectedOptionClass();
-
-    return {
-        getValue: () => state.selectedValue,
-        setValue: (value) => {
-            state.selectedValue = options.some(o => o.value === value) ? value : 'name_asc';
-            updateTriggerText();
-            updateSelectedOptionClass();
-        }
-    };
-}
-
-
 function populateFilters() {
     const classes = [...new Set(ALL_CHAMPIONS.map(c => c.class).filter(Boolean))].sort();
     const rarities = ['Epic', 'Legendary', 'Mythic', 'Limited Mythic'];
@@ -510,378 +865,9 @@ function populateFilters() {
     DOM.rarityFiltersContainer.innerHTML = rarities.map(r => 
         `<button class="filter-btn" data-group="rarity" data-value="${r}">${r}</button>`
     ).join('');
-
-    synergyPillbox = createSynergyPillbox();
-    sortDropdown = createSortDropdown();
 }
 
-async function downloadImage(imageUrl, filename) {
-    try {
-        const response = await fetch(imageUrl);
-        if (!response.ok) throw new Error('Network response was not ok.');
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        a.remove();
-    } catch (error) {
-        console.error('Error downloading image:', error);
-        dispatchNotification('Could not download image.', 'error');
-    }
-}
-
-/**
- * Checks if a resource exists at a given URL by making a lightweight HEAD request.
- * @param {string} url The URL to check.
- * @returns {Promise<boolean>} A promise that resolves to true if the URL exists, false otherwise.
- */
-async function checkUrlExists(url) {
-  try {
-    const response = await fetch(url, { method: 'HEAD' });
-    console.log('File exists in repository: ', response.ok)
-    return response.ok;
-  } catch (error) {
-    console.warn(`Could not check URL ${url}:`, error.message);
-    return false;
-  }
-}
-
-async function generateAndUploadCardImage(championId) {
-    dispatchNotification('Preparing card...', 'info', 4000);
-
-    const champion = ALL_CHAMPIONS.find(c => c.id === championId);
-    const cleanName = sanitizeName(champion.name);
-
-    const championFileNameBase = champion.name.replace(/\s+/g, '');
-    const cardImageFileName = `${championFileNameBase}-card.png`;
-    const githubRepoUrl = `https://dcdl-companion.com/img/champions/cards/${cardImageFileName}`;
-
-    const imageExistsInRepo = await checkUrlExists(githubRepoUrl);
-
-    if (imageExistsInRepo) {
-        console.log('Fetching existing card from GitHub.');
-        dispatchNotification('Starting download...', 'success', 2000);
-        await downloadImage(githubRepoUrl, `${cleanName}-card.png`);
-        return;
-    }
-
-    if (champion && champion.cardImageUrl) {
-        dispatchNotification('Starting download...', 'success', 2000);
-        await downloadImage(champion.cardImageUrl, `${cleanName}-card.png`);
-        return;
-    }
-
-    const cardElement = document.querySelector(`.champion-card[data-champion-id="${championId}"]`);
-    if (!cardElement) {
-        dispatchNotification('Error finding champion card on page.', 'error', 4000);
-        return;
-    }
-
-    const downloadButton = cardElement.querySelector('.card-download-btn');
-    if (downloadButton) downloadButton.style.display = 'none';
-
-    try {
-        const canvas = await html2canvas(cardElement, { useCORS: true, backgroundColor: null });
-        const imageDataUrl = canvas.toDataURL('image/png');
-
-        const saveImage = httpsCallable(functions, 'saveChampionCardImage');
-        const result = await saveImage({
-            championId: champion.id,
-            championName: champion.name,
-            imageDataUrl: imageDataUrl
-        });
-
-        if (champion && result.data.url) {
-            champion.cardImageUrl = result.data.url;
-        }
-
-        logAnalyticsEvent('generate_card_image', { champion_id: championId });
-        dispatchNotification('Card image created! Starting download...', 'success', 2000);
-        await downloadImage(result.data.imageDataUrl, `${cleanName}-card.png`);
-    } catch (error) {
-        if (error.code === 'functions/unauthenticated') {
-            console.warn('Guest user tried to generate an image.');
-            dispatchNotification('Please log in to generate new card images.', 'info', 5000);
-        } else {
-            console.error("Failed to call saveChampionCardImage function:", error);
-            dispatchNotification('Could not generate or save card image.', 'error');
-        }
-    } finally {
-        if (downloadButton) downloadButton.style.display = 'flex';
-    }
-}
-
-function createChampionListItem(champion) {
-    const cleanName = sanitizeName(champion.name); //
-    const item = document.createElement('div');
-    const rarityClass = champion.baseRarity.replace(' ', '-');
-    item.className = `champion-list-item rarity-${rarityClass}`;
-    item.dataset.championId = champion.id;
-
-    let synergyIconsHtml = '';
-    if (champion.inherentSynergies && champion.inherentSynergies.length > 0) { //
-        synergyIconsHtml = champion.inherentSynergies.map(s => getSynergyIcon(s)).join(''); //
-    }
-
-    item.innerHTML = `
-        <div class="list-item-avatar">
-            <img src="img/champions/avatars/${cleanName}.webp" alt="${champion.name}">
-        </div>
-        <div class="list-item-name">${champion.name}</div>
-            <div class="list-item-class">${getClassIcon(champion.class) || 'N/A'}</div>
-        <div class="list-item-rarity">${champion.baseRarity || 'N/A'}</div>
-        <div class="list-item-synergies">${synergyIconsHtml}</div>
-    `;
-
-    item.addEventListener('click', () => showModal(champion.id)); //
-    return item;
-}
-
-async function showModal(championId) {
-    DOM.modalBackdrop.classList.add('is-visible');
-    DOM.modalBody.innerHTML = `<div class="loading-spinner"></div>`;
-
-    const champion = ALL_CHAMPIONS.find(c => c.id === championId);
-    if (!champion) {
-        DOM.modalBody.innerHTML = `<p class="text-center text-red-500">Champion not found.</p>`;
-        return;
-    }
-
-    logAnalyticsEvent('view_champion_details', {
-        champion_id: champion.id,
-        champion_name: champion.name,
-    });
-    
-    const currentIndex = currentChampionList.findIndex(c => c.id === championId);
-    DOM.modalPrevBtn.disabled = currentIndex <= 0;
-    DOM.modalNextBtn.disabled = currentIndex >= currentChampionList.length - 1;
-    
-    const newPrev = DOM.modalPrevBtn.cloneNode(true);
-    DOM.modalPrevBtn.parentNode.replaceChild(newPrev, DOM.modalPrevBtn);
-    DOM.modalPrevBtn = newPrev;
-    
-    const newNext = DOM.modalNextBtn.cloneNode(true);
-    DOM.modalNextBtn.parentNode.replaceChild(newNext, DOM.modalNextBtn);
-    DOM.modalNextBtn = newNext;
-
-    if (currentIndex > 0) {
-        DOM.modalPrevBtn.addEventListener('click', () => showModal(currentChampionList[currentIndex - 1].id));
-    }
-    if (currentIndex < currentChampionList.length - 1) {
-        DOM.modalNextBtn.addEventListener('click', () => showModal(currentChampionList[currentIndex + 1].id));
-    }
-
-    const comicId = champion.name.toLowerCase().replace(/\s+/g, '_').replace('two-face', 'two_face');
-    const comic = COMICS_DATA[comicId];
-    const cleanName = sanitizeName(champion.name);
-    
-    let mainImageHtml = '';
-    let imagePanelCaption = '';
-
-    if (comic && comic.imageUrl) {
-        const comicYear = comic.coverDate ? `(${new Date(comic.coverDate).getFullYear()})` : '';
-        mainImageHtml = `
-            <img src="${comic.imageUrl}" alt="Cover of ${comic.title}" class="comic-featured-image is-background-image" onerror="this.style.display='none'">
-            <img src="img/champions/full/${cleanName}.webp" alt="${champion.name}" class="comic-featured-image is-foreground-image">
-        `;
-        imagePanelCaption = `First Appearance: ${comic.title} #${comic.issueNumber} ${comicYear}`;
-    } else {
-        mainImageHtml = `<img src="img/champions/full/${cleanName}.webp" alt="Artwork of ${champion.name}" class="comic-featured-image" onerror="this.style.display='none'">`;
-        imagePanelCaption = `Codex Image`;
-    }
-
-    let synergiesHtml = '';
-    if (champion.inherentSynergies && champion.inherentSynergies.length > 0) {
-        const synergyItems = champion.inherentSynergies.map(synName => {
-            const synergyData = Object.values(ALL_SYNERGIES).find(s => s.name === synName);
-            const description = synergyData ? synergyData.description : 'No description available.';
-            return `<li class="mt-2"><strong>${synName}</strong>: ${description}</li>`;
-        }).join('');
-        synergiesHtml = `<div class="comic-featuring-title mt-6">Inherent Synergies</div><ul class="list-disc list-inside">${synergyItems}</ul>`;
-    }
-     
-    const relatedChampsContainerId = `panel-related-champs-${Date.now()}`;
-
-    DOM.modalBody.innerHTML = `
-        <div class="comic-header"><img src="img/logo_white.webp" alt="Logo" class="comic-header-logo"></div>
-        <div class="comic-image-panel">
-            ${mainImageHtml}
-            <div class="panel-related-champions" id="${relatedChampsContainerId}"></div>
-        </div>
-        <div class="comic-featuring-title">${imagePanelCaption}</div>
-        <h3 class="comic-main-title">${champion.name}</h3>
-        <div class="champion-details" style="padding: 0 1.5rem 1rem; color: #1a202c; font-family: 'Inter', sans-serif;">
-           <p><strong>Class:</strong> ${champion.class}</p>
-           <p><strong>Base Rarity:</strong> ${champion.baseRarity}</p>
-           ${synergiesHtml}
-        </div>
-    `;
-
-    try {
-        const relatedChampsRef = collection(db, `artifacts/dc-dark-legion-builder/public/data/champions/${championId}/relatedChampions`);
-        const relatedSnap = await getDocs(relatedChampsRef);
-        
-        if (!relatedSnap.empty) {
-            const relatedDocData = relatedSnap.docs[0].data();
-            const relatedIds = relatedDocData.championIds;
-            if (relatedIds && relatedIds.length > 0) {
-                const relatedChampsData = relatedIds.map(id => ALL_CHAMPIONS.find(c => c.id === id)).filter(Boolean);
-                if (relatedChampsData.length > 0) {
-                    const relatedItemsHtml = relatedChampsData.map(rc => `
-                        <div class="related-champion-card" data-id="${rc.id}">
-                            <img src="img/champions/avatars/${sanitizeName(rc.name)}.webp" alt="${rc.name}">
-                            <span>${rc.name}</span>
-                        </div>
-                    `).join('');
-                    const relatedContainer = document.getElementById(relatedChampsContainerId);
-                    if (relatedContainer) {
-                        relatedContainer.innerHTML = relatedItemsHtml;
-                    }
-                }
-            }
-        }
-    } catch (error) {
-        console.error("Failed to fetch related champions:", error);
-    }
-}
-
-function hideModal() {
-    DOM.modalBackdrop.classList.remove('is-visible');
-    DOM.modalBody.innerHTML = '';
-}
-
-function createChampionCard(champion) {
-    const card = document.createElement('div');
-    const rarityBgClass = `rarity-bg-${champion.baseRarity.replace(' ', '-')}`;
-    card.className = `champion-card ${rarityBgClass}`;
-    card.dataset.championId = champion.id;
-
-    const cleanName = sanitizeName(champion.name);
-    const classIconHtml = champion.class ? `<div class="card-class-icon" title="${champion.class}">${getClassIcon(champion.class)}</div>` : '';
-    let synergyIconsHtml = '';
-    if (champion.inherentSynergies && champion.inherentSynergies.length > 0) { //
-        synergyIconsHtml = `<div class="card-synergy-icons">${champion.inherentSynergies.map(s => getSynergyIcon(s)).join('')}</div>`;
-    }
-    const communityLevel = champion.communityAverageLevel || 'N/A';
-    const communityStarsHTML = createStarDisplayHTML(communityLevel);
-
-    card.innerHTML = `
-        <div class="card-inner">
-            <div class="card-front">
-                <div class="avatar-bg" style="background-image: url('img/champions/avatars/${cleanName}.webp')"></div>
-                ${classIconHtml}
-                ${synergyIconsHtml}
-                <div class="card-content">
-                    <div class="name">${champion.name}</div>
-                    <div class="class">${champion.class || 'N/A'}</div>
-                    <div class="community-average">
-                        ${communityStarsHTML}
-                    </div>
-                </div>
-            </div>
-            <div class="card-back">
-                <div class="card-actions-container">
-                    <div class="roster-button-placeholder" data-champion-id="${champion.id}" data-champion-name="${encodeURIComponent(champion.name)}"></div>
-                    <button class="card-action-btn" data-action="details">Overview</button>
-                    <button class="card-action-btn" data-action="download">Download</button>
-                </div>
-            </div>
-        </div>
-    `;
-
-    const innerCard = card.querySelector('.card-inner');
-
-    const flipToFront = () => {
-        innerCard.style.transform = '';
-    };
-
-    const viewDetailsBtn = card.querySelector('[data-action="details"]');
-    const downloadBtn = card.querySelector('[data-action="download"]');
-
-    viewDetailsBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        showModal(champion.id);
-        flipToFront();
-    });
-
-    downloadBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const button = e.currentTarget;
-        button.textContent = 'Generating...';
-        button.disabled = true;
-        
-        generateAndUploadCardImage(champion.id).finally(() => {
-            button.textContent = 'Download Card';
-            button.disabled = false;
-            flipToFront();
-        });
-    });
-
-    return card;
-}
-
-function renderGridView(championsToRender) {
-    if (!DOM.grid) return;
-    DOM.grid.innerHTML = '';
-    DOM.grid.classList.remove('is-list-view');
-
-    if (championsToRender.length === 0) {
-        DOM.grid.innerHTML = `<p class="text-center text-blue-200 col-span-full">No champions match the current filters.</p>`;
-        return;
-    }
-
-    championsToRender.forEach(champion => {
-        const card = createChampionCard(champion);
-        DOM.grid.appendChild(card);
-    });
-}
-
-function renderListView(championsToRender) {
-    if (!DOM.grid) return;
-    DOM.grid.innerHTML = '';
-    DOM.grid.classList.add('is-list-view');
-
-    if (championsToRender.length === 0) {
-        DOM.grid.innerHTML = `<p class="text-center text-blue-200 col-span-full">No champions match the current filters.</p>`;
-        return;
-    }
-
-    championsToRender.forEach(champion => {
-        const listItem = createChampionListItem(champion);
-        DOM.grid.appendChild(listItem);
-    });
-}
-
-function renderChampions(championsToRender) {
-    currentChampionList = championsToRender; //
-
-    if (currentViewMode === 'list') {
-        renderListView(championsToRender);
-    } else {
-        renderGridView(championsToRender);
-    }
-}
-
-function handleViewChange(e) {
-    const selectedView = e.currentTarget.dataset.view;
-    if (selectedView === currentViewMode) return;
-
-    currentViewMode = selectedView;
-
-    DOM.viewGridBtn.classList.toggle('active', currentViewMode === 'grid');
-    DOM.viewListBtn.classList.toggle('active', currentViewMode === 'list');
-
-    renderChampions(currentChampionList); 
-}
-
-
-// --- END: Modal and Grid Rendering ---
-
+// --- END: Filter & Sort Logic ---
 
 // --- START: Data Fetching and Initialization ---
 
@@ -900,10 +886,8 @@ async function fetchCollectionsFromFirestore() {
     ]);
 
     const championsData = championsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    
     const comicsData = {};
     comicsSnap.docs.forEach(doc => { comicsData[doc.id] = { id: doc.id, ...doc.data() }});
-    
     const synergiesData = {};
     synergiesSnap.docs.forEach(doc => { synergiesData[doc.id] = { id: doc.id, ...doc.data() }});
 
@@ -927,11 +911,10 @@ async function init() {
         const cachedData = getCachedData();
 
         if (cachedData) {
-            console.log("Loading data from cache.");
             loadData(cachedData);
             showLoading(false);
         } else {
-            showLoading(true, "Fetching latest game data...");
+            showLoading(true);
             const firestoreData = await fetchCollectionsFromFirestore();
             loadData(firestoreData);
             showLoading(false);
@@ -947,21 +930,111 @@ async function init() {
 
 // --- END: Data Fetching and Initialization ---
 
+// --- START: Roster Association ---
+
+async function fetchUserRoster(uid) {
+    if (!db || !uid) return;
+    const rosterRef = doc(db, `artifacts/dc-dark-legion-builder/users/${uid}/roster/myRoster`);
+    try {
+        const rosterSnap = await getDoc(rosterRef);
+        if (rosterSnap.exists()) {
+            const rosterData = rosterSnap.data();
+            const championIds = rosterData.champions?.map(c => c.dbChampionId) || [];
+            USER_ROSTER_IDS = new Set(championIds);
+        } else {
+            USER_ROSTER_IDS.clear();
+        }
+    } catch (error) {
+        console.error("Error fetching user roster:", error);
+        USER_ROSTER_IDS.clear();
+    }
+    updateAllRosterButtons();
+}
+
+function updateAllRosterButtons() {
+    document.querySelectorAll('.roster-button-placeholder').forEach(placeholder => {
+        const championId = placeholder.dataset.championId;
+        const championName = placeholder.dataset.championName;
+        const rosterButton = document.createElement('a');
+        rosterButton.className = 'card-action-btn';
+        if (USER_ROSTER_IDS.has(championId)) {
+            rosterButton.href = `teams.html?search=${championName}`;
+            rosterButton.textContent = 'View in Roster';
+        } else {
+            rosterButton.href = `teams.html?addChampion=${championId}`;
+            rosterButton.textContent = 'Add to Roster';
+        }
+        placeholder.replaceWith(rosterButton);
+    });
+}
+
+// --- END: Roster Association ---
+
+// --- START: Grid/List View Rendering ---
+
+function renderGridView(championsToRender) {
+    if (!DOM.grid) return;
+    DOM.grid.innerHTML = '';
+    DOM.grid.classList.remove('is-list-view');
+    if (championsToRender.length === 0) {
+        DOM.grid.innerHTML = `<p class="text-center text-blue-200 col-span-full">No champions match the current filters.</p>`;
+        return;
+    }
+    championsToRender.forEach(champion => {
+        const card = createChampionCard(champion);
+        DOM.grid.appendChild(card);
+    });
+    updateAllRosterButtons();
+}
+
+function renderListView(championsToRender) {
+    if (!DOM.grid) return;
+    DOM.grid.innerHTML = '';
+    DOM.grid.classList.add('is-list-view');
+    if (championsToRender.length === 0) {
+        DOM.grid.innerHTML = `<p class="text-center text-blue-200 col-span-full">No champions match the current filters.</p>`;
+        return;
+    }
+    championsToRender.forEach(champion => {
+        const listItem = createChampionListItem(champion);
+        DOM.grid.appendChild(listItem);
+    });
+}
+
+function renderChampions(championsToRender) {
+    currentChampionList = championsToRender; 
+    if (currentViewMode === 'list') {
+        renderListView(championsToRender);
+    } else {
+        renderGridView(championsToRender);
+    }
+}
+
+function handleViewChange(e) {
+    const selectedView = e.currentTarget.dataset.view;
+    if (selectedView === currentViewMode) return;
+    currentViewMode = selectedView;
+    DOM.viewGridBtn.classList.toggle('active', currentViewMode === 'grid');
+    DOM.viewListBtn.classList.toggle('active', currentViewMode === 'list');
+    renderChampions(currentChampionList); 
+}
+
+// --- END: Grid/List View Rendering ---
 
 // --- START: Event Listeners ---
 
 document.addEventListener('firebase-ready', () => {
     try {
-        showLoading(true, "Initializing...");
-
+        showLoading(true);
         const app = getApp();
         db = getFirestore(app);
         analytics = getAnalytics(app);
         functions = getFunctions(app);
+        auth = getAuth(app);
         
-        const auth = getAuth(app);
         onAuthStateChanged(auth, (user) => {
-            if (user) {
+            currentUserId = user ? user.uid : null;
+            if (user && !user.isAnonymous) {
                 fetchUserRoster(user.uid);
             } else {
                 USER_ROSTER_IDS.clear();
@@ -970,32 +1043,31 @@ document.addEventListener('firebase-ready', () => {
         });
 
         logAnalyticsEvent('page_view', { page_title: document.title, page_path: '/codex.html' });
-        
         init();
     } catch (e) {
         console.error("Codex Page: Firebase initialization failed.", e);
-        if (DOM.grid) {
-            DOM.grid.innerHTML = `<p class="text-center text-red-400 col-span-full">Could not connect to services.</p>`;
-        }
         showLoading(false);
     }
 }, { once: true });
 
-DOM.modalClose.addEventListener('click', hideModal);
-DOM.modalBackdrop.addEventListener('click', (e) => {
-    if (e.target === DOM.modalBackdrop) {
-        hideModal();
-    }
+// Modal Close Listeners
+DOM.comicModalClose.addEventListener('click', hideComicModal);
+DOM.comicModalBackdrop.addEventListener('click', (e) => {
+    if (e.target === DOM.comicModalBackdrop) hideComicModal();
+});
+DOM.dossierModalClose.addEventListener('click', hideDossierModal);
+DOM.dossierModalBackdrop.addEventListener('click', (e) => {
+    if (e.target === DOM.dossierModalBackdrop) hideDossierModal();
 });
 
+// Attach listeners for Dossier tabs directly
+DOM.dossierRightColumn.querySelectorAll('.dossier-tab-btn').forEach(btn => {
+    btn.addEventListener('click', handleTabClick);
+});
+
+// Filter & View Listeners
 DOM.filterControls.addEventListener('click', handleFilterClick);
 DOM.searchInput.addEventListener('input', () => applyFiltersAndSort());
-DOM.modalBody.addEventListener('click', (e) => {
-    const relatedCard = e.target.closest('.related-champion-card');
-    if (relatedCard && relatedCard.dataset.id) {
-        showModal(relatedCard.dataset.id);
-    }
-});
 DOM.viewGridBtn.addEventListener('click', handleViewChange);
 DOM.viewListBtn.addEventListener('click', handleViewChange);
 

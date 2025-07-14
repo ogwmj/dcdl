@@ -13,6 +13,7 @@
     <link href="css/theme.css" rel="stylesheet">
     <link href="css/comic-view.css" rel="stylesheet">
     <link href="css/codex/ui.css" rel="stylesheet">
+    <link href="css/codex/dossier.css" rel="stylesheet">
 
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -114,6 +115,42 @@
         
             <div id="comic-modal-body">
                 </div>
+        </div>
+    </div>
+
+    <!-- NEW Champion Dossier Modal -->
+    <div id="dossier-modal-backdrop">
+        <div id="dossier-modal-content">
+            <button id="dossier-modal-close" aria-label="Close">&times;</button>
+            <div id="dossier-modal-body" class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                <!-- Left Column: Image and Basic Info -->
+                <div class="md:col-span-1" id="dossier-left-column">
+                    <!-- Content will be injected by JS -->
+                </div>
+
+                <!-- Right Column: Tabs and Detailed Info -->
+                <div class="md:col-span-2" id="dossier-right-column">
+                    <div class="dossier-tabs">
+                        <button class="dossier-tab-btn active" data-tab="overview">Overview</button>
+                        <button class="dossier-tab-btn" data-tab="community">Community Hub</button>
+                        <button class="dossier-tab-btn" data-tab="lore">Lore</button>
+                    </div>
+                    <div class="dossier-tab-content">
+                        <!-- Overview Tab -->
+                        <div id="dossier-tab-overview" class="dossier-tab-pane active">
+                            <!-- Content will be injected by JS -->
+                        </div>
+                        <!-- Community Hub Tab -->
+                        <div id="dossier-tab-community" class="dossier-tab-pane">
+                            <!-- Content will be injected by JS -->
+                        </div>
+                        <!-- Lore Tab -->
+                        <div id="dossier-tab-lore" class="dossier-tab-pane">
+                            <!-- Content will be injected by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
