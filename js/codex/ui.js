@@ -1,7 +1,7 @@
 /**
  * @file js/codex/ui.js
- * @description Adds Champion Dossier modal with community features and fixes tab functionality.
- * @version 7.4.0
+ * @description Corrects Firestore paths for community features.
+ * @version 7.8.0
  */
 
 // --- Firebase & Data ---
@@ -493,7 +493,7 @@ function populateLoreTab(champion) {
 
 async function renderCommunityRatings(championId) {
     if (!db) return;
-    const ratingsRef = collection(db, `champions/${championId}/communityRatings`);
+    const ratingsRef = collection(db, `artifacts/dc-dark-legion-builder/public/data/champions/${championId}/communityRatings`);
     const ratingsSnap = await getDocs(ratingsRef);
 
     const ratingsData = {};
@@ -535,7 +535,7 @@ async function renderCommunityRatings(championId) {
 async function renderPlayerTips(championId) {
     if (!db) return;
     const tipsContainer = document.getElementById('player-tips-list');
-    const tipsQuery = query(collection(db, `champions/${championId}/playerTips`));
+    const tipsQuery = query(collection(db, `artifacts/dc-dark-legion-builder/public/data/champions/${championId}/playerTips`));
     const tipsSnap = await getDocs(tipsQuery);
 
     if (tipsSnap.empty) {
@@ -566,7 +566,7 @@ async function handleRatingSubmit(event, championId) {
     const rating = parseInt(star.dataset.value, 10);
     const category = star.parentElement.dataset.category;
 
-    const ratingDocRef = doc(db, `champions/${championId}/communityRatings`, `${currentUserId}_${category}`);
+    const ratingDocRef = doc(db, `artifacts/dc-dark-legion-builder/public/data/champions/${championId}/communityRatings`, `${currentUserId}_${category}`);
     
     try {
         await setDoc(ratingDocRef, {
@@ -604,7 +604,7 @@ async function handleTipSubmit(event, championId) {
     button.textContent = 'Submitting...';
 
     try {
-        await addDoc(collection(db, `champions/${championId}/playerTips`), {
+        await addDoc(collection(db, `artifacts/dc-dark-legion-builder/public/data/champions/${championId}/playerTips`), {
             userId: currentUserId,
             text: tipText,
             createdAt: serverTimestamp(),
