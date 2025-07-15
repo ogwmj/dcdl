@@ -942,6 +942,23 @@ function populateFilters() {
 
 // --- START: Data Fetching and Initialization ---
 
+function handleDirectLink() {
+    const params = new URLSearchParams(window.location.search);
+    const championName = params.get('search');
+
+    if (championName) {
+        const champion = ALL_CHAMPIONS.find(c => c.name.toLowerCase() === championName.toLowerCase());
+        
+        if (champion) {
+            setTimeout(() => {
+                showDossierModal(champion.id);
+            }, 100);
+        } else {
+            dispatchNotification(`Champion "${championName}" not found.`, 'warning');
+        }
+    }
+}
+
 async function fetchCollectionsFromFirestore() {
     console.log("Fetching fresh data from Firestore...");
     const basePath = 'artifacts/dc-dark-legion-builder/public/data';
@@ -990,6 +1007,7 @@ async function init() {
             loadData(firestoreData);
             showLoading(false);
         }
+        handleDirectLink();
     } catch (error) {
         console.error("Failed to load champion data:", error);
         if (DOM.grid) {
