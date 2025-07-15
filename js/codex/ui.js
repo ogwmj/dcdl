@@ -1,7 +1,7 @@
 /**
  * @file js/codex/ui.js
- * @description Restricts community features to 'creator' role.
- * @version 8.0.0
+ * @description Adds a dedicated Skills tab to the dossier.
+ * @version 8.1.0
  */
 
 // --- Firebase & Data ---
@@ -35,7 +35,7 @@ let activeFilters = {
 let currentViewMode = 'grid';
 let USER_ROSTER_IDS = new Set();
 let currentUserId = null;
-let currentUserRoles = []; // <-- NEW: To store user roles
+let currentUserRoles = [];
 
 // --- DOM ELEMENTS ---
 const DOM = {
@@ -337,6 +337,7 @@ async function showDossierModal(championId) {
     handleTabClick(null, 'overview');
 
     populateOverviewTab(champion);
+    populateSkillsTab(champion);
     populateCommunityTab(champion);
     populateLoreTab(champion);
 }
@@ -373,14 +374,6 @@ function populateOverviewTab(champion) {
         }).join('')
         : '<p>No inherent synergies.</p>';
 
-    const skillsHtml = `
-        <div class="skill-item">
-            <div class="dossier-placeholder-text">
-                Detailed skill information, including damage multipliers and upgrade paths, is being compiled and will be added soon.
-            </div>
-        </div>
-    `;
-
     pane.innerHTML = `
         <div class="mb-6">
             <h3 class="dossier-section-title">Known Information</h3>
@@ -399,11 +392,38 @@ function populateOverviewTab(champion) {
             <h3 class="dossier-section-title">Inherent Synergies</h3>
             <div class="overview-grid">${synergiesHtml}</div>
         </div>
-        <div>
-            <h3 class="dossier-section-title">Skills</h3>
-            ${skillsHtml}
-        </div>
     `;
+}
+
+function populateSkillsTab(champion) {
+    const pane = document.getElementById('dossier-tab-skills');
+    if (!pane) return;
+
+    if (!champion.skills || champion.skills.length === 0) {
+        pane.innerHTML = `<div class="dossier-placeholder-text">Skill information for this champion is not yet available.</div>`;
+        return;
+    }
+
+    const skillsHtml = champion.skills.map(skill => {
+        const ultimateBadge = skill.isUltimate ? `<div class="skill-badge ultimate-badge">Ultimate</div>` : '';
+        const typeBadge = skill.type ? `<div class="skill-badge type-badge">${skill.type}</div>` : '';
+        const effectsHtml = skill.effects?.length > 0
+            ? `<div class="skill-effects">${skill.effects.map(eff => `<span class="effect-tag">${eff}</span>`).join('')}</div>`
+            : '';
+
+        return `
+            <div class="skill-card ${skill.isUltimate ? 'is-ultimate' : ''}">
+                <div class="skill-header">
+                    <h4 class="skill-title">${skill.name || 'Unnamed Skill'}</h4>
+                    <div class="skill-badges">${typeBadge}${ultimateBadge}</div>
+                </div>
+                <p class="skill-description">${skill.description || 'No description available.'}</p>
+                ${effectsHtml}
+            </div>
+        `;
+    }).join('');
+
+    pane.innerHTML = skillsHtml;
 }
 
 async function populateCommunityTab(champion) {
@@ -437,7 +457,7 @@ async function populateCommunityTab(champion) {
             </form>
             ` : `
             <div class="dossier-placeholder-text mt-6">
-                Only users with the 'Creator' role can submit ratings and tips.
+                Only users with the 'Creator' role can submit tips.
             </div>
             `}
         </div>
@@ -628,6 +648,10 @@ async function renderPlayerTips(championId) {
 }
 
 async function handleRatingSubmit(event, championId) {
+    if (!currentUserId) {
+        dispatchNotification('Please log in to submit a rating.', 'info');
+        return;
+    }
     const star = event.currentTarget;
     const rating = parseInt(star.dataset.value, 10);
     const category = star.parentElement.dataset.category;
@@ -718,7 +742,6 @@ async function generateAndUploadCardImage(championId) {
     const champion = ALL_CHAMPIONS.find(c => c.id === championId);
     const cleanName = sanitizeName(champion.name);
 
-    // First, check if a URL already exists and just download that.
     if (champion && champion.cardImageUrl) {
         dispatchNotification('Starting download...', 'success', 2000);
         await downloadImage(champion.cardImageUrl, `${cleanName}-card.png`);
@@ -731,52 +754,39 @@ async function generateAndUploadCardImage(championId) {
         return;
     }
 
-    // --- Start of Corrected Cloning Logic ---
-
-    // Create a clone of the card to manipulate for the screenshot
     const clone = originalCardElement.cloneNode(true);
     const rect = originalCardElement.getBoundingClientRect();
 
-    // Style the clone to be rendered off-screen with correct dimensions.
-    // This is the most reliable method for html2canvas.
     clone.style.position = 'absolute';
-    clone.style.top = `${window.scrollY}px`; // Position relative to the viewport top
-    clone.style.left = '-9999px'; // Move it far off the left side of the screen
+    clone.style.top = `${window.scrollY}px`;
+    clone.style.left = '-9999px';
     clone.style.width = `${rect.width}px`;
     clone.style.height = `${rect.height}px`;
-    // No need for z-index or visibility:hidden, as it's already off-screen.
 
     document.body.appendChild(clone);
 
-    // Find elements within the clone to manipulate
     const cardInner = clone.querySelector('.card-inner');
     const communityAverageEl = clone.querySelector('.community-average');
     const cardBack = clone.querySelector('.card-back');
 
-    // Prepare the clone for a perfect screenshot
     if (communityAverageEl) {
-        communityAverageEl.style.display = 'none'; // Hide ratings
+        communityAverageEl.style.display = 'none';
     }
     if (cardInner) {
-        cardInner.style.transform = 'rotateY(0deg)'; // Ensure front is showing
+        cardInner.style.transform = 'rotateY(0deg)';
     }
     if (cardBack) {
-        cardBack.style.display = 'none'; // Hide the back to prevent any bleed-through
+        cardBack.style.display = 'none';
     }
-    
-    // --- End of Corrected Cloning Logic ---
 
     try {
-        // Take the screenshot of the prepared clone
         const canvas = await html2canvas(clone, { 
             useCORS: true, 
             backgroundColor: null,
-            width: rect.width, // Explicitly set width and height for html2canvas
+            width: rect.width,
             height: rect.height,
         });
         const imageDataUrl = canvas.toDataURL('image/png');
-
-        // Call the Firebase function to save the image
         const saveImage = httpsCallable(functions, 'saveChampionCardImage');
         const result = await saveImage({
             championId: champion.id,
@@ -784,17 +794,13 @@ async function generateAndUploadCardImage(championId) {
             imageDataUrl: imageDataUrl
         });
 
-        // Update the local champion data with the new URL
         if (champion && result.data.url) {
             champion.cardImageUrl = result.data.url;
         }
 
         logAnalyticsEvent('generate_card_image', { champion_id: championId });
         dispatchNotification('Card image created! Starting download...', 'success', 2000);
-        
-        // Download the newly created image
         await downloadImage(result.data.imageDataUrl, `${cleanName}-card.png`);
-
     } catch (error) {
         if (error.code === 'functions/unauthenticated') {
             console.warn('Guest user tried to generate an image.');
@@ -804,7 +810,6 @@ async function generateAndUploadCardImage(championId) {
             dispatchNotification('Could not generate or save card image.', 'error');
         }
     } finally {
-        // Always remove the clone from the DOM when done
         document.body.removeChild(clone);
     }
 }

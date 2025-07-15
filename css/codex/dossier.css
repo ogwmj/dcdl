@@ -355,6 +355,69 @@
     line-height: 1.2;
 }
 
+/* --- Skills Tab --- */
+.skill-card {
+    background-color: #1f2937;
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid #4b5563;
+}
+.skill-card.is-ultimate {
+    border-left-color: #f59e0b;
+}
+.skill-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+.skill-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+}
+.skill-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+.skill-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.skill-badge.type-badge {
+    background-color: #374151;
+    color: #d1d5db;
+}
+.skill-badge.ultimate-badge {
+    background-color: #f59e0b;
+    color: #111827;
+}
+.skill-description {
+    color: #d1d5db;
+    line-height: 1.6;
+}
+.skill-effects {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.effect-tag {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.25rem;
+    background-color: rgba(59, 130, 246, 0.2);
+    color: #93c5fd;
+}
+
 .loading-spinner-small {
     display: inline-block;
     width: 2rem;
