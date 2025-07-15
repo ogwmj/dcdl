@@ -449,10 +449,11 @@ async function populateCommunityTab(champion) {
         ${tipsHtml}
     `;
 
+    pane.querySelectorAll('.rating-stars span').forEach(star => {
+        star.addEventListener('click', (e) => handleRatingSubmit(e, champion.id));
+    });
+
     if (isCreator) {
-        pane.querySelectorAll('.rating-stars span').forEach(star => {
-            star.addEventListener('click', (e) => handleRatingSubmit(e, champion.id));
-        });
         const tipForm = pane.querySelector('#add-tip-form');
         if (tipForm) {
             tipForm.addEventListener('submit', (e) => handleTipSubmit(e, champion.id));
@@ -627,10 +628,6 @@ async function renderPlayerTips(championId) {
 }
 
 async function handleRatingSubmit(event, championId) {
-    if (!currentUserRoles.includes('creator')) {
-        dispatchNotification("Only Creators can submit ratings.", "warning");
-        return;
-    }
     const star = event.currentTarget;
     const rating = parseInt(star.dataset.value, 10);
     const category = star.parentElement.dataset.category;
