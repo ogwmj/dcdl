@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-07-13T14:27:24.129Z",
+  "updated_at": "2025-07-15T12:24:45.480Z",
   "champions": [
     {
       "name": "Atom",
@@ -392,59 +392,59 @@
       ],
       "isHealer": true,
       "baseRarity": "Limited Mythic",
+      "communityAverageLevel": "Blue 1-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Starfire-card.png",
       "skills": [
         {
+          "name": "Starbolts",
+          "isUltimate": false,
           "effects": [
             "DMG",
             "AoE DMG",
             "Debuff"
           ],
-          "type": "Spiritual",
-          "name": "Starbolts",
           "description": "Starfire unleashes a beam of light, dealing Spiritual DMG to enemies within range and reducing their ATK.",
-          "isUltimate": false
+          "type": "Spiritual"
         },
         {
           "name": "Healing Energy",
           "type": "Healing",
           "description": "While the [Energy Absorption Field] is active, allies inside it restore HP over time.",
-          "isUltimate": false,
           "effects": [
             "Healing"
-          ]
+          ],
+          "isUltimate": false
         },
         {
-          "isUltimate": true,
-          "description": "Starfire converts ultraviolet light energy into an Energy Absorption Field, reducing damage taken by allies inside, with [Outsiders] allies receiving extra DMG Reduction. If Starfire casts her Ultimate again while the Energy Absorption Field is active, it enhances the Field, stacking up to 3 times.",
-          "name": "Energy Absorption Field",
           "effects": [
             "Buff",
             "Defense"
           ],
-          "type": "Defense"
+          "name": "Energy Absorption Field",
+          "description": "Starfire converts ultraviolet light energy into an Energy Absorption Field, reducing damage taken by allies inside, with [Outsiders] allies receiving extra DMG Reduction. If Starfire casts her Ultimate again while the Energy Absorption Field is active, it enhances the Field, stacking up to 3 times.",
+          "type": "Defense",
+          "isUltimate": true
         },
         {
-          "isUltimate": false,
-          "name": "Precognition",
+          "type": "Defense",
           "description": "Starfire's Spiritual DEF is increased. At the start of battle, Starfire gains Energy for every [Outsiders] ally present.",
           "effects": [
             "Defense",
             "Buff"
           ],
-          "type": "Defense"
+          "name": "Precognition",
+          "isUltimate": false
         },
         {
-          "type": "Passive",
+          "isUltimate": false,
+          "description": "Increases all Champions' MEN and [Supporter] Champions' ATK.",
           "effects": [
             "Passive"
           ],
-          "isUltimate": false,
-          "description": "Increases all Champions' MNEN and [Supporter] Champions' ATK.",
+          "type": "Passive",
           "name": "Empathic Perception"
         }
       ],
-      "communityAverageLevel": "Blue 1-Star",
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Starfire-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Starfire.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Starfire",
       "relatedChampions": [
@@ -805,7 +805,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Krypto-card.png",
-      "communityAverageLevel": "Blue 4-Star",
+      "communityAverageLevel": "Blue 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Krypto.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Krypto"
     },
@@ -2341,7 +2341,6 @@
         "Arkham's Most Wanted"
       ],
       "isHealer": false,
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Bane-card.png",
       "skills": [
         {
           "type": "Healing",
@@ -2393,6 +2392,7 @@
         }
       ],
       "communityAverageLevel": "White 5-Star",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Bane-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Bane.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Bane"
     },
