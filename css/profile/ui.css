@@ -1,0 +1,184 @@
+/**
+ * @file css/profile/ui.css
+ * @description Styles for the profile list and detail pages.
+ */
+
+.input-group label {
+    font-family: 'Russo One', sans-serif;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    color: #94a3b8; /* slate-400 */
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #475569; /* slate-600 */
+    border-radius: 0.5rem;
+    background-color: #1e293b; /* slate-800 */
+    color: #e2e8f0; /* slate-200 */
+    transition: all 0.2s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #6366f1; /* indigo-500 */
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.4);
+}
+
+.file-input {
+    display: block;
+    width: 100%;
+    color: #94a3b8;
+}
+.file-input::file-selector-button {
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border: 1px solid #475569;
+    border-radius: 0.375rem;
+    background-color: #334155;
+    color: #e2e8f0;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.file-input::file-selector-button:hover {
+    background-color: #475569;
+}
+
+
+.guide-section-title {
+    font-family: 'Russo One', sans-serif;
+    font-size: 1.75rem;
+    color: #c7d2fe;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #334155;
+}
+
+/* User Info Card Styles */
+.user-info-card {
+    background-color: rgba(30, 41, 59, 0.5); /* slate-800 with opacity */
+    border: 1px solid #334155; /* slate-700 */
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+}
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+@media (min-width: 768px) {
+    .info-grid { grid-template-columns: 1fr 1fr; }
+}
+.info-label {
+    font-family: 'Russo One', sans-serif;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    color: #94a3b8; /* slate-400 */
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+}
+.info-value {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #e2e8f0; /* slate-200 */
+    word-break: break-all;
+}
+
+/* Tab Navigation Styles */
+.tab-button {
+    font-family: 'Russo One', sans-serif;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    color: #94a3b8; /* slate-400 */
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    position: relative;
+    top: 1px; /* Aligns with the container's bottom border */
+    border-bottom: 3px solid transparent;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.tab-button:hover {
+    color: #e2e8f0; /* slate-200 */
+}
+
+.tab-button.active {
+    color: #818cf8; /* indigo-400 */
+    border-bottom-color: #818cf8; /* indigo-400 */
+}
+
+.tab-panel.hidden {
+    display: none;
+}
+
+
+/* Generic Button Styles */
+.btn {
+    padding: 0.8rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: none;
+}
+.btn-primary {
+    background-color: #4f46e5; /* indigo-600 */
+    color: white;
+}
+.btn-primary:hover {
+    background-color: #4338ca; /* indigo-700 */
+}
+
+.spinner {
+    display: inline-block;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px; /* pill shape */
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  border: 1px solid transparent;
+  line-height: 1.25;
+}
+
+/* Default 'Member' badge */
+.role-badge.role-member {
+  background-color: #334155; /* slate-700 */
+  color: #cbd5e1; /* slate-300 */
+}
+
+/* 'Admin' badge */
+.role-badge.role-admin {
+  background-color: #991b1b; /* red-800 */
+  color: #fecaca; /* red-200 */
+  border-color: #ef4444; /* red-500 */
+}
+
+/* 'Creator' badge */
+.role-badge.role-creator {
+  background-color: #1e40af; /* blue-800 */
+  color: #bfdbfe; /* blue-200 */
+  border-color: #3b82f6; /* blue-500 */
+}

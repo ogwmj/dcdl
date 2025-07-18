@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DC: Dark Legion - User Profile</title>
+    <link rel="canonical" href="https://dcdl-companion.com/profile.html">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Russo+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <link href="/css/theme.css" rel="stylesheet">
+    <link href="/css/profile/ui.css" rel="stylesheet">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+</head>
+<body class="text-gray-200">
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="ogwmj" data-description="Support me on Buy me a coffee!" data-message="" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+    <div id="toast-container"></div>
+    <notification-center></notification-center>
+    <auth-ui status-container-id="auth-status-desktop"></auth-ui>
+    <feedback-widget></feedback-widget>
+    <div class="background-hero"></div>
+    <navigation-widget></navigation-widget>
+    
+    <main class="relative z-10 max-w-7xl mx-auto p-4 md:p-8">
+        <header class="py-8 md:py-12 text-center">
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-4 glowing-text text-white">My Profile</h1>
+            <p class="text-xl md:text-2xl text-blue-200">Manage your account settings.</p>
+        </header>
+
+        <section id="profile-content" class="mb-12 hidden">
+            <div class="user-info-card mb-8">
+                    <h2 class="guide-section-title !text-left !border-b-0 !pb-0 !mb-4">User Information</h2>
+                    <div class="info-grid">
+                        <div>
+                            <p class="info-label">Email Address</p>
+                            <p id="user-email-display" class="info-value">Loading...</p>
+                        </div>
+                        <div>
+                            <p class="info-label">Username</p>
+                            <p id="username-display" class="info-value"></p>
+                        </div>
+                        <div>
+                            <p class="info-label">Roles</p>
+                            <div id="user-roles-container" class="flex flex-wrap gap-2 items-center">
+                                </div>
+                        </div>
+                    </div>
+                </div>
+
+            <div class="bg-slate-900/70 backdrop-blur-sm rounded-lg border border-blue-500/20 p-6 md:p-8">
+                <h2 class="guide-section-title !text-left !border-b-0 !pb-0 !mb-2">Account Management</h2>
+                
+                <div id="account-management-container">
+                    <div id="account-tabs-nav" class="flex border-b border-slate-700 mb-6">
+                        </div>
+
+                    <div id="account-tabs-content">
+                        <div id="member-panel" class="tab-panel">
+                            <form id="profile-update-form" class="space-y-6">
+                                <div class="input-group">
+                                    <label for="username-input">Username</label>
+                                    <input type="text" id="username-input" placeholder="Enter a public username" class="form-input">
+                                    <p class="text-xs text-slate-400 mt-1">This will be displayed publicly on shared content.</p>
+                                </div>
+                                <hr class="border-slate-700 my-8">
+                                <h3 class="text-lg font-semibold text-slate-300">Change Password</h3>
+                                <p class="text-sm text-slate-400 -mt-4 mb-4">Leave these fields blank to keep your current password.</p>
+                                <div id="password-change-container">
+                                    <div class="input-group">
+                                        <label for="current-password">Current Password (required to change)</label>
+                                        <input type="password" id="current-password" class="form-input" autocomplete="current-password">
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                                        <div class="input-group">
+                                            <label for="new-password">New Password</label>
+                                            <input type="password" id="new-password" class="form-input" autocomplete="new-password">
+                                        </div>
+                                        <div class="input-group">
+                                            <label for="confirm-password">Confirm New Password</label>
+                                            <input type="password" id="confirm-password" class="form-input" autocomplete="new-password">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pt-4">
+                                    <button type="submit" class="btn btn-primary w-full md:w-auto">
+                                        <span id="update-btn-text">Update Profile</span>
+                                        <div id="update-spinner" class="spinner hidden"></div>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div id="creator-panel" class="tab-panel hidden">
+                            <h3 class="text-lg font-semibold text-slate-300 mb-4">Creator Settings</h3>
+                            <form id="creator-update-form" class="space-y-6">
+                                <div class="input-group">
+                                    <label for="creator-logo-input">Creator Logo</label>
+                                    <div class="flex items-center gap-4 mt-2">
+                                        <img id="creator-logo-preview" src="https://via.placeholder.com/96" alt="Logo preview" class="w-24 h-24 rounded-full object-cover bg-slate-700">
+                                        <input type="file" id="creator-logo-input" class="file-input" accept="image/png, image/jpeg, image/gif">
+                                    </div>
+                                    <p class="text-xs text-slate-400 mt-2">Upload a logo (PNG, JPG, GIF). Max 1MB. Will be displayed as a circle.</p>
+                                </div>
+                        
+                                <div class="input-group">
+                                    <label for="creator-description-input">Bio / Description</label>
+                                    <textarea id="creator-description-input" rows="4" class="form-input" placeholder="Tell everyone a little about your content..."></textarea>
+                                </div>
+                        
+                                <hr class="border-slate-700 my-4">
+                        
+                                <h4 class="text-md font-semibold text-slate-300">Social Media Links</h4>
+                                <p class="text-xs text-slate-400 -mt-5 mb-2">Please provide the full URL for each link (e.g., https://...).</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                                    <div class="input-group">
+                                        <label for="creator-youtube-input">YouTube Channel</label>
+                                        <input type="url" id="creator-youtube-input" class="form-input" placeholder="https://youtube.com/channel/..." pattern="https://.*">
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="creator-twitch-input">Twitch Channel</label>
+                                        <input type="url" id="creator-twitch-input" class="form-input" placeholder="https://twitch.tv/..." pattern="https://.*">
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="creator-tiktok-input">TikTok Profile</label>
+                                        <input type="url" id="creator-tiktok-input" class="form-input" placeholder="https://tiktok.com/@..." pattern="https://.*">
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="creator-x-input">X (Twitter) Profile</label>
+                                        <input type="url" id="creator-x-input" class="form-input" placeholder="https://x.com/..." pattern="https://.*">
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="creator-discord-input">Discord Server Invite</label>
+                                        <input type="url" id="creator-discord-input" class="form-input" placeholder="https://discord.gg/..." pattern="https://.*">
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="creator-instagram-input">Instagram Profile</label>
+                                        <input type="url" id="creator-instagram-input" class="form-input" placeholder="https://instagram.com/..." pattern="https://.*">
+                                    </div>
+                                </div>
+                                
+                                <div class="pt-4">
+                                    <button type="submit" class="btn btn-primary w-full md:w-auto">
+                                        <span id="creator-update-btn-text">Update Creator Info</span>
+                                        <div id="creator-update-spinner" class="spinner hidden"></div>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div id="admin-panel" class="tab-panel hidden">
+                            <h3 class="text-lg font-semibold text-slate-300 mb-4">Admin Controls</h3>
+                            <p class="text-slate-400">Admin-specific tools and settings will be available here.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="non-email-provider-message" class="hidden">
+                    <p class="text-center text-slate-400">Account management is only available for accounts created with an email and password.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="auth-required-message" class="hidden text-center bg-slate-900/70 p-8 rounded-lg">
+            <p class="text-xl text-amber-400">Please log in to view your profile.</p>
+        </section>
+    </main>
+
+    <footer class="relative z-10 text-gray-500 text-sm py-8 text-center">
+        <p class="mt-2">DC: Dark Legion 2025 DC. Software code 2025 FunPlus International AG. DC LOGO and all related characters and elements © & ™ DC.</p>
+        <p class="mt-2">Proud DC: Dark Legion Content Creator.</p>
+        <p class="mt-4"><a href="/info/calculator.html" class="text-blue-400 hover:text-blue-300 underline">Pull Rate Guide</a> | <a href="/api/index.html" class="text-blue-400 hover:text-blue-300 underline">API Documentation</a></p>
+    </footer>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+
+    <script type="module" src="/js/profile/ui.js"></script>
+    <script type="module" src="/js/auth-ui.js"></script>
+    <script type="module" src="/js/feedback-widget.js"></script>
+    <script type="module" src="/js/notification-center.js"></script>
+    <script type="text/javascript" src="/js/navigation-widget.js"></script>
+</body>
+</html>
