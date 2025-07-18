@@ -1,6 +1,6 @@
 {
-  "updated_at": "2025-07-18T14:08:49.069Z",
-  "legacy_pieces": [
+  "updated_at": "2025-07-18T14:07:06.167Z",
+  "effects": [
     {
       "name": "Honkin' Huge Hammer",
       "baseRarity": "Mythic+",
@@ -330,13 +330,6 @@
         "Firepower",
         "Magical",
         "Assassin"
-      ]
-    },
-    {
-      "baseRarity": "Mythic+",
-      "name": "Warrior, Guardian",
-      "classes": [
-        "Activate when equipped by Superman"
       ]
     },
     {
