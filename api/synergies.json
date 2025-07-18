@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-07-08T14:42:02.830Z",
+  "updated_at": "2025-07-18T12:46:35.080Z",
   "synergies": [
     {
       "name": "Outsiders",
@@ -330,24 +330,24 @@
     },
     {
       "name": "League of Assassins",
+      "description": "Increases their Dodge.",
       "tiers": [
         {
           "countRequired": 3,
-          "tierDescription": "Increases their Dodge by 20%.",
-          "appliesTo": "synergy_members"
+          "appliesTo": "synergy_members",
+          "tierDescription": "Increases their Dodge by 30%."
         },
         {
-          "countRequired": 4,
-          "tierDescription": "Increases their Dodge by 25%.",
-          "appliesTo": "synergy_members"
+          "appliesTo": "synergy_members",
+          "tierDescription": "Increases their Dodge by 40%.",
+          "countRequired": 4
         },
         {
-          "countRequired": 5,
-          "tierDescription": "Increases their Dodge by 30%.",
-          "appliesTo": "synergy_members"
+          "appliesTo": "synergy_members",
+          "tierDescription": "Increases their Dodge by 50%.",
+          "countRequired": 5
         }
       ],
-      "description": "Increases their Dodge.",
       "factionImageUrl": "https://dcdl-companion.com/img/factions/League_of_Assassins.png",
       "codexUrl": "https://dcdl-companion.com/codex.html?synergy=League%20of%20Assassins"
     },

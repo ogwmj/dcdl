@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-07-15T12:24:45.480Z",
+  "updated_at": "2025-07-18T12:44:13.615Z",
   "champions": [
     {
       "name": "Atom",
@@ -805,7 +805,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Krypto-card.png",
-      "communityAverageLevel": "Blue 3-Star",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Krypto.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Krypto"
     },
@@ -1561,6 +1561,73 @@
       ]
     },
     {
+      "baseRarity": "Limited Mythic",
+      "isHealer": false,
+      "class": "Assassin",
+      "inherentSynergies": [
+        "League of Assassins",
+        "Metahuman"
+      ],
+      "skills": [
+        {
+          "name": "Assassin's Strike",
+          "description": "Ra's al Ghul sacrifices HP to dash behind his target and strike.",
+          "type": "Physical",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "To the Death",
+          "description": "Ra's al Ghul gains bonus ATK based on his HP lost.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Wrath of the Demon",
+          "description": "Ra's al Ghul's Ultimate and basic attacks host HP. The more HP sacrificed, the greater the DMG.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "Buff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Lazarus's Rise",
+          "description": "When taking lethal damage, Ra's al Ghul enters the Lazarus Pit to recover. If all allies are defeated, he returns and casts his ultimate.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Lazarus Effect",
+          "description": "Increases all Champion's HP and [Assassin] Champions' HP additionally.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "name": "Ra's al Ghul",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Ra'salGhul-card.png",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Ra'salGhul.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Ra's%20al%20Ghul",
+      "relatedChampions": [
+        "Cyborg",
+        "Krypto",
+        "Robin"
+      ]
+    },
+    {
       "name": "Captain Cold",
       "baseRarity": "Legendary",
       "class": "Intimidator",
@@ -1747,8 +1814,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "White 5-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/DoctorFate.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Doctor%20Fate"
     },
@@ -2763,8 +2830,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Gold 1-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/GreenArrow-card.png",
+      "communityAverageLevel": "Gold 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/GreenArrow.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Green%20Arrow"
     },
