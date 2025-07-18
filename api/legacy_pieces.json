@@ -1,0 +1,376 @@
+{
+  "updated_at": "2025-07-18T14:08:49.069Z",
+  "legacy_pieces": [
+    {
+      "name": "Honkin' Huge Hammer",
+      "baseRarity": "Mythic+",
+      "classes": [
+        "Warrior",
+        "Guardian"
+      ]
+    },
+    {
+      "name": "Modoron Smoke Bomb",
+      "baseRarity": "Epic",
+      "classes": [
+        "Warrior",
+        "Guardian"
+      ]
+    },
+    {
+      "name": "Explosive Javelin",
+      "baseRarity": "Legendary",
+      "classes": [
+        "Warrior",
+        "Guardian"
+      ]
+    },
+    {
+      "name": "Cold Gun",
+      "baseRarity": "Legendary",
+      "classes": [
+        "Firepower",
+        "Magical",
+        "Assassin"
+      ]
+    },
+    {
+      "name": "Thanagarian Mace",
+      "baseRarity": "Mythic+",
+      "classes": [
+        "Warrior",
+        "Guardian"
+      ]
+    },
+    {
+      "name": "T-Sphere Weakness Analyzer",
+      "baseRarity": "Mythic",
+      "classes": [
+        "Firepower",
+        "Magical",
+        "Assassin"
+      ]
+    },
+    {
+      "name": "Green Lantern Power Battery",
+      "baseRarity": "Mythic+",
+      "classes": [
+        "Supporter",
+        "Intimidator"
+      ]
+    },
+    {
+      "name": "Starheart Staff",
+      "baseRarity": "Mythic",
+      "classes": [
+        "Supporter",
+        "Intimidator"
+      ]
+    },
+    {
+      "name": "Improved Fear Gas Vial",
+      "baseRarity": "Legendary",
+      "classes": [
+        "Warrior",
+        "Guardian"
+      ]
+    },
+    {
+      "name": "Purple Ray Radiation",
+      "baseRarity": "Mythic",
+      "classes": [
+        "Supporter",
+        "Intimidator"
+      ]
+    },
+    {
+      "name": "Duplication Mirror",
+      "baseRarity": "Mythic",
+      "classes": [
+        "Warrior",
+        "Guardian"
+      ]
+    },
+    {
+      "name": "Robot Duplicate",
+      "baseRarity": "Mythic",
+      "classes": [
+        "Supporter",
+        "Intimidator"
+      ]
+    },
+    {
+      "name": "Charged Escrima Sticks",
+      "baseRarity": "Mythic+",
+      "classes": [
+        "Firepower",
+        "Magical",
+        "Assassin"
+      ]
+    },
+    {
+      "name": "Dart with Poison Ivy Poison",
+      "baseRarity": "Mythic",
+      "classes": [
+        "Firepower",
+        "Magical",
+        "Assassin"
+      ]
+    },
+    {
+      "name": "House of El Symbol",
+      "baseRarity": "Mythic+",
+      "classes": [
+        "Warrior",
+        "Guardian"
+      ]
+    },
+    {
+      "name": "Coluan Force Field Belt",
+      "baseRarity": "Legendary",
+      "classes": [
+        "Supporter",
+        "Intimidator"
+      ]
+    },
+    {
+      "name": "Sigil Magic",
+      "baseRarity": "Mythic+",
+      "classes": [
+        "Firepower",
+        "Magical",
+        "Assassin"
+      ]
+    },
+    {
+      "name": "Demon's Sword",
+      "baseRarity": "Mythic+",
+      "classes": [
+        "Firepower",
+        "Magical",
+        "Assassin"
+      ]
+    },
+    {
+      "name": "Not So Huge Hammer",
+      "baseRarity": "Legendary",
+      "classes": [
+        "Warrior",
+        "Guardian"
+      ]
+    },
+    {
+      "name": "Razer Rib Umbrella",
+      "baseRarity": "Epic",
+      "classes": [
+        "Warrior",
+        "Guardian"
+      ]
+    },
+    {
+      "name": "Imp Doll",
+      "baseRarity": "Mythic",
+      "classes": [
+        "Firepower",
+        "Magical",
+        "Assassin"
+      ]
+    },
+    {
+      "name": "Starfire's Starbolts",
+      "baseRarity": "Mythic+",
+      "classes": [
+        "Supporter",
+        "Intimidator"
+      ]
+    },
+    {
+      "name": "Fear Reaper",
+      "baseRarity": "Mythic+",
+      "classes": [
+        "Warrior",
+        "Guardian"
+      ]
+    },
+    {
+      "name": "Dual Katanas",
+      "baseRarity": "Mythic+",
+      "classes": [
+        "Firepower",
+        "Magical",
+        "Assassin"
+      ]
+    },
+    {
+      "name": "Superman's Cape",
+      "baseRarity": "Mythic+",
+      "classes": [
+        "Warrior",
+        "Guardian"
+      ]
+    },
+    {
+      "name": "Cocoon Gun",
+      "baseRarity": "Legendary",
+      "classes": [
+        "Supporter",
+        "Intimidator"
+      ]
+    },
+    {
+      "name": "Energy Mace",
+      "baseRarity": "Legendary",
+      "classes": [
+        "Supporter",
+        "Intimidator"
+      ]
+    },
+    {
+      "name": "Pied Piper Flute",
+      "baseRarity": "Epic",
+      "classes": [
+        "Supporter",
+        "Intimidator"
+      ]
+    },
+    {
+      "name": "Replica Time Commander",
+      "baseRarity": "Epic",
+      "classes": [
+        "Firepower",
+        "Magical",
+        "Assassin"
+      ]
+    },
+    {
+      "name": "Plastic Explosive",
+      "baseRarity": "Legendary",
+      "classes": [
+        "Firepower",
+        "Magical",
+        "Assassin"
+      ]
+    },
+    {
+      "name": "Amazonian Alloy Shield",
+      "baseRarity": "Mythic",
+      "classes": [
+        "Warrior",
+        "Guardian"
+      ]
+    },
+    {
+      "name": "Wand of the Magi",
+      "baseRarity": "Mythic+",
+      "classes": [
+        "Supporter",
+        "Intimidator"
+      ]
+    },
+    {
+      "name": "Gabriel Horn",
+      "baseRarity": "Mythic",
+      "classes": [
+        "Warrior",
+        "Guardian"
+      ]
+    },
+    {
+      "name": "Flash-Bulb Kite",
+      "baseRarity": "Epic",
+      "classes": [
+        "Supporter",
+        "Intimidator"
+      ]
+    },
+    {
+      "name": "Promethium Claws",
+      "baseRarity": "Mythic",
+      "classes": [
+        "Warrior",
+        "Guardian"
+      ]
+    },
+    {
+      "name": "Modified Joker Venom Grenade",
+      "baseRarity": "Mythic",
+      "classes": [
+        "Supporter",
+        "Intimidator"
+      ]
+    },
+    {
+      "name": "Kuru Pendant",
+      "baseRarity": "Mythic+",
+      "classes": [
+        "Warrior",
+        "Guardian"
+      ]
+    },
+    {
+      "name": "Sinestro Corps Ring",
+      "baseRarity": "Mythic+",
+      "classes": [
+        "Magical"
+      ]
+    },
+    {
+      "name": "Gas Derringer",
+      "baseRarity": "Legendary",
+      "classes": [
+        "Firepower",
+        "Magical",
+        "Assassin"
+      ]
+    },
+    {
+      "name": "Tectonic Disruptor",
+      "baseRarity": "Mythic",
+      "classes": [
+        "Firepower",
+        "Magical",
+        "Assassin"
+      ]
+    },
+    {
+      "baseRarity": "Mythic+",
+      "name": "Warrior, Guardian",
+      "classes": [
+        "Activate when equipped by Superman"
+      ]
+    },
+    {
+      "name": "Fool's Scepter",
+      "baseRarity": "Mythic+",
+      "classes": [
+        "Supporter",
+        "Intimidator"
+      ]
+    },
+    {
+      "name": "Super Six-String",
+      "baseRarity": "Mythic+",
+      "classes": [
+        "Supporter",
+        "Intimidator"
+      ]
+    },
+    {
+      "name": "Mind Control Hat",
+      "baseRarity": "Mythic",
+      "classes": [
+        "Supporter",
+        "Intimidator"
+      ]
+    },
+    {
+      "name": "Lawton Rifle Scope",
+      "baseRarity": "Epic",
+      "classes": [
+        "Firepower",
+        "Magical",
+        "Assassin"
+      ]
+    }
+  ]
+}

@@ -137,6 +137,31 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Endpoint 4: Legacy Pieces -->
+            <section id="legacy_pieces" class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Legacy Pieces</h2>
+                <p class="mb-6 text-gray-600 dark:text-gray-400">This endpoint lists all possible legacy pieces and available class assignments.</p>
+
+                <div class="flex items-center space-x-4 mb-6">
+                    <span class="text-sm font-semibold inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-green-300">GET</span>
+                    <code class="text-sm md:text-base p-2 bg-gray-100 dark:bg-gray-700 rounded-md text-gray-700 dark:text-gray-300 mono">https://dcdl-companion.com/api/legacy_pieces.json</code>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Response Schema</h3>
+                        <div class="space-y-3 text-sm">
+                            <p><code class="mono font-semibold">name</code>: <span class="text-gray-500 dark:text-gray-400">String</span> - The name of the legacy piece (e.g., "Cold Gun", "Starheart Staff").</p>
+                            <p><code class="mono font-semibold">classes</code>: <span class="text-gray-500 dark:text-gray-400">Array[String]</span> - List of classes this piece is available for.</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Example Response</h3>
+                        <pre class="bg-gray-900 text-white p-4 rounded-lg text-xs overflow-x-auto h-96"><code id="legacy-pieces-json-example" class="mono">Loading...</code></pre>
+                    </div>
+                </div>
+            </section>
         </main>
 
         <footer class="text-center mt-16 text-gray-500 dark:text-gray-400 text-sm">
@@ -193,6 +218,7 @@
             fetchAndDisplayJSON('./champions.json', 'champions-json-example', 'champions');
             fetchAndDisplayJSON('./synergies.json', 'synergies-json-example', 'synergies');
             fetchAndDisplayJSON('./effects.json', 'effects-json-example', 'effects'); 
+            fetchAndDisplayJSON('./legacy_pieces.json', 'legacy-pieces-json-example', 'legacy_pieces'); 
         });
     </script>
 
