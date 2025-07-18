@@ -790,7 +790,7 @@ async function generateAndUploadCardImage(championId) {
         const saveImage = httpsCallable(functions, 'saveChampionCardImage');
         const result = await saveImage({
             championId: champion.id,
-            championName: champion.name,
+            championName: cleanName,
             imageDataUrl: imageDataUrl
         });
 
