@@ -18,6 +18,7 @@ class NavigationWidget extends HTMLElement {
                               <a href="https://dcdl-companion.com/stores.html" class="nav-link block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Store Analyzer</a>
                           </div>
                       </div>
+
                       <div class="relative group">
                           <button class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium inline-flex items-center" aria-haspopup="true">
                               <span>Champions</span>
@@ -27,6 +28,17 @@ class NavigationWidget extends HTMLElement {
                               <a href="https://dcdl-companion.com/teams.html" class="nav-link block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Team Builder</a>
                               <a href="https://dcdl-companion.com/codex.html" class="nav-link block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Codex</a>
                               <a href="https://dcdl-companion.com/squads.html" class="nav-link block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Squads</a>
+                          </div>
+                      </div>
+
+                      <div class="relative group">
+                          <button class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium inline-flex items-center" aria-haspopup="true">
+                              <span>Tips</span>
+                              <svg class="w-4 h-4 ml-1 text-gray-400 group-hover:text-white transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                          </button>
+                          <div class="absolute hidden group-hover:block bg-slate-900 bg-opacity-90 backdrop-filter backdrop-blur-md rounded-md shadow-lg py-1 w-48 z-50 top-full">
+                              <a href="https://dcdl-companion.com/info/rewards.html" class="nav-link block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Daily Login Rewards</a>
+                              <a href="https://dcdl-companion.com/info/calculator.html" class="nav-link block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Pull Rate Guide</a>
                           </div>
                       </div>
                       
@@ -64,6 +76,11 @@ class NavigationWidget extends HTMLElement {
                       <a href="https://dcdl-companion.com/teams.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Team Builder</a>
                       <a href="https://dcdl-companion.com/codex.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Codex</a>
                       <a href="https://dcdl-companion.com/squads.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Squads</a>
+                  </div>
+                  <div class="!mt-3">
+                      <span class="px-3 pt-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Tips</span>
+                      <a href="https://dcdl-companion.com/info/rewards.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Daily Login Rewards</a>
+                      <a href="https://dcdl-companion.com/info/calculator.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Pull Rate Guide</a>
                   </div>
                   <div id="auth-status-mobile" class="pt-4 mt-2 border-t border-slate-700"></div>
               </div>
