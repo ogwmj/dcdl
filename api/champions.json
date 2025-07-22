@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-07-22T19:03:00.218Z",
+  "updated_at": "2025-07-22T19:14:35.252Z",
   "champions": [
     {
       "name": "Atom",
@@ -1618,7 +1618,7 @@
         }
       ],
       "name": "Ra's al Ghul",
-      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Ra'salGhul-card.png",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/RasalGhul-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Ra'salGhul.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Ra's%20al%20Ghul",
       "relatedChampions": [
