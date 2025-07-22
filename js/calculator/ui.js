@@ -55,6 +55,22 @@ const DOM = {
 
     // Shard Requirements
     shardRequirementSummary: document.getElementById('shard-requirement-summary'),
+
+    // Live Tracker
+    liveTrackerContainer: document.getElementById('live-tracker-container'),
+    logPullsBtn: document.getElementById('log-pulls-btn'),
+    pullsMadeInput: document.getElementById('pulls-made'),
+    lmPulledCountInput: document.getElementById('lm-pulled-count'),
+    otherMythicCountInput: document.getElementById('other-mythic-count'),
+    lmPulledContainer: document.getElementById('lm-pulled-container'),
+    lmPulledCheckbox: document.getElementById('lm-pulled'),
+    liveAnvilsSpent: document.getElementById('live-anvils-spent'),
+    liveShardsAcquired: document.getElementById('live-shards-acquired'),
+    liveMythicPity: document.getElementById('live-mythic-pity'),
+    liveLMPity: document.getElementById('live-lm-pity'),
+    liveShardsRemaining: document.getElementById('live-shards-remaining'),
+    liveLmRemainingGoal: document.getElementById('live-lm-remaining-goal'),
+    liveLmPulledTotal: document.getElementById('live-lm-pulled-total'),
 };
 
 // #region --- DATA & STATE ---
@@ -70,6 +86,8 @@ let db;
 let analytics;
 let startStarSelectorControl = null;
 let targetStarSelectorControl = null;
+let initialCalculationInputs = null;
+let liveProgressState = null;
 
 // #region --- UI INITIALIZATION & EVENT LISTENERS ---
 
@@ -396,15 +414,15 @@ function attachEventListeners() {
         }
     });
     
-    // === MODIFICATION START ===
     // Replaced the old listeners with the new one.
     if(DOM.applyCommunityAvgBtn) {
         DOM.applyCommunityAvgBtn.addEventListener('click', handleCommunityGuidance);
     }
-    // === MODIFICATION END ===
 
     DOM.lmShardsYield.addEventListener('input', updateShardRequirementSummary);
     DOM.toggleUnlockCost.addEventListener('change', updateShardRequirementSummary);
+
+    DOM.logPullsBtn.addEventListener('click', handlePullLogging);
 }
 
 
@@ -486,6 +504,8 @@ function handleCalculation() {
         return;
     }
 
+    initialCalculationInputs = { ...inputs };
+
     if (analytics) {
         const eventParams = {...inputs};
         eventParams.championName = DOM.selectedChampionName.textContent || 'unknown';
@@ -499,9 +519,123 @@ function handleCalculation() {
     }
 
     const simResults = runProbabilitySimulation(inputs);
+    liveProgressState = {
+        totalAnvilsSpent: 0,
+        shardsAcquired: 0,
+        shardsGoal: evResults.shardsNeededForUpgrade,
+        isUnlocked: !inputs.toggleUnlockCost,
+        currentMythicPity: inputs.currentMythicPity,
+        currentLMPity: inputs.currentLMPity,
+        totalLMPulled: 0,
+    };
+
     displayResults(inputs, evResults, simResults);
+    DOM.liveTrackerContainer.classList.remove('hidden');
+    updateLiveProgressDisplay();
 }
 
+/**
+ * Updates the live progress display with the current state.
+ */
+function updateLiveProgressDisplay() {
+    if (!liveProgressState || !initialCalculationInputs) return;
+
+    // Calculate remaining shards and estimated LMs to goal
+    const shardsRemaining = Math.max(0, liveProgressState.shardsGoal - liveProgressState.shardsAcquired);
+    const shardYield = initialCalculationInputs.lmShardsYield || 40;
+    const estimatedLMsToGoal = shardYield > 0 ? Math.ceil(shardsRemaining / shardYield) : 0;
+
+    // Update the UI
+    DOM.liveAnvilsSpent.textContent = liveProgressState.totalAnvilsSpent.toLocaleString();
+    DOM.liveMythicPity.textContent = liveProgressState.currentMythicPity.toLocaleString();
+    DOM.liveLMPity.textContent = liveProgressState.currentLMPity.toLocaleString();
+    DOM.liveLmPulledTotal.textContent = liveProgressState.totalLMPulled.toLocaleString();
+    DOM.liveShardsRemaining.textContent = shardsRemaining.toLocaleString();
+    DOM.liveLmRemainingGoal.textContent = estimatedLMsToGoal.toLocaleString();
+}
+
+/**
+ * Handles the logic when a user logs their pulls.
+ */
+// In ui.js, replace the entire handlePullLogging function with this one
+
+/**
+ * Handles the logic when a user logs their pulls, allowing for multiple mythic types.
+ */
+function handlePullLogging() {
+    const pullsMade = parseInt(DOM.pullsMadeInput.value, 10) || 0;
+    const lmsPulled = parseInt(DOM.lmPulledCountInput.value, 10) || 0;
+    const otherMythicsPulled = parseInt(DOM.otherMythicCountInput.value, 10) || 0;
+
+    if (pullsMade <= 0) {
+        alert("Please enter a valid number of pulls.");
+        return;
+    }
+
+    const totalMythicsPulled = lmsPulled + otherMythicsPulled;
+
+    // --- Update State ---
+    liveProgressState.totalAnvilsSpent += pullsMade;
+
+    if (totalMythicsPulled > 0) {
+        // Pity resets completely since at least one mythic was pulled in the batch.
+        liveProgressState.currentMythicPity = 0;
+
+        // Process other mythics first, as they build the LM pity streak.
+        for (let i = 0; i < otherMythicsPulled; i++) {
+            liveProgressState.currentLMPity++;
+        }
+
+        // Process LMs, which resets the LM pity streak.
+        for (let i = 0; i < lmsPulled; i++) {
+            liveProgressState.currentLMPity = 0; // Streak resets
+            liveProgressState.totalLMPulled++;
+            if (!liveProgressState.isUnlocked) {
+                liveProgressState.isUnlocked = true;
+            } else {
+                liveProgressState.shardsAcquired += initialCalculationInputs.lmShardsYield;
+            }
+        }
+    } else {
+        // No mythics, so we just add to the pity counter.
+        liveProgressState.currentMythicPity += pullsMade;
+    }
+
+    // Reset logging form for the next entry
+    DOM.pullsMadeInput.value = "10";
+    DOM.lmPulledCountInput.value = "0";
+    DOM.otherMythicCountInput.value = "0";
+    
+    recalculateProjections();
+}
+
+/**
+ * Recalculates projections based on the current live state.
+ */
+function recalculateProjections() {
+    // Determine remaining shards needed
+    const remainingShards = Math.max(0, liveProgressState.shardsGoal - liveProgressState.shardsAcquired);
+    const remainingBudget = Math.max(0, initialCalculationInputs.anvilBudget - liveProgressState.totalAnvilsSpent);
+
+    // Create a new set of inputs for the calculation functions
+    const updatedInputs = {
+        ...initialCalculationInputs, // Use original settings (rates, pity, etc.)
+        shardsNeededForUpgrade: remainingShards,
+        anvilBudget: remainingBudget,
+        currentMythicPity: liveProgressState.currentMythicPity,
+        currentLMPity: liveProgressState.currentLMPity,
+        // If the character is now unlocked, we no longer include that cost.
+        toggleUnlockCost: !liveProgressState.isUnlocked, 
+    };
+
+    // Run the calculations with the updated state
+    const evResults = calculateExpectedValue(updatedInputs);
+    const simResults = runProbabilitySimulation(updatedInputs);
+
+    // Redisplay the results and update the progress display
+    displayResults(updatedInputs, evResults, simResults);
+    updateLiveProgressDisplay();
+}
 
 // #region --- RESULTS DISPLAY ---
 

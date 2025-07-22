@@ -153,6 +153,55 @@
                 <div class="h-80 w-full"><canvas id="probability-chart-canvas"></canvas></div>
             </div>
             <div class="result-card-canvas"><h3 class="text-xl font-bold mb-1 text-center text-blue-300">Monte Carlo Simulation</h3><p class="text-sm text-slate-400 text-center mb-4">Visualizing 10,000 simulated attempts.</p><div class="h-80 w-full"><canvas id="monte-carlo-chart-canvas"></canvas></div></div>
+
+            <div id="live-tracker-container" class="hidden mt-8">
+                <h3 class="text-3xl font-bold text-center mt-8 mb-8 glowing-text text-white">Live Pull Tracker</h3>
+                <div class="bg-slate-800/60 backdrop-blur-sm rounded-lg border border-blue-500/20 p-6 md:p-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                        <div class="input-group">
+                            <label for="pulls-made">Anvils Spent / Pulls Made</label>
+                            <input type="number" id="pulls-made" value="10" min="1" class="w-full">
+
+                            <div class="grid grid-cols-2 gap-x-4 mt-4">
+                                <div class="input-group">
+                                    <label for="lm-pulled-count">Limited Mythics</label>
+                                    <input type="number" id="lm-pulled-count" value="0" min="0">
+                                </div>
+                                <div class="input-group">
+                                    <label for="other-mythic-count">Other Mythics</label>
+                                    <input type="number" id="other-mythic-count" value="0" min="0">
+                                </div>
+                            </div>
+                            
+                            <button id="log-pulls-btn" class="btn btn-secondary mt-5 w-full">Log These Pulls & Update</button>
+                        </div>
+
+                        <div id="live-progress-display" class="space-y-3 text-center md:text-left bg-slate-900/50 p-4 rounded-lg">
+                            <div class="grid grid-cols-2 gap-x-4 gap-y-3">
+                                <p class="text-slate-300">Total Anvils Spent:</p>
+                                <strong id="live-anvils-spent" class="text-white text-right">0</strong>
+                                
+                                <p class="text-slate-300">Current Mythic Pity:</p>
+                                <strong id="live-mythic-pity" class="text-white text-right">0</strong>
+
+                                <p class="text-slate-300">Non-LM Streak:</p>
+                                <strong id="live-lm-pity" class="text-white text-right">0</strong>
+
+                                <p class="text-slate-300">Total LMs Pulled:</p>
+                                <strong id="live-lm-pulled-total" class="text-white text-right">0</strong>
+
+                                <p class="text-slate-300">Shards Remaining:</p>
+                                <strong id="live-shards-remaining" class="text-white text-right">0</strong>
+                                
+                                <p class="text-indigo-300 font-semibold">Est. LMs to Goal:</p>
+                                <strong id="live-lm-remaining-goal" class="text-indigo-300 font-semibold text-right">0</strong>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-2 pt-2 border-t border-slate-700">Your results cards below will update automatically.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </section>
     </main>
 

@@ -151,12 +151,15 @@ function calculateGachaAnvils(targetShards, avgShardsPerMythic, drawsPerMythic) 
 export function calculateExpectedValue(inputs) {
     const {
         mythicProbability, mythicHardPity, lmRateUpChance,
-        startStarLevel, targetStarLevel, lmShardsYield
+        startStarLevel, targetStarLevel, lmShardsYield,
+        shardsNeededForUpgrade: directShards
     } = inputs;
 
     const startShards = startStarLevel === "0_shards" ? 0 : CONSTANTS.SHARD_REQUIREMENTS[startStarLevel] || 0;
     const targetTotalShards = CONSTANTS.SHARD_REQUIREMENTS[targetStarLevel] || 0;
-    const shardsNeededForUpgrade = Math.max(0, targetTotalShards - startShards);
+    const shardsNeededForUpgrade = (directShards !== undefined) 
+        ? directShards 
+        : Math.max(0, targetTotalShards - startShards);
 
     const drawsPerMythicAverage = calculateExpectedDrawsPerMythic(mythicProbability, mythicHardPity);
     if (isNaN(drawsPerMythicAverage)) return { error: 'Invalid base mythic calculation.' };
@@ -259,12 +262,15 @@ export function runProbabilitySimulation(inputs) {
     const {
         anvilBudget, mythicProbability, mythicHardPity, lmRateUpChance,
         startStarLevel, targetStarLevel, lmShardsYield, toggleUnlockCost,
-        currentMythicPity, currentLMPity
+        currentMythicPity, currentLMPity,
+        shardsNeededForUpgrade: directShards
     } = inputs;
 
     const startShards = startStarLevel === "0_shards" ? 0 : CONSTANTS.SHARD_REQUIREMENTS[startStarLevel] || 0;
     const targetTotalShards = CONSTANTS.SHARD_REQUIREMENTS[targetStarLevel] || 0;
-    const shardsNeededForUpgrade = Math.max(0, targetTotalShards - startShards);
+    const shardsNeededForUpgrade = (directShards !== undefined) 
+        ? directShards 
+        : Math.max(0, targetTotalShards - startShards);
     
     const actualLmRateUpChance = calculateActualRateFromEffectiveRate(lmRateUpChance, CONSTANTS.NM_GUARANTEE_THRESHOLD);
 
