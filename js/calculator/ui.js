@@ -71,16 +71,25 @@ const DOM = {
     liveShardsRemaining: document.getElementById('live-shards-remaining'),
     liveLmRemainingGoal: document.getElementById('live-lm-remaining-goal'),
     liveLmPulledTotal: document.getElementById('live-lm-pulled-total'),
+    liveCurrentStarLevel: document.getElementById('live-current-star-level'),
 };
 
 // #region --- DATA & STATE ---
-const SHARD_REQUIREMENTS = {
-    "Base Character (0 Shards)": 0, "White 1-Star": 2, "White 2-Star": 5, "White 3-Star": 10, "White 4-Star": 20, "White 5-Star": 40,
-    "Blue 1-Star": 60, "Blue 2-Star": 80, "Blue 3-Star": 100, "Blue 4-Star": 130, "Blue 5-Star": 160,
-    "Purple 1-Star": 200, "Purple 2-Star": 240, "Purple 3-Star": 280, "Purple 4-Star": 320, "Purple 5-Star": 360,
-    "Gold 1-Star": 400, "Gold 2-Star": 440, "Gold 3-Star": 480, "Gold 4-Star": 540, "Gold 5-Star": 600,
-    "Red 1-Star": 680, "Red 2-Star": 760, "Red 3-Star": 840, "Red 4-Star": 920, "Red 5-Star": 1000
-};
+const SHARD_REQUIREMENTS_ORDERED = [
+    { level: "Red 5-Star", shards: 1000 }, { level: "Red 4-Star", shards: 920 },
+    { level: "Red 3-Star", shards: 840 }, { level: "Red 2-Star", shards: 760 },
+    { level: "Red 1-Star", shards: 680 }, { level: "Gold 5-Star", shards: 600 },
+    { level: "Gold 4-Star", shards: 540 }, { level: "Gold 3-Star", shards: 480 },
+    { level: "Gold 2-Star", shards: 440 }, { level: "Gold 1-Star", shards: 400 },
+    { level: "Purple 5-Star", shards: 360 }, { level: "Purple 4-Star", shards: 320 },
+    { level: "Purple 3-Star", shards: 280 }, { level: "Purple 2-Star", shards: 240 },
+    { level: "Purple 1-Star", shards: 200 }, { level: "Blue 5-Star", shards: 160 },
+    { level: "Blue 4-Star", shards: 130 }, { level: "Blue 3-Star", shards: 100 },
+    { level: "Blue 2-Star", shards: 80 }, { level: "Blue 1-Star", shards: 60 },
+    { level: "White 5-Star", shards: 40 }, { level: "White 4-Star", shards: 20 },
+    { level: "White 3-Star", shards: 10 }, { level: "White 2-Star", shards: 5 },
+    { level: "White 1-Star", shards: 2 }
+];
 
 let db;
 let analytics;
@@ -106,6 +115,20 @@ function handleUrlParameters() {
             console.warn(`Champion with ID '${championIdFromUrl}' not found in the dropdown.`);
         }
     }
+}
+
+/**
+ * Determines the current star level based on the total number of shards.
+ * @param {number} totalShards - The total shards a champion has.
+ * @returns {string} The name of the star level.
+ */
+function getStarLevelFromShards(totalShards) {
+    for (const tier of SHARD_REQUIREMENTS_ORDERED) {
+        if (totalShards >= tier.shards) {
+            return tier.level;
+        }
+    }
+    return "Base Character";
 }
 
 /**
@@ -336,7 +359,6 @@ function navigateToStep(stepNum) {
     }
 }
 
-// === MODIFICATION START ===
 /**
  * Handles applying the community average star level recommendation.
  * @param {Event} event - The button click event.
@@ -379,7 +401,6 @@ function handleCommunityGuidance(event) {
         alert(`Community average data is not available for this champion yet.`);
     }
 }
-// === MODIFICATION END ===
 
 /**
  * Attaches all event listeners for the page.
@@ -432,10 +453,12 @@ function updateShardRequirementSummary() {
     const startValue = DOM.startStarLevel.value;
     const targetValue = DOM.targetStarLevel.value;
 
-    const startShards = startValue === '0_shards' ? 0 : SHARD_REQUIREMENTS[startValue] || 0;
-    const targetShards = SHARD_REQUIREMENTS[targetValue] || 0;
+    const findShards = (level) => (SHARD_REQUIREMENTS_ORDERED.find(t => t.level === level) || {}).shards || 0;
 
-    if (!targetValue || !SHARD_REQUIREMENTS[targetValue]) {
+    const startShards = startValue === '0_shards' ? 0 : findShards(startValue);
+    const targetShards = findShards(targetValue);
+
+    if (!targetValue || !targetShards) {
         DOM.shardRequirementSummary.classList.add('hidden');
         return;
     }
@@ -540,18 +563,25 @@ function handleCalculation() {
 function updateLiveProgressDisplay() {
     if (!liveProgressState || !initialCalculationInputs) return;
 
-    // Calculate remaining shards and estimated LMs to goal
+    // --- Calculations ---
     const shardsRemaining = Math.max(0, liveProgressState.shardsGoal - liveProgressState.shardsAcquired);
     const shardYield = initialCalculationInputs.lmShardsYield || 40;
     const estimatedLMsToGoal = shardYield > 0 ? Math.ceil(shardsRemaining / shardYield) : 0;
+    
+    // --- Shards & Star Level
+    const findShards = (level) => (SHARD_REQUIREMENTS_ORDERED.find(t => t.level === level) || {}).shards || 0;
+    const initialShards = initialCalculationInputs.startStarLevel === "0_shards" ? 0 : findShards(initialCalculationInputs.startStarLevel);
+    const totalCurrentShards = initialShards + liveProgressState.shardsAcquired;
+    const currentStarLevel = getStarLevelFromShards(totalCurrentShards);
 
-    // Update the UI
+    // --- UI Updates ---
     DOM.liveAnvilsSpent.textContent = liveProgressState.totalAnvilsSpent.toLocaleString();
     DOM.liveMythicPity.textContent = liveProgressState.currentMythicPity.toLocaleString();
     DOM.liveLMPity.textContent = liveProgressState.currentLMPity.toLocaleString();
     DOM.liveLmPulledTotal.textContent = liveProgressState.totalLMPulled.toLocaleString();
     DOM.liveShardsRemaining.textContent = shardsRemaining.toLocaleString();
     DOM.liveLmRemainingGoal.textContent = estimatedLMsToGoal.toLocaleString();
+    DOM.liveCurrentStarLevel.textContent = currentStarLevel;
 }
 
 /**
