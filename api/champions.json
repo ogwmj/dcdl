@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-07-18T12:44:13.615Z",
+  "updated_at": "2025-07-22T19:03:00.218Z",
   "champions": [
     {
       "name": "Atom",
@@ -130,8 +130,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Gold 2-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Catwoman-card.png",
+      "communityAverageLevel": "Gold 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Catwoman.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Catwoman"
     },
@@ -153,8 +153,8 @@
           "isUltimate": true
         }
       ],
-      "communityAverageLevel": "White 3-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/GatlingGirl-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/GatlingGirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Gatling%20Girl"
     },
@@ -240,8 +240,8 @@
           "isUltimate": true
         }
       ],
-      "communityAverageLevel": "White 3-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/GoodDayAK-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/GoodDayAK.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Good%20Day%20AK"
     },
@@ -392,7 +392,6 @@
       ],
       "isHealer": true,
       "baseRarity": "Limited Mythic",
-      "communityAverageLevel": "Blue 1-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Starfire-card.png",
       "skills": [
         {
@@ -445,6 +444,7 @@
           "name": "Empathic Perception"
         }
       ],
+      "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Starfire.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Starfire",
       "relatedChampions": [
@@ -516,8 +516,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Purple 5-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/WonderWoman-card.png",
+      "communityAverageLevel": "Gold 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/WonderWoman.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Wonder%20Woman"
     },
@@ -648,7 +648,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Supergirl-card.png",
-      "communityAverageLevel": "Purple 2-Star",
+      "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Supergirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Supergirl",
       "relatedChampions": [
@@ -718,8 +718,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Blue 1-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png",
+      "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/PoisonIvy.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Poison%20Ivy"
     },
@@ -740,8 +740,8 @@
           "isUltimate": true
         }
       ],
-      "communityAverageLevel": "White 3-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/ChopChop-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/ChopChop.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Chop%20Chop"
     },
@@ -805,7 +805,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Krypto-card.png",
-      "communityAverageLevel": "Blue 4-Star",
+      "communityAverageLevel": "Blue 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Krypto.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Krypto"
     },
@@ -827,8 +827,8 @@
           "isUltimate": true
         }
       ],
-      "communityAverageLevel": "White 2-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Patrolman-card.png",
+      "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Patrolman.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Patrolman"
     },
@@ -1095,8 +1095,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Blue 3-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Sinestro-card.png",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Sinestro.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Sinestro",
       "relatedChampions": [
@@ -1291,8 +1291,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Gold 1-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Mera-card.png",
+      "communityAverageLevel": "Gold 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Mera.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Mera"
     },
@@ -1422,8 +1422,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Gold 3-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/RedHood-card.png",
+      "communityAverageLevel": "Gold 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/RedHood.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Red%20Hood"
     },
@@ -1690,8 +1690,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Gold 1-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/CaptainCold-card.png",
+      "communityAverageLevel": "Gold 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/CaptainCold.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Captain%20Cold"
     },
@@ -2033,8 +2033,8 @@
           "description": "Bazooka Bro fires a rocket, dealing Physical DMG to enemies within range."
         }
       ],
-      "communityAverageLevel": "White 3-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BazookaBro-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BazookaBro.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Bazooka%20Bro"
     },
@@ -2237,8 +2237,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Blue 2-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Zatanna-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Zatanna.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Zatanna",
       "relatedChampions": [
@@ -2305,8 +2305,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "White 5-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/LexLuthor-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/LexLuthor.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Lex%20Luthor"
     },
@@ -2393,8 +2393,8 @@
           "isUltimate": true
         }
       ],
-      "communityAverageLevel": "White 2-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Homefun-card.png",
+      "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Homefun.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Homefun"
     },
@@ -2612,8 +2612,8 @@
           ]
         }
       ],
-      "communityAverageLevel": "White 3-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BigBoy-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BigBoy.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Big%20Boy"
     },
@@ -2626,7 +2626,6 @@
         "Superman Family",
         "Metahuman"
       ],
-      "communityAverageLevel": "Unlocked",
       "skills": [
         {
           "name": "Chill",
@@ -2677,6 +2676,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Superboy-card.png",
+      "communityAverageLevel": "White 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Superboy.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Superboy",
       "relatedChampions": [
@@ -2703,8 +2703,8 @@
           "isUltimate": true
         }
       ],
-      "communityAverageLevel": "White 3-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Crossbar-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Crossbar.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Crossbar"
     },
@@ -2850,8 +2850,8 @@
           "name": "YEE-HA!"
         }
       ],
-      "communityAverageLevel": "White 3-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BangBang-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BangBang.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Bang%20Bang"
     },
@@ -3148,8 +3148,8 @@
           "isUltimate": true
         }
       ],
-      "communityAverageLevel": "White 3-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/ShieldSquad-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/ShieldSquad.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Shield%20Squad"
     },
@@ -3212,8 +3212,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "White 5-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TheFlash-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TheFlash.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=The%20Flash"
     },
@@ -3276,8 +3276,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Blue 2-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Nightwing-card.png",
+      "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Nightwing.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Nightwing",
       "relatedChampions": [
