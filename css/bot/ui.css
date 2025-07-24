@@ -1,0 +1,123 @@
+/**
+ * @file css/bot/ui.css
+ * @description Styles for the Bot page
+ * @version 1.0.0
+ */
+
+/* Main call-to-action button */
+.install-bot-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 2.5rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #fff;
+    background-color: #5865F2; /* Discord Blurple */
+    border: none;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4);
+}
+
+.install-bot-btn:hover {
+    transform: translateY(-3px);
+    background-color: #4f5bcf;
+    box-shadow: 0 8px 25px rgba(88, 101, 242, 0.5);
+}
+
+/* General content container */
+.page-content {
+    background-color: rgba(17, 24, 39, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 1rem;
+    padding: 2rem;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+@media (min-width: 768px) {
+    .page-content {
+        padding: 3rem;
+    }
+}
+
+/* Command Card Layout */
+.command-card {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: center;
+}
+
+@media (min-width: 1024px) {
+    .command-card {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4rem;
+    }
+    /* Alternate layout for variety */
+    .command-card.alt-layout .command-text-content {
+        order: 2;
+    }
+    .command-card.alt-layout .command-image-content {
+        order: 1;
+    }
+}
+
+.command-title {
+    font-family: 'Russo One', sans-serif;
+    font-size: 2.5rem;
+    color: #e2e8f0;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+    text-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+}
+
+.command-description {
+    color: #b0c4de; /* A lighter, more readable blue-gray */
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+}
+
+.command-image {
+    width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+    border: 2px solid rgba(59, 130, 246, 0.5);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.command-image:hover {
+    transform: scale(1.03);
+    box-shadow: 0 15px 40px rgba(59, 130, 246, 0.3);
+}
+
+.command-example {
+    background-color: #0d1226;
+    border-radius: 0.5rem;
+    padding: 1rem 1.5rem;
+    border-left: 4px solid #3b82f6;
+}
+
+.command-example pre {
+    margin: 0;
+}
+
+.command-example code {
+    font-family: 'Courier New', Courier, monospace;
+    color: #a7f3d0;
+    font-size: 1.1rem;
+    background: none;
+    padding: 0;
+}
+
+.inline-code {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: rgba(59, 130, 246, 0.2);
+    color: #bfdbfe;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.95em;
+}

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Primary SEO Meta Tags -->
+    <title>DC: Dark Legion - Hypertime Tracker Discord Bot</title>
+    <meta name="description" content="Supercharge your DC: Dark Legion strategy with the Hypertime Tracker Discord bot. Track champion schedules, look up hero stats, and sync your team builds directly from Discord.">
+    <meta name="keywords" content="DC: Dark Legion, DC Dark Legion bot, Discord bot, Hypertime Tracker, game strategy, team builder, champion stats, bleed schedule, superhero game">
+    <link rel="canonical" href="https://dcdl-companion.com/bot.html">
+
+    <!-- Open Graph / Facebook / Discord -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://dcdl-companion.com/bot.html">
+    <meta property="og:title" content="DC: Dark Legion - Hypertime Tracker Discord Bot">
+    <meta property="og:description" content="Track schedules, look up stats, and sync your teams directly from Discord.">
+    <meta property="og:image" content="https://dcdl-companion.com/img/bot/teams.png">
+    <meta property="og:site_name" content="DC:DL Companion Tools">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://dcdl-companion.com/bot.html">
+    <meta property="twitter:title" content="DC: Dark Legion - Hypertime Tracker Discord Bot">
+    <meta property="twitter:description" content="Track schedules, look up stats, and sync your teams directly from Discord.">
+    <meta property="twitter:image" content="https://dcdl-companion.com/img/bot/teams.png">
+    
+    <!-- Styling and Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Russo+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <link href="/css/theme.css" rel="stylesheet">
+    <link href="/css/bot/ui.css" rel="stylesheet">
+    
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- JSON-LD Structured Data for Rich Snippets -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Hypertime Tracker Bot",
+      "applicationCategory": "GameTool",
+      "operatingSystem": "Discord",
+      "description": "Unleash the full power of your DC: Dark Legion strategy with the Hypertime Tracker bot! Stay ahead of the competition by tracking the champion rotation schedule, mastering any hero with detailed stats, and securely linking your companion website account to view your saved team compositions.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "screenshot": [
+        "https://dcdl-companion.com/img/bot/schedule.png",
+        "https://dcdl-companion.com/img/bot/champion.png",
+        "https://dcdl-companion.com/img/bot/teams.png"
+      ]
+    }
+    </script>
+</head>
+<body class="text-gray-200">
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="ogwmj" data-description="Support me on Buy me a coffee!" data-message="" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+    <notification-center></notification-center>
+    <auth-ui status-container-id="auth-status-desktop"></auth-ui>
+    <feedback-widget></feedback-widget>
+    <div class="background-hero"></div>
+    <navigation-widget></navigation-widget>
+    
+    <main class="relative z-10 max-w-7xl mx-auto p-4 md:p-8">
+        <header class="py-8 md:py-12 text-center">
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-4 glowing-text text-white">Hypertime Tracker Bot</h1>
+            <p class="text-xl md:text-2xl text-blue-200 max-w-4xl mx-auto">Unleash the full power of your DC: Dark Legion strategy. Add the Hypertime Tracker to your server today and bring your strategic command to a whole new level!</p>
+            <div class="mt-8">
+                <a href="https://discord.com/discovery/applications/1385296946142380104" target="_blank" rel="noopener noreferrer" class="install-bot-btn">
+                    <i class="fab fa-discord mr-3"></i>
+                    Add Hypertime Tracker to Discord
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Page Section -->
+        <div class="page-content space-y-16">
+            
+            <!-- /schedule command -->
+            <section id="schedule-feature" class="command-card">
+                <div class="command-text-content">
+                    <h2 class="command-title">Track the Bleed</h2>
+                    <p class="command-description">Stay ahead of the competition by tracking the champion rotation schedule right in your server. Never miss a limited-time Mythic hero again.</p>
+                    <div class="command-example">
+                        <pre><code class="language-bash">/schedule</code></pre>
+                    </div>
+                </div>
+                <div class="command-image-content">
+                    <img src="img/bot/schedule.png" alt="Screenshot of the /schedule command" class="command-image">
+                </div>
+            </section>
+            
+            <!-- /champion command -->
+            <section id="champion-feature" class="command-card alt-layout">
+                <div class="command-text-content">
+                    <h2 class="command-title">Master Any Hero</h2>
+                    <p class="command-description">Instantly pull up detailed stats, skills, and community average evolution for any champion. Get the intel you need to build the perfect counter.</p>
+                    <div class="command-example">
+                        <pre><code class="language-bash">/champion name: The Flash</code></pre>
+                    </div>
+                </div>
+                <div class="command-image-content">
+                    <img src="img/bot/champion.png" alt="Screenshot of the /champion command" class="command-image">
+                </div>
+            </section>
+
+            <!-- /teams command -->
+            <section id="teams-feature" class="command-card">
+                <div class="command-text-content">
+                    <h2 class="command-title">Sync Your Squads</h2>
+                    <p class="command-description">The standout feature! Securely link your companion website account with <code class="inline-code">/login</code>, giving you direct access to your saved team compositions—complete with scores, active synergies, and custom-generated team images.</p>
+                    <div class="command-example">
+                        <pre><code class="language-bash">/teams</code></pre>
+                    </div>
+                </div>
+                <div class="command-image-content">
+                    <img src="img/bot/teams.png" alt="Screenshot of the /teams command" class="command-image">
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="relative z-10 text-gray-500 text-sm py-8 text-center">
+        <p class="mt-2">DC: Dark Legion 2025 DC. Software code 2025 FunPlus International AG. DC LOGO and all related characters and elements &copy; &amp; &trade; DC.</p>
+        <p class="mt-2">Proud DC: Dark Legion Content Creator.</p>
+        <p class="mt-4"><a href="/api/index.html" class="text-blue-400 hover:text-blue-300 underline">API Documentation</a></p>
+    </footer>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+
+    <script type="module" src="/js/bot/ui.js"></script>
+    <script type="module" src="/js/auth-ui.js"></script>
+    <script type="module" src="/js/feedback-widget.js"></script>
+    <script type="text/javascript" src="/js/navigation-widget.js"></script>
+</body>
+</html>
