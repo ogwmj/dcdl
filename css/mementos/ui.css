@@ -1,0 +1,183 @@
+/**
+ * @file css/mementos/ui.css
+ * @description Styles for The Monitor's Mementos page
+ * @version 1.1.0
+ */
+
+/* --- Page-specific Layout --- */
+.comics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.5rem;
+    max-width: 1200px; /* Prevents grid from becoming too wide */
+    margin: 0 auto; /* Center the grid */
+}
+
+@media (min-width: 768px) {
+    .comics-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 2rem;
+    }
+}
+
+.comics-section-title {
+    font-family: 'Russo One', sans-serif;
+    font-size: 2rem;
+    color: #bfdbfe;
+    text-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+}
+
+/* --- Comic Card Styling --- */
+.comic-card {
+    display: block; /* Change to block for the anchor tag */
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-decoration: none; /* Remove underline from anchor */
+}
+
+.comic-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.comic-cover-wrapper {
+    position: relative;
+    margin-bottom: 0.75rem;
+}
+
+.comic-cover {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.limited-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: #ef4444; /* Red */
+    color: white;
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    transform: rotate(15deg);
+    box-shadow: 0 2px 5px rgba(239, 68, 68, 0.5);
+}
+
+.comic-title {
+    font-weight: 600;
+    color: #e2e8f0;
+    line-height: 1.3;
+}
+
+/* --- Mementos Detail View --- */
+#memento-detail-header {
+    margin-bottom: 2rem;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    background-color: rgba(59, 130, 246, 0.2);
+    color: #bfdbfe;
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.back-link:hover {
+    background-color: rgba(59, 130, 246, 0.4);
+    color: #fff;
+}
+
+#memento-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    #memento-detail-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 2rem;
+    }
+}
+
+/* --- Memento Card (in Detail View) --- */
+.memento-card {
+    background-color: rgba(17, 24, 39, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    text-align: center;
+    border: 1px solid;
+    border-color: rgba(59, 130, 246, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.memento-image {
+    width: 100%;
+    max-width: 150px;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+}
+
+.memento-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #e2e8f0;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+}
+
+.memento-tier-na {
+    color: #64748b;
+    font-style: italic;
+}
+
+/* --- Memento Star Rating Styles --- */
+.memento-stars {
+    display: flex;
+    justify-content: center;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.star-icon {
+    color: #475569; /* Default empty star color */
+    transition: color 0.2s;
+    margin: 0 2px;
+}
+
+.star-icon.active {
+    text-shadow: 0 0 6px currentColor;
+}
+
+/* Tier-specific colors for active stars */
+.tier-gold .star-icon.active { color: #f59e0b; }
+.tier-red .star-icon.active { color: #ef4444; }
+.tier-purple .star-icon.active { color: #8b5cf6; }
+.tier-blue .star-icon.active { color: #3b82f6; }
+.tier-green .star-icon.active { color: #10b981; }
+.tier-white .star-icon.active { color: #e2e8f0; }
+.tier-unlocked .star-icon { color: #475569; }
+
+.hidden {
+    display: none !important;
+}
+
