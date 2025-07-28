@@ -168,11 +168,7 @@ async function fetchAndPopulateChampions() {
                 const imgSrc = `img/champions/avatars/${sanitizedName}.webp`;
 
                 optionEl.dataset.value = doc.id;
-                
-                // === MODIFICATION START ===
-                // Store the community average level on the element itself for easy access.
                 optionEl.dataset.communityLevel = champ.communityAverageLevel || 'not set';
-                // === MODIFICATION END ===
 
                 optionEl.innerHTML = `
                     <div class="flex items-center">
@@ -392,7 +388,6 @@ function handleCommunityGuidance(event) {
         }
         DOM.toggleUnlockCost.checked = true;
         
-        // Use the notification center to provide feedback
         document.dispatchEvent(new CustomEvent('show-notification', {
             detail: { message: 'Community average level applied.', type: 'success' }
         }));
@@ -427,7 +422,6 @@ function attachEventListeners() {
         const selectedValue = DOM.lmChampionSelect.value;
         const selectedOptionEl = DOM.customDropdownOptions.querySelector(`li[data-value="${selectedValue}"]`);
 
-        // Show the guidance button if the community level is set
         if (selectedOptionEl && selectedOptionEl.dataset.communityLevel && selectedOptionEl.dataset.communityLevel !== 'not set') {
             DOM.guidanceButtons.classList.remove('hidden');
         } else {
@@ -435,7 +429,6 @@ function attachEventListeners() {
         }
     });
     
-    // Replaced the old listeners with the new one.
     if(DOM.applyCommunityAvgBtn) {
         DOM.applyCommunityAvgBtn.addEventListener('click', handleCommunityGuidance);
     }
@@ -585,11 +578,6 @@ function updateLiveProgressDisplay() {
 }
 
 /**
- * Handles the logic when a user logs their pulls.
- */
-// In ui.js, replace the entire handlePullLogging function with this one
-
-/**
  * Handles the logic when a user logs their pulls, allowing for multiple mythic types.
  */
 function handlePullLogging() {
@@ -604,21 +592,17 @@ function handlePullLogging() {
 
     const totalMythicsPulled = lmsPulled + otherMythicsPulled;
 
-    // --- Update State ---
     liveProgressState.totalAnvilsSpent += pullsMade;
 
     if (totalMythicsPulled > 0) {
-        // Pity resets completely since at least one mythic was pulled in the batch.
         liveProgressState.currentMythicPity = 0;
 
-        // Process other mythics first, as they build the LM pity streak.
         for (let i = 0; i < otherMythicsPulled; i++) {
             liveProgressState.currentLMPity++;
         }
 
-        // Process LMs, which resets the LM pity streak.
         for (let i = 0; i < lmsPulled; i++) {
-            liveProgressState.currentLMPity = 0; // Streak resets
+            liveProgressState.currentLMPity = 0;
             liveProgressState.totalLMPulled++;
             if (!liveProgressState.isUnlocked) {
                 liveProgressState.isUnlocked = true;
@@ -627,11 +611,9 @@ function handlePullLogging() {
             }
         }
     } else {
-        // No mythics, so we just add to the pity counter.
         liveProgressState.currentMythicPity += pullsMade;
     }
 
-    // Reset logging form for the next entry
     DOM.pullsMadeInput.value = "10";
     DOM.lmPulledCountInput.value = "0";
     DOM.otherMythicCountInput.value = "0";
@@ -643,26 +625,21 @@ function handlePullLogging() {
  * Recalculates projections based on the current live state.
  */
 function recalculateProjections() {
-    // Determine remaining shards needed
     const remainingShards = Math.max(0, liveProgressState.shardsGoal - liveProgressState.shardsAcquired);
     const remainingBudget = Math.max(0, initialCalculationInputs.anvilBudget - liveProgressState.totalAnvilsSpent);
 
-    // Create a new set of inputs for the calculation functions
     const updatedInputs = {
-        ...initialCalculationInputs, // Use original settings (rates, pity, etc.)
+        ...initialCalculationInputs,
         shardsNeededForUpgrade: remainingShards,
         anvilBudget: remainingBudget,
         currentMythicPity: liveProgressState.currentMythicPity,
         currentLMPity: liveProgressState.currentLMPity,
-        // If the character is now unlocked, we no longer include that cost.
         toggleUnlockCost: !liveProgressState.isUnlocked, 
     };
 
-    // Run the calculations with the updated state
     const evResults = calculateExpectedValue(updatedInputs);
     const simResults = runProbabilitySimulation(updatedInputs);
 
-    // Redisplay the results and update the progress display
     displayResults(updatedInputs, evResults, simResults);
     updateLiveProgressDisplay();
 }

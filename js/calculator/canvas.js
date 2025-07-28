@@ -7,12 +7,7 @@
 // --- CHART INSTANCES ---
 let probabilityChart = null;
 let monteCarloChart = null;
-// Chart.js Annotation plugin needs to be registered if it's used. Let's assume it's loaded.
-// Since it's not imported, we check for its existence before registering.
-if (Chart.register) {
-    // This assumes chartjs-plugin-annotation is loaded via a script tag.
-    // If it's a modular project, it would be imported.
-}
+if (Chart.register) {}
 
 
 // --- UTILITY FUNCTIONS ---
@@ -145,9 +140,8 @@ export function drawMonteCarloChart(canvasId, simulationResult) {
             datasets: [{
                 label: 'Simulation Run Cost',
                 data: sampledData,
-                // UPDATED COLORS FOR BETTER VISIBILITY
-                borderColor: 'rgba(148, 163, 184, 0.6)',    // Brighter Slate-400
-                backgroundColor: 'rgba(148, 163, 184, 0.1)', // Very subtle fill color
+                borderColor: 'rgba(148, 163, 184, 0.6)',
+                backgroundColor: 'rgba(148, 163, 184, 0.1)',
                 borderWidth: 1.5,
                 pointRadius: 2,
                 pointHoverRadius: 5,

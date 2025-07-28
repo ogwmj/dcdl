@@ -74,7 +74,6 @@ async function handleProfileUpdate(e) {
     let passwordUpdated = false;
     let errorOccurred = false;
 
-    // Task 1: Update Username if it has changed
     if (newUsername && newUsername !== DOM.usernameDisplay.textContent) {
         try {
             const userProfileRef = doc(db, "artifacts", appId, "users", user.uid);
@@ -88,7 +87,6 @@ async function handleProfileUpdate(e) {
         }
     }
 
-    // Task 2: Update Password if password fields are filled
     if (newPassword && !errorOccurred) {
         const confirmPassword = DOM.confirmPasswordInput.value;
         if (!currentPassword) {
@@ -116,7 +114,6 @@ async function handleProfileUpdate(e) {
         }
     }
     
-    // Final Notification Logic
     if (!errorOccurred) {
         if (usernameUpdated && passwordUpdated) {
             showNotification("Profile and password updated successfully!", "success");
@@ -133,7 +130,6 @@ async function handleProfileUpdate(e) {
         }
     }
 
-    // Reset UI state
     DOM.updateBtnText.classList.remove('hidden');
     DOM.updateSpinner.classList.add('hidden');
     e.target.querySelector('button[type="submit"]').disabled = false;
@@ -149,12 +145,12 @@ function handleLogoSelection(event) {
 
     if (!file.type.startsWith('image/')) {
         showNotification('Please select an image file (PNG, JPG, GIF).', 'error');
-        event.target.value = ''; // Reset the input
+        event.target.value = '';
         return;
     }
-    if (file.size > 1 * 1024 * 1024) { // 1MB size limit
+    if (file.size > 1 * 1024 * 1024) {
         showNotification('Image size must be less than 1MB.', 'error');
-        event.target.value = ''; // Reset the input
+        event.target.value = '';
         return;
     }
 
@@ -183,16 +179,13 @@ async function handleCreatorProfileUpdate(e) {
         const isNewLogo = logoUrl.startsWith('data:image');
 
         if (isNewLogo) {
-            // A new logo was selected. Upload it to the *temporary* path to be moderated.
             const tempStoragePath = `temp_uploads/${user.uid}/logo.png`;
             const storageRef = ref(storage, tempStoragePath);
             const base64String = logoUrl.split(',')[1];
             
             await uploadString(storageRef, base64String, 'base64');
-            // The Cloud Function will handle moving it and updating Firestore.
         }
 
-        // Save the other text-based profile info immediately.
         const creatorProfileData = {
             description: DOM.creatorDescriptionInput.value.trim(),
             socials: {
@@ -210,7 +203,6 @@ async function handleCreatorProfileUpdate(e) {
         });
 
         const userProfileRef = doc(db, "artifacts", appId, "users", user.uid);
-        // Note: We are NOT saving the logo URL here anymore.
         await setDoc(userProfileRef, { creatorProfile: creatorProfileData }, { merge: true });
 
         showNotification("Profile info saved! Your new logo is being processed and will appear shortly.", "success");
@@ -253,7 +245,7 @@ function populateCreatorForm(creatorProfile) {
  */
 function renderRoleBadges(roles = []) {
     if (!DOM.userRolesContainer) return;
-    DOM.userRolesContainer.innerHTML = ''; // Clear existing badges
+    DOM.userRolesContainer.innerHTML = '';
 
     if (roles && roles.length > 0) {
         roles.forEach(role => {
@@ -377,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const app = getApp();
             auth = getAuth(app);
             db = getFirestore(app);
-            storage = getStorage(app); // Initialize Cloud Storage
+            storage = getStorage(app);
 
             if (DOM.profileUpdateForm) {
                 DOM.profileUpdateForm.addEventListener('submit', handleProfileUpdate);
