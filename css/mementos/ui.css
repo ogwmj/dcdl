@@ -147,17 +147,26 @@
 .memento-stars.tier-red .star-icon.active { color: #ef4444; }
 .memento-stars.tier-unlocked .star-icon.active { color: #475569; }
 
-/* Memento Collection Counter Styles */
-.memento-counter {
+/* Memento Collection Counter & Wishlist Styles */
+.memento-actions-wrapper {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
+    justify-content: space-between;
+    gap: 1rem;
     margin-top: 1rem;
     width: 100%;
     background-color: #1e293b; /* slate-800 */
     border-radius: 0.5rem;
     padding: 0.25rem;
+}
+
+
+.memento-counter {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-grow: 1;
+    justify-content: center;
 }
 
 .counter-btn {
@@ -181,13 +190,34 @@
     cursor: not-allowed;
 }
 
-.counter-value {
+.counter-display {
     font-size: 1.125rem;
     font-weight: 700;
     color: #bfdbfe;
     min-width: 1.5rem;
     text-align: center;
 }
+
+.wishlist-btn {
+    background: none;
+    border: none;
+    color: #64748b; /* slate-500 */
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+.wishlist-btn:hover:not(:disabled) {
+    transform: scale(1.1);
+}
+.wishlist-btn.active {
+    color: #f59e0b; /* gold-500 */
+}
+.wishlist-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 
 /* NEW: Creator Card styles for mementos.html */
 .creator-card-memento {
@@ -253,4 +283,3 @@
     color: #fff;
     transform: translateY(-2px) scale(1.1);
 }
-

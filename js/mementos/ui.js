@@ -1,12 +1,12 @@
 /**
  * @file js/mementos/ui.js
  * @fileoverview Handles UI interactions for The Monitor's Mementos page.
- * @version 1.2.4 - Added featured creator display with minimal impact to existing logic.
+ * @version 1.3.0 - Added wishlist functionality.
  */
 
 import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, collection, getDocs, query, orderBy, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, query, orderBy, doc, getDoc, setDoc, updateDoc, deleteField } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
 // #region --- GLOBAL VARIABLES & CONFIG ---
@@ -14,14 +14,11 @@ import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.6.
 let db, auth, analytics, userId;
 const comicDataCache = new Map();
 let userCollection = new Map(); // Stores user's memento counts { mementoId: count }
+let userWishlist = []; // Stores user's wishlist [mementoId, mementoId]
 const APP_ID = 'dc-dark-legion-builder';
 
 // Public Usernames of Creators to feature on this page.
-// These usernames correspond to document IDs in the 'public_creator_profiles' collection.
-const FEATURED_CREATOR_PUBLIC_IDS = [
-    'ogwmj',
-    'Tyvokka',
-];
+const FEATURED_CREATOR_PUBLIC_IDS = ['ogwmj', 'Tyvokka'];
 
 // #endregion
 
@@ -37,7 +34,7 @@ const DOM = {
     limitedComicsContainer: document.getElementById('limited-comics-container'),
     standardComicsContainer: document.getElementById('standard-comics-container'),
     mementoDetailGrid: document.getElementById('memento-detail-grid'),
-    featuredCreatorsContainer: document.getElementById('featured-creators-container'), // New: Reference for the creators section
+    featuredCreatorsContainer: document.getElementById('featured-creators-container'),
 };
 
 // #endregion
@@ -76,7 +73,6 @@ function resetHeader() {
     DOM.pageTitle.textContent = "Monitor's Mementos";
     DOM.pageDescription.textContent = "A complete collection of comic book mementos.";
     DOM.mainHeader.classList.remove('text-left');
-    // Ensure featured creators are visible when returning to the main comic list view
     if (DOM.featuredCreatorsContainer && DOM.featuredCreatorsContainer.parentElement) {
         DOM.featuredCreatorsContainer.parentElement.classList.remove('hidden');
     }
@@ -85,7 +81,6 @@ function resetHeader() {
 function switchView(viewName) {
     DOM.comicsView.classList.toggle('hidden', viewName !== 'comics');
     DOM.mementosView.classList.toggle('hidden', viewName !== 'mementos');
-    // Hide featured creators section when on memento detail view
     if (DOM.featuredCreatorsContainer && DOM.featuredCreatorsContainer.parentElement) {
         DOM.featuredCreatorsContainer.parentElement.classList.toggle('hidden', viewName === 'mementos');
     }
@@ -115,26 +110,16 @@ function displayComicsView(comics) {
     DOM.standardComicsContainer.innerHTML = '';
     const limitedComics = comics.filter(c => c.isLimited).sort((a, b) => a.sortOrder - b.sortOrder);
     const standardComics = comics.filter(c => !c.isLimited).sort((a, b) => a.sortOrder - b.sortOrder);
-    if (limitedComics.length > 0) {
-        limitedComics.forEach(comic => DOM.limitedComicsContainer.appendChild(createComicCardLink(comic)));
-    } else {
-        DOM.limitedComicsContainer.innerHTML = '<p class="text-slate-400 col-span-full">No limited edition mementos found.</p>';
-    }
-    if (standardComics.length > 0) {
-        standardComics.forEach(comic => DOM.standardComicsContainer.appendChild(createComicCardLink(comic)));
-    } else {
-        DOM.standardComicsContainer.innerHTML = '<p class="text-slate-400 col-span-full">No standard issue mementos found.</p>';
-    }
+    limitedComics.forEach(comic => DOM.limitedComicsContainer.appendChild(createComicCardLink(comic)));
+    standardComics.forEach(comic => DOM.standardComicsContainer.appendChild(createComicCardLink(comic)));
     switchView('comics');
     hideLoader();
-
-    // Load featured creators only when on the main comics view
     displayFeaturedCreators(FEATURED_CREATOR_PUBLIC_IDS);
 }
 
 function displayMementosView(comic, mementos) {
     DOM.pageTitle.textContent = comic.title;
-    DOM.pageDescription.textContent = userId ? "Track your collection below." : "Log in to track your collection.";
+    DOM.pageDescription.textContent = userId ? "Track your collection and wishlist below." : "Log in to track your collection.";
     DOM.mainHeader.classList.add('text-left');
     DOM.mementoDetailGrid.innerHTML = '';
     const formattedComicTitle = formatTitleForImage(comic.title);
@@ -146,13 +131,19 @@ function displayMementosView(comic, mementos) {
         mementoEl.className = 'memento-card';
         mementoEl.id = `memento-${memento.id}`;
         
-        let counterHtml = '';
+        let actionsHtml = '';
         if (userId) {
-            counterHtml = `
-                <div class="memento-counter">
-                    <button class="counter-btn" data-action="decrement" data-memento-id="${memento.id}">-</button>
-                    <span class="counter-display" id="count-${memento.id}">0</span>
-                    <button class="counter-btn" data-action="increment" data-memento-id="${memento.id}">+</button>
+            const isWishlisted = userWishlist.includes(memento.id);
+            actionsHtml = `
+                <div class="memento-actions-wrapper">
+                    <div class="memento-counter">
+                        <button class="counter-btn" data-action="decrement" data-memento-id="${memento.id}">-</button>
+                        <span class="counter-display" id="count-${memento.id}">0</span>
+                        <button class="counter-btn" data-action="increment" data-memento-id="${memento.id}">+</button>
+                    </div>
+                    <button class="wishlist-btn ${isWishlisted ? 'active' : ''}" data-action="wishlist" data-memento-id="${memento.id}" title="Toggle Wishlist">
+                        <i class="fas fa-star"></i>
+                    </button>
                 </div>`;
         }
 
@@ -160,7 +151,7 @@ function displayMementosView(comic, mementos) {
             <img src="${mementoImageUrl}" alt="${memento.name}" class="memento-image" loading="lazy">
             <div class="memento-name mt-2">${memento.name}</div>
             ${tierHtml}
-            ${counterHtml}
+            ${actionsHtml}
         `;
         DOM.mementoDetailGrid.appendChild(mementoEl);
     });
@@ -177,9 +168,16 @@ function updateMementosUIWithUserData() {
         const display = card.querySelector(`#count-${mementoId}`);
         if (display) {
             display.textContent = count;
+            const decrementBtn = card.querySelector('[data-action="decrement"]');
+            if(decrementBtn) decrementBtn.disabled = count === 0;
         }
         card.classList.toggle('is-owned', count > 0);
         card.classList.toggle('has-duplicates', count > 1);
+
+        const wishlistBtn = card.querySelector('.wishlist-btn');
+        if (wishlistBtn) {
+            wishlistBtn.classList.toggle('active', userWishlist.includes(mementoId));
+        }
     });
 }
 
@@ -189,14 +187,8 @@ function hideLoader() {
     }
 }
 
-/**
- * Generates HTML for a single featured creator card.
- * @param {Object} creatorData - Public creator profile data.
- * @returns {string} HTML string for the creator card.
- */
 function generateMementoCreatorCardHtml(creatorData) {
     const socials = creatorData.socials || {};
-
     const socialLinks = [
         { key: 'discord', icon: 'fab fa-discord', url: socials.discord },
         { key: 'youtube', icon: 'fab fa-youtube', url: socials.youtube },
@@ -205,36 +197,15 @@ function generateMementoCreatorCardHtml(creatorData) {
         { key: 'tiktok', icon: 'fab fa-tiktok', url: socials.tiktok },
         { key: 'instagram', icon: 'fab fa-instagram', url: socials.instagram }
     ];
-
-    const socialsHtml = socialLinks
-        .filter(link => link.url)
-        .map(link => `<a href="${link.url}" target="_blank" rel="noopener noreferrer" title="${link.key.charAt(0).toUpperCase() + link.key.slice(1)}"><i class="${link.icon}"></i></a>`)
-        .join('');
-
+    const socialsHtml = socialLinks.filter(link => link.url).map(link => `<a href="${link.url}" target="_blank" rel="noopener noreferrer" title="${link.key.charAt(0).toUpperCase() + link.key.slice(1)}"><i class="${link.icon}"></i></a>`).join('');
     const logoUrl = creatorData.logo || '/img/champions/avatars/dc_logo.webp';
-
-    return `
-        <div class="creator-card-memento">
-            <img src="${logoUrl}" alt="${creatorData.username || 'Creator'} Logo" class="creator-logo-memento" onerror="this.onerror=null;this.src='/img/champions/avatars/dc_logo.webp';">
-            <h3 class="creator-username-memento">${creatorData.username || 'Anonymous'}</h3>
-            ${creatorData.description ? `<p class="creator-description-memento">${creatorData.description}</p>` : ''}
-            ${socialsHtml ? `<div class="creator-socials-memento">${socialsHtml}</div>` : ''}
-        </div>
-    `;
+    return `<div class="creator-card-memento"><img src="${logoUrl}" alt="${creatorData.username || 'Creator'} Logo" class="creator-logo-memento" onerror="this.onerror=null;this.src='/img/champions/avatars/dc_logo.webp';"><h3 class="creator-username-memento">${creatorData.username || 'Anonymous'}</h3>${creatorData.description ? `<p class="creator-description-memento">${creatorData.description}</p>` : ''}${socialsHtml ? `<div class="creator-socials-memento">${socialsHtml}</div>` : ''}</div>`;
 }
 
-/**
- * Fetches and displays featured creator profiles in the Community Spotlight section.
- * @param {string[]} creatorPublicIds - An array of public usernames (IDs) of creators to display.
- */
 async function displayFeaturedCreators(creatorPublicIds) {
     if (!DOM.featuredCreatorsContainer) return;
-
-    // Set initial loading message
     DOM.featuredCreatorsContainer.innerHTML = '<p class="text-center text-slate-400 col-span-full">Loading featured creators...</p>';
-
     const profiles = await fetchPublicCreatorProfiles(creatorPublicIds);
-
     if (profiles.length === 0) {
         DOM.featuredCreatorsContainer.innerHTML = '<p class="text-center text-slate-400 col-span-full">No featured creators to display at this time.</p>';
     } else {
@@ -258,9 +229,7 @@ function initFirebaseServices() {
 }
 
 async function fetchAllComics() {
-    if (comicDataCache.size > 0) {
-        return Array.from(comicDataCache.values());
-    }
+    if (comicDataCache.size > 0) return Array.from(comicDataCache.values());
     try {
         const comicsColRef = collection(db, `/artifacts/${APP_ID}/public/data/mementoComics`);
         const q = query(comicsColRef, orderBy('sortOrder', 'asc'));
@@ -293,19 +262,24 @@ async function fetchMementosForComic(comicId) {
 async function fetchUserCollection() {
     if (!userId || !db) {
         userCollection.clear();
+        userWishlist = [];
         return;
     };
     try {
         const docRef = doc(db, `artifacts/${APP_ID}/users/${userId}/mementos/collection`);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-            userCollection = new Map(Object.entries(docSnap.data().mementos || {}));
+            const data = docSnap.data();
+            userCollection = new Map(Object.entries(data.mementos || {}));
+            userWishlist = data.wishlist || [];
         } else {
             userCollection.clear();
+            userWishlist = [];
         }
     } catch (error) {
         console.error("Error fetching user memento collection:", error);
         userCollection.clear();
+        userWishlist = [];
     }
 }
 
@@ -316,18 +290,22 @@ async function updateUserCollection(mementoId, newCount) {
     const fieldPath = `mementos.${mementoId}`;
 
     userCollection.set(mementoId, newCount);
-    updateMementosUIWithUserData(); // Update UI immediately for responsiveness
+    updateMementosUIWithUserData();
 
     try {
-        // First try to update an existing document.
-        await updateDoc(docRef, { [fieldPath]: newCount });
+        if (newCount > 0) {
+            await updateDoc(docRef, { [fieldPath]: newCount });
+        } else {
+            await updateDoc(docRef, { [fieldPath]: deleteField() });
+        }
     } catch (error) {
-        // If the document or field doesn't exist, this will fail. Use setDoc with merge to create it.
         if (error.code === 'not-found' || error.message.includes('No document to update')) {
-            try {
-                 await setDoc(docRef, { mementos: { [mementoId]: newCount } }, { merge: true });
-            } catch (e) {
-                 console.error("Error creating/merging user collection document:", e);
+            if (newCount > 0) {
+                try {
+                    await setDoc(docRef, { mementos: { [mementoId]: newCount } }, { merge: true });
+                } catch (e) {
+                    console.error("Error creating/merging user collection document:", e);
+                }
             }
         } else {
             console.error("Error updating user collection:", error);
@@ -335,11 +313,17 @@ async function updateUserCollection(mementoId, newCount) {
     }
 }
 
-/**
- * Fetches public creator profiles based on an array of public usernames.
- * @param {string[]} publicIds - Array of creator usernames (public IDs) to fetch.
- * @returns {Promise<Array<Object>>} A promise that resolves to an array of public creator data.
- */
+async function updateUserWishlist() {
+    if (!userId) return;
+    const docRef = doc(db, `artifacts/${APP_ID}/users/${userId}/mementos/collection`);
+    try {
+        await setDoc(docRef, { wishlist: userWishlist }, { merge: true });
+    } catch (error) {
+        console.error("Error updating wishlist:", error);
+        document.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'Failed to update wishlist.', type: 'error' } }));
+    }
+}
+
 async function fetchPublicCreatorProfiles(publicIds) {
     if (!db || !publicIds || publicIds.length === 0) return [];
     const profiles = [];
@@ -349,8 +333,6 @@ async function fetchPublicCreatorProfiles(publicIds) {
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
                 profiles.push({ id: docSnap.id, ...docSnap.data() });
-            } else {
-                console.warn(`Public profile for creator '${username}' not found.`);
             }
         }
     } catch (error) {
@@ -363,25 +345,34 @@ async function fetchPublicCreatorProfiles(publicIds) {
 
 // #region --- EVENT LISTENERS & INITIALIZATION ---
 
-function handleCounterClick(event) {
-    const target = event.target.closest('.counter-btn');
-    if (!target || !userId) return;
+function handleActionsClick(event) {
+    const button = event.target.closest('button');
+    if (!button || !userId) return;
 
-    const action = target.dataset.action;
-    const mementoId = target.dataset.mementoId;
-    const currentCount = userCollection.get(mementoId) || 0;
+    const action = button.dataset.action;
+    const mementoId = button.dataset.mementoId;
 
-    let newCount = currentCount;
-    if (action === 'increment') {
-        newCount++;
-    } else if (action === 'decrement' && currentCount > 0) {
-        newCount--;
-    } else {
-        return; // No change needed
+    if (action === 'increment' || action === 'decrement') {
+        const currentCount = userCollection.get(mementoId) || 0;
+        let newCount = (action === 'increment') ? currentCount + 1 : Math.max(0, currentCount - 1);
+        logEvent(analytics, 'update_memento_count', { memento_id: mementoId, new_count: newCount });
+        updateUserCollection(mementoId, newCount);
+    } else if (action === 'wishlist') {
+        const index = userWishlist.indexOf(mementoId);
+        if (index > -1) {
+            userWishlist.splice(index, 1);
+            logEvent(analytics, 'update_wishlist', { memento_id: mementoId, action: 'remove' });
+        } else {
+            if (userWishlist.length >= 5) {
+                document.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'Wishlist is full (max 5 items).', type: 'warning' } }));
+                return;
+            }
+            userWishlist.push(mementoId);
+            logEvent(analytics, 'update_wishlist', { memento_id: mementoId, action: 'add' });
+        }
+        updateMementosUIWithUserData();
+        updateUserWishlist();
     }
-    
-    logEvent(analytics, 'update_memento_count', { memento_id: mementoId, new_count: newCount });
-    updateUserCollection(mementoId, newCount);
 }
 
 async function initializePage() {
@@ -411,42 +402,32 @@ async function initializePage() {
 }
 
 document.addEventListener('firebase-ready', () => {
-    // Initialize services as soon as Firebase is ready.
     initFirebaseServices();
     if (!db || !analytics) {
         hideLoader();
         return;
     }
     
-    // Set up the listener for user login/logout
     onAuthStateChanged(getAuth(), async (user) => {
-        const wasLoggedIn = !!userId;
         if (user && !user.isAnonymous) {
             userId = user.uid;
             await fetchUserCollection();
         } else {
             userId = null;
             userCollection.clear();
+            userWishlist = [];
         }
-
-        // If the user's login status changed, we need to refresh the mementos view
-        // to show or hide the counters.
         const params = new URLSearchParams(window.location.search);
         const comicId = params.get('comic');
         if (comicId && DOM.mementosView && !DOM.mementosView.classList.contains('hidden')) {
              const comicData = comicDataCache.get(comicId);
              const mementos = await fetchMementosForComic(comicId);
              displayMementosView(comicData, mementos);
-        } else if (wasLoggedIn && !userId) {
-            // User just logged out, refresh if on mementos page
-             if (comicId) window.location.reload();
         }
     });
     
-    // Initialize the page content now that services are ready
     initializePage();
-    
-    DOM.mementoDetailGrid.addEventListener('click', handleCounterClick);
+    DOM.mementoDetailGrid.addEventListener('click', handleActionsClick);
 
 }, { once: true });
 
