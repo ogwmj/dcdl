@@ -38,6 +38,10 @@ const DOM = {
     creatorInstagramInput: document.getElementById('creator-instagram-input'),
     creatorUpdateBtnText: document.getElementById('creator-update-btn-text'),
     creatorUpdateSpinner: document.getElementById('creator-update-spinner'),
+    // New Game Detail Inputs
+    ingameNameInput: document.getElementById('ingame-name-input'),
+    earthIdInput: document.getElementById('earth-id-input'),
+    allowDiscordMessagesInput: document.getElementById('allow-discord-messages-input'),
 };
 
 let auth, db, storage;
@@ -55,7 +59,7 @@ function showNotification(message, type) {
 
 /**
  * @function handleProfileUpdate
- * @description Handles submission for updating username and/or password.
+ * @description Handles submission for updating username, game details, and/or password.
  */
 async function handleProfileUpdate(e) {
     e.preventDefault();
@@ -69,20 +73,41 @@ async function handleProfileUpdate(e) {
     const newUsername = DOM.usernameInput.value.trim();
     const currentPassword = DOM.currentPasswordInput.value;
     const newPassword = DOM.newPasswordInput.value;
+
+    const gameProfileData = {
+        inGameName: DOM.ingameNameInput.value.trim(),
+        earthId: DOM.earthIdInput.value ? parseInt(DOM.earthIdInput.value, 10) : null,
+        allowDiscordMessages: DOM.allowDiscordMessagesInput.checked,
+    };
     
     let usernameUpdated = false;
     let passwordUpdated = false;
+    let gameProfileUpdated = false;
     let errorOccurred = false;
 
-    if (newUsername && newUsername !== DOM.usernameDisplay.textContent) {
+    // Consolidate all profile data into a single object for one Firestore write.
+    const profileDataToUpdate = {};
+
+    if (newUsername && newUsername !== DOM.usernameInput.dataset.initialValue) {
+        profileDataToUpdate.username = newUsername;
+        usernameUpdated = true;
+    }
+
+    const initialGameProfile = JSON.parse(DOM.profileUpdateForm.dataset.initialGameProfile || '{}');
+    if (JSON.stringify(gameProfileData) !== JSON.stringify(initialGameProfile)) {
+        profileDataToUpdate.gameProfile = gameProfileData;
+        gameProfileUpdated = true;
+    }
+
+    if (Object.keys(profileDataToUpdate).length > 0) {
         try {
             const userProfileRef = doc(db, "artifacts", appId, "users", user.uid);
-            await setDoc(userProfileRef, { username: newUsername }, { merge: true });
-            DOM.usernameDisplay.textContent = newUsername;
-            usernameUpdated = true;
+            await setDoc(userProfileRef, profileDataToUpdate, { merge: true });
+            if (usernameUpdated) DOM.usernameInput.dataset.initialValue = newUsername;
+            if (gameProfileUpdated) DOM.profileUpdateForm.dataset.initialGameProfile = JSON.stringify(gameProfileData);
         } catch (error) {
-            console.error("Username update error:", error);
-            showNotification("Failed to update username.", "error");
+            console.error("Profile data update error:", error);
+            showNotification("Failed to update profile data.", "error");
             errorOccurred = true;
         }
     }
@@ -115,16 +140,21 @@ async function handleProfileUpdate(e) {
     }
     
     if (!errorOccurred) {
-        if (usernameUpdated && passwordUpdated) {
-            showNotification("Profile and password updated successfully!", "success");
-            DOM.profileUpdateForm.reset();
-            DOM.usernameInput.value = newUsername;
-        } else if (usernameUpdated) {
-            showNotification("Username updated successfully!", "success");
-        } else if (passwordUpdated) {
-            showNotification("Password updated successfully!", "success");
-            DOM.profileUpdateForm.reset();
-            DOM.usernameInput.value = newUsername;
+        const updatedItems = [
+            usernameUpdated ? 'Username' : null,
+            gameProfileUpdated ? 'Game Details' : null,
+            passwordUpdated ? 'Password' : null,
+        ].filter(Boolean);
+
+        if (updatedItems.length > 0) {
+            showNotification(`${updatedItems.join(' & ')} updated successfully!`, "success");
+            if (passwordUpdated) DOM.profileUpdateForm.reset(); // Reset form only on password change
+            // Repopulate form after potential reset
+            DOM.usernameInput.value = DOM.usernameInput.dataset.initialValue;
+            const currentGameProfile = JSON.parse(DOM.profileUpdateForm.dataset.initialGameProfile);
+            DOM.ingameNameInput.value = currentGameProfile.inGameName || '';
+            DOM.earthIdInput.value = currentGameProfile.earthId || '';
+            DOM.allowDiscordMessagesInput.checked = currentGameProfile.allowDiscordMessages || false;
         } else {
             showNotification("No changes were made.", "info");
         }
@@ -328,11 +358,22 @@ async function setupPageForUser(user) {
                 const username = userData.username;
                 DOM.usernameDisplay.textContent = username || "Not set";
                 DOM.usernameInput.value = username || "";
+                DOM.usernameInput.dataset.initialValue = username || "";
+
                 renderRoleBadges(userData.roles);
                 setupAccountTabs(userData.roles);
                 populateCreatorForm(userData.creatorProfile);
+
+                const gameProfile = userData.gameProfile || {};
+                DOM.ingameNameInput.value = gameProfile.inGameName || '';
+                DOM.earthIdInput.value = gameProfile.earthId || '';
+                DOM.allowDiscordMessagesInput.checked = gameProfile.allowDiscordMessages === true;
+                DOM.profileUpdateForm.dataset.initialGameProfile = JSON.stringify(gameProfile);
+
             } else {
                 DOM.usernameDisplay.textContent = "Not set";
+                DOM.usernameInput.dataset.initialValue = "";
+                DOM.profileUpdateForm.dataset.initialGameProfile = JSON.stringify({});
                 renderRoleBadges([]);
                 setupAccountTabs([]);
             }
