@@ -1,32 +1,36 @@
 /**
  * @file js/mementos/ui.js
  * @fileoverview Handles UI interactions for The Monitor's Mementos page.
- * @version 1.1.5
+ * @version 1.2.1
  */
 
-import { initializeApp, getApp, getApps } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getFirestore, collection, getDocs, query, orderBy, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getFirestore, collection, getDocs, query, orderBy, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
 // #region --- GLOBAL VARIABLES & CONFIG ---
 
-let db, analytics;
+let db, auth, analytics, userId;
 const comicDataCache = new Map();
+let userCollection = new Map(); // Stores user's memento counts { mementoId: count }
 const APP_ID = 'dc-dark-legion-builder';
 
 // #endregion
 
 // #region --- DOM ELEMENT REFERENCES ---
 
-const pageLoader = document.getElementById('page-loader');
-const mainHeader = document.getElementById('main-header');
-const pageTitle = document.getElementById('page-title');
-const pageDescription = document.getElementById('page-description');
-const comicsView = document.getElementById('comics-view');
-const mementosView = document.getElementById('mementos-view');
-const limitedComicsContainer = document.getElementById('limited-comics-container');
-const standardComicsContainer = document.getElementById('standard-comics-container');
-const mementoDetailGrid = document.getElementById('memento-detail-grid');
+const DOM = {
+    pageLoader: document.getElementById('page-loader'),
+    mainHeader: document.getElementById('main-header'),
+    pageTitle: document.getElementById('page-title'),
+    pageDescription: document.getElementById('page-description'),
+    comicsView: document.getElementById('comics-view'),
+    mementosView: document.getElementById('mementos-view'),
+    limitedComicsContainer: document.getElementById('limited-comics-container'),
+    standardComicsContainer: document.getElementById('standard-comics-container'),
+    mementoDetailGrid: document.getElementById('memento-detail-grid'),
+};
 
 // #endregion
 
@@ -38,11 +42,6 @@ function formatTitleForImage(title) {
 
 function padSortOrder(num) {
     return String(num).padStart(2, '0');
-}
-
-function getTierColor(tierString) {
-    if (!tierString) return 'unlocked';
-    return tierString.split(' ')[0].toLowerCase();
 }
 
 function createMementoTierHtml(ratingString) {
@@ -66,14 +65,14 @@ function createMementoTierHtml(ratingString) {
 // #region --- VIEW RENDERING & MANAGEMENT ---
 
 function resetHeader() {
-    pageTitle.textContent = "Monitor's Mementos";
-    pageDescription.textContent = "A complete collection of comic book mementos.";
-    mainHeader.classList.remove('text-left');
+    DOM.pageTitle.textContent = "Monitor's Mementos";
+    DOM.pageDescription.textContent = "A complete collection of comic book mementos.";
+    DOM.mainHeader.classList.remove('text-left');
 }
 
 function switchView(viewName) {
-    comicsView.classList.toggle('hidden', viewName !== 'comics');
-    mementosView.classList.toggle('hidden', viewName !== 'mementos');
+    DOM.comicsView.classList.toggle('hidden', viewName !== 'comics');
+    DOM.mementosView.classList.toggle('hidden', viewName !== 'mementos');
 }
 
 function createComicCardLink(comic) {
@@ -96,29 +95,29 @@ function createComicCardLink(comic) {
 
 function displayComicsView(comics) {
     resetHeader();
-    limitedComicsContainer.innerHTML = '';
-    standardComicsContainer.innerHTML = '';
+    DOM.limitedComicsContainer.innerHTML = '';
+    DOM.standardComicsContainer.innerHTML = '';
     const limitedComics = comics.filter(c => c.isLimited).sort((a, b) => a.sortOrder - b.sortOrder);
     const standardComics = comics.filter(c => !c.isLimited).sort((a, b) => a.sortOrder - b.sortOrder);
     if (limitedComics.length > 0) {
-        limitedComics.forEach(comic => limitedComicsContainer.appendChild(createComicCardLink(comic)));
+        limitedComics.forEach(comic => DOM.limitedComicsContainer.appendChild(createComicCardLink(comic)));
     } else {
-        limitedComicsContainer.innerHTML = '<p class="text-slate-400 col-span-full">No limited edition mementos found.</p>';
+        DOM.limitedComicsContainer.innerHTML = '<p class="text-slate-400 col-span-full">No limited edition mementos found.</p>';
     }
     if (standardComics.length > 0) {
-        standardComics.forEach(comic => standardComicsContainer.appendChild(createComicCardLink(comic)));
+        standardComics.forEach(comic => DOM.standardComicsContainer.appendChild(createComicCardLink(comic)));
     } else {
-        standardComicsContainer.innerHTML = '<p class="text-slate-400 col-span-full">No standard issue mementos found.</p>';
+        DOM.standardComicsContainer.innerHTML = '<p class="text-slate-400 col-span-full">No standard issue mementos found.</p>';
     }
     switchView('comics');
     hideLoader();
 }
 
 function displayMementosView(comic, mementos) {
-    pageTitle.textContent = comic.title;
-    pageDescription.textContent = "A collection of mementos.";
-    mainHeader.classList.add('text-left');
-    mementoDetailGrid.innerHTML = '';
+    DOM.pageTitle.textContent = comic.title;
+    DOM.pageDescription.textContent = userId ? "Track your collection below." : "Log in to track your collection.";
+    DOM.mainHeader.classList.add('text-left');
+    DOM.mementoDetailGrid.innerHTML = '';
     const formattedComicTitle = formatTitleForImage(comic.title);
     mementos.sort((a, b) => a.sortOrder - b.sortOrder).forEach(memento => {
         const paddedOrder = padSortOrder(memento.sortOrder);
@@ -126,35 +125,63 @@ function displayMementosView(comic, mementos) {
         const tierHtml = createMementoTierHtml(memento.starColorTier);
         const mementoEl = document.createElement('div');
         mementoEl.className = 'memento-card';
+        mementoEl.id = `memento-${memento.id}`;
+        
+        let counterHtml = '';
+        if (userId) {
+            counterHtml = `
+                <div class="memento-counter">
+                    <button class="counter-btn" data-action="decrement" data-memento-id="${memento.id}">-</button>
+                    <span class="counter-display" id="count-${memento.id}">0</span>
+                    <button class="counter-btn" data-action="increment" data-memento-id="${memento.id}">+</button>
+                </div>`;
+        }
+
         mementoEl.innerHTML = `
             <img src="${mementoImageUrl}" alt="${memento.name}" class="memento-image" loading="lazy">
             <div class="memento-name">${memento.name}</div>
             ${tierHtml}
+            ${counterHtml}
         `;
-        mementoDetailGrid.appendChild(mementoEl);
+        DOM.mementoDetailGrid.appendChild(mementoEl);
     });
+    updateMementosUIWithUserData();
     switchView('mementos');
     hideLoader();
 }
 
+function updateMementosUIWithUserData() {
+    if (!userId) return;
+    document.querySelectorAll('.memento-card').forEach(card => {
+        const mementoId = card.id.replace('memento-', '');
+        const count = userCollection.get(mementoId) || 0;
+        const display = card.querySelector(`#count-${mementoId}`);
+        if (display) {
+            display.textContent = count;
+        }
+        card.classList.toggle('is-owned', count > 0);
+        card.classList.toggle('has-duplicates', count > 1);
+    });
+}
+
 function hideLoader() {
-    if (pageLoader) {
-        pageLoader.remove();
+    if (DOM.pageLoader) {
+        DOM.pageLoader.remove();
     }
 }
 
 // #endregion
 
-// #region --- FIREBASE DATA FETCHING ---
+// #region --- FIREBASE DATA & USER COLLECTION ---
 
 function initFirebaseServices() {
     try {
         const app = getApp();
+        auth = getAuth(app);
         db = getFirestore(app);
         analytics = getAnalytics(app);
     } catch (e) {
         console.error("Mementos UI: Error getting Firebase services.", e);
-        document.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'Failed to connect to content service.', type: 'error' } }));
     }
 }
 
@@ -184,46 +211,85 @@ async function fetchMementosForComic(comicId) {
         const mementosColRef = collection(db, `/artifacts/${APP_ID}/public/data/mementoComics/${comicId}/mementos`);
         const q = query(mementosColRef, orderBy('sortOrder', 'asc'));
         const querySnapshot = await getDocs(q);
-        const mementos = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        return mementos;
+        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     } catch (error) {
         console.error(`Mementos UI: Error fetching mementos for comic ${comicId}:`, error);
         return [];
     }
 }
 
-// #endregion
-
-// #region --- INITIALIZATION & FIXES ---
-
-/**
- * Fixes an issue where desktop navigation links might not appear due to CSS conflicts or other script interference.
- * This function ensures the navigation container is visible on wider screens.
- */
-function applyNavVisibilityFix() {
+async function fetchUserCollection() {
+    if (!userId || !db) {
+        userCollection.clear();
+        return;
+    };
     try {
-        const navLinksContainer = document.querySelector('navigation-widget .hidden.md\\:flex');
-        // The 'md' breakpoint in Tailwind is typically 768px.
-        if (navLinksContainer && window.innerWidth >= 768) {
-            // Forcefully remove the `hidden` class and reset inline style to prevent conflicts.
-            navLinksContainer.classList.remove('hidden');
-            navLinksContainer.style.display = ''; // Let the Tailwind 'md:flex' class take over.
+        const docRef = doc(db, `artifacts/${APP_ID}/users/${userId}/mementos/collection`);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            userCollection = new Map(Object.entries(docSnap.data().mementos || {}));
+        } else {
+            userCollection.clear();
         }
     } catch (error) {
-        console.error("Failed to apply navigation visibility fix:", error);
+        console.error("Error fetching user memento collection:", error);
+        userCollection.clear();
     }
 }
 
+async function updateUserCollection(mementoId, newCount) {
+    if (!userId) return;
+    
+    const docRef = doc(db, `artifacts/${APP_ID}/users/${userId}/mementos/collection`);
+    const fieldPath = `mementos.${mementoId}`;
+
+    userCollection.set(mementoId, newCount);
+    updateMementosUIWithUserData(); // Update UI immediately for responsiveness
+
+    try {
+        // First try to update an existing document.
+        await updateDoc(docRef, { [fieldPath]: newCount });
+    } catch (error) {
+        // If the document or field doesn't exist, this will fail. Use setDoc with merge to create it.
+        if (error.code === 'not-found' || error.message.includes('No document to update')) {
+            try {
+                 await setDoc(docRef, { mementos: { [mementoId]: newCount } }, { merge: true });
+            } catch (e) {
+                 console.error("Error creating/merging user collection document:", e);
+            }
+        } else {
+            console.error("Error updating user collection:", error);
+        }
+    }
+}
+
+// #endregion
+
+// #region --- EVENT LISTENERS & INITIALIZATION ---
+
+function handleCounterClick(event) {
+    const target = event.target.closest('.counter-btn');
+    if (!target || !userId) return;
+
+    const action = target.dataset.action;
+    const mementoId = target.dataset.mementoId;
+    const currentCount = userCollection.get(mementoId) || 0;
+
+    let newCount = currentCount;
+    if (action === 'increment') {
+        newCount++;
+    } else if (action === 'decrement' && currentCount > 0) {
+        newCount--;
+    } else {
+        return; // No change needed
+    }
+    
+    logEvent(analytics, 'update_memento_count', { memento_id: mementoId, new_count: newCount });
+    updateUserCollection(mementoId, newCount);
+}
 
 async function initializePage() {
     try {
-        initFirebaseServices();
-        if (!db || !analytics) {
-            console.error("Mementos UI: DB or Analytics not available. Halting initialization.");
-            hideLoader();
-            return;
-        }
-
         const params = new URLSearchParams(window.location.search);
         const comicId = params.get('comic');
 
@@ -236,7 +302,6 @@ async function initializePage() {
                 const mementos = await fetchMementosForComic(comicId);
                 displayMementosView(comicData, mementos);
             } else {
-                console.error(`Mementos UI: Comic with ID ${comicId} not found in cache. Displaying main view.`);
                 displayComicsView(Array.from(comicDataCache.values()));
             }
         } else {
@@ -245,17 +310,48 @@ async function initializePage() {
         }
     } catch (error) {
         console.error("Mementos UI: A critical error occurred during page initialization:", error);
-        document.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'A critical error occurred while loading the page.', type: 'error' } }));
         hideLoader();
     }
 }
 
 document.addEventListener('firebase-ready', () => {
+    // Initialize services as soon as Firebase is ready.
+    initFirebaseServices();
+    if (!db || !analytics) {
+        hideLoader();
+        return;
+    }
+    
+    // Set up the listener for user login/logout
+    onAuthStateChanged(getAuth(), async (user) => {
+        const wasLoggedIn = !!userId;
+        if (user && !user.isAnonymous) {
+            userId = user.uid;
+            await fetchUserCollection();
+        } else {
+            userId = null;
+            userCollection.clear();
+        }
+
+        // If the user's login status changed, we need to refresh the mementos view
+        // to show or hide the counters.
+        const params = new URLSearchParams(window.location.search);
+        const comicId = params.get('comic');
+        if (comicId && DOM.mementosView && !DOM.mementosView.classList.contains('hidden')) {
+             const comicData = comicDataCache.get(comicId);
+             const mementos = await fetchMementosForComic(comicId);
+             displayMementosView(comicData, mementos);
+        } else if (wasLoggedIn && !userId) {
+            // User just logged out, refresh if on mementos page
+             if (comicId) window.location.reload();
+        }
+    });
+    
+    // Initialize the page content now that services are ready
     initializePage();
-    // After initializing the page content, apply the navigation visibility fix.
-    applyNavVisibilityFix();
-    // Also apply the fix whenever the window is resized.
-    window.addEventListener('resize', applyNavVisibilityFix);
+    
+    DOM.mementoDetailGrid.addEventListener('click', handleCounterClick);
+
 }, { once: true });
 
 // #endregion
