@@ -158,7 +158,7 @@ function displayMementosView(comic, mementos) {
 
         mementoEl.innerHTML = `
             <img src="${mementoImageUrl}" alt="${memento.name}" class="memento-image" loading="lazy">
-            <div class="memento-name">${memento.name}</div>
+            <div class="memento-name mt-2">${memento.name}</div>
             ${tierHtml}
             ${counterHtml}
         `;
