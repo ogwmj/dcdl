@@ -1,7 +1,7 @@
 /**
  * @file js/mementos/ui.js
  * @fileoverview Handles UI interactions for The Monitor's Mementos page.
- * @version 1.2.1
+ * @version 1.2.4 - Added featured creator display with minimal impact to existing logic.
  */
 
 import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -15,6 +15,13 @@ let db, auth, analytics, userId;
 const comicDataCache = new Map();
 let userCollection = new Map(); // Stores user's memento counts { mementoId: count }
 const APP_ID = 'dc-dark-legion-builder';
+
+// Public Usernames of Creators to feature on this page.
+// These usernames correspond to document IDs in the 'public_creator_profiles' collection.
+const FEATURED_CREATOR_PUBLIC_IDS = [
+    'ogwmj',
+    'Tyvokka',
+];
 
 // #endregion
 
@@ -30,6 +37,7 @@ const DOM = {
     limitedComicsContainer: document.getElementById('limited-comics-container'),
     standardComicsContainer: document.getElementById('standard-comics-container'),
     mementoDetailGrid: document.getElementById('memento-detail-grid'),
+    featuredCreatorsContainer: document.getElementById('featured-creators-container'), // New: Reference for the creators section
 };
 
 // #endregion
@@ -68,11 +76,19 @@ function resetHeader() {
     DOM.pageTitle.textContent = "Monitor's Mementos";
     DOM.pageDescription.textContent = "A complete collection of comic book mementos.";
     DOM.mainHeader.classList.remove('text-left');
+    // Ensure featured creators are visible when returning to the main comic list view
+    if (DOM.featuredCreatorsContainer && DOM.featuredCreatorsContainer.parentElement) {
+        DOM.featuredCreatorsContainer.parentElement.classList.remove('hidden');
+    }
 }
 
 function switchView(viewName) {
     DOM.comicsView.classList.toggle('hidden', viewName !== 'comics');
     DOM.mementosView.classList.toggle('hidden', viewName !== 'mementos');
+    // Hide featured creators section when on memento detail view
+    if (DOM.featuredCreatorsContainer && DOM.featuredCreatorsContainer.parentElement) {
+        DOM.featuredCreatorsContainer.parentElement.classList.toggle('hidden', viewName === 'mementos');
+    }
 }
 
 function createComicCardLink(comic) {
@@ -111,6 +127,9 @@ function displayComicsView(comics) {
     }
     switchView('comics');
     hideLoader();
+
+    // Load featured creators only when on the main comics view
+    displayFeaturedCreators(FEATURED_CREATOR_PUBLIC_IDS);
 }
 
 function displayMementosView(comic, mementos) {
@@ -167,6 +186,59 @@ function updateMementosUIWithUserData() {
 function hideLoader() {
     if (DOM.pageLoader) {
         DOM.pageLoader.remove();
+    }
+}
+
+/**
+ * Generates HTML for a single featured creator card.
+ * @param {Object} creatorData - Public creator profile data.
+ * @returns {string} HTML string for the creator card.
+ */
+function generateMementoCreatorCardHtml(creatorData) {
+    const socials = creatorData.socials || {};
+
+    const socialLinks = [
+        { key: 'discord', icon: 'fab fa-discord', url: socials.discord },
+        { key: 'youtube', icon: 'fab fa-youtube', url: socials.youtube },
+        { key: 'twitch', icon: 'fab fa-twitch', url: socials.twitch },
+        { key: 'x', icon: 'fab fa-twitter', url: socials.x },
+        { key: 'tiktok', icon: 'fab fa-tiktok', url: socials.tiktok },
+        { key: 'instagram', icon: 'fab fa-instagram', url: socials.instagram }
+    ];
+
+    const socialsHtml = socialLinks
+        .filter(link => link.url)
+        .map(link => `<a href="${link.url}" target="_blank" rel="noopener noreferrer" title="${link.key.charAt(0).toUpperCase() + link.key.slice(1)}"><i class="${link.icon}"></i></a>`)
+        .join('');
+
+    const logoUrl = creatorData.logo || '/img/champions/avatars/dc_logo.webp';
+
+    return `
+        <div class="creator-card-memento">
+            <img src="${logoUrl}" alt="${creatorData.username || 'Creator'} Logo" class="creator-logo-memento" onerror="this.onerror=null;this.src='/img/champions/avatars/dc_logo.webp';">
+            <h3 class="creator-username-memento">${creatorData.username || 'Anonymous'}</h3>
+            ${creatorData.description ? `<p class="creator-description-memento">${creatorData.description}</p>` : ''}
+            ${socialsHtml ? `<div class="creator-socials-memento">${socialsHtml}</div>` : ''}
+        </div>
+    `;
+}
+
+/**
+ * Fetches and displays featured creator profiles in the Community Spotlight section.
+ * @param {string[]} creatorPublicIds - An array of public usernames (IDs) of creators to display.
+ */
+async function displayFeaturedCreators(creatorPublicIds) {
+    if (!DOM.featuredCreatorsContainer) return;
+
+    // Set initial loading message
+    DOM.featuredCreatorsContainer.innerHTML = '<p class="text-center text-slate-400 col-span-full">Loading featured creators...</p>';
+
+    const profiles = await fetchPublicCreatorProfiles(creatorPublicIds);
+
+    if (profiles.length === 0) {
+        DOM.featuredCreatorsContainer.innerHTML = '<p class="text-center text-slate-400 col-span-full">No featured creators to display at this time.</p>';
+    } else {
+        DOM.featuredCreatorsContainer.innerHTML = profiles.map(generateMementoCreatorCardHtml).join('');
     }
 }
 
@@ -261,6 +333,30 @@ async function updateUserCollection(mementoId, newCount) {
             console.error("Error updating user collection:", error);
         }
     }
+}
+
+/**
+ * Fetches public creator profiles based on an array of public usernames.
+ * @param {string[]} publicIds - Array of creator usernames (public IDs) to fetch.
+ * @returns {Promise<Array<Object>>} A promise that resolves to an array of public creator data.
+ */
+async function fetchPublicCreatorProfiles(publicIds) {
+    if (!db || !publicIds || publicIds.length === 0) return [];
+    const profiles = [];
+    try {
+        for (const username of publicIds) {
+            const docRef = doc(db, 'public_creator_profiles', username);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                profiles.push({ id: docSnap.id, ...docSnap.data() });
+            } else {
+                console.warn(`Public profile for creator '${username}' not found.`);
+            }
+        }
+    } catch (error) {
+        console.error("Error fetching public creator profiles:", error);
+    }
+    return profiles;
 }
 
 // #endregion

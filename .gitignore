@@ -26,3 +26,6 @@ functions/
 admin/
 .firebaserc
 venv/
+
+firestore.rules
+firestore.indexes.json
