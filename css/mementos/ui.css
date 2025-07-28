@@ -152,6 +152,7 @@
 }
 
 .memento-stars.tier-white .star-icon.active { color: #cbd5e1; }
+.memento-stars.tier-green .star-icon.active { color: #54f63b; }
 .memento-stars.tier-blue .star-icon.active { color: #3b82f6; }
 .memento-stars.tier-purple .star-icon.active { color: #8b5cf6; }
 .memento-stars.tier-gold .star-icon.active { color: #f59e0b; }
