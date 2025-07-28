@@ -1,7 +1,7 @@
 /**
  * @file js/codex/ui.js
  * @description Adds a dedicated Skills tab to the dossier.
- * @version 8.1.0
+ * @version 8.2.0
  */
 
 // --- Firebase & Data ---
@@ -68,6 +68,30 @@ const DOM = {
 };
 
 // --- START: Helper & Utility Functions ---
+
+/**
+ * Generates the HTML for social media icons based on a creator's profile data.
+ * @param {object} socials - An object containing social media URLs.
+ * @returns {string} The generated HTML string for the icons.
+ */
+function generateSocialIconsHtml(socials) {
+    if (!socials || Object.keys(socials).length === 0) return '';
+
+    const socialLinks = [
+        { key: 'discord', icon: 'fab fa-discord' },
+        { key: 'youtube', icon: 'fab fa-youtube' },
+        { key: 'twitch', icon: 'fab fa-twitch' },
+        { key: 'x', icon: 'fab fa-twitter' },
+        { key: 'tiktok', icon: 'fab fa-tiktok' },
+        { key: 'instagram', icon: 'fab fa-instagram' }
+    ];
+
+    return socialLinks
+        .filter(link => socials[link.key])
+        .map(link => `<a href="${socials[link.key]}" target="_blank" rel="noopener noreferrer" title="${link.key}"><i class="${link.icon}"></i></a>`)
+        .join('');
+}
+
 
 function createStarDisplayHTML(levelString) {
     if (!levelString || levelString === 'N/A' || levelString === 'Unlocked') {
@@ -637,10 +661,17 @@ async function renderPlayerTips(championId) {
     tipsSnap.forEach(doc => {
         const tip = doc.data();
         const date = tip.createdAt?.toDate().toLocaleDateString() || 'A while ago';
+        const socialsHtml = generateSocialIconsHtml(tip.creatorSocials);
+        console.log(socialsHtml);
+
         tipsHtml += `
             <div class="tip-card">
                 <p class="tip-meta">Shared on ${date}</p>
                 <p class="tip-text">${tip.text}</p>
+                <div class="tip-author-info">
+                    <span class="tip-author-name">${tip.creatorName || 'A Creator'}</span>
+                    ${socialsHtml ? `<div class="tip-author-socials">${socialsHtml}</div>` : ''}
+                </div>
             </div>
         `;
     });
@@ -694,11 +725,29 @@ async function handleTipSubmit(event, championId) {
     button.textContent = 'Submitting...';
 
     try {
+        // Fetch creator profile to denormalize data for efficient rendering
+        const userDocRef = doc(db, `artifacts/dc-dark-legion-builder/users/${currentUserId}`);
+        const userDocSnap = await getDoc(userDocRef);
+
+        let creatorName = 'A Creator';
+        let creatorSocials = {};
+
+        if (userDocSnap.exists()) {
+            const userData = userDocSnap.data();
+            creatorName = userData.username || creatorName;
+            if (userData.creatorProfile && userData.creatorProfile.socials) {
+                creatorSocials = userData.creatorProfile.socials;
+            }
+        }
+
+        // Add tip with creator info to Firestore
         await addDoc(collection(db, `artifacts/dc-dark-legion-builder/public/data/champions/${championId}/playerTips`), {
             userId: currentUserId,
             text: tipText,
             createdAt: serverTimestamp(),
-            upvotes: 0
+            upvotes: 0,
+            creatorName: creatorName,
+            creatorSocials: creatorSocials
         });
         dispatchNotification('Tip submitted successfully!', 'success');
         form.reset();

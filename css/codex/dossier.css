@@ -432,3 +432,70 @@
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+/* --- Community Hub: Tip Author --- */
+.tip-author-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #374151; /* slate-700 */
+    gap: 1rem;
+}
+
+.tip-author-name {
+    font-weight: 700;
+    color: #e2e8f0; /* slate-200 */
+    font-size: 0.9rem;
+}
+
+.tip-author-socials {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tip-author-socials a {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 32px;
+    height: 32px;
+    background-color: #374151; /* slate-700 */
+    color: #d1d5db; /* gray-300 */
+    border-radius: 50%;
+    font-size: 1rem;
+    transition: all 0.2s ease-in-out;
+}
+
+/* General hover for scaling */
+.tip-author-socials a:hover {
+    transform: scale(1.1);
+}
+
+/* Individual Social Colors on Hover */
+.tip-author-socials a[title="discord"]:hover {
+    background-color: #5865F2;
+    color: #fff;
+}
+.tip-author-socials a[title="youtube"]:hover {
+    background-color: #FF0000;
+    color: #fff;
+}
+.tip-author-socials a[title="twitch"]:hover {
+    background-color: #9146FF;
+    color: #fff;
+}
+.tip-author-socials a[title="x"]:hover {
+    background-color: #1DA1F2;
+    color: #fff;
+}
+.tip-author-socials a[title="tiktok"]:hover {
+    background-color: #000;
+    color: #fff;
+}
+.tip-author-socials a[title="instagram"]:hover {
+    background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%);
+    color: #fff;
+}
