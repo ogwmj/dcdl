@@ -430,7 +430,7 @@ function generateCreatorProfileHtml(creatorData) {
             <h2 class="guide-section-title">Squad Creator</h2>
             <div class="creator-card">
                 <div class="creator-header">
-                    <img src="${profile.logo || '/img/dcdl_logo.png'}" alt="Creator Logo" class="creator-logo" onerror="this.onerror=null;this.src='/img/dcdl_logo.png';">
+                    <img src="${profile.logo || '/img/champions/avatars/dc_logo.webp'}" alt="Creator Logo" class="creator-logo" onerror="this.onerror=null;this.src='/img/champions/avatars/dc_logo.webp';">
                     <span class="creator-username">${creatorData.username || 'Anonymous'}</span>
                 </div>
                 ${profile.description ? `<p class="creator-description">"${profile.description}"</p>` : ''}
