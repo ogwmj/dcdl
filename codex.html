@@ -99,8 +99,23 @@
                             <button id="reset-filters-btn" class="filter-btn text-sm !bg-red-600/50 hover:!bg-red-600/80">Reset All</button>
                         </div>
                     </div>
-
                 </div>
+
+                <!-- Admin Panel -->
+                <div id="admin-panel" class="hidden col-span-full mt-6 pt-4 border-t border-red-500/30">
+                    <h4 class="filter-label text-red-400">Admin Controls</h4>
+                    <div class="flex flex-wrap items-center gap-4">
+                        <button id="bulk-regenerate-all-btn" class="filter-btn !bg-yellow-800/80 hover:!bg-yellow-700/80">Regenerate Missing Cards</button>
+                        <button id="bulk-regenerate-overwrite-btn" class="filter-btn !bg-red-800/80 hover:!bg-red-700/80">Regenerate & Overwrite ALL Cards</button>
+                    </div>
+                    <div id="bulk-progress" class="mt-4 hidden">
+                        <p id="bulk-progress-text" class="text-sm text-slate-300 mb-1">Processing...</p>
+                        <div class="w-full bg-slate-700 rounded-full h-2.5">
+                            <div id="bulk-progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
             </section>
 
             <section id="codex-grid" class="codex-grid">
@@ -119,7 +134,7 @@
         </div>
     </div>
 
-    <!-- NEW Champion Dossier Modal -->
+    <!-- Champion Dossier Modal -->
     <div id="dossier-modal-backdrop">
         <div id="dossier-modal-content">
             <button id="dossier-modal-close" aria-label="Close">&times;</button>
@@ -144,6 +159,18 @@
                         <div id="dossier-tab-lore" class="dossier-tab-pane"></div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal-backdrop" class="hidden fixed inset-0 bg-black bg-opacity-75 z-[1050] flex items-center justify-center p-4">
+        <div id="confirmation-modal-content" class="bg-slate-800 rounded-lg shadow-xl p-6 w-full max-w-md border border-slate-600">
+            <h3 id="confirmation-modal-title" class="text-xl font-bold text-white mb-4">Confirm Action</h3>
+            <p id="confirmation-modal-text" class="text-slate-300 mb-6">Are you sure?</p>
+            <div class="flex justify-end space-x-4">
+                <button id="confirmation-modal-cancel-btn" class="filter-btn">Cancel</button>
+                <button id="confirmation-modal-confirm-btn" class="filter-btn !bg-red-700 hover:!bg-red-600">Confirm</button>
             </div>
         </div>
     </div>
