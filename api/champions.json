@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-07-28T19:59:11.018Z",
+  "updated_at": "2025-07-31T19:40:40.913Z",
   "champions": [
     {
       "name": "Atom",
@@ -372,8 +372,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Purple 2-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Hawkgirl-card.png",
+      "communityAverageLevel": "Purple 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Hawkgirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Hawkgirl",
       "relatedChampions": [
@@ -444,7 +444,7 @@
           "name": "Empathic Perception"
         }
       ],
-      "communityAverageLevel": "Blue 2-Star",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Starfire.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Starfire",
       "relatedChampions": [
@@ -648,7 +648,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Supergirl-card.png",
-      "communityAverageLevel": "Blue 2-Star",
+      "communityAverageLevel": "Blue 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Supergirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Supergirl",
       "relatedChampions": [
@@ -805,7 +805,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Krypto-card.png",
-      "communityAverageLevel": "Blue 5-Star",
+      "communityAverageLevel": "Purple 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Krypto.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Krypto"
     },
@@ -1486,8 +1486,8 @@
           ]
         }
       ],
-      "communityAverageLevel": "White 3-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Arsenal-card.png",
+      "communityAverageLevel": "White 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Arsenal.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Arsenal"
     },
@@ -1550,8 +1550,8 @@
           ]
         }
       ],
-      "communityAverageLevel": "Blue 4-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/MartianManhunter-card.png",
+      "communityAverageLevel": "Blue 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/MartianManhunter.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Martian%20Manhunter",
       "relatedChampions": [
@@ -1619,6 +1619,7 @@
       ],
       "name": "Ra's al Ghul",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/RasalGhul-card.png",
+      "communityAverageLevel": "White 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Ra'salGhul.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Ra's%20al%20Ghul",
       "relatedChampions": [
@@ -2238,7 +2239,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Zatanna-card.png",
-      "communityAverageLevel": "Blue 1-Star",
+      "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Zatanna.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Zatanna",
       "relatedChampions": [
@@ -2676,7 +2677,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Superboy-card.png",
-      "communityAverageLevel": "White 3-Star",
+      "communityAverageLevel": "Blue 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Superboy.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Superboy",
       "relatedChampions": [
@@ -3277,7 +3278,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Nightwing-card.png",
-      "communityAverageLevel": "Blue 2-Star",
+      "communityAverageLevel": "Blue 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Nightwing.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Nightwing",
       "relatedChampions": [
