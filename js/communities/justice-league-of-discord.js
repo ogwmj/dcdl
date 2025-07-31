@@ -11,7 +11,7 @@ let communityAdminUid = null;
 let ALL_CHAMPIONS_DATA = {};
 let currentUserRoles = [];
 let currentUsername = null;
-let LATEST_TIER_LIST = null; // NEW: To store the latest tier list data
+let LATEST_TIER_LIST = null;
 
 const COMMUNITY_ID = "justice-league-of-discord";
 
@@ -31,7 +31,6 @@ const DOM = {
     adminPanel: document.getElementById('admin-panel'),
     addMemberForm: document.getElementById('add-member-form'),
     memberEmailInput: document.getElementById('member-email'),
-    adminMessage: document.getElementById('admin-message'),
     tierListContainer: document.getElementById('tier-list-container'),
     createTierListBtn: document.getElementById('create-tierlist-btn'),
     forumContainer: document.getElementById('forum-container'),
@@ -71,6 +70,46 @@ const DOM = {
         bodyTextarea: document.getElementById('post-body-textarea'),
     }
 };
+
+// --- Confirmation Modal ---
+const confirmationModal = {
+    backdrop: document.getElementById('confirmation-modal-backdrop'),
+    title: document.getElementById('confirmation-modal-title'),
+    text: document.getElementById('confirmation-modal-text'),
+    confirmBtn: document.getElementById('confirmation-modal-confirm-btn'),
+    cancelBtn: document.getElementById('confirmation-modal-cancel-btn'),
+    _resolve: null,
+
+    show(text, title = 'Confirm Action') {
+        if (!this.backdrop) return Promise.resolve(window.confirm(text)); // Fallback
+        this.title.textContent = title;
+        this.text.textContent = text;
+        this.backdrop.classList.remove('hidden');
+        return new Promise(resolve => {
+            this._resolve = resolve;
+        });
+    },
+
+    hide(result) {
+        if (!this.backdrop) return;
+        this.backdrop.classList.add('hidden');
+        if (this._resolve) {
+            this._resolve(result);
+            this._resolve = null;
+        }
+    }
+};
+
+
+// --- Helper Functions ---
+function dispatchNotification(message, type = 'info', duration = 3000) {
+    const event = new CustomEvent('show-notification', {
+        detail: { message, type, duration },
+        bubbles: true,
+        composed: true
+    });
+    document.dispatchEvent(event);
+}
 
 // --- TinyMCE & Sanitization ---
 function initTinyMCE(selector) {
@@ -435,7 +474,6 @@ async function showPostView(postId) {
         const isAuthor = currentUserId === post.authorUid;
         const canDelete = currentUserRoles.includes('admin') || isCommunityAdmin || isAuthor;
         
-        // NEW: Find the champion's tier rating
         const championTier = getChampionTier(post.championId);
         const tierBadgeHtml = championTier 
             ? `<div class="tier-rating-badge tier-${championTier.toLowerCase().replace('+', '-plus')}">${championTier}</div>` 
@@ -797,7 +835,10 @@ function closeCreatePostModal() {
 // --- Data Saving Handlers ---
 async function handleSaveTierList() {
     const title = DOM.tierListModal.titleInput.value.trim();
-    if (!title) { alert('Please enter a title.'); return; }
+    if (!title) { 
+        dispatchNotification('Please enter a title for the tier list.', 'warning');
+        return; 
+    }
 
     const tiersData = {};
     DOM.tierListModal.tiersContainer.querySelectorAll('.editor-tier-row').forEach(tierRow => {
@@ -822,10 +863,10 @@ async function handleSaveTierList() {
         await addDoc(tierListsRef, newTierList);
         closeTierListModal();
         loadTierList();
-        alert('Tier list saved!');
+        dispatchNotification('Tier list saved successfully!', 'success');
     } catch (error) {
         console.error("Error saving tier list: ", error);
-        alert('Failed to save tier list.');
+        dispatchNotification('Failed to save tier list. Please try again.', 'error');
     } finally {
         DOM.tierListModal.saveBtn.disabled = false;
     }
@@ -835,7 +876,7 @@ async function handleSaveTeam() {
     const name = DOM.teamBuilderModal.nameInput.value.trim();
     const description = getSanitizedEditorContent('team-description-textarea');
     if (!name) {
-        alert('Please enter a team name.');
+        dispatchNotification('Please enter a team name.', 'warning');
         return;
     }
 
@@ -848,7 +889,7 @@ async function handleSaveTeam() {
     });
 
     if (championIds.length === 0) {
-        alert('Please add at least one champion to the team.');
+        dispatchNotification('Please add at least one champion to the team.', 'warning');
         return;
     }
 
@@ -865,10 +906,10 @@ async function handleSaveTeam() {
         await addDoc(teamsRef, newTeam);
         closeTeamBuilderModal();
         loadCommunityTeams();
-        alert('Team saved successfully!');
+        dispatchNotification('Team saved successfully!', 'success');
     } catch (error) {
         console.error("Error saving team:", error);
-        alert('Failed to save team.');
+        dispatchNotification('Failed to save team. Please try again.', 'error');
     } finally {
         DOM.teamBuilderModal.saveBtn.disabled = false;
     }
@@ -881,7 +922,7 @@ async function handleSaveForumPost(e) {
     const body = getSanitizedEditorContent('post-body-textarea');
 
     if (!title || !championId || !body) {
-        alert('Please fill out all fields.');
+        dispatchNotification('Please fill out all fields before publishing.', 'warning');
         return;
     }
 
@@ -898,10 +939,10 @@ async function handleSaveForumPost(e) {
         await addDoc(postsRef, newPost);
         closeCreatePostModal();
         loadForumPosts();
-        alert('Forum post published!');
+        dispatchNotification('Forum post published!', 'success');
     } catch (error) {
         console.error("Error saving post:", error);
-        alert('Failed to publish post.');
+        dispatchNotification('Failed to publish post. Please try again.', 'error');
     } finally {
         DOM.postModal.saveBtn.disabled = false;
     }
@@ -933,13 +974,13 @@ async function handleSaveComment(e, parentId, parentCollection) {
         }
     } catch (error) {
         console.error("Error saving comment:", error);
-        alert('Failed to save comment.');
+        dispatchNotification('Failed to save comment.', 'error');
     }
 }
 
 async function handleChampionVote(championId, voteType) {
     if (!currentUserId) {
-        alert("You must be logged in to vote.");
+        dispatchNotification("You must be logged in to vote.", "info");
         return;
     }
     const voteRef = doc(db, 'communities', COMMUNITY_ID, 'championVotes', championId, 'votes', currentUserId);
@@ -948,13 +989,13 @@ async function handleChampionVote(championId, voteType) {
         loadChampionVotes(championId);
     } catch (error) {
         console.error("Error casting vote:", error);
-        alert("Could not save your vote.");
+        dispatchNotification("Could not save your vote.", "error");
     }
 }
 
 async function handleTeamVote(teamId, voteType) {
     if (!currentUserId) {
-        alert("You must be logged in to vote.");
+        dispatchNotification("You must be logged in to vote.", "info");
         return;
     }
     const voteRef = doc(db, 'communities', COMMUNITY_ID, 'teamVotes', teamId, 'votes', currentUserId);
@@ -963,14 +1004,16 @@ async function handleTeamVote(teamId, voteType) {
         loadTeamVotes(teamId);
     } catch (error) {
         console.error("Error casting team vote:", error);
-        alert("Could not save your vote.");
+        dispatchNotification("Could not save your vote.", "error");
     }
 }
 
 
 // --- Delete Functions
 async function handleDeleteComment(e, parentId, commentId, parentCollection) {
-    if (!confirm('Are you sure you want to delete this comment?')) return;
+    const confirmed = await confirmationModal.show('Are you sure you want to delete this comment?', 'Delete Comment');
+    if (!confirmed) return;
+
     try {
         const commentRef = doc(db, 'communities', COMMUNITY_ID, parentCollection, parentId, 'comments', commentId);
         await deleteDoc(commentRef);
@@ -981,59 +1024,66 @@ async function handleDeleteComment(e, parentId, commentId, parentCollection) {
         }
     } catch (error) {
         console.error("Error deleting comment:", error);
-        alert('Failed to delete comment.');
+        dispatchNotification('Failed to delete comment.', 'error');
     }
 }
 
 async function handleDeletePost(e) {
     const postId = e.currentTarget.dataset.postId;
-    if (!postId || !confirm('Are you sure you want to permanently delete this post?')) return;
+    if (!postId) return;
+
+    const confirmed = await confirmationModal.show('Are you sure you want to permanently delete this post?', 'Delete Post');
+    if (!confirmed) return;
 
     try {
         const postRef = doc(db, 'communities', COMMUNITY_ID, 'forumPosts', postId);
         await deleteDoc(postRef);
-        alert('Post deleted successfully.');
+        dispatchNotification('Post deleted successfully.', 'success');
         showMainView();
         loadForumPosts();
     } catch (error) {
         console.error("Error deleting post:", error);
-        alert('Failed to delete post.');
+        dispatchNotification('Failed to delete post.', 'error');
     }
 }
 
 async function handleDeleteTeam(e) {
     const teamId = e.currentTarget.dataset.teamId;
-    if (!teamId || !confirm('Are you sure you want to permanently delete this team?')) return;
+    if (!teamId) return;
+
+    const confirmed = await confirmationModal.show('Are you sure you want to permanently delete this team?', 'Delete Team');
+    if (!confirmed) return;
 
     try {
         const teamRef = doc(db, 'communities', COMMUNITY_ID, 'teams', teamId);
         await deleteDoc(teamRef);
-        alert('Team deleted successfully.');
+        dispatchNotification('Team deleted successfully.', 'success');
         showMainView();
         loadCommunityTeams();
     } catch (error) {
         console.error("Error deleting team:", error);
-        alert('Failed to delete team.');
+        dispatchNotification('Failed to delete team.', 'error');
     }
 }
 
 async function handleDeleteTierList(e) {
-    if (!confirm('Are you sure you want to permanently delete this tier list?')) return;
-
     const listId = e.currentTarget.dataset.listId;
     if (!listId) {
         console.error("Delete button is missing the list ID.");
         return;
     }
+    
+    const confirmed = await confirmationModal.show('Are you sure you want to permanently delete this tier list?', 'Delete Tier List');
+    if (!confirmed) return;
 
     try {
         const listRef = doc(db, 'communities', COMMUNITY_ID, 'tierLists', listId);
         await deleteDoc(listRef);
-        alert('Tier list deleted successfully.');
+        dispatchNotification('Tier list deleted successfully.', 'success');
         loadTierList();
     } catch (error) {
         console.error("Error deleting tier list:", error);
-        alert('Failed to delete tier list.');
+        dispatchNotification('Failed to delete tier list.', 'error');
     }
 }
 
@@ -1064,30 +1114,33 @@ async function handleAddMember(e) {
     const email = DOM.memberEmailInput.value.trim();
     if (!email) return;
 
-    DOM.adminMessage.textContent = 'Processing...';
+    dispatchNotification('Processing request...', 'info');
     try {
         const addCommunityMember = httpsCallable(functions, 'addCommunityMember');
         const result = await addCommunityMember({ email, communityId: COMMUNITY_ID });
         if (result.data.success) {
-            DOM.adminMessage.textContent = result.data.message;
+            dispatchNotification(result.data.message, 'success');
             DOM.addMemberForm.reset();
             loadMembers();
         } else { throw new Error(result.data.message); }
     } catch (error) {
-        DOM.adminMessage.textContent = `Error: ${error.message}`;
+        dispatchNotification(`Error: ${error.message}`, 'error');
     }
 }
 
 async function handleRemoveMember(e) {
     const memberUid = e.currentTarget.dataset.uid;
-    if (!memberUid || !confirm('Are you sure?')) return;
+    if (!memberUid) return;
+
+    const confirmed = await confirmationModal.show('Are you sure you want to remove this member?', 'Remove Member');
+    if (!confirmed) return;
     
     try {
         await deleteDoc(doc(db, 'communities', COMMUNITY_ID, 'members', memberUid));
-        alert('Member removed.');
+        dispatchNotification('Member removed.', 'success');
         loadMembers();
     } catch (error) {
-        alert('Failed to remove member.');
+        dispatchNotification('Failed to remove member.', 'error');
     }
 }
 
@@ -1205,6 +1258,14 @@ document.addEventListener('firebase-ready', async () => {
         DOM.name.textContent = "Error Loading Page";
     }
 }, { once: true });
+
+// Confirmation Modal Listeners
+confirmationModal.confirmBtn.addEventListener('click', () => confirmationModal.hide(true));
+confirmationModal.cancelBtn.addEventListener('click', () => confirmationModal.hide(false));
+confirmationModal.backdrop.addEventListener('click', (e) => {
+    if (e.target === confirmationModal.backdrop) confirmationModal.hide(false);
+});
+
 
 DOM.addMemberForm.addEventListener('submit', handleAddMember);
 DOM.createTierListBtn.addEventListener('click', openTierListModal);

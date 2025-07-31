@@ -244,3 +244,225 @@ body main, body section {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
     background-color: rgba(30, 41, 59, 0.6);
 }
+
+/* --- Generic Modal Styles --- */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    background-color: rgba(13, 18, 38, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-backdrop.is-visible, .modal-backdrop:not(.hidden) {
+    display: flex; /* This is now only applied when the modal should be visible */
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.modal-content {
+    position: relative;
+    background-color: #111827; /* slate-900 */
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    border-radius: 0.75rem; /* 12px */
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    width: 100%;
+    max-width: 900px; /* Default max-width */
+    max-height: calc(100vh - 40px);
+    display: flex;
+    flex-direction: column;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+    color: #d1d5db; /* gray-300 */
+    overflow-y: auto;
+}
+
+.modal-backdrop.is-visible .modal-content, .modal-backdrop:not(.hidden) .modal-content {
+    transform: scale(1);
+}
+
+.modal-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.modal-title {
+    font-family: 'Russo One', sans-serif;
+    font-size: 1.5rem;
+    color: #fff;
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    font-size: 1.75rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid rgba(59, 130, 246, 0.2);
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    flex-shrink: 0;
+}
+
+
+/* --- Comic & Dossier Modal Specifics --- */
+#comic-modal-backdrop, #dossier-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1010; /* Higher z-index */
+    background-color: rgba(13, 18, 38, 0.85);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+#comic-modal-content, #dossier-modal-content {
+    padding: 1.5rem; /* 24px */
+}
+
+#comic-modal-close, #dossier-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: #9ca3af; /* gray-400 */
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+    border-radius: 9999px;
+    width: 32px;
+    height: 32px;
+    transition: background-color 0.2s, color 0.2s;
+    z-index: 20;
+}
+#comic-modal-close:hover, #dossier-modal-close:hover {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+}
+
+.modal-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 15;
+    width: 44px;
+    height: 44px;
+    background: #3b82f6;
+    color: #fff;
+    border: 4px solid #1a202c;
+    border-radius: 50%;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+    font-family: 'Russo One', sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.modal-nav-btn:hover:not(:disabled) {
+    transform: translateY(-50%) scale(1.1);
+    background-color: #2563eb;
+}
+
+.modal-nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+    background-color: #1e3a8a;
+}
+
+.modal-nav-btn.prev-btn { left: -22px; }
+.modal-nav-btn.next-btn { right: -22px; }
+
+
+/* --- Confirmation Modal --- */
+#confirmation-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 1050;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+#confirmation-modal-content {
+    background-color: #1f2937; /* slate-800 */
+    border-radius: 0.5rem; /* 8px */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 28rem; /* 448px */
+    border: 1px solid #334155; /* slate-700 */
+}
+
+#confirmation-modal-title {
+    font-size: 1.25rem; /* 20px */
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1rem;
+}
+
+#confirmation-modal-text {
+    color: #cbd5e1; /* slate-300 */
+    margin-bottom: 1.5rem;
+}
+
+/* --- Action Buttons (Used in confirmation modals) --- */
+.filter-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: rgba(51, 65, 85, 0.8);
+    border: 1px solid rgba(71, 85, 105, 0.5);
+    color: #e2e8f0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+.filter-btn:hover {
+    background-color: #4b5563; /* slate-600 */
+    border-color: #64748b; /* slate-500 */
+}
