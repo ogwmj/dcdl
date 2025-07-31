@@ -156,8 +156,7 @@ async function loadCommunityInfo() {
             DOM.description.textContent = data.description || 'Welcome to the hub.';
             if (data.bannerImageUrl && data.bannerImageUrl != '') {
                 DOM.banner.style.backgroundImage = `url('${data.bannerImageUrl}')`;
-            } else {
-                DOM.banner.style.display = 'none';
+                DOM.banner.style.display = 'block';
             }
             DOM.header.classList.remove('community-header-loading');
         } else {
