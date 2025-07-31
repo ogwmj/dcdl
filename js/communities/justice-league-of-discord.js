@@ -750,7 +750,8 @@ function showMainView() {
 function openTierListModal() {
     initTinyMCE('#team-description-textarea');
     DOM.tierListModal.championPool.innerHTML = '';
-    Object.entries(ALL_CHAMPIONS_DATA).forEach(([id, champData]) => {
+    const sortedChampions = Object.entries(ALL_CHAMPIONS_DATA).sort(([,a], [,b]) => a.name.localeCompare(b.name));
+    sortedChampions.forEach(([id, champData]) => {
         const cleanName = (champData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
         const rarityClass = `rarity-${(champData.baseRarity || '').toLowerCase().replace(/\s/g, '-')}`;
         const champEl = document.createElement('div');
@@ -790,7 +791,8 @@ function closeTierListModal() {
 function openTeamBuilderModal() {
     initTinyMCE('#team-description-textarea');
     DOM.teamBuilderModal.championPool.innerHTML = '';
-     Object.entries(ALL_CHAMPIONS_DATA).forEach(([id, champData]) => {
+    const sortedChampions = Object.entries(ALL_CHAMPIONS_DATA).sort(([,a], [,b]) => a.name.localeCompare(b.name));
+    sortedChampions.forEach(([id, champData]) => {
         const cleanName = (champData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
         const rarityClass = `rarity-${(champData.baseRarity || '').toLowerCase().replace(/\s/g, '-')}`;
         const champEl = document.createElement('div');
