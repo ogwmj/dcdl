@@ -1,9 +1,12 @@
-/* --- Fix for layout overlap --- */
+/**
+* @file css/communities/justice-league-of-discord.css
+* @description Styles for the JLoD community page
+*/
+
 main.relative {
     padding-top: 2rem;
 }
 
-/* --- Community Header --- */
 .community-header-loading {
     opacity: 0.7;
     pointer-events: none;

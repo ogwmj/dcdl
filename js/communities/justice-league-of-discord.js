@@ -1,3 +1,9 @@
+/**
+ * @file /js/communities/justice-league-of-discord.js
+ * @fileoverview Core logic for all the JLoD features.
+ * @version 1.0.0
+ */
+
 import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, collection, getDocs, deleteDoc, query, orderBy, limit, addDoc, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
