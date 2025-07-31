@@ -8,9 +8,10 @@ import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.j
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, collection, getDocs, deleteDoc, query, orderBy, limit, addDoc, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
+import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
 // --- Global Variables ---
-let db, auth, functions;
+let db, auth, functions, analytics;
 let currentUserId = null;
 let isCurrentUserMember = false;
 let communityAdminUid = null;
@@ -118,6 +119,24 @@ function dispatchNotification(message, type = 'info', duration = 3000) {
     });
     document.dispatchEvent(event);
 }
+
+/**
+ * Added: Logs a custom event to Firebase Analytics.
+ * @param {string} eventName - The name of the event to log.
+ * @param {object} [params={}] - An object of key-value pairs to associate with the event.
+ */
+function logAnalyticsEvent(eventName, params = {}) {
+    if (analytics) {
+        try {
+            // Automatically include community_id for context in all events
+            const eventParams = { ...params, community_id: COMMUNITY_ID };
+            logEvent(analytics, eventName, eventParams);
+        } catch (e) {
+            console.warn(`Analytics event "${eventName}" failed:`, e);
+        }
+    }
+}
+
 
 // --- TinyMCE & Sanitization ---
 function initTinyMCE(selector) {
@@ -383,7 +402,7 @@ function renderTierList(listData, listId) {
                     }
                     columnsHtml += `
                         <div class="item-card ${rarityClass}">
-                            <img src="${imageUrl}" alt="${escapedName}" onerror="this.onerror=null;this.src='https://placehold.co/72x72/1f2937/e2e8f0?text=?';">
+                            <img src="${imageUrl}" alt="${escapedName}" onerror="this.onerror=null;this.src='/img/champions/avatars/dc_logo.webp';">
                         </div>`;
                 }
             });
@@ -450,7 +469,7 @@ async function loadForumPosts() {
             postEl.dataset.postId = doc.id;
             postEl.innerHTML = `
                 <div class="post-champion-avatar">
-                    <img src="/img/champions/avatars/${cleanName}.webp" alt="${champData?.name}" onerror="this.onerror=null;this.src='https://placehold.co/56x56/1f2937/e2e8f0?text=?';">
+                    <img src="/img/champions/avatars/${cleanName}.webp" alt="${champData?.name}" onerror="this.onerror=null;this.src='/img/champions/avatars/dc_logo.webp';">
                 </div>
                 <div class="post-details">
                     <h3 class="post-title">${post.title}</h3>
@@ -534,6 +553,7 @@ async function showPostView(postId) {
 
     try {
         history.pushState({ postId: postId }, '', `?postId=${postId}`);
+        logAnalyticsEvent('view_post', { post_id: postId });
 
         const postRef = doc(db, 'communities', COMMUNITY_ID, 'forumPosts', postId);
         const postSnap = await getDoc(postRef);
@@ -618,6 +638,7 @@ async function showTeamView(teamId) {
 
     try {
         history.pushState({ teamId: teamId }, '', `?teamId=${teamId}`);
+        logAnalyticsEvent('view_team', { team_id: teamId });
 
         const teamRef = doc(db, 'communities', COMMUNITY_ID, 'teams', teamId);
         const teamSnap = await getDoc(teamRef);
@@ -720,12 +741,12 @@ async function loadComments(parentId, parentCollection) {
     commentsSnap.forEach(doc => {
         const comment = doc.data();
         const canDelete = isCurrentUserMember || currentUserId === comment.authorUid;
-        const commentDate = comment.createdAt?.toDate ? comment.createdAt.toDate().toLocaleString() : '';
+        const commentDate = comment.createdAt?.toDate ? comment.createdAt.toLocaleString() : '';
 
         const commentEl = document.createElement('div');
         commentEl.className = 'comment-item';
         commentEl.innerHTML = `
-            <img src="${comment.authorPhotoURL || 'https://placehold.co/40x40/1f2937/e2e8f0?text=?'}" alt="${comment.authorName}" class="comment-avatar">
+            <img src="${comment.authorPhotoURL || '/img/champions/avatars/dc_logo.webp'}" alt="${comment.authorName}" class="comment-avatar">
             <div class="comment-content">
                 <div class="comment-header">
                     <span class="comment-author">${comment.authorName}</span>
@@ -828,6 +849,7 @@ function showMainView() {
     DOM.mainView.classList.remove('hidden');
 
     history.pushState({}, '', window.location.pathname);
+    logAnalyticsEvent('page_view', { page_title: `Community: ${COMMUNITY_ID}` });
 }
 
 // --- Modal Management ---
@@ -861,12 +883,12 @@ function openTierListModal(type = 'champion') {
         if (isChampionList) {
             const cleanName = (itemData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
             itemEl.dataset.class = itemData.class || 'Unknown';
-            itemEl.innerHTML = `<img src="/img/champions/avatars/${cleanName}.webp" alt="${itemData.name}" onerror="this.onerror=null;this.src='https://placehold.co/72x72/1f2937/e2e8f0?text=?';">`;
+            itemEl.innerHTML = `<img src="/img/champions/avatars/${cleanName}.webp" alt="${itemData.name}" onerror="this.onerror=null;this.src='/img/champions/avatars/dc_logo.webp';">`;
         } else {
             const cleanName = (itemData.name || '').replace(/[^a-zA-Z0-9]/g, "");
             itemEl.dataset.classes = (itemData.classes || []).join(',');
             const imageUrl = itemData.cardImageUrl || `/img/legacy_pieces/${cleanName}.webp`;
-            itemEl.innerHTML = `<img src="${imageUrl}" alt="${itemData.name}" onerror="this.onerror=null;this.src='https://placehold.co/72x72/1f2937/e2e8f0?text=?';">`;
+            itemEl.innerHTML = `<img src="${imageUrl}" alt="${itemData.name}" onerror="this.onerror=null;this.src='/img/champions/avatars/dc_logo.webp';">`;
         }
         DOM.tierListModal.championPool.appendChild(itemEl);
     });
@@ -908,7 +930,7 @@ function openTeamBuilderModal() {
         champEl.className = `item-card ${rarityClass}`;
         champEl.dataset.id = id;
         champEl.draggable = true;
-        champEl.innerHTML = `<img src="/img/champions/avatars/${cleanName}.webp" alt="${champData.name}" onerror="this.onerror=null;this.src='https://placehold.co/72x72/1f2937/e2e8f0?text=?';">`;
+        champEl.innerHTML = `<img src="/img/champions/avatars/${cleanName}.webp" alt="${champData.name}" onerror="this.onerror=null;this.src='/img/champions/avatars/dc_logo.webp';">`;
         DOM.teamBuilderModal.championPool.appendChild(champEl);
     });
     DOM.teamBuilderModal.slots.forEach(slot => slot.innerHTML = '');
@@ -954,7 +976,6 @@ async function handleSaveTierList() {
     const type = DOM.tierListModal.backdrop.dataset.type || 'champion';
     const tiersData = {};
 
-    // Logic is now the same for both types
     DOM.tierListModal.tiersContainer.querySelectorAll('.editor-tier-row').forEach(tierRow => {
         const tier = tierRow.querySelector('.tier-label').textContent;
         let itemIds = [];
@@ -967,7 +988,7 @@ async function handleSaveTierList() {
 
     const newTierList = {
         title,
-        type: type, // Explicitly save the type
+        type: type,
         authorUid: currentUserId,
         authorName: currentUsername || auth.currentUser.displayName || 'A Member',
         createdAt: serverTimestamp(),
@@ -981,6 +1002,8 @@ async function handleSaveTierList() {
         closeTierListModal();
         await loadTierList();
         dispatchNotification('Tier list saved successfully!', 'success');
+
+        logAnalyticsEvent('create_tier_list', { list_type: type, title: title });
     } catch (error) {
         console.error("Error saving tier list: ", error);
         dispatchNotification('Failed to save tier list. Please try again.', 'error');
@@ -1024,6 +1047,8 @@ async function handleSaveTeam() {
         closeTeamBuilderModal();
         loadCommunityTeams();
         dispatchNotification('Team saved successfully!', 'success');
+
+        logAnalyticsEvent('create_team', { team_name: name, champion_count: championIds.length });
     } catch (error) {
         console.error("Error saving team:", error);
         dispatchNotification('Failed to save team. Please try again.', 'error');
@@ -1057,6 +1082,8 @@ async function handleSaveForumPost(e) {
         closeCreatePostModal();
         loadForumPosts();
         dispatchNotification('Forum post published!', 'success');
+
+        logAnalyticsEvent('create_post', { champion_id: championId, post_title: title });
     } catch (error) {
         console.error("Error saving post:", error);
         dispatchNotification('Failed to publish post. Please try again.', 'error');
@@ -1089,6 +1116,8 @@ async function handleSaveComment(e, parentId, parentCollection) {
         } else if (parentCollection === 'teams') {
             loadComments(parentId, 'teams');
         }
+
+        logAnalyticsEvent('add_comment', { parent_id: parentId, parent_collection: parentCollection });
     } catch (error) {
         console.error("Error saving comment:", error);
         dispatchNotification('Failed to save comment.', 'error');
@@ -1104,6 +1133,8 @@ async function handleChampionVote(championId, voteType) {
     try {
         await setDoc(voteRef, { voteType });
         loadChampionVotes(championId);
+
+        logAnalyticsEvent('vote_champion', { champion_id: championId, vote_type: voteType });
     } catch (error) {
         console.error("Error casting vote:", error);
         dispatchNotification("Could not save your vote.", "error");
@@ -1119,6 +1150,8 @@ async function handleTeamVote(teamId, voteType) {
     try {
         await setDoc(voteRef, { voteType });
         loadTeamVotes(teamId);
+
+        logAnalyticsEvent('vote_team', { team_id: teamId, vote_type: voteType });
     } catch (error) {
         console.error("Error casting team vote:", error);
         dispatchNotification("Could not save your vote.", "error");
@@ -1139,6 +1172,8 @@ async function handleDeleteComment(e, parentId, commentId, parentCollection) {
         } else if (parentCollection === 'teams') {
             loadComments(parentId, 'teams');
         }
+
+        logAnalyticsEvent('delete_comment', { parent_id: parentId, comment_id: commentId, parent_collection: parentCollection });
     } catch (error) {
         console.error("Error deleting comment:", error);
         dispatchNotification('Failed to delete comment.', 'error');
@@ -1158,6 +1193,8 @@ async function handleDeletePost(e) {
         dispatchNotification('Post deleted successfully.', 'success');
         showMainView();
         loadForumPosts();
+
+        logAnalyticsEvent('delete_post', { post_id: postId });
     } catch (error) {
         console.error("Error deleting post:", error);
         dispatchNotification('Failed to delete post.', 'error');
@@ -1177,6 +1214,8 @@ async function handleDeleteTeam(e) {
         dispatchNotification('Team deleted successfully.', 'success');
         showMainView();
         loadCommunityTeams();
+
+        logAnalyticsEvent('delete_team', { team_id: teamId });
     } catch (error) {
         console.error("Error deleting team:", error);
         dispatchNotification('Failed to delete team.', 'error');
@@ -1197,6 +1236,8 @@ async function handleDeleteTierList(listId) {
         await deleteDoc(listRef);
         dispatchNotification('Tier list deleted successfully.', 'success');
         loadTierList();
+
+        logAnalyticsEvent('delete_tier_list', { list_id: listId });
     } catch (error) {
         console.error("Error deleting tier list:", error);
         dispatchNotification('Failed to delete tier list.', 'error');
@@ -1239,6 +1280,8 @@ async function handleAddMember(e) {
             dispatchNotification(result.data.message, 'success');
             DOM.addMemberForm.reset();
             loadMembers();
+
+            logAnalyticsEvent('add_member');
         } else { throw new Error(result.data.message); }
     } catch (error) {
         dispatchNotification(`Error: ${error.message}`, 'error');
@@ -1256,6 +1299,8 @@ async function handleRemoveMember(e) {
         await deleteDoc(doc(db, 'communities', COMMUNITY_ID, 'members', memberUid));
         dispatchNotification('Member removed.', 'success');
         loadMembers();
+
+        logAnalyticsEvent('remove_member', { removed_uid: memberUid });
     } catch (error) {
         dispatchNotification('Failed to remove member.', 'error');
     }
@@ -1341,11 +1386,9 @@ document.addEventListener('drop', (e) => {
             const tierListModal = e.target.closest('#tierlist-modal-backdrop');
 
             if (tierListModal && zone.matches('.editor-tier-row')) {
-                // Unified logic for champions and legacy pieces
                 const itemClasses = (draggedElement.dataset.classes || draggedElement.dataset.class || '').split(',');
                 let targetGroupKey = null;
 
-                // Find the first matching group for any of the item's classes
                 for (const itemClass of itemClasses) {
                     if (itemClass) {
                         for (const [groupKey, groupData] of Object.entries(CLASS_GROUPS)) {
@@ -1361,14 +1404,13 @@ document.addEventListener('drop', (e) => {
                 if (targetGroupKey) {
                     cardContainer = zone.querySelector(`.editor-tier-content[data-group="${targetGroupKey}"]`);
                 } else {
-                    // Fallback to the first group if no class matches
                     cardContainer = zone.querySelector('.editor-tier-content');
                 }
             }
             
             if (cardContainer) {
                 if (cardContainer.matches('.team-slot') && cardContainer.children.length > 0) {
-                    return; // Don't drop if slot is full
+                    return;
                 }
                 cardContainer.appendChild(draggedElement);
             }
@@ -1384,6 +1426,8 @@ document.addEventListener('firebase-ready', async () => {
         db = getFirestore(app);
         auth = getAuth(app);
         functions = getFunctions(app);
+
+        analytics = getAnalytics(app);
 
         await cacheAllChampionsData();
         await cacheAllLegacyPiecesData();
