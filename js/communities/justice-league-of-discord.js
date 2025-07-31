@@ -1,7 +1,7 @@
 /**
  * @file /js/communities/justice-league-of-discord.js
  * @fileoverview Core logic for all the JLoD features.
- * @version 1.0.0
+ * @version 1.2.0
  */
 
 import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -76,7 +76,7 @@ const DOM = {
         titleInput: document.getElementById('post-title-input'),
         championSelect: document.getElementById('post-champion-select'),
         bodyTextarea: document.getElementById('post-body-textarea'),
-    },
+    }
 };
 
 // --- Confirmation Modal ---
@@ -161,7 +161,7 @@ async function cacheAllChampionsData() {
 }
 
 /**
- * Fetches legacy piece data from Firestore.
+ * Fetches legacy piece data from Firestore and parses class strings.
  */
 async function cacheAllLegacyPiecesData() {
     if (Object.keys(ALL_LEGACY_PIECES_DATA).length > 0) return;
@@ -169,12 +169,20 @@ async function cacheAllLegacyPiecesData() {
         const legacyPiecesRef = collection(db, 'artifacts/dc-dark-legion-builder/public/data/legacyPieces');
         const snapshot = await getDocs(legacyPiecesRef);
         snapshot.forEach(doc => {
-            ALL_LEGACY_PIECES_DATA[doc.id] = doc.data();
+            const data = doc.data();
+            // Parse the comma-delimited string of classes into an array
+            if (data.description && typeof data.description === 'string') {
+                data.classes = data.description.split(',').map(c => c.trim());
+            } else {
+                data.classes = [];
+            }
+            ALL_LEGACY_PIECES_DATA[doc.id] = data;
         });
     } catch (error) {
         console.error("Error caching legacy piece data:", error);
     }
 }
+
 
 /**
  * Fetches the current user's profile data (roles and username).
@@ -227,7 +235,8 @@ async function loadCommunityInfo() {
             DOM.name.textContent = "Community Not Found";
             DOM.description.textContent = "Please check the community ID and configuration.";
         }
-    } catch (error) {
+    } catch (error)
+        {
         console.error("Error loading community info:", error);
     }
 }
@@ -297,87 +306,76 @@ async function loadTierList() {
 
 /**
  * Renders the tier list HTML based on data from Firestore.
+ * Handles both 'champion' and 'legacyPiece' types with grouped columns.
  */
 function renderTierList(listData, listId) {
-    const type = listData.type || 'champion'; // Default to champion for old lists
+    const type = listData.type || 'champion';
     const isChampionList = type === 'champion';
-
     const tiers = ['S', 'A+', 'A', 'B', 'C', 'D'];
-    let tierRowsHtml = '';
-    let headerHtml = '';
 
-    if (isChampionList) {
-        // --- EXISTING CHAMPION RENDERING LOGIC ---
-        let groupHeadersHtml = '<div></div>'; 
-        Object.values(CLASS_GROUPS).forEach(group => {
-            groupHeadersHtml += `<div class="column-header">`;
-            group.icons.forEach(iconSrc => {
-                groupHeadersHtml += `<img src="${iconSrc}" alt="${group.name}" class="class-icon-header">`;
-            });
-            groupHeadersHtml += `</div>`;
+    // --- Render Headers ---
+    let groupHeadersHtml = '<div></div>'; 
+    Object.values(CLASS_GROUPS).forEach(group => {
+        groupHeadersHtml += `<div class="column-header">`;
+        group.icons.forEach(iconSrc => {
+            groupHeadersHtml += `<img src="${iconSrc}" alt="${group.name}" class="class-icon-header">`;
         });
-        headerHtml = `<div class="tier-column-headers">${groupHeadersHtml}</div>`;
+        groupHeadersHtml += `</div>`;
+    });
+    const headerHtml = `<div class="tier-column-headers">${groupHeadersHtml}</div>`;
 
-        for (const tier of tiers) {
-            const tierItems = listData.tiers[tier] || [];
-            const groupedChamps = { GROUP_1: [], GROUP_2: [], GROUP_3: [] };
+    // --- Render Tier Rows ---
+    let tierRowsHtml = '';
+    for (const tier of tiers) {
+        const tierItems = listData.tiers[tier] || [];
+        const groupedItems = { GROUP_1: [], GROUP_2: [], GROUP_3: [] };
 
-            tierItems.forEach(itemId => {
-                const champData = ALL_CHAMPIONS_DATA[itemId];
-                if (champData) {
+        tierItems.forEach(itemId => {
+            const itemData = isChampionList ? ALL_CHAMPIONS_DATA[itemId] : ALL_LEGACY_PIECES_DATA[itemId];
+            if (itemData) {
+                const itemClasses = isChampionList ? [itemData.class] : (itemData.classes || []);
+                let placed = false;
+                for (const itemClass of itemClasses) {
                     for (const [groupKey, groupData] of Object.entries(CLASS_GROUPS)) {
-                        if (groupData.classes.includes(champData.class)) {
-                            groupedChamps[groupKey].push(itemId);
-                            break;
+                        if (groupData.classes.includes(itemClass)) {
+                            if (!groupedItems[groupKey].includes(itemId)) { // Prevent duplicates
+                                groupedItems[groupKey].push(itemId);
+                            }
+                            placed = true;
+                            break; 
                         }
                     }
+                    if(placed) break;
                 }
-            });
+            }
+        });
 
-            let columnsHtml = '';
-            Object.values(groupedChamps).forEach(group => {
-                columnsHtml += '<div class="tier-content">';
-                group.forEach(itemId => {
-                    const champData = ALL_CHAMPIONS_DATA[itemId];
-                    if (champData) {
-                        const cleanName = (champData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
-                        const rarityClass = `rarity-${(champData.baseRarity || '').toLowerCase().replace(/\s/g, '-')}`;
-                        const escapedName = (champData.name || 'Unknown').replace(/"/g, '&quot;');
-                        columnsHtml += `
-                            <div class="item-card ${rarityClass}">
-                                <img src="/img/champions/avatars/${cleanName}.webp" alt="${escapedName}" onerror="this.onerror=null;this.src='/img/champions/avatars/dc_logo.webp';">
-                            </div>`;
-                    }
-                });
-                columnsHtml += '</div>';
-            });
-            tierRowsHtml += `<div class="tier-row" data-tier="${tier}"><div class="tier-label">${tier}</div><div class="tier-row-content">${columnsHtml}</div></div>`;
-        }
-    } else {
-        // --- NEW LEGACY PIECE RENDERING LOGIC ---
-        for (const tier of tiers) {
-            const tierItems = listData.tiers[tier] || [];
-            
-            let itemsHtml = '';
-            tierItems.forEach(itemId => {
-                const itemData = ALL_LEGACY_PIECES_DATA[itemId];
+        let columnsHtml = '';
+        Object.values(groupedItems).forEach(group => {
+            columnsHtml += '<div class="tier-content">';
+            group.forEach(itemId => {
+                const itemData = isChampionList ? ALL_CHAMPIONS_DATA[itemId] : ALL_LEGACY_PIECES_DATA[itemId];
                 if (itemData) {
-                    const rarityClass = `rarity-${(itemData.baseRarity || '').toLowerCase().replace(/\s/g, '-')}`;
+                    let rarityClass = `rarity-${(itemData.baseRarity || '').toLowerCase().replace(/\s/g, '-')}`;
                     const escapedName = (itemData.name || 'Unknown').replace(/"/g, '&quot;');
-                    const imageUrl = itemData.cardImageUrl || `/img/champions/avatars/dc_logo.webp`;
-                    itemsHtml += `
+                    let imageUrl, cleanName;
+                    if (isChampionList) {
+                        cleanName = (itemData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
+                        imageUrl = `/img/champions/avatars/${cleanName}.webp`;
+                    } else {
+                        rarityClass = 'rarity-none';
+                        cleanName = (itemData.name || '').replace(/[^a-zA-Z0-9]/g, "");
+                        imageUrl = itemData.cardImageUrl || `/img/legacy_pieces/${cleanName}.webp`;
+                    }
+                    columnsHtml += `
                         <div class="item-card ${rarityClass}">
-                            <img src="${imageUrl}" alt="${escapedName}" onerror="this.onerror=null;this.src='/img/champions/avatars/dc_logo.webp';">
+                            <img src="${imageUrl}" alt="${escapedName}" onerror="this.onerror=null;this.src='https://placehold.co/72x72/1f2937/e2e8f0?text=?';">
                         </div>`;
                 }
             });
-
-            tierRowsHtml += `
-                <div class="tier-row" data-tier="${tier}">
-                    <div class="tier-label">${tier}</div>
-                    <div class="tier-content">${itemsHtml}</div>
-                </div>`;
-        }
+            columnsHtml += '</div>';
+        });
+        tierRowsHtml += `<div class="tier-row" data-tier="${tier}"><div class="tier-label">${tier}</div><div class="tier-row-content">${columnsHtml}</div></div>`;
     }
 
     // --- Common Wrapper HTML ---
@@ -437,7 +435,7 @@ async function loadForumPosts() {
             postEl.dataset.postId = doc.id;
             postEl.innerHTML = `
                 <div class="post-champion-avatar">
-                    <img src="/img/champions/avatars/${cleanName}.webp" alt="${champData?.name}" onerror="this.onerror=null;this.src='/img/champions/avatars/dc_logo.webp';">
+                    <img src="/img/champions/avatars/${cleanName}.webp" alt="${champData?.name}" onerror="this.onerror=null;this.src='https://placehold.co/56x56/1f2937/e2e8f0?text=?';">
                 </div>
                 <div class="post-details">
                     <h3 class="post-title">${post.title}</h3>
@@ -796,7 +794,7 @@ async function loadTeamVotes(teamId) {
  * @returns {string|null} The tier (e.g., "S", "A+") or null if not found.
  */
 function getChampionTier(championId) {
-    if (!LATEST_TIER_LIST || !LATEST_TIER_LIST.tiers) {
+    if (!LATEST_TIER_LIST || !LATEST_TIER_LIST.tiers || LATEST_TIER_LIST.type !== 'champion') {
         return null;
     }
     for (const [tier, championIds] of Object.entries(LATEST_TIER_LIST.tiers)) {
@@ -824,7 +822,7 @@ function openTierListModal(type = 'champion') {
     
     const isChampionList = type === 'champion';
 
-    initTinyMCE('#team-description-textarea');
+    // 1. Configure Modal Titles
     DOM.tierListModal.backdrop.querySelector('.modal-title').textContent = isChampionList ? 'Create New Champion Tier List' : 'Create New Legacy Tier List';
     DOM.tierListModal.backdrop.querySelector('.palette-title').textContent = isChampionList ? 'Champions' : 'Legacy Pieces';
     
@@ -833,8 +831,14 @@ function openTierListModal(type = 'champion') {
     const sortedItems = Object.entries(dataSource).sort(([,a], [,b]) => a.name.localeCompare(b.name));
 
     sortedItems.forEach(([id, itemData]) => {
-        const cleanName = (itemData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
-        const rarityClass = `rarity-${(itemData.baseRarity || '').toLowerCase().replace(/\s/g, '-').replace('mythic+', 'limited-mythic')}`;
+        const cleanName = (itemData.name || '').replace(/[^a-zA-Z0-9]/g, "");
+        let rarityClass = '';
+        if (type === 'champion') {
+            rarityClass = `rarity-${(itemData.baseRarity || '').toLowerCase().replace(/\s/g, '-')}`;
+        } else {
+            rarityClass = 'rarity-none';
+        }
+        
         const itemEl = document.createElement('div');
         itemEl.className = `item-card ${rarityClass}`;
         itemEl.dataset.id = id;
@@ -842,48 +846,39 @@ function openTierListModal(type = 'champion') {
         
         if (isChampionList) {
             itemEl.dataset.class = itemData.class || 'Unknown';
-            itemEl.innerHTML = `<img src="/img/champions/avatars/${cleanName}.webp" alt="${itemData.name}"">`;
+            itemEl.innerHTML = `<img src="/img/champions/avatars/${cleanName}.webp" alt="${itemData.name}" onerror="this.onerror=null;this.src='https://placehold.co/72x72/1f2937/e2e8f0?text=?';">`;
         } else {
-            // Legacy pieces don't have classes. Use cardImageUrl.
-            itemEl.innerHTML = `<img src="/img/legacy_pieces/${cleanName}.webp" alt="${itemData.name}" onerror="this.onerror=null;this.src='/img/champions/avatars/dc_logo.webp';">`;
+            // Legacy pieces now have multiple classes, store them in a data attribute
+            itemEl.dataset.classes = (itemData.classes || []).join(',');
+            const imageUrl = itemData.cardImageUrl || `/img/legacy_pieces/${cleanName}.webp`;
+            itemEl.innerHTML = `<img src="${imageUrl}" alt="${itemData.name}" onerror="this.onerror=null;this.src='https://placehold.co/72x72/1f2937/e2e8f0?text=?';">`;
         }
         DOM.tierListModal.championPool.appendChild(itemEl);
     });
 
-    // 3. Build the Tier Editor Structure
+    // 3. Build the Tier Editor Structure (now the same for both types)
     const tiers = ['S', 'A+', 'A', 'B', 'C', 'D'];
     tiers.forEach(tier => {
         const tierRow = document.createElement('div');
         tierRow.className = 'editor-tier-row';
-        if (isChampionList) {
-            tierRow.innerHTML = `
-                <div class="tier-label">${tier}</div>
-                <div class="editor-tier-content-wrapper">
-                    <div class="editor-tier-content" data-tier="${tier}" data-group="GROUP_1"></div>
-                    <div class="editor-tier-content" data-tier="${tier}" data-group="GROUP_2"></div>
-                    <div class="editor-tier-content" data-tier="${tier}" data-group="GROUP_3"></div>
-                </div>
-            `;
-        } else {
-            // Simpler structure for Legacy Pieces (one drop zone)
-            tierRow.innerHTML = `
-                <div class="tier-label">${tier}</div>
-                <div class="editor-tier-content-wrapper">
-                    <div class="editor-tier-content" data-tier="${tier}"></div>
-                </div>
-            `;
-        }
+        tierRow.innerHTML = `
+            <div class="tier-label">${tier}</div>
+            <div class="editor-tier-content-wrapper">
+                <div class="editor-tier-content" data-tier="${tier}" data-group="GROUP_1"></div>
+                <div class="editor-tier-content" data-tier="${tier}" data-group="GROUP_2"></div>
+                <div class="editor-tier-content" data-tier="${tier}" data-group="GROUP_3"></div>
+            </div>
+        `;
         DOM.tierListModal.tiersContainer.appendChild(tierRow);
     });
 
     DOM.tierListModal.backdrop.classList.remove('hidden');
 }
 
+
 function closeTierListModal() {
-    tinymce.remove('#team-description-textarea');
     DOM.tierListModal.backdrop.classList.add('hidden');
     DOM.tierListModal.titleInput.value = '';
-
     delete DOM.tierListModal.backdrop.dataset.type;
 }
 
@@ -899,7 +894,7 @@ function openTeamBuilderModal() {
         champEl.className = `item-card ${rarityClass}`;
         champEl.dataset.id = id;
         champEl.draggable = true;
-        champEl.innerHTML = `<img src="/img/champions/avatars/${cleanName}.webp" alt="${champData.name}" onerror="this.onerror=null;this.src='/img/champions/avatars/dc_logo.webp';">`;
+        champEl.innerHTML = `<img src="/img/champions/avatars/${cleanName}.webp" alt="${champData.name}" onerror="this.onerror=null;this.src='https://placehold.co/72x72/1f2937/e2e8f0?text=?';">`;
         DOM.teamBuilderModal.championPool.appendChild(champEl);
     });
     DOM.teamBuilderModal.slots.forEach(slot => slot.innerHTML = '');
@@ -943,26 +938,16 @@ async function handleSaveTierList() {
     }
 
     const type = DOM.tierListModal.backdrop.dataset.type || 'champion';
-    const isChampionList = type === 'champion';
-
     const tiersData = {};
+
+    // Logic is now the same for both types
     DOM.tierListModal.tiersContainer.querySelectorAll('.editor-tier-row').forEach(tierRow => {
         const tier = tierRow.querySelector('.tier-label').textContent;
         let itemIds = [];
-        
-        if (isChampionList) {
-            // Existing logic for champions with class groups
-            tierRow.querySelectorAll('.editor-tier-content').forEach(groupColumn => {
-                const idsInColumn = Array.from(groupColumn.children).map(child => child.dataset.id);
-                itemIds = itemIds.concat(idsInColumn);
-            });
-        } else {
-            // Simpler logic for legacy pieces (one column)
-            const contentArea = tierRow.querySelector('.editor-tier-content');
-            if (contentArea) {
-                itemIds = Array.from(contentArea.children).map(child => child.dataset.id);
-            }
-        }
+        tierRow.querySelectorAll('.editor-tier-content').forEach(groupColumn => {
+            const idsInColumn = Array.from(groupColumn.children).map(child => child.dataset.id);
+            itemIds = itemIds.concat(idsInColumn);
+        });
         tiersData[tier] = itemIds;
     });
 
@@ -1287,7 +1272,7 @@ async function init() {
     }
 }
 
-// --- Drag and Drop Logic (User Provided) ---
+// --- Drag and Drop Logic ---
 document.addEventListener('dragstart', (e) => {
     const draggedCard = e.target.closest('.item-card');
     if (draggedCard) {
@@ -1335,32 +1320,35 @@ document.addEventListener('drop', (e) => {
         e.preventDefault();
         zone.classList.remove('drag-over');
 
-        const championId = e.dataTransfer.getData('text/plain');
-        const draggedElement = document.querySelector(`.item-card[data-id="${championId}"].dragging`);
+        const itemId = e.dataTransfer.getData('text/plain');
+        const draggedElement = document.querySelector(`.item-card[data-id="${itemId}"].dragging`);
 
         if (draggedElement) {
             let cardContainer = zone;
             const tierListModal = e.target.closest('#tierlist-modal-backdrop');
 
             if (tierListModal && zone.matches('.editor-tier-row')) {
-                const type = tierListModal.dataset.type;
-                if (type === 'champion') {
-                    // Existing logic for champions
-                    const championClass = draggedElement.dataset.class;
-                    let targetGroupKey = null;
-                    for (const [groupKey, groupData] of Object.entries(CLASS_GROUPS)) {
-                        if (groupData.classes.includes(championClass)) {
-                            targetGroupKey = groupKey;
-                            break;
+                // Unified logic for champions and legacy pieces
+                const itemClasses = (draggedElement.dataset.classes || draggedElement.dataset.class || '').split(',');
+                let targetGroupKey = null;
+
+                // Find the first matching group for any of the item's classes
+                for (const itemClass of itemClasses) {
+                    if (itemClass) {
+                        for (const [groupKey, groupData] of Object.entries(CLASS_GROUPS)) {
+                            if (groupData.classes.includes(itemClass.trim())) {
+                                targetGroupKey = groupKey;
+                                break;
+                            }
                         }
                     }
-                    if(targetGroupKey) {
-                        cardContainer = zone.querySelector(`.editor-tier-content[data-group="${targetGroupKey}"]`);
-                    } else {
-                        cardContainer = zone.querySelector('.editor-tier-content');
-                    }
+                    if (targetGroupKey) break;
+                }
+                
+                if (targetGroupKey) {
+                    cardContainer = zone.querySelector(`.editor-tier-content[data-group="${targetGroupKey}"]`);
                 } else {
-                    // New simpler logic for legacy pieces.
+                    // Fallback to the first group if no class matches
                     cardContainer = zone.querySelector('.editor-tier-content');
                 }
             }
@@ -1374,6 +1362,7 @@ document.addEventListener('drop', (e) => {
         }
     }
 });
+
 
 // --- Event Listeners ---
 document.addEventListener('firebase-ready', async () => {
