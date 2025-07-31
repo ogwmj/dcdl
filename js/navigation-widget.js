@@ -4,7 +4,7 @@ class NavigationWidget extends HTMLElement {
       <nav class="bg-slate-900 bg-opacity-80 backdrop-filter backdrop-blur-md shadow-lg sticky top-0 z-50">
           <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <div class="flex items-center justify-between h-16">
-                  <a href="index.html" class="text-white text-2xl font-bold">DC:DL Tools</a>
+                  <a href="/index.html" class="text-white text-2xl font-bold">DC:DL Tools</a>
                   <div class="hidden md:flex items-center space-x-4">
 
                       <div class="relative group">
