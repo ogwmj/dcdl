@@ -46,77 +46,72 @@
             </div>
         </header>
 
-        <!-- Main Content Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 mt-8">
-            
-            <!-- Left Column: Main Content -->
-            <div id="main-content-column" class="lg:col-span-3">
-                <!-- This container will hold either the main view or the single post/team view -->
-                <div id="main-view">
-                    <div class="content-section">
-                        <div class="flex justify-between items-center mb-4">
-                             <h2 class="section-title !mb-0 !pb-0 !border-none">Community Tier List</h2>
-                             <button id="create-tierlist-btn" class="action-button hidden"><i class="fas fa-plus mr-2"></i>Create New List</button>
-                        </div>
-                        <div id="tier-list-container">
-                             <div class="placeholder-content"><p>No tier list found for this community yet.</p></div>
-                        </div>
+        <!-- MODIFIED: Main content area is now a direct child for full width -->
+        <div id="main-content-column" class="mt-8">
+            <!-- This container will hold either the main view or the single post/team view -->
+            <div id="main-view">
+                <div class="content-section">
+                    <div class="flex justify-between items-center mb-4">
+                         <h2 class="section-title !mb-0 !pb-0 !border-none">Community Tier List</h2>
+                         <button id="create-tierlist-btn" class="action-button hidden"><i class="fas fa-plus mr-2"></i>Create New List</button>
                     </div>
-
-                    <div class="content-section mt-8">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="section-title !mb-0 !pb-0 !border-none">Community Teams</h2>
-                            <button id="create-team-btn" class="action-button hidden"><i class="fas fa-users mr-2"></i>Create Team</button>
-                        </div>
-                        <div id="team-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="placeholder-content md:col-span-2"><p>No teams created yet.</p></div>
-                        </div>
-                    </div>
-
-
-                    <div class="content-section mt-8">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="section-title !mb-0 !pb-0 !border-none">Community Forum</h2>
-                            <button id="create-post-btn" class="action-button hidden"><i class="fas fa-pen-to-square mr-2"></i>Create Post</button>
-                        </div>
-                        <div id="forum-container" class="space-y-4">
-                            <div class="placeholder-content"><p>No forum posts yet. Be the first to create one!</p></div>
-                        </div>
+                    <div id="tier-list-container">
+                         <div class="placeholder-content"><p>No tier list found for this community yet.</p></div>
                     </div>
                 </div>
 
-                <!-- Single Post View (hidden by default) -->
-                <div id="post-view" class="hidden"></div>
-                
-                <!-- Single Team View (hidden by default) -->
-                <div id="team-view" class="hidden"></div>
+                <div class="content-section mt-8">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="section-title !mb-0 !pb-0 !border-none">Community Teams</h2>
+                        <button id="create-team-btn" class="action-button hidden"><i class="fas fa-users mr-2"></i>Create Team</button>
+                    </div>
+                    <div id="team-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="placeholder-content md:col-span-2"><p>No teams created yet.</p></div>
+                    </div>
+                </div>
+
+
+                <div class="content-section mt-8">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="section-title !mb-0 !pb-0 !border-none">Community Forum</h2>
+                        <button id="create-post-btn" class="action-button hidden"><i class="fas fa-pen-to-square mr-2"></i>Create Post</button>
+                    </div>
+                    <div id="forum-container" class="space-y-4">
+                        <div class="placeholder-content"><p>No forum posts yet. Be the first to create one!</p></div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Right Column: Members & Admin Panel -->
-            <aside class="lg:col-span-1">
-                <div id="admin-panel" class="content-section hidden">
-                    <h2 class="section-title text-red-400"><i class="fas fa-user-shield mr-2"></i>Admin Panel</h2>
-                    <form id="add-member-form" class="space-y-4">
-                        <div>
-                            <label for="member-email" class="block text-sm font-medium text-gray-300 mb-1">Add Member by Email</label>
-                            <input type="email" id="member-email" placeholder="user@example.com" class="admin-input" required>
-                        </div>
-                        <button type="submit" class="admin-button w-full">Add Member</button>
-                    </form>
-                    <div id="admin-message" class="mt-4 text-sm"></div>
-                </div>
-
-                <div class="content-section">
-                    <h2 class="section-title"><i class="fas fa-users mr-2"></i>Members</h2>
-                    <div id="member-list" class="space-y-3">
-                        <div class="member-item-loading"></div>
-                        <div class="member-item-loading"></div>
-                        <div class="member-item-loading"></div>
-                    </div>
-                </div>
-            </aside>
-
+            <!-- Single Post View (hidden by default) -->
+            <div id="post-view" class="hidden"></div>
+            
+            <!-- Single Team View (hidden by default) -->
+            <div id="team-view" class="hidden"></div>
         </div>
+
+        <!-- MODIFIED: Admin and Members panel moved to the bottom -->
+        <aside id="bottom-panel" class="mt-12">
+            <div id="admin-panel" class="content-section hidden">
+                <h2 class="section-title text-red-400"><i class="fas fa-user-shield mr-2"></i>Admin Panel</h2>
+                <form id="add-member-form" class="space-y-4">
+                    <div>
+                        <label for="member-email" class="block text-sm font-medium text-gray-300 mb-1">Add Member by Email</label>
+                        <input type="email" id="member-email" placeholder="user@example.com" class="admin-input" required>
+                    </div>
+                    <button type="submit" class="admin-button w-full">Add Member</button>
+                </form>
+                <div id="admin-message" class="mt-4 text-sm"></div>
+            </div>
+
+            <div class="content-section">
+                <h2 class="section-title"><i class="fas fa-users mr-2"></i>Members</h2>
+                <div id="member-list" class="space-y-3">
+                    <div class="member-item-loading"></div>
+                    <div class="member-item-loading"></div>
+                    <div class="member-item-loading"></div>
+                </div>
+            </div>
+        </aside>
     </main>
 
     <!-- Tier List Creation Modal -->

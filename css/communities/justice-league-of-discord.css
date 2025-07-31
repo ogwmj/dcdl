@@ -523,3 +523,9 @@ main.relative {
 .tier-rating-badge.tier-b { background-color: #22c55e; }
 .tier-rating-badge.tier-c { background-color: #3b82f6; }
 .tier-rating-badge.tier-d { background-color: #6b7280; }
+
+#bottom-panel {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+}
