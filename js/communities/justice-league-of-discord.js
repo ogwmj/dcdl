@@ -525,8 +525,7 @@ async function showTeamView(teamId) {
         team.championIds.forEach(champId => {
             const champData = ALL_CHAMPIONS_DATA[champId];
             if (champData) {
-                const cleanName = (champData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
-                championsHtml += `<div class="item-card"><img src="${champData.cardImageUrl}" alt="${champData.name}"></div>`;
+                championsHtml += `<div class="item-card"><a href="/codex.html?search=${encodeURIComponent(champData.name)}"><img src="${champData.cardImageUrl}" alt="${champData.name}"></a></div>`;
             }
         });
 
@@ -546,6 +545,13 @@ async function showTeamView(teamId) {
                 </header>
                 <div class="team-champions mb-4">${championsHtml}</div>
                 <div class="single-post-body">${team.description || 'No description provided.'}</div>
+                
+                <div id="team-vote-section-${teamId}" class="champion-vote-section">
+                    <button class="vote-button like" data-vote="like"><i class="fas fa-thumbs-up"></i></button>
+                    <span class="vote-count like">0</span>
+                    <button class="vote-button dislike" data-vote="dislike"><i class="fas fa-thumbs-down"></i></button>
+                    <span class="vote-count dislike">0</span>
+                </div>
             </div>
              <div class="content-section comments-section">
                 <h2 class="section-title">Comments</h2>
@@ -559,6 +565,7 @@ async function showTeamView(teamId) {
         DOM.teamView.innerHTML = teamHtml;
 
         await loadComments(teamId, 'teams');
+        await loadTeamVotes(teamId);
 
         DOM.teamView.querySelector('#back-to-main-view').addEventListener('click', showMainView);
         DOM.teamView.querySelector('#comment-form').addEventListener('submit', (e) => handleSaveComment(e, teamId, 'teams'));
@@ -566,6 +573,10 @@ async function showTeamView(teamId) {
         if (deleteBtn) {
             deleteBtn.addEventListener('click', handleDeleteTeam);
         }
+        
+        DOM.teamView.querySelectorAll('.vote-button').forEach(btn => {
+            btn.addEventListener('click', () => handleTeamVote(teamId, btn.dataset.vote));
+        });
 
     } catch (error) {
         console.error("Error showing team view:", error);
@@ -627,6 +638,36 @@ async function loadChampionVotes(championId) {
     if (!voteSection) return;
 
     const votesRef = collection(db, 'communities', COMMUNITY_ID, 'championVotes', championId, 'votes');
+    const votesSnap = await getDocs(votesRef);
+
+    let likes = 0;
+    let dislikes = 0;
+    let userVote = null;
+
+    votesSnap.forEach(doc => {
+        if (doc.data().voteType === 'like') likes++;
+        if (doc.data().voteType === 'dislike') dislikes++;
+        if (doc.id === currentUserId) userVote = doc.data().voteType;
+    });
+
+    voteSection.querySelector('.vote-count.like').textContent = likes;
+    voteSection.querySelector('.vote-count.dislike').textContent = dislikes;
+
+    const likeBtn = voteSection.querySelector('.vote-button.like');
+    const dislikeBtn = voteSection.querySelector('.vote-button.dislike');
+    likeBtn.classList.toggle('active', userVote === 'like');
+    dislikeBtn.classList.toggle('active', userVote === 'dislike');
+}
+
+/**
+ * Fetches and displays vote counts for a team.
+ * @param {string} teamId - The ID of the team.
+ */
+async function loadTeamVotes(teamId) {
+    const voteSection = document.getElementById(`team-vote-section-${teamId}`);
+    if (!voteSection) return;
+
+    const votesRef = collection(db, 'communities', COMMUNITY_ID, 'teamVotes', teamId, 'votes');
     const votesSnap = await getDocs(votesRef);
 
     let likes = 0;
@@ -898,6 +939,27 @@ async function handleChampionVote(championId, voteType) {
         alert("Could not save your vote.");
     }
 }
+
+/**
+ * Handles saving a vote for a team.
+ * @param {string} teamId - The ID of the team.
+ * @param {string} voteType - 'like' or 'dislike'.
+ */
+async function handleTeamVote(teamId, voteType) {
+    if (!currentUserId) {
+        alert("You must be logged in to vote.");
+        return;
+    }
+    const voteRef = doc(db, 'communities', COMMUNITY_ID, 'teamVotes', teamId, 'votes', currentUserId);
+    try {
+        await setDoc(voteRef, { voteType });
+        loadTeamVotes(teamId); // Refresh vote counts
+    } catch (error) {
+        console.error("Error casting team vote:", error);
+        alert("Could not save your vote.");
+    }
+}
+
 
 // --- Delete Functions
 async function handleDeleteComment(e, parentId, commentId, parentCollection) {
