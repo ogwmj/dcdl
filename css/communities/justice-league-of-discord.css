@@ -227,6 +227,11 @@ main.relative {
     font-size: 0.8rem;
     color: #9ca3af;
 }
+
+.tier-list-instance-wrapper { 
+    margin: 20px 0;
+}
+
 .tier-grid { display: flex; flex-direction: column; }
 .tier-column-headers { display: grid; grid-template-columns: 80px 1fr 1fr 1fr; padding: 0 0.5rem 0.5rem 0.5rem; }
 .column-header { text-align: center; color: #9ca3af; font-size: 1.25rem; }
@@ -248,13 +253,77 @@ main.relative {
 .tier-row[data-tier="D"] { background-color: #302640; }
 .tier-row[data-tier="D"] .tier-label { background-color: #6b7280; }
 
-#team-builder-modal-content .item-card, #tierlist-modal-content .item-card, .tier-list-wrapper .item-card { position: relative; width: 72px; height: 72px; border-radius: 0.25rem; overflow: hidden; border: 3px solid transparent; box-shadow: 0 2px 5px rgba(0,0,0,0.4); cursor: pointer; transition: transform 0.2s ease; }
-#team-builder-modal-content .item-card:hover, #tierlist-modal-content .item-card:hover, .tier-list-wrapper .item-card:hover { transform: scale(1.1); z-index: 10; }
-#team-builder-modal-content .item-card img, #tierlist-modal-content .item-card img, .tier-list-wrapper .item-card img { width: 100%; height: 100%; object-fit: cover; }
-#team-builder-modal-content .item-card.rarity-limited-mythic, #tierlist-modal-content .item-card.rarity-limited-mythic, .tier-list-wrapper .item-card.rarity-limited-mythic, #team-view .item-card.rarity-limited-mythic { border-color: #900101; background-color: rgba(144, 1, 1, 0.5);}
-#team-builder-modal-content .item-card.rarity-mythic, #tierlist-modal-content .item-card.rarity-mythic, .tier-list-wrapper .item-card.rarity-mythic, #team-view .item-card.rarity-mythic { border-color: #dc2626; background-color: rgba(220, 38, 38, 0.5); }
-#team-builder-modal-content .item-card.rarity-legendary, #tierlist-modal-content .item-card.rarity-legendary, .tier-list-wrapper .item-card.rarity-legendary, #team-view .item-card.rarity-legendary { border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.5); }
-#team-builder-modal-content .item-card.rarity-epic, #tierlist-modal-content .item-card.rarity-epic, .tier-list-wrapper .item-card.rarity-epic, #team-view .item-card.rarity-epic { border-color: #7916a3; background-color: rgba(121, 22, 163, 0.5); }
+#team-builder-modal-content .item-card,
+#tierlist-modal-content .item-card,
+#champion-tier-list-instance-wrapper .item-card {
+	position: relative;
+	width: 72px;
+	height: 72px;
+	border-radius: 0.25rem;
+	overflow: hidden;
+	border: 3px solid transparent;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+	cursor: pointer;
+	transition: transform 0.2s ease;
+}
+
+#legacyPiece-tier-list-instance-wrapper .item-card {
+    position: relative;
+	width: 72px;
+	height: 72px;
+	border-radius: 0.25rem;
+	overflow: hidden;
+	border: 3px solid transparent;
+	cursor: pointer;
+	transition: transform 0.2s ease;
+}
+
+#team-builder-modal-content .item-card:hover,
+#tierlist-modal-content .item-card:hover,
+.tier-list-wrapper .item-card:hover {
+	transform: scale(1.1);
+	z-index: 10;
+}
+
+#team-builder-modal-content .item-card img,
+#tierlist-modal-content .item-card img,
+.tier-list-wrapper .item-card img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+#team-builder-modal-content .item-card.rarity-limited-mythic,
+#tierlist-modal-content .item-card.rarity-limited-mythic,
+.tier-list-wrapper .item-card.rarity-limited-mythic,
+#team-view .item-card.rarity-limited-mythic {
+	border-color: #900101;
+	background-color: rgba(144, 1, 1, 0.5);
+}
+
+#team-builder-modal-content .item-card.rarity-mythic,
+#tierlist-modal-content .item-card.rarity-mythic,
+.tier-list-wrapper .item-card.rarity-mythic,
+#team-view .item-card.rarity-mythic {
+	border-color: #dc2626;
+	background-color: rgba(220, 38, 38, 0.5);
+}
+
+#team-builder-modal-content .item-card.rarity-legendary,
+#tierlist-modal-content .item-card.rarity-legendary,
+.tier-list-wrapper .item-card.rarity-legendary,
+#team-view .item-card.rarity-legendary {
+	border-color: #f59e0b;
+	background-color: rgba(245, 158, 11, 0.5);
+}
+
+#team-builder-modal-content .item-card.rarity-epic,
+#tierlist-modal-content .item-card.rarity-epic,
+.tier-list-wrapper .item-card.rarity-epic,
+#team-view .item-card.rarity-epic {
+	border-color: #7916a3;
+	background-color: rgba(121, 22, 163, 0.5);
+}
 
 
 /* --- Tier List Editor & Forum Post Modals --- */

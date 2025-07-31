@@ -1,12 +1,12 @@
 /**
  * @file /js/communities/justice-league-of-discord.js
  * @fileoverview Core logic for all the JLoD features.
- * @version 1.2.0
+ * @version 1.0.0
  */
 
 import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, collection, getDocs, deleteDoc, query, orderBy, limit, addDoc, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc, collection, getDocs, deleteDoc, query, orderBy, limit, addDoc, serverTimestamp, setDoc, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js";
 
 // --- Global Variables ---
@@ -18,7 +18,7 @@ let ALL_CHAMPIONS_DATA = {};
 let ALL_LEGACY_PIECES_DATA = {};
 let currentUserRoles = [];
 let currentUsername = null;
-let LATEST_TIER_LIST = null;
+let LATEST_TIER_LISTS = {};
 
 const COMMUNITY_ID = "justice-league-of-discord";
 
@@ -171,8 +171,8 @@ async function cacheAllLegacyPiecesData() {
         snapshot.forEach(doc => {
             const data = doc.data();
             // Parse the comma-delimited string of classes into an array
-            if (data.description && typeof data.description === 'string') {
-                data.classes = data.description.split(',').map(c => c.trim());
+            if (data.class && typeof data.class === 'string') {
+                data.classes = data.class.split(',').map(c => c.trim());
             } else {
                 data.classes = [];
             }
@@ -279,34 +279,42 @@ async function loadMembers() {
 }
 
 /**
- * Fetches the latest tier list and renders it.
+ * Fetches the latest tier list for each type and renders them.
  */
 async function loadTierList() {
+    DOM.tierListContainer.innerHTML = ''; // Clear existing lists
+    LATEST_TIER_LISTS = {}; // Reset global state
+    const listTypes = ['champion', 'legacyPiece'];
+    let listsFound = 0;
+
     try {
         const tierListsRef = collection(db, 'communities', COMMUNITY_ID, 'tierLists');
-        const q = query(tierListsRef, orderBy("createdAt", "desc"), limit(1));
-        const tierListSnap = await getDocs(q);
+        
+        for (const type of listTypes) {
+            const q = query(tierListsRef, where("type", "==", type), orderBy("createdAt", "desc"), limit(1));
+            const tierListSnap = await getDocs(q);
 
-        if (tierListSnap.empty) {
-            LATEST_TIER_LIST = null;
-            DOM.tierListContainer.innerHTML = '<div class="placeholder-content"><p>No tier list found for this community yet.</p></div>';
-            return;
+            if (!tierListSnap.empty) {
+                listsFound++;
+                const latestDoc = tierListSnap.docs[0];
+                const listData = latestDoc.data();
+                LATEST_TIER_LISTS[type] = listData;
+                renderTierList(listData, latestDoc.id);
+            }
         }
 
-        const latestTierListDoc = tierListSnap.docs[0];
-        LATEST_TIER_LIST = latestTierListDoc.data();
-        renderTierList(latestTierListDoc.data(), latestTierListDoc.id);
+        if (listsFound === 0) {
+            DOM.tierListContainer.innerHTML = '<div class="placeholder-content"><p>No tier list found for this community yet.</p></div>';
+        }
 
     } catch (error) {
-        console.error("Error loading tier list:", error);
-        LATEST_TIER_LIST = null;
-        DOM.tierListContainer.innerHTML = '<div class="placeholder-content"><p class="text-red-400">Could not load tier list.</p></div>';
+        console.error("Error loading tier lists:", error);
+        DOM.tierListContainer.innerHTML = '<div class="placeholder-content"><p class="text-red-400">Could not load tier lists.</p></div>';
     }
 }
 
 /**
- * Renders the tier list HTML based on data from Firestore.
- * Handles both 'champion' and 'legacyPiece' types with grouped columns.
+ * Renders a single tier list HTML and appends it to the container.
  */
 function renderTierList(listData, listId) {
     const type = listData.type || 'champion';
@@ -333,7 +341,7 @@ function renderTierList(listData, listId) {
         tierItems.forEach(itemId => {
             const itemData = isChampionList ? ALL_CHAMPIONS_DATA[itemId] : ALL_LEGACY_PIECES_DATA[itemId];
             if (itemData) {
-                const itemClasses = isChampionList ? [itemData.class] : (itemData.classes || []);
+                const itemClasses = isChampionList ? [itemData.class] : (itemData.description.split(', ') || []);
                 let placed = false;
                 for (const itemClass of itemClasses) {
                     for (const [groupKey, groupData] of Object.entries(CLASS_GROUPS)) {
@@ -347,15 +355,21 @@ function renderTierList(listData, listId) {
                     }
                     if(placed) break;
                 }
+                // Fallback for items that don't match any class group
+                if (!placed) {
+                    groupedItems.GROUP_1.push(itemId);
+                }
             }
         });
 
         let columnsHtml = '';
+        let hasConent = false;
         Object.values(groupedItems).forEach(group => {
             columnsHtml += '<div class="tier-content">';
             group.forEach(itemId => {
                 const itemData = isChampionList ? ALL_CHAMPIONS_DATA[itemId] : ALL_LEGACY_PIECES_DATA[itemId];
                 if (itemData) {
+                    hasConent = true;
                     let rarityClass = `rarity-${(itemData.baseRarity || '').toLowerCase().replace(/\s/g, '-')}`;
                     const escapedName = (itemData.name || 'Unknown').replace(/"/g, '&quot;');
                     let imageUrl, cleanName;
@@ -375,7 +389,9 @@ function renderTierList(listData, listId) {
             });
             columnsHtml += '</div>';
         });
-        tierRowsHtml += `<div class="tier-row" data-tier="${tier}"><div class="tier-label">${tier}</div><div class="tier-row-content">${columnsHtml}</div></div>`;
+        if (hasConent) {
+            tierRowsHtml += `<div class="tier-row" data-tier="${tier}"><div class="tier-label">${tier}</div><div class="tier-row-content">${columnsHtml}</div></div>`;
+        }
     }
 
     // --- Common Wrapper HTML ---
@@ -384,7 +400,10 @@ function renderTierList(listData, listId) {
     const isAuthor = currentUserId === listData.authorUid;
     const canDelete = currentUserRoles.includes('admin') || isCommunityAdmin || isAuthor;
 
-    DOM.tierListContainer.innerHTML = `
+    const listWrapper = document.createElement('div');
+    listWrapper.classList.add('tier-list-instance-wrapper');
+    listWrapper.setAttribute('id', type + '-tier-list-instance-wrapper');
+    listWrapper.innerHTML = `
         <div class="tier-list-wrapper">
             <header class="tier-list-header">
                 <div class="header-title-block">
@@ -392,7 +411,7 @@ function renderTierList(listData, listId) {
                     <p>Created by ${listData.authorName || 'A Member'} on ${creationDate}</p>
                 </div>
                 <div>
-                    ${canDelete ? `<button id="delete-tierlist-btn" class="action-button-secondary" data-list-id="${listId}"><i class="fas fa-trash mr-2"></i>Delete</button>` : ''}
+                    ${canDelete ? `<button class="delete-tierlist-btn action-button-secondary" data-list-id="${listId}"><i class="fas fa-trash mr-2"></i>Delete</button>` : ''}
                 </div>
             </header>
             <div class="tier-grid">
@@ -401,11 +420,7 @@ function renderTierList(listData, listId) {
             </div>
         </div>
     `;
-
-    const deleteBtn = document.getElementById('delete-tierlist-btn');
-    if (deleteBtn) {
-        deleteBtn.addEventListener('click', handleDeleteTierList);
-    }
+    DOM.tierListContainer.appendChild(listWrapper);
 }
 
 
@@ -789,15 +804,16 @@ async function loadTeamVotes(teamId) {
 }
 
 /**
- * NEW: Looks up a champion's tier from the globally stored tier list.
+ * Looks up a champion's tier from the globally stored champion tier list.
  * @param {string} championId - The ID of the champion to find.
  * @returns {string|null} The tier (e.g., "S", "A+") or null if not found.
  */
 function getChampionTier(championId) {
-    if (!LATEST_TIER_LIST || !LATEST_TIER_LIST.tiers || LATEST_TIER_LIST.type !== 'champion') {
+    const championList = LATEST_TIER_LISTS.champion;
+    if (!championList || !championList.tiers) {
         return null;
     }
-    for (const [tier, championIds] of Object.entries(LATEST_TIER_LIST.tiers)) {
+    for (const [tier, championIds] of Object.entries(championList.tiers)) {
         if (championIds.includes(championId)) {
             return tier;
         }
@@ -831,14 +847,14 @@ function openTierListModal(type = 'champion') {
     const sortedItems = Object.entries(dataSource).sort(([,a], [,b]) => a.name.localeCompare(b.name));
 
     sortedItems.forEach(([id, itemData]) => {
-        const cleanName = (itemData.name || '').replace(/[^a-zA-Z0-9]/g, "");
+        const cleanName = (itemData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
         let rarityClass = '';
         if (type === 'champion') {
             rarityClass = `rarity-${(itemData.baseRarity || '').toLowerCase().replace(/\s/g, '-')}`;
         } else {
             rarityClass = 'rarity-none';
         }
-        
+
         const itemEl = document.createElement('div');
         itemEl.className = `item-card ${rarityClass}`;
         itemEl.dataset.id = id;
@@ -1169,8 +1185,7 @@ async function handleDeleteTeam(e) {
     }
 }
 
-async function handleDeleteTierList(e) {
-    const listId = e.currentTarget.dataset.listId;
+async function handleDeleteTierList(listId) {
     if (!listId) {
         console.error("Delete button is missing the list ID.");
         return;
@@ -1407,6 +1422,14 @@ DOM.createPostBtn.addEventListener('click', openCreatePostModal);
 DOM.postModal.closeBtn.addEventListener('click', closeCreatePostModal);
 DOM.postModal.cancelBtn.addEventListener('click', closeCreatePostModal);
 DOM.postModal.form.addEventListener('submit', handleSaveForumPost);
+
+DOM.tierListContainer.addEventListener('click', (e) => {
+    const deleteBtn = e.target.closest('.delete-tierlist-btn');
+    if (deleteBtn && deleteBtn.dataset.listId) {
+        handleDeleteTierList(deleteBtn.dataset.listId);
+    }
+});
+
 DOM.forumContainer.addEventListener('click', (e) => {
     const postItem = e.target.closest('.forum-post-item');
     if (postItem && postItem.dataset.postId) {
