@@ -265,7 +265,7 @@ async function loadMembers() {
             const memberEl = document.createElement('div');
             memberEl.className = 'member-item';
             memberEl.innerHTML = `
-                <img src="${member.photoURL || 'https://placehold.co/48x48/1f2937/e2e8f0?text=?'}" alt="${member.displayName}" class="member-avatar">
+                <img src="${member.photoURL || '/img/champions/avatars/dc_logo.webp'}" alt="${member.displayName}" class="member-avatar">
                 <span class="member-name">${member.displayName || 'Unnamed Member'}</span>
                 <span class="member-role ${isAdmin ? 'admin' : 'member'}">${isAdmin ? 'Admin' : 'Member'}</span>
                 <button class="remove-member-btn" data-uid="${member.id}" title="Remove Member">&times;</button>
