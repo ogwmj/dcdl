@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-07-31T16:54:46.576Z",
+  "updated_at": "2025-07-31T19:05:59.354Z",
   "legacy_pieces": [
     {
       "name": "Honkin' Huge Hammer",
@@ -11,9 +11,9 @@
       ]
     },
     {
-      "name": "Modoron Smoke Bomb",
       "baseRarity": "Epic",
-      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/ModoronSmokeBomb.webp",
+      "name": "Modoran Sonic Bomb",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/ModoranSonicBomb.webp",
       "classes": [
         "Warrior",
         "Guardian"
@@ -179,9 +179,9 @@
       ]
     },
     {
-      "name": "Razer Rib Umbrella",
       "baseRarity": "Epic",
-      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/RazerRibUmbrella.webp",
+      "name": "Razor Rib Umbrella",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/RazorRibUmbrella.webp",
       "classes": [
         "Warrior",
         "Guardian"
@@ -282,9 +282,9 @@
       ]
     },
     {
-      "name": "Amazonian Alloy Shield",
       "baseRarity": "Mythic",
-      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/AmazonianAlloyShield.webp",
+      "name": "Amazonium Alloy Shield",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/AmazoniumAlloyShield.webp",
       "classes": [
         "Warrior",
         "Guardian"
