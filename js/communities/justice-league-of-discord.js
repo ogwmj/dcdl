@@ -423,9 +423,15 @@ async function loadCommunityTeams() {
                 const champData = ALL_CHAMPIONS_DATA[champId];
                 if (champData) {
                     const cleanName = (champData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
+                    const championTier = getChampionTier(champId);
+                    const tierBadgeHtml = championTier 
+                        ? `<div class="tier-rating-badge tier-${championTier.toLowerCase().replace('+', '-plus')}">${championTier}</div>` 
+                        : '';
+
                     championsHtml += `
                         <div class="item-card">
                             <img src="${champData.cardImageUrl}" alt="${champData.name}" onerror="this.onerror=null;this.src='/img/champions/avatars/${cleanName}.webp';">
+                            ${tierBadgeHtml}
                         </div>`;
                 }
             });
@@ -559,7 +565,12 @@ async function showTeamView(teamId) {
         team.championIds.forEach(champId => {
             const champData = ALL_CHAMPIONS_DATA[champId];
             if (champData) {
-                championsHtml += `<div class="item-card"><a href="/codex.html?search=${encodeURIComponent(champData.name)}"><img src="${champData.cardImageUrl}" alt="${champData.name}"></a></div>`;
+                const championTier = getChampionTier(champId);
+                const tierBadgeHtml = championTier 
+                    ? `<div class="tier-rating-badge tier-${championTier.toLowerCase().replace('+', '-plus')}">${championTier}</div>` 
+                    : '';
+
+                championsHtml += `<div class="item-card"><a href="/codex.html?search=${encodeURIComponent(champData.name)}"><img src="${champData.cardImageUrl}" alt="${champData.name}">${tierBadgeHtml}</a></div>`;
             }
         });
 
@@ -751,6 +762,7 @@ function openTierListModal() {
     initTinyMCE('#team-description-textarea');
     DOM.tierListModal.championPool.innerHTML = '';
     const sortedChampions = Object.entries(ALL_CHAMPIONS_DATA).sort(([,a], [,b]) => a.name.localeCompare(b.name));
+
     sortedChampions.forEach(([id, champData]) => {
         const cleanName = (champData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
         const rarityClass = `rarity-${(champData.baseRarity || '').toLowerCase().replace(/\s/g, '-')}`;
@@ -792,6 +804,7 @@ function openTeamBuilderModal() {
     initTinyMCE('#team-description-textarea');
     DOM.teamBuilderModal.championPool.innerHTML = '';
     const sortedChampions = Object.entries(ALL_CHAMPIONS_DATA).sort(([,a], [,b]) => a.name.localeCompare(b.name));
+    
     sortedChampions.forEach(([id, champData]) => {
         const cleanName = (champData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
         const rarityClass = `rarity-${(champData.baseRarity || '').toLowerCase().replace(/\s/g, '-')}`;

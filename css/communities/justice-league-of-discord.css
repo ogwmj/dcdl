@@ -248,10 +248,10 @@ main.relative {
 #team-builder-modal-content .item-card, #tierlist-modal-content .item-card, .tier-list-wrapper .item-card { position: relative; width: 72px; height: 72px; border-radius: 0.25rem; overflow: hidden; border: 3px solid transparent; box-shadow: 0 2px 5px rgba(0,0,0,0.4); cursor: pointer; transition: transform 0.2s ease; }
 #team-builder-modal-content .item-card:hover, #tierlist-modal-content .item-card:hover, .tier-list-wrapper .item-card:hover { transform: scale(1.1); z-index: 10; }
 #team-builder-modal-content .item-card img, #tierlist-modal-content .item-card img, .tier-list-wrapper .item-card img { width: 100%; height: 100%; object-fit: cover; }
-#team-builder-modal-content .item-card.rarity-limited-mythic, #tierlist-modal-content .item-card.rarity-limited-mythic, .tier-list-wrapper .item-card.rarity-limited-mythic { border-color: #900101; background-color: rgba(144, 1, 1, 0.5);}
-#team-builder-modal-content .item-card.rarity-mythic, #tierlist-modal-content .item-card.rarity-mythic, .tier-list-wrapper .item-card.rarity-mythic { border-color: #dc2626; background-color: rgba(220, 38, 38, 0.5); }
-#team-builder-modal-content .item-card.rarity-legendary, #tierlist-modal-content .item-card.rarity-legendary, .tier-list-wrapper .item-card.rarity-legendary { border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.5); }
-#team-builder-modal-content .item-card.rarity-epic, #tierlist-modal-content .item-card.rarity-epic, .tier-list-wrapper .item-card.rarity-epic { border-color: #7916a3; background-color: rgba(121, 22, 163, 0.5); }
+#team-builder-modal-content .item-card.rarity-limited-mythic, #tierlist-modal-content .item-card.rarity-limited-mythic, .tier-list-wrapper .item-card.rarity-limited-mythic, #team-view .item-card.rarity-limited-mythic { border-color: #900101; background-color: rgba(144, 1, 1, 0.5);}
+#team-builder-modal-content .item-card.rarity-mythic, #tierlist-modal-content .item-card.rarity-mythic, .tier-list-wrapper .item-card.rarity-mythic, #team-view .item-card.rarity-mythic { border-color: #dc2626; background-color: rgba(220, 38, 38, 0.5); }
+#team-builder-modal-content .item-card.rarity-legendary, #tierlist-modal-content .item-card.rarity-legendary, .tier-list-wrapper .item-card.rarity-legendary, #team-view .item-card.rarity-legendary { border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.5); }
+#team-builder-modal-content .item-card.rarity-epic, #tierlist-modal-content .item-card.rarity-epic, .tier-list-wrapper .item-card.rarity-epic, #team-view .item-card.rarity-epic { border-color: #7916a3; background-color: rgba(121, 22, 163, 0.5); }
 
 
 /* --- Tier List Editor & Forum Post Modals --- */
@@ -476,7 +476,7 @@ main.relative {
 .vote-count.like { color: #22c55e; }
 .vote-count.dislike { color: #ef4444; }
 
-/* --- Team Builder --- */
+/* --- Team Builder & Lists --- */
 .team-item {
     background-color: rgba(13, 18, 38, 0.5);
     border-radius: 0.375rem;
@@ -490,6 +490,34 @@ main.relative {
 .team-name { font-family: 'Russo One', sans-serif; font-size: 1.2rem; color: #e2e8f0; }
 .team-meta { font-size: 0.8rem; color: #9ca3af; text-align: right; }
 .team-champions { display: flex; gap: 0.5rem; }
+
+/* Cards in the main team list view */
+.team-item .item-card {
+    position: relative;
+    width: 72px;
+    border-radius: 0.25rem;
+    overflow: hidden;
+}
+.team-item .item-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Cards in the team detail view */
+#team-view .team-champions .item-card {
+    position: relative;
+    border-radius: 0.375rem;
+    overflow: hidden;
+    border: 3px solid transparent;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+}
+#team-view .team-champions .item-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 
 .team-builder-slots { display: flex; gap: 1rem; padding: 1rem; background-color: rgba(13, 18, 38, 0.5); border-radius: 0.5rem; justify-content: center; }
 .team-slot { width: 80px; height: 80px; background-color: #0d1226; border: 2px dashed #374151; border-radius: 0.25rem; display: flex; align-items: center; justify-content: center; }
@@ -523,6 +551,30 @@ main.relative {
 .tier-rating-badge.tier-b { background-color: #22c55e; }
 .tier-rating-badge.tier-c { background-color: #3b82f6; }
 .tier-rating-badge.tier-d { background-color: #6b7280; }
+
+/* Tier badge override for team champion cards */
+.item-card > .tier-rating-badge, .item-card a > .tier-rating-badge {
+    position: absolute;
+    font-size: 0.7rem; /* Smaller font */
+    padding: 0.1rem 0.4rem; /* Smaller padding */
+    line-height: 1.2;
+    z-index: 5;
+    margin-left: 0;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+    border: 1px solid rgba(0,0,0,0.3);
+}
+
+.item-card > .tier-rating-badge {
+    top: 2px;
+    right: 2px;
+}
+
+#team-view .item-card a > .tier-rating-badge {
+    bottom: 0px;
+    right: 0px;
+    font-size: 1rem; /* Smaller font */
+    padding: 0.3rem 0.6rem; /* Smaller padding */
+}
 
 #bottom-panel {
     display: grid;
