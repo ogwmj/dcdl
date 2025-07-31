@@ -40,7 +40,7 @@ const DISCORD_WIDGET_TEMPLATE = `
     }
 </style>
 <a id="discord-link-button" 
-   href="https://discord.com/discovery/applications/1385296946142380104" 
+   href="https://discord.com/oauth2/authorize?client_id=1385296946142380104&permissions=51200&integration_type=0&scope=bot+applications.commands" 
    target="_blank" 
    rel="noopener noreferrer" 
    aria-label="Join our Discord community">
