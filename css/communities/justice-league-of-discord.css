@@ -490,7 +490,7 @@ main.relative {
 .team-name { font-family: 'Russo One', sans-serif; font-size: 1.2rem; color: #e2e8f0; }
 .team-meta { font-size: 0.8rem; color: #9ca3af; text-align: right; }
 .team-champions { display: flex; gap: 0.5rem; }
-.team-champions .item-card { width: 60px; height: 60px; }
+
 .team-builder-slots { display: flex; gap: 1rem; padding: 1rem; background-color: rgba(13, 18, 38, 0.5); border-radius: 0.5rem; justify-content: center; }
 .team-slot { width: 80px; height: 80px; background-color: #0d1226; border: 2px dashed #374151; border-radius: 0.25rem; display: flex; align-items: center; justify-content: center; }
 .team-slot.drag-over { border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.1); }
