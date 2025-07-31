@@ -11,6 +11,7 @@ let communityAdminUid = null;
 let ALL_CHAMPIONS_DATA = {};
 let currentUserRoles = [];
 let currentUsername = null;
+let LATEST_TIER_LIST = null; // NEW: To store the latest tier list data
 
 const COMMUNITY_ID = "justice-league-of-discord";
 
@@ -72,11 +73,6 @@ const DOM = {
 };
 
 // --- TinyMCE & Sanitization ---
-
-/**
- * Initializes a TinyMCE editor on a given selector.
- * @param {string} selector - The CSS selector for the textarea.
- */
 function initTinyMCE(selector) {
     tinymce.init({
         selector: selector,
@@ -87,28 +83,19 @@ function initTinyMCE(selector) {
         content_css: 'dark',
         height: 300,
         setup: function(editor) {
-            editor.on('change', function(e) {
-                editor.save(); // Keep the underlying textarea updated
-            });
+            editor.on('change', () => editor.save());
         }
     });
 }
 
-/**
- * Safely gets and sanitizes content from a TinyMCE editor.
- * @param {string} editorId - The ID of the textarea element.
- * @returns {string} Sanitized HTML content.
- */
 function getSanitizedEditorContent(editorId) {
     const editor = tinymce.get(editorId);
     if (editor) {
         const rawContent = editor.getContent();
-        // Sanitize the HTML to prevent XSS attacks
         return DOMPurify.sanitize(rawContent);
     }
     return '';
 }
-
 
 /**
  * Fetches champion data from the main codex for image lookups.
@@ -128,7 +115,6 @@ async function cacheAllChampionsData() {
 
 /**
  * Fetches the current user's profile data (roles and username).
- * @param {string} uid - The user's Firebase UID.
  */
 async function fetchUserProfile(uid) {
     if (!uid) {
@@ -168,8 +154,10 @@ async function loadCommunityInfo() {
             communityAdminUid = data.adminUid;
             DOM.name.textContent = data.name || 'Community Hub';
             DOM.description.textContent = data.description || 'Welcome to the hub.';
-            if (data.bannerImageUrl) {
+            if (data.bannerImageUrl && data.bannerImageUrl != '') {
                 DOM.banner.style.backgroundImage = `url('${data.bannerImageUrl}')`;
+            } else {
+                DOM.banner.style.display = 'none';
             }
             DOM.header.classList.remove('community-header-loading');
         } else {
@@ -229,15 +217,18 @@ async function loadTierList() {
         const tierListSnap = await getDocs(q);
 
         if (tierListSnap.empty) {
+            LATEST_TIER_LIST = null;
             DOM.tierListContainer.innerHTML = '<div class="placeholder-content"><p>No tier list found for this community yet.</p></div>';
             return;
         }
 
         const latestTierListDoc = tierListSnap.docs[0];
+        LATEST_TIER_LIST = latestTierListDoc.data();
         renderTierList(latestTierListDoc.data(), latestTierListDoc.id);
 
     } catch (error) {
         console.error("Error loading tier list:", error);
+        LATEST_TIER_LIST = null;
         DOM.tierListContainer.innerHTML = '<div class="placeholder-content"><p class="text-red-400">Could not load tier list.</p></div>';
     }
 }
@@ -444,6 +435,12 @@ async function showPostView(postId) {
         const isCommunityAdmin = currentUserId === communityAdminUid;
         const isAuthor = currentUserId === post.authorUid;
         const canDelete = currentUserRoles.includes('admin') || isCommunityAdmin || isAuthor;
+        
+        // NEW: Find the champion's tier rating
+        const championTier = getChampionTier(post.championId);
+        const tierBadgeHtml = championTier 
+            ? `<div class="tier-rating-badge tier-${championTier.toLowerCase().replace('+', '-plus')}">${championTier}</div>` 
+            : '';
 
         let postHtml = `
             <div class="content-section">
@@ -451,7 +448,7 @@ async function showPostView(postId) {
                 <header class="single-post-header">
                     <div class="flex justify-between items-start">
                         <div>
-                            <h1 class="single-post-title">${post.title}</h1>
+                            <h1 class="single-post-title">${post.title} ${tierBadgeHtml}</h1>
                             <p class="single-post-meta">Posted by ${post.authorName} on ${postDate} &bull; About ${champData?.name}</p>
                         </div>
                         <div>
@@ -573,7 +570,6 @@ async function showTeamView(teamId) {
         if (deleteBtn) {
             deleteBtn.addEventListener('click', handleDeleteTeam);
         }
-        
         DOM.teamView.querySelectorAll('.vote-button').forEach(btn => {
             btn.addEventListener('click', () => handleTeamVote(teamId, btn.dataset.vote));
         });
@@ -687,6 +683,23 @@ async function loadTeamVotes(teamId) {
     const dislikeBtn = voteSection.querySelector('.vote-button.dislike');
     likeBtn.classList.toggle('active', userVote === 'like');
     dislikeBtn.classList.toggle('active', userVote === 'dislike');
+}
+
+/**
+ * NEW: Looks up a champion's tier from the globally stored tier list.
+ * @param {string} championId - The ID of the champion to find.
+ * @returns {string|null} The tier (e.g., "S", "A+") or null if not found.
+ */
+function getChampionTier(championId) {
+    if (!LATEST_TIER_LIST || !LATEST_TIER_LIST.tiers) {
+        return null;
+    }
+    for (const [tier, championIds] of Object.entries(LATEST_TIER_LIST.tiers)) {
+        if (championIds.includes(championId)) {
+            return tier;
+        }
+    }
+    return null;
 }
 
 
@@ -940,11 +953,6 @@ async function handleChampionVote(championId, voteType) {
     }
 }
 
-/**
- * Handles saving a vote for a team.
- * @param {string} teamId - The ID of the team.
- * @param {string} voteType - 'like' or 'dislike'.
- */
 async function handleTeamVote(teamId, voteType) {
     if (!currentUserId) {
         alert("You must be logged in to vote.");
@@ -953,7 +961,7 @@ async function handleTeamVote(teamId, voteType) {
     const voteRef = doc(db, 'communities', COMMUNITY_ID, 'teamVotes', teamId, 'votes', currentUserId);
     try {
         await setDoc(voteRef, { voteType });
-        loadTeamVotes(teamId); // Refresh vote counts
+        loadTeamVotes(teamId);
     } catch (error) {
         console.error("Error casting team vote:", error);
         alert("Could not save your vote.");
