@@ -838,16 +838,14 @@ function openTierListModal(type = 'champion') {
     
     const isChampionList = type === 'champion';
 
-    // 1. Configure Modal Titles
     DOM.tierListModal.backdrop.querySelector('.modal-title').textContent = isChampionList ? 'Create New Champion Tier List' : 'Create New Legacy Tier List';
     DOM.tierListModal.backdrop.querySelector('.palette-title').textContent = isChampionList ? 'Champions' : 'Legacy Pieces';
     
-    // 2. Populate the Item Palette
     const dataSource = isChampionList ? ALL_CHAMPIONS_DATA : ALL_LEGACY_PIECES_DATA;
     const sortedItems = Object.entries(dataSource).sort(([,a], [,b]) => a.name.localeCompare(b.name));
 
     sortedItems.forEach(([id, itemData]) => {
-        const cleanName = (itemData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
+        
         let rarityClass = '';
         if (type === 'champion') {
             rarityClass = `rarity-${(itemData.baseRarity || '').toLowerCase().replace(/\s/g, '-')}`;
@@ -861,10 +859,11 @@ function openTierListModal(type = 'champion') {
         itemEl.draggable = true;
         
         if (isChampionList) {
+            const cleanName = (itemData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
             itemEl.dataset.class = itemData.class || 'Unknown';
             itemEl.innerHTML = `<img src="/img/champions/avatars/${cleanName}.webp" alt="${itemData.name}" onerror="this.onerror=null;this.src='https://placehold.co/72x72/1f2937/e2e8f0?text=?';">`;
         } else {
-            // Legacy pieces now have multiple classes, store them in a data attribute
+            const cleanName = (itemData.name || '').replace(/[^a-zA-Z0-9]/g, "");
             itemEl.dataset.classes = (itemData.classes || []).join(',');
             const imageUrl = itemData.cardImageUrl || `/img/legacy_pieces/${cleanName}.webp`;
             itemEl.innerHTML = `<img src="${imageUrl}" alt="${itemData.name}" onerror="this.onerror=null;this.src='https://placehold.co/72x72/1f2937/e2e8f0?text=?';">`;
@@ -872,7 +871,6 @@ function openTierListModal(type = 'champion') {
         DOM.tierListModal.championPool.appendChild(itemEl);
     });
 
-    // 3. Build the Tier Editor Structure (now the same for both types)
     const tiers = ['S', 'A+', 'A', 'B', 'C', 'D'];
     tiers.forEach(tier => {
         const tierRow = document.createElement('div');
