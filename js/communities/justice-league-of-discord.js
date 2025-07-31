@@ -48,8 +48,11 @@ const DOM = {
     createTierListBtn: document.getElementById('create-tierlist-btn'),
     forumContainer: document.getElementById('forum-container'),
     createPostBtn: document.getElementById('create-post-btn'),
+    teamContainer: document.getElementById('team-container'),
+    createTeamBtn: document.getElementById('create-team-btn'),
     mainView: document.getElementById('main-view'),
     postView: document.getElementById('post-view'),
+    teamView: document.getElementById('team-view'),
     // Tier List Modal
     tierListModal: {
         backdrop: document.getElementById('tierlist-modal-backdrop'),
@@ -59,6 +62,17 @@ const DOM = {
         titleInput: document.getElementById('tierlist-title-input'),
         tiersContainer: document.getElementById('tierlist-editor-tiers'),
         championPool: document.getElementById('tierlist-editor-champion-pool'),
+    },
+    // Team Builder Modal
+    teamBuilderModal: {
+        backdrop: document.getElementById('team-builder-modal-backdrop'),
+        closeBtn: document.getElementById('team-builder-modal-close'),
+        cancelBtn: document.getElementById('team-builder-modal-cancel'),
+        saveBtn: document.getElementById('team-builder-modal-save'),
+        nameInput: document.getElementById('team-name-input'),
+        descriptionTextarea: document.getElementById('team-description-textarea'),
+        slots: document.querySelectorAll('.team-slot'),
+        championPool: document.getElementById('team-builder-champion-pool'),
     },
     // Post Modal
     postModal: {
@@ -196,10 +210,7 @@ async function loadTierList() {
             return;
         }
 
-        // Correctly define the document variable
         const latestTierListDoc = tierListSnap.docs[0];
-        
-        // Pass both the data and the ID to the render function
         renderTierList(latestTierListDoc.data(), latestTierListDoc.id);
 
     } catch (error) {
@@ -215,8 +226,7 @@ function renderTierList(listData, listId) {
     const tiers = ['S', 'A+', 'A', 'B', 'C', 'D'];
     let tierRowsHtml = '';
 
-    // Create the group headers with icons
-    let groupHeadersHtml = '<div></div>'; // Empty cell for the tier label column
+    let groupHeadersHtml = '<div></div>'; 
     Object.values(CLASS_GROUPS).forEach(group => {
         groupHeadersHtml += `<div class="column-header">`;
         group.icons.forEach(iconSrc => {
@@ -250,10 +260,7 @@ function renderTierList(listData, listId) {
                 if (champData) {
                     const cleanName = (champData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
                     const rarityClass = `rarity-${(champData.baseRarity || '').toLowerCase().replace(/\s/g, '-')}`;
-                    
-                    // --- FIX: Escape the champion name for the alt attribute ---
                     const escapedName = (champData.name || 'Unknown').replace(/"/g, '&quot;');
-
                     columnsHtml += `
                         <div class="item-card ${rarityClass}">
                             <img src="/img/champions/avatars/${cleanName}.webp" alt="${escapedName}" onerror="this.onerror=null;this.src='https://placehold.co/72x72/1f2937/e2e8f0?text=?';">
@@ -263,7 +270,7 @@ function renderTierList(listData, listId) {
             columnsHtml += '</div>';
         });
 
-        tierRowsHtml += `<div class="tier-row" data-tier="${tier}"><div class="tier-label">${tier}</div>${columnsHtml}</div>`;
+        tierRowsHtml += `<div class="tier-row" data-tier="${tier}"><div class="tier-label">${tier}</div><div class="tier-row-content">${columnsHtml}</div></div>`;
     }
 
     const creationDate = listData.createdAt?.toDate ? listData.createdAt.toDate().toLocaleDateString() : 'a while ago';
@@ -343,12 +350,63 @@ async function loadForumPosts() {
 }
 
 /**
+ * Fetches and renders community teams.
+ */
+async function loadCommunityTeams() {
+    try {
+        const teamsRef = collection(db, 'communities', COMMUNITY_ID, 'teams');
+        const q = query(teamsRef, orderBy("createdAt", "desc"), limit(10));
+        const teamsSnap = await getDocs(q);
+
+        if (teamsSnap.empty) {
+            DOM.teamContainer.innerHTML = '<div class="placeholder-content md:col-span-2"><p>No teams created yet.</p></div>';
+            return;
+        }
+
+        DOM.teamContainer.innerHTML = '';
+        teamsSnap.forEach(doc => {
+            const team = doc.data();
+            let championsHtml = '';
+            team.championIds.forEach(champId => {
+                const champData = ALL_CHAMPIONS_DATA[champId];
+                if (champData) {
+                    const cleanName = (champData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
+                    const rarityClass = `rarity-${(champData.baseRarity || '').toLowerCase().replace(/\s/g, '-')}`;
+                    championsHtml += `
+                        <div class="item-card ${rarityClass}">
+                            <img src="/img/champions/avatars/${cleanName}.webp" alt="${champData.name}" onerror="this.onerror=null;this.src='https://placehold.co/60x60/1f2937/e2e8f0?text=?';">
+                        </div>`;
+                }
+            });
+
+            const teamEl = document.createElement('div');
+            teamEl.className = 'team-item';
+            teamEl.dataset.teamId = doc.id; // Add team ID for click handling
+            teamEl.innerHTML = `
+                <div class="team-header">
+                    <div>
+                        <h3 class="team-name">${team.name}</h3>
+                        <p class="team-meta">By ${team.authorName}</p>
+                    </div>
+                </div>
+                <div class="team-champions">${championsHtml}</div>
+            `;
+            DOM.teamContainer.appendChild(teamEl);
+        });
+    } catch (error) {
+        console.error("Error loading teams:", error);
+        DOM.teamContainer.innerHTML = '<div class="placeholder-content md:col-span-2"><p class="text-red-400">Could not load teams.</p></div>';
+    }
+}
+
+/**
  * Shows the single post view and hides the main view.
  * @param {string} postId - The ID of the post to display.
  */
 async function showPostView(postId) {
     DOM.mainView.classList.add('hidden');
     DOM.postView.classList.remove('hidden');
+    DOM.teamView.classList.add('hidden');
     DOM.postView.innerHTML = '<div class="content-section"><div class="placeholder-content"><p>Loading post...</p></div></div>';
 
     try {
@@ -367,7 +425,7 @@ async function showPostView(postId) {
 
         let postHtml = `
             <div class="content-section">
-                <button id="back-to-main-view" class="action-button-secondary mb-6"><i class="fas fa-arrow-left mr-2"></i>Back to Forum</button>
+                <button id="back-to-main-view" class="action-button-secondary mb-6"><i class="fas fa-arrow-left mr-2"></i>Back to Main View</button>
                 <header class="single-post-header">
                     <div class="flex justify-between items-start">
                         <div>
@@ -399,12 +457,11 @@ async function showPostView(postId) {
         `;
         DOM.postView.innerHTML = postHtml;
         
-        await loadComments(postId);
+        await loadComments(postId, 'forumPosts');
         await loadChampionVotes(post.championId);
 
-        // Add event listeners
         DOM.postView.querySelector('#back-to-main-view').addEventListener('click', showMainView);
-        DOM.postView.querySelector('#comment-form').addEventListener('submit', (e) => handleSaveComment(e, postId));
+        DOM.postView.querySelector('#comment-form').addEventListener('submit', (e) => handleSaveComment(e, postId, 'forumPosts'));
         DOM.postView.querySelectorAll('.vote-button').forEach(btn => {
             btn.addEventListener('click', () => handleChampionVote(post.championId, btn.dataset.vote));
         });
@@ -420,12 +477,91 @@ async function showPostView(postId) {
 }
 
 /**
- * Fetches and renders comments for a specific post.
- * @param {string} postId - The ID of the post.
+ * NEW: Shows the single team view.
+ * @param {string} teamId - The ID of the team to display.
  */
-async function loadComments(postId) {
-    const commentsList = DOM.postView.querySelector('#comments-list');
-    const commentsRef = collection(db, 'communities', COMMUNITY_ID, 'forumPosts', postId, 'comments');
+async function showTeamView(teamId) {
+    DOM.mainView.classList.add('hidden');
+    DOM.postView.classList.add('hidden');
+    DOM.teamView.classList.remove('hidden');
+    DOM.teamView.innerHTML = '<div class="content-section"><div class="placeholder-content"><p>Loading team...</p></div></div>';
+
+    try {
+        const teamRef = doc(db, 'communities', COMMUNITY_ID, 'teams', teamId);
+        const teamSnap = await getDoc(teamRef);
+
+        if (!teamSnap.exists()) throw new Error("Team not found");
+
+        const team = teamSnap.data();
+        const teamDate = team.createdAt?.toDate ? team.createdAt.toDate().toLocaleDateString() : 'a while ago';
+
+        const isCommunityAdmin = currentUserId === communityAdminUid;
+        const isAuthor = currentUserId === team.authorUid;
+        const canDelete = currentUserRoles.includes('admin') || isCommunityAdmin || isAuthor;
+
+        let championsHtml = '';
+        team.championIds.forEach(champId => {
+            const champData = ALL_CHAMPIONS_DATA[champId];
+            if (champData) {
+                const cleanName = (champData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
+                const rarityClass = `rarity-${(champData.baseRarity || '').toLowerCase().replace(/\s/g, '-')}`;
+                championsHtml += `<div class="item-card ${rarityClass} !w-20 !h-20"><img src="/img/champions/avatars/${cleanName}.webp" alt="${champData.name}"></div>`;
+            }
+        });
+
+        let teamHtml = `
+            <div class="content-section">
+                <button id="back-to-main-view" class="action-button-secondary mb-6"><i class="fas fa-arrow-left mr-2"></i>Back to Main View</button>
+                <header class="single-post-header">
+                     <div class="flex justify-between items-start">
+                        <div>
+                            <h1 class="single-post-title">${team.name}</h1>
+                            <p class="single-post-meta">Created by ${team.authorName} on ${teamDate}</p>
+                        </div>
+                        <div>
+                            ${canDelete ? `<button id="delete-team-btn" class="action-button-secondary" data-team-id="${teamId}"><i class="fas fa-trash mr-2"></i>Delete Team</button>` : ''}
+                        </div>
+                    </div>
+                </header>
+                <div class="team-champions mb-4">${championsHtml}</div>
+                <div class="single-post-body">${(team.description || 'No description provided.').replace(/\n/g, '<br>')}</div>
+            </div>
+             <div class="content-section comments-section">
+                <h2 class="section-title">Comments</h2>
+                <div id="comments-list" class="space-y-6"></div>
+                <form id="comment-form" class="mt-8 ${currentUserId ? '' : 'hidden'}">
+                    <textarea id="comment-textarea" class="admin-input w-full" placeholder="Write a comment..." required></textarea>
+                    <button type="submit" class="action-button mt-2">Submit Comment</button>
+                </form>
+            </div>
+        `;
+        DOM.teamView.innerHTML = teamHtml;
+
+        await loadComments(teamId, 'teams');
+
+        DOM.teamView.querySelector('#back-to-main-view').addEventListener('click', showMainView);
+        DOM.teamView.querySelector('#comment-form').addEventListener('submit', (e) => handleSaveComment(e, teamId, 'teams'));
+        const deleteBtn = DOM.teamView.querySelector('#delete-team-btn');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', handleDeleteTeam);
+        }
+
+    } catch (error) {
+        console.error("Error showing team view:", error);
+        DOM.teamView.innerHTML = '<div class="content-section"><p class="text-red-400">Could not load team.</p></div>';
+    }
+}
+
+
+/**
+ * Fetches and renders comments for a specific post or team.
+ * @param {string} parentId - The ID of the post or team.
+ * @param {string} parentCollection - The name of the parent collection ('forumPosts' or 'teams').
+ */
+async function loadComments(parentId, parentCollection) {
+    const view = parentCollection === 'forumPosts' ? DOM.postView : DOM.teamView;
+    const commentsList = view.querySelector('#comments-list');
+    const commentsRef = collection(db, 'communities', COMMUNITY_ID, parentCollection, parentId, 'comments');
     const q = query(commentsRef, orderBy("createdAt", "asc"));
     const commentsSnap = await getDocs(q);
 
@@ -457,7 +593,7 @@ async function loadComments(postId) {
     });
 
     commentsList.querySelectorAll('.comment-delete-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => handleDeleteComment(e, postId, btn.dataset.commentId));
+        btn.addEventListener('click', (e) => handleDeleteComment(e, parentId, btn.dataset.commentId, parentCollection));
     });
 }
 
@@ -485,7 +621,6 @@ async function loadChampionVotes(championId) {
     voteSection.querySelector('.vote-count.like').textContent = likes;
     voteSection.querySelector('.vote-count.dislike').textContent = dislikes;
 
-    // Update button active state
     const likeBtn = voteSection.querySelector('.vote-button.like');
     const dislikeBtn = voteSection.querySelector('.vote-button.dislike');
     likeBtn.classList.toggle('active', userVote === 'like');
@@ -495,6 +630,7 @@ async function loadChampionVotes(championId) {
 
 function showMainView() {
     DOM.postView.classList.add('hidden');
+    DOM.teamView.classList.add('hidden');
     DOM.mainView.classList.remove('hidden');
 }
 
@@ -507,6 +643,7 @@ function openTierListModal() {
         const champEl = document.createElement('div');
         champEl.className = `item-card ${rarityClass}`;
         champEl.dataset.id = id;
+        champEl.dataset.class = champData.class || 'Unknown';
         champEl.draggable = true;
         champEl.innerHTML = `<img src="/img/champions/avatars/${cleanName}.webp" alt="${champData.name}" onerror="this.onerror=null;this.src='https://placehold.co/72x72/1f2937/e2e8f0?text=?';">`;
         DOM.tierListModal.championPool.appendChild(champEl);
@@ -517,7 +654,14 @@ function openTierListModal() {
     tiers.forEach(tier => {
         const tierRow = document.createElement('div');
         tierRow.className = 'editor-tier-row';
-        tierRow.innerHTML = `<div class="tier-label">${tier}</div><div class="editor-tier-content" data-tier="${tier}"></div>`;
+        tierRow.innerHTML = `
+            <div class="tier-label">${tier}</div>
+            <div class="editor-tier-content-wrapper">
+                <div class="editor-tier-content" data-tier="${tier}" data-group="GROUP_1"></div>
+                <div class="editor-tier-content" data-tier="${tier}" data-group="GROUP_2"></div>
+                <div class="editor-tier-content" data-tier="${tier}" data-group="GROUP_3"></div>
+            </div>
+        `;
         DOM.tierListModal.tiersContainer.appendChild(tierRow);
     });
 
@@ -527,6 +671,28 @@ function openTierListModal() {
 function closeTierListModal() {
     DOM.tierListModal.backdrop.classList.add('hidden');
     DOM.tierListModal.titleInput.value = '';
+}
+
+function openTeamBuilderModal() {
+    DOM.teamBuilderModal.championPool.innerHTML = '';
+     Object.entries(ALL_CHAMPIONS_DATA).forEach(([id, champData]) => {
+        const cleanName = (champData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
+        const rarityClass = `rarity-${(champData.baseRarity || '').toLowerCase().replace(/\s/g, '-')}`;
+        const champEl = document.createElement('div');
+        champEl.className = `item-card ${rarityClass}`;
+        champEl.dataset.id = id;
+        champEl.draggable = true;
+        champEl.innerHTML = `<img src="/img/champions/avatars/${cleanName}.webp" alt="${champData.name}" onerror="this.onerror=null;this.src='https://placehold.co/72x72/1f2937/e2e8f0?text=?';">`;
+        DOM.teamBuilderModal.championPool.appendChild(champEl);
+    });
+    DOM.teamBuilderModal.slots.forEach(slot => slot.innerHTML = '');
+    DOM.teamBuilderModal.nameInput.value = '';
+    DOM.teamBuilderModal.descriptionTextarea.value = '';
+    DOM.teamBuilderModal.backdrop.classList.remove('hidden');
+}
+
+function closeTeamBuilderModal() {
+    DOM.teamBuilderModal.backdrop.classList.add('hidden');
 }
 
 function openCreatePostModal() {
@@ -547,30 +713,6 @@ function closeCreatePostModal() {
     DOM.postModal.backdrop.classList.add('hidden');
 }
 
-/**
- * Handles the deletion of a tier list document.
- */
-async function handleDeleteTierList(e) {
-    if (!confirm('Are you sure you want to permanently delete this tier list?')) {
-        return;
-    }
-
-    const listId = e.currentTarget.dataset.listId;
-    if (!listId) {
-        console.error("Delete button is missing the list ID.");
-        return;
-    }
-
-    try {
-        const listRef = doc(db, 'communities', COMMUNITY_ID, 'tierLists', listId);
-        await deleteDoc(listRef);
-        alert('Tier list deleted successfully.');
-        loadTierList(); // Reload to show the next available list or empty state
-    } catch (error) {
-        console.error("Error deleting tier list:", error);
-        alert('Failed to delete tier list.');
-    }
-}
 
 // --- Data Saving Handlers ---
 async function handleSaveTierList() {
@@ -578,11 +720,14 @@ async function handleSaveTierList() {
     if (!title) { alert('Please enter a title.'); return; }
 
     const tiersData = {};
-    // Find each tier content area and get its children
-    DOM.tierListModal.tiersContainer.querySelectorAll('.editor-tier-content').forEach(tierContent => {
-        const tier = tierContent.dataset.tier;
-        // Create an array of champion IDs from the items in the tier
-        tiersData[tier] = Array.from(tierContent.children).map(child => child.dataset.id);
+    DOM.tierListModal.tiersContainer.querySelectorAll('.editor-tier-row').forEach(tierRow => {
+        const tier = tierRow.querySelector('.tier-label').textContent;
+        let championIds = [];
+        tierRow.querySelectorAll('.editor-tier-content').forEach(groupColumn => {
+            const idsInColumn = Array.from(groupColumn.children).map(child => child.dataset.id);
+            championIds = championIds.concat(idsInColumn);
+        });
+        tiersData[tier] = championIds;
     });
 
     const newTierList = {
@@ -596,13 +741,56 @@ async function handleSaveTierList() {
         const tierListsRef = collection(db, 'communities', COMMUNITY_ID, 'tierLists');
         await addDoc(tierListsRef, newTierList);
         closeTierListModal();
-        loadTierList(); // This will trigger the sorted view
+        loadTierList();
         alert('Tier list saved!');
     } catch (error) {
         console.error("Error saving tier list: ", error);
         alert('Failed to save tier list.');
     } finally {
         DOM.tierListModal.saveBtn.disabled = false;
+    }
+}
+
+async function handleSaveTeam() {
+    const name = DOM.teamBuilderModal.nameInput.value.trim();
+    const description = DOM.teamBuilderModal.descriptionTextarea.value.trim();
+    if (!name) {
+        alert('Please enter a team name.');
+        return;
+    }
+
+    const championIds = [];
+    DOM.teamBuilderModal.slots.forEach(slot => {
+        const champCard = slot.querySelector('.item-card');
+        if (champCard) {
+            championIds.push(champCard.dataset.id);
+        }
+    });
+
+    if (championIds.length === 0) {
+        alert('Please add at least one champion to the team.');
+        return;
+    }
+
+    const newTeam = {
+        name, description, championIds,
+        authorUid: currentUserId,
+        authorName: currentUsername || auth.currentUser.displayName || 'A Member',
+        createdAt: serverTimestamp(),
+    };
+
+    try {
+        DOM.teamBuilderModal.saveBtn.disabled = true;
+        const teamsRef = collection(db, 'communities', COMMUNITY_ID, 'teams');
+        await addDoc(teamsRef, newTeam);
+        closeTeamBuilderModal();
+        loadCommunityTeams();
+        alert('Team saved successfully!');
+    } catch (error) {
+        console.error("Error saving team:", error);
+        alert('Failed to save team.');
+    } finally {
+        DOM.teamBuilderModal.saveBtn.disabled = false;
     }
 }
 
@@ -639,7 +827,7 @@ async function handleSaveForumPost(e) {
     }
 }
 
-async function handleSaveComment(e, postId) {
+async function handleSaveComment(e, parentId, parentCollection) {
     e.preventDefault();
     const form = e.currentTarget;
     const textarea = form.querySelector('textarea');
@@ -655,10 +843,14 @@ async function handleSaveComment(e, postId) {
     };
 
     try {
-        const commentsRef = collection(db, 'communities', COMMUNITY_ID, 'forumPosts', postId, 'comments');
+        const commentsRef = collection(db, 'communities', COMMUNITY_ID, parentCollection, parentId, 'comments');
         await addDoc(commentsRef, newComment);
         form.reset();
-        loadComments(postId); // Refresh comments
+        if (parentCollection === 'forumPosts') {
+            loadComments(parentId, 'forumPosts');
+        } else if (parentCollection === 'teams') {
+            loadComments(parentId, 'teams');
+        }
     } catch (error) {
         console.error("Error saving comment:", error);
         alert('Failed to save comment.');
@@ -673,7 +865,7 @@ async function handleChampionVote(championId, voteType) {
     const voteRef = doc(db, 'communities', COMMUNITY_ID, 'championVotes', championId, 'votes', currentUserId);
     try {
         await setDoc(voteRef, { voteType });
-        loadChampionVotes(championId); // Refresh vote counts
+        loadChampionVotes(championId);
     } catch (error) {
         console.error("Error casting vote:", error);
         alert("Could not save your vote.");
@@ -681,35 +873,71 @@ async function handleChampionVote(championId, voteType) {
 }
 
 // --- Delete Functions
-async function handleDeleteComment(e, postId, commentId) {
+async function handleDeleteComment(e, parentId, commentId, parentCollection) {
     if (!confirm('Are you sure you want to delete this comment?')) return;
     try {
-        const commentRef = doc(db, 'communities', COMMUNITY_ID, 'forumPosts', postId, 'comments', commentId);
+        const commentRef = doc(db, 'communities', COMMUNITY_ID, parentCollection, parentId, 'comments', commentId);
         await deleteDoc(commentRef);
-        loadComments(postId); // Refresh comments
+        if (parentCollection === 'forumPosts') {
+            loadComments(parentId, 'forumPosts');
+        } else if (parentCollection === 'teams') {
+            loadComments(parentId, 'teams');
+        }
     } catch (error) {
         console.error("Error deleting comment:", error);
         alert('Failed to delete comment.');
     }
 }
 
-/**
- * Handles the deletion of a forum post.
- */
 async function handleDeletePost(e) {
     const postId = e.currentTarget.dataset.postId;
-    if (!postId || !confirm('Are you sure you want to permanently delete this post?')) {
-        return;
-    }
+    if (!postId || !confirm('Are you sure you want to permanently delete this post?')) return;
 
     try {
         const postRef = doc(db, 'communities', COMMUNITY_ID, 'forumPosts', postId);
         await deleteDoc(postRef);
         alert('Post deleted successfully.');
-        showMainView(); // Go back to the main forum view
+        showMainView();
+        loadForumPosts();
     } catch (error) {
         console.error("Error deleting post:", error);
         alert('Failed to delete post.');
+    }
+}
+
+async function handleDeleteTeam(e) {
+    const teamId = e.currentTarget.dataset.teamId;
+    if (!teamId || !confirm('Are you sure you want to permanently delete this team?')) return;
+
+    try {
+        const teamRef = doc(db, 'communities', COMMUNITY_ID, 'teams', teamId);
+        await deleteDoc(teamRef);
+        alert('Team deleted successfully.');
+        showMainView();
+        loadCommunityTeams();
+    } catch (error) {
+        console.error("Error deleting team:", error);
+        alert('Failed to delete team.');
+    }
+}
+
+async function handleDeleteTierList(e) {
+    if (!confirm('Are you sure you want to permanently delete this tier list?')) return;
+
+    const listId = e.currentTarget.dataset.listId;
+    if (!listId) {
+        console.error("Delete button is missing the list ID.");
+        return;
+    }
+
+    try {
+        const listRef = doc(db, 'communities', COMMUNITY_ID, 'tierLists', listId);
+        await deleteDoc(listRef);
+        alert('Tier list deleted successfully.');
+        loadTierList();
+    } catch (error) {
+        console.error("Error deleting tier list:", error);
+        alert('Failed to delete tier list.');
     }
 }
 
@@ -729,10 +957,10 @@ function updateUIVisibility() {
         });
     }
 
-    // A site admin can do anything a member can do.
     const canCreateContent = isCurrentUserMember || isSiteAdmin;
     DOM.createTierListBtn.classList.toggle('hidden', !canCreateContent);
     DOM.createPostBtn.classList.toggle('hidden', !canCreateContent);
+    DOM.createTeamBtn.classList.toggle('hidden', !canCreateContent);
 }
 
 async function handleAddMember(e) {
@@ -775,51 +1003,38 @@ async function init() {
     await loadMembers();
     await loadTierList();
     await loadForumPosts();
+    await loadCommunityTeams();
     updateUIVisibility();
 }
 
-// --- Drag and Drop Logic (Rebuilt with Logging) ---
-
-// 1. When a drag starts, log it and store the item's ID
+// --- Drag and Drop Logic (User Provided) ---
 document.addEventListener('dragstart', (e) => {
-    // Find the draggable card, even if the drag started on the image inside it
     const draggedCard = e.target.closest('.item-card');
-
     if (draggedCard) {
-        const championId = draggedCard.dataset.id;
-
-        // Set the data for the transfer
-        e.dataTransfer.setData('text/plain', championId);
+        e.dataTransfer.setData('text/plain', draggedCard.dataset.id);
         e.dataTransfer.effectAllowed = 'move';
-
-        // Add dragging class for visual feedback
         setTimeout(() => {
             draggedCard.classList.add('dragging');
         }, 0);
     }
 });
 
-// 2. Replace your 'dragend' listener with this
 document.addEventListener('dragend', (e) => {
-    // Find the card that was being dragged to remove its class
     const draggedCard = e.target.closest('.item-card');
     if (draggedCard) {
         draggedCard.classList.remove('dragging');
     }
 });
 
-// Helper function to find the dropzone from any event target
-const getDropZone = (target) => target.closest('.editor-tier-row, .palette-pool');
+const getDropZone = (target) => target.closest('.editor-tier-row, .palette-pool, .team-slot');
 
-// 3. Log what's happening during dragover
 document.addEventListener('dragover', (e) => {
     const zone = getDropZone(e.target);
     if (zone) {
-        e.preventDefault(); // Allow the drop
+        e.preventDefault();
     }
 });
 
-// 4. Add visual feedback when entering a dropzone
 document.addEventListener('dragenter', (e) => {
     const zone = getDropZone(e.target);
     if (zone) {
@@ -827,7 +1042,6 @@ document.addEventListener('dragenter', (e) => {
     }
 });
 
-// 5. Remove visual feedback when leaving a dropzone
 document.addEventListener('dragleave', (e) => {
     const zone = getDropZone(e.target);
     if (zone && !zone.contains(e.relatedTarget)) {
@@ -835,7 +1049,6 @@ document.addEventListener('dragleave', (e) => {
     }
 });
 
-// 6. Log every step of the final drop
 document.addEventListener('drop', (e) => {
     const zone = getDropZone(e.target);
     if (zone) {
@@ -845,17 +1058,31 @@ document.addEventListener('drop', (e) => {
         const championId = e.dataTransfer.getData('text/plain');
         const draggedElement = document.querySelector(`.item-card[data-id="${championId}"]`);
 
-        const cardContainer = zone.matches('.palette-pool') 
-            ? zone 
-            : zone.querySelector('.editor-tier-content');
-
-        if (draggedElement && cardContainer) {
-            cardContainer.appendChild(draggedElement);
-        } else {
-            console.error('[drop] Failure! Could not find dragged element or card container.', { draggedElement, cardContainer });
+        if (draggedElement) {
+            let cardContainer = zone;
+            if (zone.matches('.editor-tier-row')) {
+                const championClass = draggedElement.dataset.class;
+                let targetGroupKey = null;
+                for (const [groupKey, groupData] of Object.entries(CLASS_GROUPS)) {
+                    if (groupData.classes.includes(championClass)) {
+                        targetGroupKey = groupKey;
+                        break;
+                    }
+                }
+                if(targetGroupKey) {
+                    cardContainer = zone.querySelector(`.editor-tier-content[data-group="${targetGroupKey}"]`);
+                } else {
+                    cardContainer = null; // Invalid class for any group
+                }
+            }
+            
+            if (cardContainer) {
+                if (cardContainer.matches('.team-slot') && cardContainer.children.length > 0) {
+                    return; // Don't drop if slot is full
+                }
+                cardContainer.appendChild(draggedElement);
+            }
         }
-    } else {
-        console.error('[drop] Failure! Drop occurred on an invalid target.');
     }
 });
 
@@ -898,3 +1125,13 @@ DOM.forumContainer.addEventListener('click', (e) => {
         showPostView(postItem.dataset.postId);
     }
 });
+DOM.teamContainer.addEventListener('click', (e) => {
+    const teamItem = e.target.closest('.team-item');
+    if (teamItem && teamItem.dataset.teamId) {
+        showTeamView(teamItem.dataset.teamId);
+    }
+});
+DOM.createTeamBtn.addEventListener('click', openTeamBuilderModal);
+DOM.teamBuilderModal.closeBtn.addEventListener('click', closeTeamBuilderModal);
+DOM.teamBuilderModal.cancelBtn.addEventListener('click', closeTeamBuilderModal);
+DOM.teamBuilderModal.saveBtn.addEventListener('click', handleSaveTeam);

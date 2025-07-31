@@ -46,7 +46,7 @@
             
             <!-- Left Column: Main Content -->
             <div id="main-content-column" class="lg:col-span-3">
-                <!-- This container will hold either the main view or the single post view -->
+                <!-- This container will hold either the main view or the single post/team view -->
                 <div id="main-view">
                     <div class="content-section">
                         <div class="flex justify-between items-center mb-4">
@@ -60,6 +60,17 @@
 
                     <div class="content-section mt-8">
                         <div class="flex justify-between items-center mb-4">
+                            <h2 class="section-title !mb-0 !pb-0 !border-none">Community Teams</h2>
+                            <button id="create-team-btn" class="action-button hidden"><i class="fas fa-users mr-2"></i>Create Team</button>
+                        </div>
+                        <div id="team-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="placeholder-content md:col-span-2"><p>No teams created yet.</p></div>
+                        </div>
+                    </div>
+
+
+                    <div class="content-section mt-8">
+                        <div class="flex justify-between items-center mb-4">
                             <h2 class="section-title !mb-0 !pb-0 !border-none">Community Forum</h2>
                             <button id="create-post-btn" class="action-button hidden"><i class="fas fa-pen-to-square mr-2"></i>Create Post</button>
                         </div>
@@ -70,14 +81,14 @@
                 </div>
 
                 <!-- Single Post View (hidden by default) -->
-                <div id="post-view" class="hidden">
-                    <!-- Post content will be injected here by ui.js -->
-                </div>
+                <div id="post-view" class="hidden"></div>
+                
+                <!-- Single Team View (hidden by default) -->
+                <div id="team-view" class="hidden"></div>
             </div>
 
             <!-- Right Column: Members & Admin Panel -->
             <aside class="lg:col-span-1">
-                <!-- Admin Panel (hidden by default) -->
                 <div id="admin-panel" class="content-section hidden">
                     <h2 class="section-title text-red-400"><i class="fas fa-user-shield mr-2"></i>Admin Panel</h2>
                     <form id="add-member-form" class="space-y-4">
@@ -90,7 +101,6 @@
                     <div id="admin-message" class="mt-4 text-sm"></div>
                 </div>
 
-                <!-- Member List -->
                 <div class="content-section">
                     <h2 class="section-title"><i class="fas fa-users mr-2"></i>Members</h2>
                     <div id="member-list" class="space-y-3">
@@ -129,6 +139,46 @@
             <div class="modal-footer">
                 <button id="tierlist-modal-cancel" class="action-button-secondary">Cancel</button>
                 <button id="tierlist-modal-save" class="action-button">Save Tier List</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Builder Modal -->
+    <div id="team-builder-modal-backdrop" class="modal-backdrop hidden">
+        <div id="team-builder-modal-content" class="modal-content">
+             <div class="modal-header">
+                <h3 class="modal-title">Create New Team</h3>
+                <button id="team-builder-modal-close" class="modal-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                 <div class="tierlist-editor-layout">
+                    <div class="tierlist-editor-main">
+                        <div class="mb-4">
+                            <label for="team-name-input" class="block text-sm font-medium text-gray-300 mb-1">Team Name</label>
+                            <input type="text" id="team-name-input" placeholder="e.g., Speed Force Squad" class="admin-input w-full">
+                        </div>
+                        <div class="team-builder-slots">
+                            <div class="team-slot" data-slot="1"></div>
+                            <div class="team-slot" data-slot="2"></div>
+                            <div class="team-slot" data-slot="3"></div>
+                            <div class="team-slot" data-slot="4"></div>
+                            <div class="team-slot" data-slot="5"></div>
+                        </div>
+                        <!-- NEW: Description Textarea -->
+                        <div class="mt-4">
+                             <label for="team-description-textarea" class="block text-sm font-medium text-gray-300 mb-1">Description / Strategy</label>
+                             <textarea id="team-description-textarea" rows="5" class="admin-input w-full" placeholder="Explain how this team works..."></textarea>
+                        </div>
+                    </div>
+                    <div class="tierlist-editor-palette">
+                        <h4 class="palette-title">Champions</h4>
+                        <div id="team-builder-champion-pool" class="palette-pool"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="team-builder-modal-cancel" class="action-button-secondary">Cancel</button>
+                <button id="team-builder-modal-save" class="action-button">Save Team</button>
             </div>
         </div>
     </div>
