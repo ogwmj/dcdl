@@ -756,11 +756,11 @@ function getChampionTier(championId) {
 
 
 function showMainView() {
-    history.pushState({}, '', window.location.pathname);
-
     DOM.postView.classList.add('hidden');
     DOM.teamView.classList.add('hidden');
     DOM.mainView.classList.remove('hidden');
+
+    history.pushState({}, '', window.location.pathname);
 }
 
 // --- Modal Management ---
@@ -1175,8 +1175,7 @@ async function init() {
     await loadForumPosts();
     await loadCommunityTeams();
     updateUIVisibility();
-
-    // Check for URL parameters
+    
     const urlParams = new URLSearchParams(window.location.search);
     const postId = urlParams.get('postId');
     const teamId = urlParams.get('teamId');
