@@ -12,25 +12,12 @@ let ALL_CHAMPIONS_DATA = {};
 let currentUserRoles = [];
 let currentUsername = null;
 
-// This ID is hardcoded for this specific community page.
 const COMMUNITY_ID = "justice-league-of-discord";
 
 const CLASS_GROUPS = {
-    GROUP_1: {
-        name: 'Physical',
-        classes: ['Warrior', 'Guardian'],
-        icons: ['/img/classes/Warrior.png', '/img/classes/Guardian.png']
-    },
-    GROUP_2: {
-        name: 'Damage',
-        classes: ['Firepower', 'Magical', 'Assassin'],
-        icons: ['/img/classes/Firepower.png', '/img/classes/Magical.png', '/img/classes/Assassin.png']
-    },
-    GROUP_3: {
-        name: 'Support',
-        classes: ['Supporter', 'Intimidator'],
-        icons: ['/img/classes/Supporter.png', '/img/classes/Intimidator.png']
-    }
+    GROUP_1: { name: 'Physical', classes: ['Warrior', 'Guardian'], icons: ['/img/classes/Warrior.png', '/img/classes/Guardian.png'] },
+    GROUP_2: { name: 'Damage', classes: ['Firepower', 'Magical', 'Assassin'], icons: ['/img/classes/Firepower.png', '/img/classes/Magical.png', '/img/classes/Assassin.png'] },
+    GROUP_3: { name: 'Support', classes: ['Supporter', 'Intimidator'], icons: ['/img/classes/Supporter.png', '/img/classes/Intimidator.png'] }
 };
 
 // --- DOM Elements ---
@@ -53,7 +40,6 @@ const DOM = {
     mainView: document.getElementById('main-view'),
     postView: document.getElementById('post-view'),
     teamView: document.getElementById('team-view'),
-    // Tier List Modal
     tierListModal: {
         backdrop: document.getElementById('tierlist-modal-backdrop'),
         closeBtn: document.getElementById('tierlist-modal-close'),
@@ -63,7 +49,6 @@ const DOM = {
         tiersContainer: document.getElementById('tierlist-editor-tiers'),
         championPool: document.getElementById('tierlist-editor-champion-pool'),
     },
-    // Team Builder Modal
     teamBuilderModal: {
         backdrop: document.getElementById('team-builder-modal-backdrop'),
         closeBtn: document.getElementById('team-builder-modal-close'),
@@ -74,7 +59,6 @@ const DOM = {
         slots: document.querySelectorAll('.team-slot'),
         championPool: document.getElementById('team-builder-champion-pool'),
     },
-    // Post Modal
     postModal: {
         backdrop: document.getElementById('post-modal-backdrop'),
         closeBtn: document.getElementById('post-modal-close'),
@@ -86,6 +70,45 @@ const DOM = {
         bodyTextarea: document.getElementById('post-body-textarea'),
     }
 };
+
+// --- TinyMCE & Sanitization ---
+
+/**
+ * Initializes a TinyMCE editor on a given selector.
+ * @param {string} selector - The CSS selector for the textarea.
+ */
+function initTinyMCE(selector) {
+    tinymce.init({
+        selector: selector,
+        plugins: 'lists link image emoticons',
+        toolbar: 'undo redo | bold italic underline | bullist numlist | link emoticons',
+        menubar: false,
+        skin: 'oxide-dark',
+        content_css: 'dark',
+        height: 300,
+        setup: function(editor) {
+            editor.on('change', function(e) {
+                editor.save(); // Keep the underlying textarea updated
+            });
+        }
+    });
+}
+
+/**
+ * Safely gets and sanitizes content from a TinyMCE editor.
+ * @param {string} editorId - The ID of the textarea element.
+ * @returns {string} Sanitized HTML content.
+ */
+function getSanitizedEditorContent(editorId) {
+    const editor = tinymce.get(editorId);
+    if (editor) {
+        const rawContent = editor.getContent();
+        // Sanitize the HTML to prevent XSS attacks
+        return DOMPurify.sanitize(rawContent);
+    }
+    return '';
+}
+
 
 /**
  * Fetches champion data from the main codex for image lookups.
@@ -119,7 +142,7 @@ async function fetchUserProfile(uid) {
         if (userDocSnap.exists()) {
             const data = userDocSnap.data();
             currentUserRoles = data.roles || [];
-            currentUsername = data.username || null; // Get the username
+            currentUsername = data.username || null;
         } else {
             currentUserRoles = [];
             currentUsername = null;
@@ -329,7 +352,7 @@ async function loadForumPosts() {
 
             const postEl = document.createElement('div');
             postEl.className = 'forum-post-item';
-            postEl.dataset.postId = doc.id; // Add post ID for click handling
+            postEl.dataset.postId = doc.id;
             postEl.innerHTML = `
                 <div class="post-champion-avatar">
                     <img src="/img/champions/avatars/${cleanName}.webp" alt="${champData?.name}" onerror="this.onerror=null;this.src='https://placehold.co/56x56/1f2937/e2e8f0?text=?';">
@@ -371,17 +394,16 @@ async function loadCommunityTeams() {
                 const champData = ALL_CHAMPIONS_DATA[champId];
                 if (champData) {
                     const cleanName = (champData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
-                    const rarityClass = `rarity-${(champData.baseRarity || '').toLowerCase().replace(/\s/g, '-')}`;
                     championsHtml += `
-                        <div class="item-card ${rarityClass}">
-                            <img src="/img/champions/avatars/${cleanName}.webp" alt="${champData.name}" onerror="this.onerror=null;this.src='https://placehold.co/60x60/1f2937/e2e8f0?text=?';">
+                        <div class="item-card">
+                            <img src="${champData.cardImageUrl}" alt="${champData.name}" onerror="this.onerror=null;this.src='/img/champions/avatars/${cleanName}.webp';">
                         </div>`;
                 }
             });
 
             const teamEl = document.createElement('div');
             teamEl.className = 'team-item';
-            teamEl.dataset.teamId = doc.id; // Add team ID for click handling
+            teamEl.dataset.teamId = doc.id;
             teamEl.innerHTML = `
                 <div class="team-header">
                     <div>
@@ -437,7 +459,7 @@ async function showPostView(postId) {
                         </div>
                     </div>
                 </header>
-                <div class="single-post-body">${post.body.replace(/\n/g, '<br>')}</div>
+                <div class="single-post-body">${post.body}</div>
                 
                 <div id="champion-vote-section-${post.championId}" class="champion-vote-section">
                     <button class="vote-button like" data-vote="like"><i class="fas fa-thumbs-up"></i></button>
@@ -477,7 +499,7 @@ async function showPostView(postId) {
 }
 
 /**
- * NEW: Shows the single team view.
+ * Shows the single team view.
  * @param {string} teamId - The ID of the team to display.
  */
 async function showTeamView(teamId) {
@@ -504,8 +526,7 @@ async function showTeamView(teamId) {
             const champData = ALL_CHAMPIONS_DATA[champId];
             if (champData) {
                 const cleanName = (champData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
-                const rarityClass = `rarity-${(champData.baseRarity || '').toLowerCase().replace(/\s/g, '-')}`;
-                championsHtml += `<div class="item-card ${rarityClass} !w-20 !h-20"><img src="/img/champions/avatars/${cleanName}.webp" alt="${champData.name}"></div>`;
+                championsHtml += `<div class="item-card"><img src="${champData.cardImageUrl}" alt="${champData.name}"></div>`;
             }
         });
 
@@ -524,7 +545,7 @@ async function showTeamView(teamId) {
                     </div>
                 </header>
                 <div class="team-champions mb-4">${championsHtml}</div>
-                <div class="single-post-body">${(team.description || 'No description provided.').replace(/\n/g, '<br>')}</div>
+                <div class="single-post-body">${team.description || 'No description provided.'}</div>
             </div>
              <div class="content-section comments-section">
                 <h2 class="section-title">Comments</h2>
@@ -636,6 +657,7 @@ function showMainView() {
 
 // --- Modal Management ---
 function openTierListModal() {
+    initTinyMCE('#team-description-textarea');
     DOM.tierListModal.championPool.innerHTML = '';
     Object.entries(ALL_CHAMPIONS_DATA).forEach(([id, champData]) => {
         const cleanName = (champData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
@@ -669,11 +691,13 @@ function openTierListModal() {
 }
 
 function closeTierListModal() {
+    tinymce.remove('#team-description-textarea');
     DOM.tierListModal.backdrop.classList.add('hidden');
     DOM.tierListModal.titleInput.value = '';
 }
 
 function openTeamBuilderModal() {
+    initTinyMCE('#team-description-textarea');
     DOM.teamBuilderModal.championPool.innerHTML = '';
      Object.entries(ALL_CHAMPIONS_DATA).forEach(([id, champData]) => {
         const cleanName = (champData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
@@ -692,10 +716,12 @@ function openTeamBuilderModal() {
 }
 
 function closeTeamBuilderModal() {
+    tinymce.remove('#team-description-textarea');
     DOM.teamBuilderModal.backdrop.classList.add('hidden');
 }
 
 function openCreatePostModal() {
+    initTinyMCE('#post-body-textarea');
     DOM.postModal.championSelect.innerHTML = '<option value="" disabled selected>Select a champion...</option>';
     const sortedChampions = Object.entries(ALL_CHAMPIONS_DATA).sort(([,a], [,b]) => a.name.localeCompare(b.name));
     
@@ -710,6 +736,7 @@ function openCreatePostModal() {
 }
 
 function closeCreatePostModal() {
+    tinymce.remove('#post-body-textarea');
     DOM.postModal.backdrop.classList.add('hidden');
 }
 
@@ -753,7 +780,7 @@ async function handleSaveTierList() {
 
 async function handleSaveTeam() {
     const name = DOM.teamBuilderModal.nameInput.value.trim();
-    const description = DOM.teamBuilderModal.descriptionTextarea.value.trim();
+    const description = getSanitizedEditorContent('team-description-textarea');
     if (!name) {
         alert('Please enter a team name.');
         return;
@@ -798,7 +825,7 @@ async function handleSaveForumPost(e) {
     e.preventDefault();
     const title = DOM.postModal.titleInput.value.trim();
     const championId = DOM.postModal.championSelect.value;
-    const body = DOM.postModal.bodyTextarea.value.trim();
+    const body = getSanitizedEditorContent('post-body-textarea');
 
     if (!title || !championId || !body) {
         alert('Please fill out all fields.');
