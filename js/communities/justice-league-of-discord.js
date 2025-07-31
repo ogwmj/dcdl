@@ -15,6 +15,7 @@ let currentUserId = null;
 let isCurrentUserMember = false;
 let communityAdminUid = null;
 let ALL_CHAMPIONS_DATA = {};
+let ALL_LEGACY_PIECES_DATA = {};
 let currentUserRoles = [];
 let currentUsername = null;
 let LATEST_TIER_LIST = null;
@@ -39,6 +40,7 @@ const DOM = {
     memberEmailInput: document.getElementById('member-email'),
     tierListContainer: document.getElementById('tier-list-container'),
     createTierListBtn: document.getElementById('create-tierlist-btn'),
+    createLegacyTierListBtn: document.getElementById('create-legacy-tierlist-btn'),
     forumContainer: document.getElementById('forum-container'),
     createPostBtn: document.getElementById('create-post-btn'),
     teamContainer: document.getElementById('team-container'),
@@ -74,7 +76,7 @@ const DOM = {
         titleInput: document.getElementById('post-title-input'),
         championSelect: document.getElementById('post-champion-select'),
         bodyTextarea: document.getElementById('post-body-textarea'),
-    }
+    },
 };
 
 // --- Confirmation Modal ---
@@ -155,6 +157,22 @@ async function cacheAllChampionsData() {
         });
     } catch (error) {
         console.error("Error caching champion data:", error);
+    }
+}
+
+/**
+ * Fetches legacy piece data from Firestore.
+ */
+async function cacheAllLegacyPiecesData() {
+    if (Object.keys(ALL_LEGACY_PIECES_DATA).length > 0) return;
+    try {
+        const legacyPiecesRef = collection(db, 'artifacts/dc-dark-legion-builder/public/data/legacyPieces');
+        const snapshot = await getDocs(legacyPiecesRef);
+        snapshot.forEach(doc => {
+            ALL_LEGACY_PIECES_DATA[doc.id] = doc.data();
+        });
+    } catch (error) {
+        console.error("Error caching legacy piece data:", error);
     }
 }
 
@@ -281,61 +299,92 @@ async function loadTierList() {
  * Renders the tier list HTML based on data from Firestore.
  */
 function renderTierList(listData, listId) {
+    const type = listData.type || 'champion'; // Default to champion for old lists
+    const isChampionList = type === 'champion';
+
     const tiers = ['S', 'A+', 'A', 'B', 'C', 'D'];
     let tierRowsHtml = '';
+    let headerHtml = '';
 
-    let groupHeadersHtml = '<div></div>'; 
-    Object.values(CLASS_GROUPS).forEach(group => {
-        groupHeadersHtml += `<div class="column-header">`;
-        group.icons.forEach(iconSrc => {
-            groupHeadersHtml += `<img src="${iconSrc}" alt="${group.name}" class="class-icon-header">`;
+    if (isChampionList) {
+        // --- EXISTING CHAMPION RENDERING LOGIC ---
+        let groupHeadersHtml = '<div></div>'; 
+        Object.values(CLASS_GROUPS).forEach(group => {
+            groupHeadersHtml += `<div class="column-header">`;
+            group.icons.forEach(iconSrc => {
+                groupHeadersHtml += `<img src="${iconSrc}" alt="${group.name}" class="class-icon-header">`;
+            });
+            groupHeadersHtml += `</div>`;
         });
-        groupHeadersHtml += `</div>`;
-    });
+        headerHtml = `<div class="tier-column-headers">${groupHeadersHtml}</div>`;
 
-    for (const tier of tiers) {
-        const tierItems = listData.tiers[tier] || [];
-        
-        const groupedChamps = { GROUP_1: [], GROUP_2: [], GROUP_3: [] };
+        for (const tier of tiers) {
+            const tierItems = listData.tiers[tier] || [];
+            const groupedChamps = { GROUP_1: [], GROUP_2: [], GROUP_3: [] };
 
-        tierItems.forEach(itemId => {
-            const champData = ALL_CHAMPIONS_DATA[itemId];
-            if (champData) {
-                for (const [groupKey, groupData] of Object.entries(CLASS_GROUPS)) {
-                    if (groupData.classes.includes(champData.class)) {
-                        groupedChamps[groupKey].push(itemId);
-                        break;
-                    }
-                }
-            }
-        });
-
-        let columnsHtml = '';
-        Object.values(groupedChamps).forEach(group => {
-            columnsHtml += '<div class="tier-content">';
-            group.forEach(itemId => {
+            tierItems.forEach(itemId => {
                 const champData = ALL_CHAMPIONS_DATA[itemId];
                 if (champData) {
-                    const cleanName = (champData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
-                    const rarityClass = `rarity-${(champData.baseRarity || '').toLowerCase().replace(/\s/g, '-')}`;
-                    const escapedName = (champData.name || 'Unknown').replace(/"/g, '&quot;');
-                    columnsHtml += `
+                    for (const [groupKey, groupData] of Object.entries(CLASS_GROUPS)) {
+                        if (groupData.classes.includes(champData.class)) {
+                            groupedChamps[groupKey].push(itemId);
+                            break;
+                        }
+                    }
+                }
+            });
+
+            let columnsHtml = '';
+            Object.values(groupedChamps).forEach(group => {
+                columnsHtml += '<div class="tier-content">';
+                group.forEach(itemId => {
+                    const champData = ALL_CHAMPIONS_DATA[itemId];
+                    if (champData) {
+                        const cleanName = (champData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
+                        const rarityClass = `rarity-${(champData.baseRarity || '').toLowerCase().replace(/\s/g, '-')}`;
+                        const escapedName = (champData.name || 'Unknown').replace(/"/g, '&quot;');
+                        columnsHtml += `
+                            <div class="item-card ${rarityClass}">
+                                <img src="/img/champions/avatars/${cleanName}.webp" alt="${escapedName}" onerror="this.onerror=null;this.src='/img/champions/avatars/dc_logo.webp';">
+                            </div>`;
+                    }
+                });
+                columnsHtml += '</div>';
+            });
+            tierRowsHtml += `<div class="tier-row" data-tier="${tier}"><div class="tier-label">${tier}</div><div class="tier-row-content">${columnsHtml}</div></div>`;
+        }
+    } else {
+        // --- NEW LEGACY PIECE RENDERING LOGIC ---
+        for (const tier of tiers) {
+            const tierItems = listData.tiers[tier] || [];
+            
+            let itemsHtml = '';
+            tierItems.forEach(itemId => {
+                const itemData = ALL_LEGACY_PIECES_DATA[itemId];
+                if (itemData) {
+                    const rarityClass = `rarity-${(itemData.baseRarity || '').toLowerCase().replace(/\s/g, '-')}`;
+                    const escapedName = (itemData.name || 'Unknown').replace(/"/g, '&quot;');
+                    const imageUrl = itemData.cardImageUrl || `/img/champions/avatars/dc_logo.webp`;
+                    itemsHtml += `
                         <div class="item-card ${rarityClass}">
-                            <img src="/img/champions/avatars/${cleanName}.webp" alt="${escapedName}" onerror="this.onerror=null;this.src='https://placehold.co/72x72/1f2937/e2e8f0?text=?';">
+                            <img src="${imageUrl}" alt="${escapedName}" onerror="this.onerror=null;this.src='/img/champions/avatars/dc_logo.webp';">
                         </div>`;
                 }
             });
-            columnsHtml += '</div>';
-        });
 
-        tierRowsHtml += `<div class="tier-row" data-tier="${tier}"><div class="tier-label">${tier}</div><div class="tier-row-content">${columnsHtml}</div></div>`;
+            tierRowsHtml += `
+                <div class="tier-row" data-tier="${tier}">
+                    <div class="tier-label">${tier}</div>
+                    <div class="tier-content">${itemsHtml}</div>
+                </div>`;
+        }
     }
 
+    // --- Common Wrapper HTML ---
     const creationDate = listData.createdAt?.toDate ? listData.createdAt.toDate().toLocaleDateString() : 'a while ago';
     const isCommunityAdmin = currentUserId === communityAdminUid;
     const isAuthor = currentUserId === listData.authorUid;
     const canDelete = currentUserRoles.includes('admin') || isCommunityAdmin || isAuthor;
-
 
     DOM.tierListContainer.innerHTML = `
         <div class="tier-list-wrapper">
@@ -349,9 +398,7 @@ function renderTierList(listData, listId) {
                 </div>
             </header>
             <div class="tier-grid">
-                <div class="tier-column-headers">
-                    ${groupHeadersHtml}
-                </div>
+                ${headerHtml}
                 ${tierRowsHtml}
             </div>
         </div>
@@ -390,7 +437,7 @@ async function loadForumPosts() {
             postEl.dataset.postId = doc.id;
             postEl.innerHTML = `
                 <div class="post-champion-avatar">
-                    <img src="/img/champions/avatars/${cleanName}.webp" alt="${champData?.name}" onerror="this.onerror=null;this.src='https://placehold.co/56x56/1f2937/e2e8f0?text=?';">
+                    <img src="/img/champions/avatars/${cleanName}.webp" alt="${champData?.name}" onerror="this.onerror=null;this.src='/img/champions/avatars/dc_logo.webp';">
                 </div>
                 <div class="post-details">
                     <h3 class="post-title">${post.title}</h3>
@@ -770,36 +817,62 @@ function showMainView() {
 }
 
 // --- Modal Management ---
-function openTierListModal() {
-    initTinyMCE('#team-description-textarea');
+function openTierListModal(type = 'champion') {
+    DOM.tierListModal.backdrop.dataset.type = type;
     DOM.tierListModal.championPool.innerHTML = '';
-    const sortedChampions = Object.entries(ALL_CHAMPIONS_DATA).sort(([,a], [,b]) => a.name.localeCompare(b.name));
+    DOM.tierListModal.tiersContainer.innerHTML = '';
+    
+    const isChampionList = type === 'champion';
 
-    sortedChampions.forEach(([id, champData]) => {
-        const cleanName = (champData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
-        const rarityClass = `rarity-${(champData.baseRarity || '').toLowerCase().replace(/\s/g, '-')}`;
-        const champEl = document.createElement('div');
-        champEl.className = `item-card ${rarityClass}`;
-        champEl.dataset.id = id;
-        champEl.dataset.class = champData.class || 'Unknown';
-        champEl.draggable = true;
-        champEl.innerHTML = `<img src="/img/champions/avatars/${cleanName}.webp" alt="${champData.name}" onerror="this.onerror=null;this.src='https://placehold.co/72x72/1f2937/e2e8f0?text=?';">`;
-        DOM.tierListModal.championPool.appendChild(champEl);
+    initTinyMCE('#team-description-textarea');
+    DOM.tierListModal.backdrop.querySelector('.modal-title').textContent = isChampionList ? 'Create New Champion Tier List' : 'Create New Legacy Tier List';
+    DOM.tierListModal.backdrop.querySelector('.palette-title').textContent = isChampionList ? 'Champions' : 'Legacy Pieces';
+    
+    // 2. Populate the Item Palette
+    const dataSource = isChampionList ? ALL_CHAMPIONS_DATA : ALL_LEGACY_PIECES_DATA;
+    const sortedItems = Object.entries(dataSource).sort(([,a], [,b]) => a.name.localeCompare(b.name));
+
+    sortedItems.forEach(([id, itemData]) => {
+        const cleanName = (itemData.name || '').replace(/[^a-zA-Z0-9-]/g, "");
+        const rarityClass = `rarity-${(itemData.baseRarity || '').toLowerCase().replace(/\s/g, '-').replace('mythic+', 'limited-mythic')}`;
+        const itemEl = document.createElement('div');
+        itemEl.className = `item-card ${rarityClass}`;
+        itemEl.dataset.id = id;
+        itemEl.draggable = true;
+        
+        if (isChampionList) {
+            itemEl.dataset.class = itemData.class || 'Unknown';
+            itemEl.innerHTML = `<img src="/img/champions/avatars/${cleanName}.webp" alt="${itemData.name}"">`;
+        } else {
+            // Legacy pieces don't have classes. Use cardImageUrl.
+            itemEl.innerHTML = `<img src="/img/legacy_pieces/${cleanName}.webp" alt="${itemData.name}" onerror="this.onerror=null;this.src='/img/champions/avatars/dc_logo.webp';">`;
+        }
+        DOM.tierListModal.championPool.appendChild(itemEl);
     });
 
-    DOM.tierListModal.tiersContainer.innerHTML = '';
+    // 3. Build the Tier Editor Structure
     const tiers = ['S', 'A+', 'A', 'B', 'C', 'D'];
     tiers.forEach(tier => {
         const tierRow = document.createElement('div');
         tierRow.className = 'editor-tier-row';
-        tierRow.innerHTML = `
-            <div class="tier-label">${tier}</div>
-            <div class="editor-tier-content-wrapper">
-                <div class="editor-tier-content" data-tier="${tier}" data-group="GROUP_1"></div>
-                <div class="editor-tier-content" data-tier="${tier}" data-group="GROUP_2"></div>
-                <div class="editor-tier-content" data-tier="${tier}" data-group="GROUP_3"></div>
-            </div>
-        `;
+        if (isChampionList) {
+            tierRow.innerHTML = `
+                <div class="tier-label">${tier}</div>
+                <div class="editor-tier-content-wrapper">
+                    <div class="editor-tier-content" data-tier="${tier}" data-group="GROUP_1"></div>
+                    <div class="editor-tier-content" data-tier="${tier}" data-group="GROUP_2"></div>
+                    <div class="editor-tier-content" data-tier="${tier}" data-group="GROUP_3"></div>
+                </div>
+            `;
+        } else {
+            // Simpler structure for Legacy Pieces (one drop zone)
+            tierRow.innerHTML = `
+                <div class="tier-label">${tier}</div>
+                <div class="editor-tier-content-wrapper">
+                    <div class="editor-tier-content" data-tier="${tier}"></div>
+                </div>
+            `;
+        }
         DOM.tierListModal.tiersContainer.appendChild(tierRow);
     });
 
@@ -810,6 +883,8 @@ function closeTierListModal() {
     tinymce.remove('#team-description-textarea');
     DOM.tierListModal.backdrop.classList.add('hidden');
     DOM.tierListModal.titleInput.value = '';
+
+    delete DOM.tierListModal.backdrop.dataset.type;
 }
 
 function openTeamBuilderModal() {
@@ -824,7 +899,7 @@ function openTeamBuilderModal() {
         champEl.className = `item-card ${rarityClass}`;
         champEl.dataset.id = id;
         champEl.draggable = true;
-        champEl.innerHTML = `<img src="/img/champions/avatars/${cleanName}.webp" alt="${champData.name}" onerror="this.onerror=null;this.src='https://placehold.co/72x72/1f2937/e2e8f0?text=?';">`;
+        champEl.innerHTML = `<img src="/img/champions/avatars/${cleanName}.webp" alt="${champData.name}" onerror="this.onerror=null;this.src='/img/champions/avatars/dc_logo.webp';">`;
         DOM.teamBuilderModal.championPool.appendChild(champEl);
     });
     DOM.teamBuilderModal.slots.forEach(slot => slot.innerHTML = '');
@@ -867,21 +942,37 @@ async function handleSaveTierList() {
         return; 
     }
 
+    const type = DOM.tierListModal.backdrop.dataset.type || 'champion';
+    const isChampionList = type === 'champion';
+
     const tiersData = {};
     DOM.tierListModal.tiersContainer.querySelectorAll('.editor-tier-row').forEach(tierRow => {
         const tier = tierRow.querySelector('.tier-label').textContent;
-        let championIds = [];
-        tierRow.querySelectorAll('.editor-tier-content').forEach(groupColumn => {
-            const idsInColumn = Array.from(groupColumn.children).map(child => child.dataset.id);
-            championIds = championIds.concat(idsInColumn);
-        });
-        tiersData[tier] = championIds;
+        let itemIds = [];
+        
+        if (isChampionList) {
+            // Existing logic for champions with class groups
+            tierRow.querySelectorAll('.editor-tier-content').forEach(groupColumn => {
+                const idsInColumn = Array.from(groupColumn.children).map(child => child.dataset.id);
+                itemIds = itemIds.concat(idsInColumn);
+            });
+        } else {
+            // Simpler logic for legacy pieces (one column)
+            const contentArea = tierRow.querySelector('.editor-tier-content');
+            if (contentArea) {
+                itemIds = Array.from(contentArea.children).map(child => child.dataset.id);
+            }
+        }
+        tiersData[tier] = itemIds;
     });
 
     const newTierList = {
-        title, type: 'champion', authorUid: currentUserId,
+        title,
+        type: type, // Explicitly save the type
+        authorUid: currentUserId,
         authorName: currentUsername || auth.currentUser.displayName || 'A Member',
-        createdAt: serverTimestamp(), tiers: tiersData,
+        createdAt: serverTimestamp(),
+        tiers: tiersData,
     };
 
     try {
@@ -889,7 +980,7 @@ async function handleSaveTierList() {
         const tierListsRef = collection(db, 'communities', COMMUNITY_ID, 'tierLists');
         await addDoc(tierListsRef, newTierList);
         closeTierListModal();
-        loadTierList();
+        await loadTierList();
         dispatchNotification('Tier list saved successfully!', 'success');
     } catch (error) {
         console.error("Error saving tier list: ", error);
@@ -1132,6 +1223,7 @@ function updateUIVisibility() {
 
     const canCreateContent = isCurrentUserMember || isSiteAdmin;
     DOM.createTierListBtn.classList.toggle('hidden', !canCreateContent);
+    DOM.createLegacyTierListBtn.classList.toggle('hidden', !canCreateContent);
     DOM.createPostBtn.classList.toggle('hidden', !canCreateContent);
     DOM.createTeamBtn.classList.toggle('hidden', !canCreateContent);
 }
@@ -1244,23 +1336,32 @@ document.addEventListener('drop', (e) => {
         zone.classList.remove('drag-over');
 
         const championId = e.dataTransfer.getData('text/plain');
-        const draggedElement = document.querySelector(`.item-card[data-id="${championId}"]`);
+        const draggedElement = document.querySelector(`.item-card[data-id="${championId}"].dragging`);
 
         if (draggedElement) {
             let cardContainer = zone;
-            if (zone.matches('.editor-tier-row')) {
-                const championClass = draggedElement.dataset.class;
-                let targetGroupKey = null;
-                for (const [groupKey, groupData] of Object.entries(CLASS_GROUPS)) {
-                    if (groupData.classes.includes(championClass)) {
-                        targetGroupKey = groupKey;
-                        break;
+            const tierListModal = e.target.closest('#tierlist-modal-backdrop');
+
+            if (tierListModal && zone.matches('.editor-tier-row')) {
+                const type = tierListModal.dataset.type;
+                if (type === 'champion') {
+                    // Existing logic for champions
+                    const championClass = draggedElement.dataset.class;
+                    let targetGroupKey = null;
+                    for (const [groupKey, groupData] of Object.entries(CLASS_GROUPS)) {
+                        if (groupData.classes.includes(championClass)) {
+                            targetGroupKey = groupKey;
+                            break;
+                        }
                     }
-                }
-                if(targetGroupKey) {
-                    cardContainer = zone.querySelector(`.editor-tier-content[data-group="${targetGroupKey}"]`);
+                    if(targetGroupKey) {
+                        cardContainer = zone.querySelector(`.editor-tier-content[data-group="${targetGroupKey}"]`);
+                    } else {
+                        cardContainer = zone.querySelector('.editor-tier-content');
+                    }
                 } else {
-                    cardContainer = null; // Invalid class for any group
+                    // New simpler logic for legacy pieces.
+                    cardContainer = zone.querySelector('.editor-tier-content');
                 }
             }
             
@@ -1283,6 +1384,7 @@ document.addEventListener('firebase-ready', async () => {
         functions = getFunctions(app);
 
         await cacheAllChampionsData();
+        await cacheAllLegacyPiecesData();
 
         onAuthStateChanged(auth, async (user) => {
             currentUserId = user ? user.uid : null;
@@ -1307,7 +1409,8 @@ confirmationModal.backdrop.addEventListener('click', (e) => {
 
 
 DOM.addMemberForm.addEventListener('submit', handleAddMember);
-DOM.createTierListBtn.addEventListener('click', openTierListModal);
+DOM.createTierListBtn.addEventListener('click', () => openTierListModal('champion'));
+DOM.createLegacyTierListBtn.addEventListener('click', () => openTierListModal('legacyPiece'));
 DOM.tierListModal.closeBtn.addEventListener('click', closeTierListModal);
 DOM.tierListModal.cancelBtn.addEventListener('click', closeTierListModal);
 DOM.tierListModal.saveBtn.addEventListener('click', handleSaveTierList);
