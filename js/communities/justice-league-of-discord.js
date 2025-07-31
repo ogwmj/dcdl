@@ -467,6 +467,8 @@ async function showPostView(postId) {
     DOM.postView.innerHTML = '<div class="content-section"><div class="placeholder-content"><p>Loading post...</p></div></div>';
 
     try {
+        history.pushState({ postId: postId }, '', `?postId=${postId}`);
+
         const postRef = doc(db, 'communities', COMMUNITY_ID, 'forumPosts', postId);
         const postSnap = await getDoc(postRef);
 
@@ -549,6 +551,8 @@ async function showTeamView(teamId) {
     DOM.teamView.innerHTML = '<div class="content-section"><div class="placeholder-content"><p>Loading team...</p></div></div>';
 
     try {
+        history.pushState({ teamId: teamId }, '', `?teamId=${teamId}`);
+
         const teamRef = doc(db, 'communities', COMMUNITY_ID, 'teams', teamId);
         const teamSnap = await getDoc(teamRef);
 
@@ -752,6 +756,8 @@ function getChampionTier(championId) {
 
 
 function showMainView() {
+    history.pushState({}, '', window.location.pathname);
+
     DOM.postView.classList.add('hidden');
     DOM.teamView.classList.add('hidden');
     DOM.mainView.classList.remove('hidden');
@@ -1169,6 +1175,19 @@ async function init() {
     await loadForumPosts();
     await loadCommunityTeams();
     updateUIVisibility();
+
+    // Check for URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get('postId');
+    const teamId = urlParams.get('teamId');
+
+    if (postId) {
+        showPostView(postId);
+    } else if (teamId) {
+        showTeamView(teamId);
+    } else {
+        showMainView();
+    }
 }
 
 // --- Drag and Drop Logic (User Provided) ---
@@ -1307,3 +1326,16 @@ DOM.createTeamBtn.addEventListener('click', openTeamBuilderModal);
 DOM.teamBuilderModal.closeBtn.addEventListener('click', closeTeamBuilderModal);
 DOM.teamBuilderModal.cancelBtn.addEventListener('click', closeTeamBuilderModal);
 DOM.teamBuilderModal.saveBtn.addEventListener('click', handleSaveTeam);
+window.addEventListener('popstate', (event) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get('postId');
+    const teamId = urlParams.get('teamId');
+
+    if (postId) {
+        showPostView(postId);
+    } else if (teamId) {
+        showTeamView(teamId);
+    } else {
+        showMainView();
+    }
+});
