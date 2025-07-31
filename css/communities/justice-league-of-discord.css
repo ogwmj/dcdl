@@ -235,7 +235,7 @@ main.relative {
 .tier-grid { display: flex; flex-direction: column; }
 .tier-column-headers { display: grid; grid-template-columns: 80px 1fr 1fr 1fr; padding: 0 0.5rem 0.5rem 0.5rem; }
 .column-header { text-align: center; color: #9ca3af; font-size: 1.25rem; }
-.class-icon-header { height: 24px; display: inline-block; }
+.class-icon-header { height: 36px; display: inline-block; }
 .tier-row { display: grid; grid-template-columns: 80px 1fr; margin-bottom: 0.5rem; border-radius: 0.25rem; }
 .tier-row-content { display: grid; grid-template-columns: 1fr 1fr 1fr; }
 .tier-label { display: flex; align-items: center; justify-content: center; font-family: 'Russo One', sans-serif; font-size: 2.5rem; color: #fff; border-radius: 0.25rem 0 0 0.25rem; }
