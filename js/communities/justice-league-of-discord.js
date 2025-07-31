@@ -336,11 +336,10 @@ function renderTierList(listData, listId) {
             <header class="tier-list-header">
                 <div class="header-title-block">
                     <h1>${listData.title || 'Community Tier List'}</h1>
-                    <p class="hide-in-canvas">Created by ${listData.authorName || 'A Member'} on ${creationDate}</p>
+                    <p>Created by ${listData.authorName || 'A Member'} on ${creationDate}</p>
                 </div>
-                <div class="flex gap-4">
-                    <button id="download-tierlist-btn" class="action-button hide-in-canvas"><i class="fas fa-download mr-2"></i>Download</button>
-                    ${canDelete ? `<button id="delete-tierlist-btn" class="action-button-secondary hide-in-canvas" data-list-id="${listId}"><i class="fas fa-trash mr-2"></i>Delete</button>` : ''}
+                <div>
+                    ${canDelete ? `<button id="delete-tierlist-btn" class="action-button-secondary" data-list-id="${listId}"><i class="fas fa-trash mr-2"></i>Delete</button>` : ''}
                 </div>
             </header>
             <div class="tier-grid">
@@ -351,11 +350,6 @@ function renderTierList(listData, listId) {
             </div>
         </div>
     `;
-    
-    const downloadBtn = document.getElementById('download-tierlist-btn');
-    if (downloadBtn) {
-        downloadBtn.addEventListener('click', handleDownloadTierList);
-    }
 
     const deleteBtn = document.getElementById('delete-tierlist-btn');
     if (deleteBtn) {
@@ -1165,52 +1159,6 @@ async function handleRemoveMember(e) {
     }
 }
 
-async function handleDownloadTierList() {
-    const container = DOM.tierListContainer.querySelector('.tier-list-wrapper');
-    const displayToggles = DOM.tierListContainer.querySelectorAll('.hide-in-canvas');
-
-    if (!container) {
-        console.error('Tier list container not found!');
-        dispatchNotification('Could not find tier list to download.', 'error');
-        return;
-    }
-
-    dispatchNotification('Generating tier list image...', 'info');
-    // Explicitly hide elements before capture
-    displayToggles.forEach(toggle => {
-        toggle.style.visibility = 'hidden';
-    });
-
-    try {
-        // Measure the container's full rendered size
-        const canvasWidth = container.scrollWidth;
-        const canvasHeight = container.scrollHeight;
-
-        const canvas = await html2canvas(container, { 
-            useCORS: true,
-            backgroundColor: '#111827',
-            // Keep width and height to prevent the original issue
-            width: canvasWidth,
-            height: canvasHeight
-            // Removing windowWidth and windowHeight lets the renderer use the correct layout context
-        });
-        
-        const link = document.createElement('a');
-        link.download = 'jld-tier-list.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-
-    } catch (error) {
-        console.error('Error generating tier list image:', error);
-        dispatchNotification('Failed to generate image.', 'error');
-    } finally {
-        // Always make sure the elements are shown again, even if an error occurs
-        displayToggles.forEach(toggle => {
-            toggle.style.visibility = 'visible';
-        });
-    }
-}
-
 /**
  * Initializes the page after Firebase is ready.
  */
@@ -1352,7 +1300,7 @@ DOM.forumContainer.addEventListener('click', (e) => {
 DOM.teamContainer.addEventListener('click', (e) => {
     const teamItem = e.target.closest('.team-item');
     if (teamItem && teamItem.dataset.teamId) {
-        showPostView(teamItem.dataset.teamId);
+        showTeamView(teamItem.dataset.teamId);
     }
 });
 DOM.createTeamBtn.addEventListener('click', openTeamBuilderModal);
