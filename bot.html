@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Primary SEO Meta Tags -->
     <title>DC: Dark Legion - Hypertime Tracker Discord Bot</title>
     <meta name="description" content="Supercharge your DC: Dark Legion strategy with the Hypertime Tracker Discord bot. Track champion schedules, look up hero stats, and sync your team builds directly from Discord.">
     <meta name="keywords" content="DC: Dark Legion, DC Dark Legion bot, Discord bot, Hypertime Tracker, game strategy, team builder, champion stats, bleed schedule, superhero game">
     <link rel="canonical" href="https://dcdl-companion.com/bot.html">
 
-    <!-- Open Graph / Facebook / Discord -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://dcdl-companion.com/bot.html">
     <meta property="og:title" content="DC: Dark Legion - Hypertime Tracker Discord Bot">
@@ -18,14 +16,12 @@
     <meta property="og:image" content="https://dcdl-companion.com/img/bot/teams.png">
     <meta property="og:site_name" content="DC:DL Companion Tools">
 
-    <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://dcdl-companion.com/bot.html">
     <meta property="twitter:title" content="DC: Dark Legion - Hypertime Tracker Discord Bot">
     <meta property="twitter:description" content="Track schedules, look up stats, and sync your teams directly from Discord.">
     <meta property="twitter:image" content="https://dcdl-companion.com/img/bot/teams.png">
     
-    <!-- Styling and Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Russo+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -33,13 +29,11 @@
     <link href="/css/theme.css" rel="stylesheet">
     <link href="/css/bot/ui.css" rel="stylesheet">
     
-    <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
 
-    <!-- JSON-LD Structured Data for Rich Snippets -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -74,17 +68,15 @@
             <h1 class="text-5xl md:text-7xl font-extrabold mb-4 glowing-text text-white">Hypertime Tracker Bot</h1>
             <p class="text-xl md:text-2xl text-blue-200 max-w-4xl mx-auto">Unleash the full power of your DC: Dark Legion strategy. Add the Hypertime Tracker to your server today and bring your strategic command to a whole new level!</p>
             <div class="mt-8">
-                <a href="https://discord.com/oauth2/authorize?client_id=1385296946142380104&permissions=51200&integration_type=0&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="install-bot-btn">
+                <a href="https://discord.com/oauth2/authorize?client_id=1385296946142380104&permissions=17600776031232&integration_type=0&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="install-bot-btn">
                     <i class="fab fa-discord mr-3"></i>
                     Add Hypertime Tracker to Discord
                 </a>
             </div>
         </header>
 
-        <!-- Main Page Section -->
         <div class="page-content space-y-16">
             
-            <!-- /schedule command -->
             <section id="schedule-feature" class="command-card">
                 <div class="command-text-content">
                     <h2 class="command-title">Track the Bleed</h2>
@@ -98,7 +90,6 @@
                 </div>
             </section>
             
-            <!-- /champion command -->
             <section id="champion-feature" class="command-card alt-layout">
                 <div class="command-text-content">
                     <h2 class="command-title">Master Any Hero</h2>
@@ -112,7 +103,6 @@
                 </div>
             </section>
 
-            <!-- /teams command -->
             <section id="teams-feature" class="command-card">
                 <div class="command-text-content">
                     <h2 class="command-title">Sync Your Squads</h2>
@@ -126,7 +116,19 @@
                 </div>
             </section>
 
-        </div>
+            <section id="events-feature" class="command-card alt-layout">
+                <div class="command-text-content">
+                    <h2 class="command-title">Automate Your Hype</h2>
+                    <p class="command-description">Activate the ultimate convenience! The bot can automatically create server events for each new champion release, keeping your community notified and engaged. Simply enable the feature with <code class="inline-code">/events enable</code> and let the bot handle the rest.</p>
+                    <div class="command-example">
+                        <pre><code class="language-bash">/events enable</code></pre>
+                    </div>
+                </div>
+                <div class="command-image-content">
+                    <img src="img/bot/schedule.png" alt="An example of an automatically created champion event" class="command-image">
+                </div>
+            </section>
+            </div>
     </main>
 
     <footer class="relative z-10 text-gray-500 text-sm py-8 text-center">
