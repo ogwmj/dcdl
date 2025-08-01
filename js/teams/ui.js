@@ -1780,61 +1780,6 @@ async function loadSavedTeamsFromFirestore() {
 // =================================================================================================
 
 // =================================================================================================
-// #region Discord Functionality
-// =================================================================================================
-
-/**
- * @description Finalizes the Discord account link using a token from the URL.
- * @param {string} token - The one-time token for linking.
- * @async
- */
-async function finalizeDiscordLink(token) {
-    if (!auth || !db) {
-        showToast("Authentication service not ready, please wait and refresh.", "error");
-        return;
-    }
-
-    const user = auth.currentUser;
-    if (!user) {
-        showToast("Please log in or sign up to link your account.", "info");
-        const unsubscribe = onAuthStateChanged(auth, (newUser) => {
-            if (newUser) {
-                unsubscribe();
-                finalizeDiscordLink(token);
-            }
-        });
-        return;
-    }
-
-    openModal('processingModal', `<div class="modal-content"><h3>Linking Account...</h3><div class="loading-spinner mx-auto"></div></div>`);
-
-    try {
-        const { getFunctions, httpsCallable } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-functions.js");
-        const functions = getFunctions(getApp());
-        const linkAccount = httpsCallable(functions, 'linkDiscordAccount');
-
-        const result = await linkAccount({ token: token });
-
-        if (result.data.success) {
-            showToast("Success! Your account is now linked.", "success", 5000);
-        } else {
-            throw new Error(result.data.error || "Unknown error occurred.");
-        }
-    } catch (error) {
-        console.error("Error linking account:", error);
-        showToast(`Linking failed: ${error.message}`, "error", 5000);
-    } finally {
-        closeModal('processingModal');
-        // Clean the URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-    }
-}
-
-// =================================================================================================
-// #endregion Discord Functionality
-// =================================================================================================
-
-// =================================================================================================
 // #region UI Helpers & Modals
 // =================================================================================================
 
@@ -1872,8 +1817,6 @@ function handleUrlParameters() {
         DOM.rosterSearchInput.value = decodeURIComponent(championNameToSearch);
         shouldScrollToRoster = true; 
         DOM.rosterSearchInput.dispatchEvent(new Event('input', { bubbles: true }));
-    } else if (authToken) {
-        finalizeDiscordLink(authToken);
     }
 }
 

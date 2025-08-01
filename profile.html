@@ -34,6 +34,11 @@
             <p class="text-xl md:text-2xl text-blue-200">Manage your account settings.</p>
         </header>
 
+        <section id="discord-linking-container" class="hidden text-center p-8 bg-slate-800 rounded-lg">
+            <div class="loading-spinner mx-auto"></div>
+            <p id="discord-linking-status" class="text-blue-200 mt-4 text-lg">Linking your Discord account...</p>
+        </section>
+
         <section id="profile-content" class="mb-12 hidden">
             <div class="user-info-card mb-8">
                     <h2 class="guide-section-title !text-left !border-b-0 !pb-0 !mb-4">User Information</h2>
@@ -213,6 +218,7 @@
     </script>
 
     <script type="module" src="/js/profile/ui.js"></script>
+    <script type="module" src="/js/profile/discord-link.js"></script>
     <script type="module" src="/js/auth-ui.js"></script>
     <script type="module" src="/js/feedback-widget.js"></script>
     <script type="module" src="/js/notification-center.js"></script>
