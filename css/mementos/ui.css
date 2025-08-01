@@ -1,0 +1,330 @@
+/**
+ * @file css/mementos/ui.css
+ * @description Styles for The Monitor's Mementos page.
+ */
+
+.section-title {
+    font-family: 'Russo One', sans-serif;
+    font-size: 2rem;
+    color: #c7d2fe; /* A light, thematic blue */
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+    text-shadow: 0 0 8px rgba(59, 130, 246, 0.2);
+}
+
+#back-to-comics-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 0.5rem;
+    color: #93c5fd; /* blue-300 */
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#back-to-comics-btn:hover {
+    background-color: rgba(59, 130, 246, 0.2);
+    color: #c7d2fe;
+}
+
+/* Base styles for comic cards */
+.comics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.comic-card {
+    background-color: rgba(15, 23, 42, 0.7); /* slate-900 with opacity */
+    border: 1px solid #334155; /* slate-700 */
+    border-radius: 0.75rem; /* 12px */
+    padding: 1.25rem;
+    text-align: center;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3), 0 4px 6px -1px rgba(0,0,0,0.4);
+    transition: all 0.3s ease;
+    display: block;
+    text-decoration: none;
+    background-color: rgba(30, 41, 59, 0.6);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+}
+
+.comic-card:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2), 0 0 15px rgba(59, 130, 246, 0.1);
+}
+
+.comic-cover-wrapper {
+    position: relative;
+}
+
+.comic-cover {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    display: block;
+}
+
+.limited-badge {
+    position: absolute;
+    top: 10px;
+    right: -1px;
+    background-color: #ef4444; /* red-500 */
+    color: white;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 0.375rem 0 0 0.375rem;
+    box-shadow: -2px 2px 5px rgba(0,0,0,0.3);
+}
+
+.comic-title {
+    padding: 1rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    text-align: center;
+    background-color: rgba(17, 24, 39, 0.8);
+    min-height: 80px; /* Ensures consistent height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.comic-card:hover {
+    transform: translateY(-5px);
+    border-color: #4f46e5; /* indigo-600 */
+    box-shadow: 0 10px 20px -5px rgba(79,70,229,0.2);
+}
+
+.comic-card-image {
+    width: 100%;
+    max-width: 150px;
+    height: auto;
+    object-fit: contain;
+    margin: 0 auto 1rem auto;
+    border-radius: 0.375rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.comic-card h3 {
+    font-family: 'Russo One', sans-serif;
+    font-size: 1.25rem;
+    color: #e2e8f0;
+    margin-bottom: 0.5rem;
+}
+
+.comic-card p {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    flex-grow: 1;
+}
+
+.comic-card-footer {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(51, 65, 85, 0.5); /* slate-700 with opacity */
+    font-size: 0.85rem;
+    color: #cbd5e1; /* slate-300 */
+}
+
+.mementos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.memento-card {
+    background-color: rgba(15, 23, 42, 0.7);
+    border: 1px solid #334155;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3), 0 4px 6px -1px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: #e2e8f0;
+}
+
+.memento-card-image {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+}
+
+.memento-card h3 {
+    font-family: 'Russo One', sans-serif;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.memento-card p {
+    font-size: 0.95rem;
+    color: #94a3b8;
+    margin-bottom: 1rem;
+    flex-grow: 1;
+}
+
+.memento-stars {
+    display: flex;
+    font-size: 1.5rem;
+    gap: 0.25rem;
+    color: #cbd5e1;
+}
+
+.memento-stars .star-icon.active { color: #f59e0b; }
+.memento-stars.tier-white .star-icon.active { color: #a8a29e; }
+.memento-stars.tier-green .star-icon.active { color: #54f63b; }
+.memento-stars.tier-blue .star-icon.active { color: #3b82f6; }
+.memento-stars.tier-purple .star-icon.active { color: #8b5cf6; }
+.memento-stars.tier-gold .star-icon.active { color: #f59e0b; }
+.memento-stars.tier-red .star-icon.active { color: #ef4444; }
+.memento-stars.tier-unlocked .star-icon.active { color: #475569; }
+
+/* Memento Collection Counter & Wishlist Styles */
+.memento-actions-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1rem;
+    width: 100%;
+    background-color: #1e293b; /* slate-800 */
+    border-radius: 0.5rem;
+    padding: 0.25rem;
+}
+
+.memento-counter {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.counter-btn {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.375rem;
+    background-color: #334155; /* slate-700 */
+    color: #e2e8f0;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.counter-btn:hover:not(:disabled) {
+    background-color: #475569; /* slate-600 */
+}
+
+.counter-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.counter-display {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #bfdbfe;
+    min-width: 1.5rem;
+    text-align: center;
+}
+
+.wishlist-btn {
+    background: none;
+    border: none;
+    color: #64748b; /* slate-500 */
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+.wishlist-btn:hover:not(:disabled) {
+    transform: scale(1.1);
+}
+.wishlist-btn.active {
+    color: #f59e0b; /* gold-500 */
+}
+.wishlist-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.creator-card-memento {
+    background-color: rgba(15, 23, 42, 0.7); /* slate-900 with opacity */
+    border: 1px solid rgba(59, 130, 246, 0.3); /* blue-500 with opacity */
+    border-radius: 0.75rem; /* 12px */
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3), 0 4px 6px -1px rgba(0,0,0,0.4);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.creator-card-memento:hover {
+    transform: translateY(-5px);
+    border-color: #4f46e5; /* indigo-600 */
+    box-shadow: 0 10px 20px -5px rgba(79,70,229,0.2);
+}
+
+.creator-card-memento .creator-logo-memento {
+    width: 96px; /* 24 rem */
+    height: 96px; /* 24 rem */
+    border-radius: 50%;
+    border: 3px solid #4f46e5; /* indigo-600 */
+    object-fit: cover;
+    background-color: #0d1226;
+    box-shadow: 0 0 15px rgba(79, 70, 229, 0.5);
+    margin-bottom: 1rem;
+}
+
+.creator-card-memento .creator-username-memento {
+    font-family: 'Russo One', sans-serif;
+    font-size: 1.75rem; /* 28px */
+    color: #e2e8f0;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+    margin-bottom: 0.5rem;
+}
+
+.creator-card-memento .creator-description-memento {
+    color: #cbd5e1; /* slate-300 */
+    font-size: 0.9rem;
+    font-style: italic;
+    flex-grow: 1; /* Allows it to take up available space */
+    margin-bottom: 1rem;
+}
+
+.creator-card-memento .creator-socials-memento {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem; /* 12px */
+    margin-top: auto; /* Pushes socials to the bottom */
+}
+
+.creator-card-memento .creator-socials-memento a {
+    color: #94a3b8; /* slate-400 */
+    font-size: 1.25rem; /* 20px */
+    transition: all 0.2s ease-in-out;
+}
+
+.creator-card-memento .creator-socials-memento a:hover {
+    color: #fff;
+    transform: translateY(-2px) scale(1.1);
+}
+

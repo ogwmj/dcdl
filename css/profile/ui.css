@@ -182,3 +182,38 @@
   color: #bfdbfe; /* blue-200 */
   border-color: #3b82f6; /* blue-500 */
 }
+
+/* Custom Toggle Switch Style */
+.form-checkbox-toggle {
+    appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    width: 3rem; /* 48px */
+    height: 1.5rem; /* 24px */
+    border-radius: 9999px;
+    background-color: #334155; /* slate-700 */
+    border: 1px solid #475569; /* slate-600 */
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.form-checkbox-toggle::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 1.25rem; /* 20px */
+    height: 1.25rem; /* 20px */
+    border-radius: 50%;
+    background-color: white;
+    transition: transform 0.2s ease-in-out;
+}
+
+.form-checkbox-toggle:checked {
+    background-color: #4f46e5; /* indigo-600 */
+    border-color: #6366f1; /* indigo-500 */
+}
+
+.form-checkbox-toggle:checked::before {
+    transform: translateX(1.5rem); /* 24px */
+}

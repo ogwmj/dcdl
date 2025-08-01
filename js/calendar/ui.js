@@ -173,10 +173,7 @@ async function initializeCalendar(analytics) {
                 id: doc.id,
                 name: champ.name,
                 avatar: `img/champions/avatars/${(champ.name || "").replace(/[^a-zA-Z0-9-_]/g, "")}.webp`,
-                // === MODIFICATION START ===
-                // Fetch the community average level for each champion
                 communityAverageLevel: champ.communityAverageLevel || 'N/A'
-                // === MODIFICATION END ===
             });
         });
 

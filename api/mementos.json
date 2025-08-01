@@ -1,0 +1,881 @@
+{
+  "updated_at": "2025-07-28T20:02:16.156Z",
+  "memento_collections": [
+    {
+      "id": "c0g1WJqzhyjCgin3dvdi",
+      "title": "Arkham Asylum Artifacts",
+      "isLimited": true,
+      "sortOrder": 1,
+      "coverImageUrl": "https://dcdl-companion.com/img/mementos/Arkham_Asylum_Artifacts/icon_collection_Arkham_Asylum_Artifacts_cover.webp",
+      "url": "https://dcdl-companion.com/mementos.html?comic=c0g1WJqzhyjCgin3dvdi",
+      "mementos": [
+        {
+          "name": "Surveillance Tape",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 1,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Arkham_Asylum_Artifacts/icon_collection_Arkham_Asylum_Artifacts_01.webp"
+        },
+        {
+          "name": "Access Card",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 2,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Arkham_Asylum_Artifacts/icon_collection_Arkham_Asylum_Artifacts_02.webp"
+        },
+        {
+          "name": "Broken Venom Syringe",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 3,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Arkham_Asylum_Artifacts/icon_collection_Arkham_Asylum_Artifacts_03.webp"
+        },
+        {
+          "name": "Spore Petri Dish",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 4,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Arkham_Asylum_Artifacts/icon_collection_Arkham_Asylum_Artifacts_04.webp"
+        },
+        {
+          "name": "Damaged Wall",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 5,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Arkham_Asylum_Artifacts/icon_collection_Arkham_Asylum_Artifacts_05.webp"
+        },
+        {
+          "name": "Cleaning Supplies",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 6,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Arkham_Asylum_Artifacts/icon_collection_Arkham_Asylum_Artifacts_06.webp"
+        },
+        {
+          "name": "The Penguin's Umbrella",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 7,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Arkham_Asylum_Artifacts/icon_collection_Arkham_Asylum_Artifacts_07.webp"
+        },
+        {
+          "name": "Liquid Nitrogen Tank",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 8,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Arkham_Asylum_Artifacts/icon_collection_Arkham_Asylum_Artifacts_08.webp"
+        },
+        {
+          "name": "Pyschiatric Notes",
+          "description": "",
+          "starColorTier": "Red 5-Star",
+          "sortOrder": 9,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Arkham_Asylum_Artifacts/icon_collection_Arkham_Asylum_Artifacts_09.webp"
+        }
+      ]
+    },
+    {
+      "id": "nwd5O28qL1SlN5PkmvNS",
+      "title": "Dark Deals",
+      "isLimited": false,
+      "sortOrder": 1,
+      "coverImageUrl": "https://dcdl-companion.com/img/mementos/Dark_Deals/icon_collection_Dark_Deals_cover.webp",
+      "url": "https://dcdl-companion.com/mementos.html?comic=nwd5O28qL1SlN5PkmvNS",
+      "mementos": [
+        {
+          "name": "Transaction List",
+          "description": "",
+          "starColorTier": "Green 1-Star",
+          "sortOrder": 1,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Dark_Deals/icon_collection_Dark_Deals_01.webp"
+        },
+        {
+          "name": "Book of Dark Contracts",
+          "description": "",
+          "starColorTier": "Green 1-Star",
+          "sortOrder": 2,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Dark_Deals/icon_collection_Dark_Deals_02.webp"
+        },
+        {
+          "name": "Spore Capsule",
+          "description": "",
+          "starColorTier": "Green 1-Star",
+          "sortOrder": 3,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Dark_Deals/icon_collection_Dark_Deals_03.webp"
+        },
+        {
+          "name": "Fake IDs",
+          "description": "",
+          "starColorTier": "Green 1-Star",
+          "sortOrder": 4,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Dark_Deals/icon_collection_Dark_Deals_04.webp"
+        },
+        {
+          "name": "Toxin Samples",
+          "description": "",
+          "starColorTier": "Green 1-Star",
+          "sortOrder": 5,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Dark_Deals/icon_collection_Dark_Deals_05.webp"
+        },
+        {
+          "name": "Escape Route",
+          "description": "",
+          "starColorTier": "Green 1-Star",
+          "sortOrder": 6,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Dark_Deals/icon_collection_Dark_Deals_06.webp"
+        },
+        {
+          "name": "Advanced Hacking Devices",
+          "description": "",
+          "starColorTier": "Green 1-Star",
+          "sortOrder": 7,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Dark_Deals/icon_collection_Dark_Deals_07.webp"
+        },
+        {
+          "name": "Encrypted Communicator",
+          "description": "",
+          "sortOrder": 8,
+          "starColorTier": "Blue 2-Star",
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Dark_Deals/icon_collection_Dark_Deals_08.webp"
+        },
+        {
+          "name": "Kryptonian Smuggling Case",
+          "description": "",
+          "sortOrder": 9,
+          "starColorTier": "Blue 2-Star",
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Dark_Deals/icon_collection_Dark_Deals_09.webp"
+        }
+      ]
+    },
+    {
+      "id": "BIBNCxraBWKmnLyVHo8P",
+      "title": "Know Your Enemy",
+      "isLimited": true,
+      "sortOrder": 2,
+      "coverImageUrl": "https://dcdl-companion.com/img/mementos/Know_Your_Enemy/icon_collection_Know_Your_Enemy_cover.webp",
+      "url": "https://dcdl-companion.com/mementos.html?comic=BIBNCxraBWKmnLyVHo8P",
+      "mementos": [
+        {
+          "name": "Scarecrow Fear Toxin Formula",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 1,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Know_Your_Enemy/icon_collection_Know_Your_Enemy_01.webp"
+        },
+        {
+          "name": "Cryogenic Stasis Chamber",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 2,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Know_Your_Enemy/icon_collection_Know_Your_Enemy_02.webp"
+        },
+        {
+          "name": "Killer Croc's Scale Sample",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 3,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Know_Your_Enemy/icon_collection_Know_Your_Enemy_03.webp"
+        },
+        {
+          "name": "The Penguin Voice Recording",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 4,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Know_Your_Enemy/icon_collection_Know_Your_Enemy_04.webp"
+        },
+        {
+          "name": "Harvey Dent's Court Transcripts",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 5,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Know_Your_Enemy/icon_collection_Know_Your_Enemy_05.webp"
+        },
+        {
+          "name": "The Riddler's Puzzle Simulator",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 6,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Know_Your_Enemy/icon_collection_Know_Your_Enemy_06.webp"
+        },
+        {
+          "name": "Silphium Seeds",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 7,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Know_Your_Enemy/icon_collection_Know_Your_Enemy_07.webp"
+        },
+        {
+          "name": "The Joker Fish",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 8,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Know_Your_Enemy/icon_collection_Know_Your_Enemy_08.webp"
+        },
+        {
+          "name": "Talon Mask",
+          "description": "",
+          "starColorTier": "Red 5-Star",
+          "sortOrder": 9,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Know_Your_Enemy/icon_collection_Know_Your_Enemy_09.webp"
+        }
+      ]
+    },
+    {
+      "id": "plEWQ4mXZUhLnfxnCBpL",
+      "title": "Gotham Police Evidence Locker",
+      "isLimited": false,
+      "sortOrder": 2,
+      "coverImageUrl": "https://dcdl-companion.com/img/mementos/Gotham_Police_Evidence_Locker/icon_collection_Gotham_Police_Evidence_Locker_cover.webp",
+      "url": "https://dcdl-companion.com/mementos.html?comic=plEWQ4mXZUhLnfxnCBpL",
+      "mementos": [
+        {
+          "name": "Coin Casting Mold",
+          "description": "",
+          "starColorTier": "Green 1-Star",
+          "sortOrder": 1,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Gotham_Police_Evidence_Locker/icon_collection_Gotham_Police_Evidence_Locker_01.webp"
+        },
+        {
+          "name": "Fear Toxin Formula Fragment",
+          "description": "",
+          "starColorTier": "Green 1-Star",
+          "sortOrder": 2,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Gotham_Police_Evidence_Locker/icon_collection_Gotham_Police_Evidence_Locker_02.webp"
+        },
+        {
+          "name": "Vine Specimen",
+          "description": "",
+          "starColorTier": "Green 1-Star",
+          "sortOrder": 3,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Gotham_Police_Evidence_Locker/icon_collection_Gotham_Police_Evidence_Locker_03.webp"
+        },
+        {
+          "name": "Cracked Black Mask",
+          "description": "",
+          "starColorTier": "Green 1-Star",
+          "sortOrder": 4,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Gotham_Police_Evidence_Locker/icon_collection_Gotham_Police_Evidence_Locker_04.webp"
+        },
+        {
+          "name": "Abandoned Sniper Scope",
+          "description": "",
+          "starColorTier": "Green 1-Star",
+          "sortOrder": 5,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Gotham_Police_Evidence_Locker/icon_collection_Gotham_Police_Evidence_Locker_05.webp"
+        },
+        {
+          "name": "Encrypted Hard Drive",
+          "description": "",
+          "starColorTier": "Green 1-Star",
+          "sortOrder": 6,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Gotham_Police_Evidence_Locker/icon_collection_Gotham_Police_Evidence_Locker_06.webp"
+        },
+        {
+          "name": "Empty Vial",
+          "description": "",
+          "starColorTier": "Blue 2-Star",
+          "sortOrder": 7,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Gotham_Police_Evidence_Locker/icon_collection_Gotham_Police_Evidence_Locker_07.webp"
+        },
+        {
+          "name": "Broken Baseball Bat",
+          "description": "",
+          "starColorTier": "Blue 2-Star",
+          "sortOrder": 8,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Gotham_Police_Evidence_Locker/icon_collection_Gotham_Police_Evidence_Locker_08.webp"
+        },
+        {
+          "name": "Batarang Fragment",
+          "description": "",
+          "starColorTier": "Blue 2-Star",
+          "sortOrder": 9,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Gotham_Police_Evidence_Locker/icon_collection_Gotham_Police_Evidence_Locker_09.webp"
+        }
+      ]
+    },
+    {
+      "id": "3uhcgxaToKTFjoOqoAtd",
+      "title": "Supernatural San Francisco",
+      "isLimited": false,
+      "sortOrder": 3,
+      "coverImageUrl": "https://dcdl-companion.com/img/mementos/Supernatural_San_Francisco/icon_collection_Supernatural_San_Francisco_cover.webp",
+      "url": "https://dcdl-companion.com/mementos.html?comic=3uhcgxaToKTFjoOqoAtd",
+      "mementos": [
+        {
+          "name": "Supernatural Wind Chime",
+          "description": "",
+          "starColorTier": "Green 1-Star",
+          "sortOrder": 1,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Supernatural_San_Francisco/icon_collection_Supernatural_San_Francisco_01.webp"
+        },
+        {
+          "name": "Mysterious Run Stone",
+          "description": "",
+          "starColorTier": "Green 1-Star",
+          "sortOrder": 2,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Supernatural_San_Francisco/icon_collection_Supernatural_San_Francisco_02.webp"
+        },
+        {
+          "name": "Glowing Seed",
+          "description": "",
+          "starColorTier": "Green 1-Star",
+          "sortOrder": 3,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Supernatural_San_Francisco/icon_collection_Supernatural_San_Francisco_03.webp"
+        },
+        {
+          "name": "Ghost Ticket",
+          "description": "",
+          "starColorTier": "Green 1-Star",
+          "sortOrder": 4,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Supernatural_San_Francisco/icon_collection_Supernatural_San_Francisco_04.webp"
+        },
+        {
+          "name": "Rune-Engraved Tile",
+          "description": "",
+          "starColorTier": "Blue 2-Star",
+          "sortOrder": 5,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Supernatural_San_Francisco/icon_collection_Supernatural_San_Francisco_05.webp"
+        },
+        {
+          "name": "Mysterious Diary",
+          "description": "",
+          "starColorTier": "Blue 2-Star",
+          "sortOrder": 6,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Supernatural_San_Francisco/icon_collection_Supernatural_San_Francisco_06.webp"
+        },
+        {
+          "name": "Sigil Cigarette",
+          "description": "",
+          "starColorTier": "Blue 2-Star",
+          "sortOrder": 7,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Supernatural_San_Francisco/icon_collection_Supernatural_San_Francisco_07.webp"
+        },
+        {
+          "name": "Reverse Speech Tape",
+          "description": "",
+          "starColorTier": "Blue 2-Star",
+          "sortOrder": 8,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Supernatural_San_Francisco/icon_collection_Supernatural_San_Francisco_08.webp"
+        },
+        {
+          "name": "List of Ritual Sites",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 9,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Supernatural_San_Francisco/icon_collection_Supernatural_San_Francisco_09.webp"
+        }
+      ]
+    },
+    {
+      "id": "QtaAFo6tNkJ5xhG51rWz",
+      "title": "Bat-Family Ties",
+      "isLimited": true,
+      "sortOrder": 3,
+      "coverImageUrl": "https://dcdl-companion.com/img/mementos/Bat_Family_Ties/icon_collection_Bat_Family_Ties_cover.webp",
+      "url": "https://dcdl-companion.com/mementos.html?comic=QtaAFo6tNkJ5xhG51rWz",
+      "mementos": [
+        {
+          "name": "Stephanic Brown's Training Log",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 1,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Bat_Family_Ties/icon_collection_Bat_Family_Ties_01.webp"
+        },
+        {
+          "name": "Maggie Kyle's Treatment Plans",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 2,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Bat_Family_Ties/icon_collection_Bat_Family_Ties_02.webp"
+        },
+        {
+          "name": "Alfred's Contingency Plans",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 3,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Bat_Family_Ties/icon_collection_Bat_Family_Ties_03.webp"
+        },
+        {
+          "name": "Damian Wayne's Genetic Code",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 4,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Bat_Family_Ties/icon_collection_Bat_Family_Ties_04.webp"
+        },
+        {
+          "name": "Jason Todd's Resource Package",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 5,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Bat_Family_Ties/icon_collection_Bat_Family_Ties_05.webp"
+        },
+        {
+          "name": "Cybernetic Nerve Implant",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 6,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Bat_Family_Ties/icon_collection_Bat_Family_Ties_06.webp"
+        },
+        {
+          "name": "Cold Case Library",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 7,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Bat_Family_Ties/icon_collection_Bat_Family_Ties_07.webp"
+        },
+        {
+          "name": "Vulnerability Analysis by Nightwing",
+          "description": "",
+          "starColorTier": "Red 5-Star",
+          "sortOrder": 8,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Bat_Family_Ties/icon_collection_Bat_Family_Ties_08.webp"
+        },
+        {
+          "name": "Psychological Evaluation Reports",
+          "description": "",
+          "starColorTier": "Red 5-Star",
+          "sortOrder": 9,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Bat_Family_Ties/icon_collection_Bat_Family_Ties_09.webp"
+        }
+      ]
+    },
+    {
+      "id": "9qoNyabhWW77qyRZdRX6",
+      "title": "Guardians of Gotham",
+      "isLimited": true,
+      "sortOrder": 4,
+      "coverImageUrl": "https://dcdl-companion.com/img/mementos/Guardians_of_Gotham/icon_collection_Guardians_of_Gotham_cover.webp",
+      "url": "https://dcdl-companion.com/mementos.html?comic=9qoNyabhWW77qyRZdRX6",
+      "mementos": [
+        {
+          "name": "Prototype Batarang",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 1,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Guardians_of_Gotham/icon_collection_Guardians_of_Gotham_01.webp"
+        },
+        {
+          "name": "Gordon's Police Badge",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 2,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Guardians_of_Gotham/icon_collection_Guardians_of_Gotham_02.webp"
+        },
+        {
+          "name": "Jason Todd's Robin Costume",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 3,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Guardians_of_Gotham/icon_collection_Guardians_of_Gotham_03.webp"
+        },
+        {
+          "name": "Catwoman's Engagement Ring",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 4,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Guardians_of_Gotham/icon_collection_Guardians_of_Gotham_04.webp"
+        },
+        {
+          "name": "Arkham Asylum Key",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 5,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Guardians_of_Gotham/icon_collection_Guardians_of_Gotham_05.webp"
+        },
+        {
+          "name": "The Joker's Toxin Vial",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 6,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Guardians_of_Gotham/icon_collection_Guardians_of_Gotham_06.webp"
+        },
+        {
+          "name": "Outsider Protocol",
+          "description": "",
+          "starColorTier": "Red 5-Star",
+          "sortOrder": 7,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Guardians_of_Gotham/icon_collection_Guardians_of_Gotham_07.webp"
+        },
+        {
+          "name": "Thomas Wayne's Pocket Watch",
+          "description": "",
+          "starColorTier": "Red 5-Star",
+          "sortOrder": 8,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Guardians_of_Gotham/icon_collection_Guardians_of_Gotham_08.webp"
+        },
+        {
+          "name": "Batman's Journal",
+          "description": "",
+          "starColorTier": "Red 5-Star",
+          "sortOrder": 9,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Guardians_of_Gotham/icon_collection_Guardians_of_Gotham_09.webp"
+        }
+      ]
+    },
+    {
+      "id": "fsdVYze0Koy0dq8sfxvT",
+      "title": "Catwoman Theft Files",
+      "isLimited": false,
+      "sortOrder": 4,
+      "coverImageUrl": "https://dcdl-companion.com/img/mementos/Catwoman_Theft_Files/icon_collection_Catwoman_Theft_Files_cover.webp",
+      "url": "https://dcdl-companion.com/mementos.html?comic=fsdVYze0Koy0dq8sfxvT",
+      "mementos": [
+        {
+          "name": "Embezzlement Files",
+          "description": "",
+          "starColorTier": "Green 1-Star",
+          "sortOrder": 1,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Catwoman_Theft_Files/icon_collection_Catwoman_Theft_Files_01.webp"
+        },
+        {
+          "name": "The Beryl Butterfly",
+          "description": "",
+          "starColorTier": "Green 1-Star",
+          "sortOrder": 2,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Catwoman_Theft_Files/icon_collection_Catwoman_Theft_Files_02.webp"
+        },
+        {
+          "name": "The Marquez Dagger",
+          "description": "",
+          "starColorTier": "Green 1-Star",
+          "sortOrder": 3,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Catwoman_Theft_Files/icon_collection_Catwoman_Theft_Files_03.webp"
+        },
+        {
+          "name": "Casanova Canary Diamond",
+          "description": "",
+          "starColorTier": "Blue 2-Star",
+          "sortOrder": 4,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Catwoman_Theft_Files/icon_collection_Catwoman_Theft_Files_04.webp"
+        },
+        {
+          "name": "The Ace of Winchesters",
+          "description": "",
+          "starColorTier": "Blue 2-Star",
+          "sortOrder": 5,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Catwoman_Theft_Files/icon_collection_Catwoman_Theft_Files_05.webp"
+        },
+        {
+          "name": "Diamond Necklace",
+          "description": "",
+          "starColorTier": "Blue 2-Star",
+          "sortOrder": 6,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Catwoman_Theft_Files/icon_collection_Catwoman_Theft_Files_06.webp"
+        },
+        {
+          "name": "Emerald",
+          "description": "",
+          "starColorTier": "Blue 2-Star",
+          "sortOrder": 7,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Catwoman_Theft_Files/icon_collection_Catwoman_Theft_Files_07.webp"
+        },
+        {
+          "name": "Christmas Ornament",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 8,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Catwoman_Theft_Files/icon_collection_Catwoman_Theft_Files_08.webp"
+        },
+        {
+          "name": "Kryptonite",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 9,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Catwoman_Theft_Files/icon_collection_Catwoman_Theft_Files_09.webp"
+        }
+      ]
+    },
+    {
+      "id": "YW7j2MWYNV33WzEikuS7",
+      "title": "Harley's Private Stuff",
+      "isLimited": false,
+      "sortOrder": 5,
+      "coverImageUrl": "https://dcdl-companion.com/img/mementos/Harley_s_Private_Stuff/icon_collection_Harley_s_Private_Stuff_cover.webp",
+      "url": "https://dcdl-companion.com/mementos.html?comic=YW7j2MWYNV33WzEikuS7",
+      "mementos": [
+        {
+          "name": "Daily Affirmation Book",
+          "description": "",
+          "starColorTier": "Green 1-Star",
+          "sortOrder": 1,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Harley_s_Private_Stuff/icon_collection_Harley_s_Private_Stuff_01.webp"
+        },
+        {
+          "name": "Cute Hyena Costumes",
+          "description": "",
+          "starColorTier": "Blue 2-Star",
+          "sortOrder": 2,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Harley_s_Private_Stuff/icon_collection_Harley_s_Private_Stuff_02.webp"
+        },
+        {
+          "name": "Suicide Squad Pardons",
+          "description": "",
+          "starColorTier": "Blue 2-Star",
+          "sortOrder": 3,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Harley_s_Private_Stuff/icon_collection_Harley_s_Private_Stuff_03.webp"
+        },
+        {
+          "name": "Cut-Up Photos",
+          "description": "",
+          "starColorTier": "Blue 2-Star",
+          "sortOrder": 4,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Harley_s_Private_Stuff/icon_collection_Harley_s_Private_Stuff_04.webp"
+        },
+        {
+          "name": "Gymnastics Trophy",
+          "description": "",
+          "starColorTier": "Blue 2-Star",
+          "sortOrder": 5,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Harley_s_Private_Stuff/icon_collection_Harley_s_Private_Stuff_05.webp"
+        },
+        {
+          "name": "Psychiatry Diploma from Gotham State University",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 6,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Harley_s_Private_Stuff/icon_collection_Harley_s_Private_Stuff_06.webp"
+        },
+        {
+          "name": "Potted Cactus",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 7,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Harley_s_Private_Stuff/icon_collection_Harley_s_Private_Stuff_07.webp"
+        },
+        {
+          "name": "Bazooka",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 8,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Harley_s_Private_Stuff/icon_collection_Harley_s_Private_Stuff_08.webp"
+        },
+        {
+          "name": "Batcave Access Card",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 9,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Harley_s_Private_Stuff/icon_collection_Harley_s_Private_Stuff_09.webp"
+        }
+      ]
+    },
+    {
+      "id": "StUxinOlw6DIvLD0O0bh",
+      "title": "Magical Artifacts",
+      "isLimited": false,
+      "sortOrder": 6,
+      "coverImageUrl": "https://dcdl-companion.com/img/mementos/Magical_Artifacts/icon_collection_Magical_Artifacts_cover.webp",
+      "url": "https://dcdl-companion.com/mementos.html?comic=StUxinOlw6DIvLD0O0bh",
+      "mementos": [
+        {
+          "name": "Magic Charms",
+          "description": "",
+          "starColorTier": "Blue 2-Star",
+          "sortOrder": 1,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Magical_Artifacts/icon_collection_Magical_Artifacts_01.webp"
+        },
+        {
+          "name": "Magic Hat",
+          "description": "",
+          "starColorTier": "Blue 2-Star",
+          "sortOrder": 2,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Magical_Artifacts/icon_collection_Magical_Artifacts_02.webp"
+        },
+        {
+          "name": "Heart of Darkness",
+          "description": "",
+          "starColorTier": "Blue 2-Star",
+          "sortOrder": 3,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Magical_Artifacts/icon_collection_Magical_Artifacts_03.webp"
+        },
+        {
+          "name": "Hellblazer's Lighter",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 4,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Magical_Artifacts/icon_collection_Magical_Artifacts_04.webp"
+        },
+        {
+          "name": "Giovanni Zatarra's Top Hat",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 5,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Magical_Artifacts/icon_collection_Magical_Artifacts_05.webp"
+        },
+        {
+          "name": "Pandora's Box",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 6,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Magical_Artifacts/icon_collection_Magical_Artifacts_06.webp"
+        },
+        {
+          "name": "Ra's Al Ghul's Lazarus Pit",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 7,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Magical_Artifacts/icon_collection_Magical_Artifacts_07.webp"
+        },
+        {
+          "name": "Anhk Amulet",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 8,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Magical_Artifacts/icon_collection_Magical_Artifacts_08.webp"
+        },
+        {
+          "name": "Helmet of Fate",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 9,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Magical_Artifacts/icon_collection_Magical_Artifacts_09.webp"
+        }
+      ]
+    },
+    {
+      "id": "0GhMXk4SSKXkgvRmI7xT",
+      "title": "Secrets of Atlantis",
+      "isLimited": false,
+      "sortOrder": 7,
+      "coverImageUrl": "https://dcdl-companion.com/img/mementos/Secrets_of_Atlantis/icon_collection_Secrets_of_Atlantis_cover.webp",
+      "url": "https://dcdl-companion.com/mementos.html?comic=0GhMXk4SSKXkgvRmI7xT",
+      "mementos": [
+        {
+          "name": "Atlantean Helmet",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 1,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Secrets_of_Atlantis/icon_collection_Secrets_of_Atlantis_01.webp"
+        },
+        {
+          "name": "Atlantean Key",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 2,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Secrets_of_Atlantis/icon_collection_Secrets_of_Atlantis_02.webp"
+        },
+        {
+          "name": "Atlan's Scepter",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 3,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Secrets_of_Atlantis/icon_collection_Secrets_of_Atlantis_03.webp"
+        },
+        {
+          "name": "Globe of Transportation",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 4,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Secrets_of_Atlantis/icon_collection_Secrets_of_Atlantis_04.webp"
+        },
+        {
+          "name": "Manacles of Force",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 5,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Secrets_of_Atlantis/icon_collection_Secrets_of_Atlantis_05.webp"
+        },
+        {
+          "name": "Power Glove",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 6,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Secrets_of_Atlantis/icon_collection_Secrets_of_Atlantis_06.webp"
+        },
+        {
+          "name": "Seal of Clarity",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 7,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Secrets_of_Atlantis/icon_collection_Secrets_of_Atlantis_07.webp"
+        },
+        {
+          "name": "Trident of Neptune",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 8,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Secrets_of_Atlantis/icon_collection_Secrets_of_Atlantis_08.webp"
+        },
+        {
+          "name": "Tear of Extinction",
+          "description": "",
+          "starColorTier": "Red 5-Star",
+          "sortOrder": 9,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Secrets_of_Atlantis/icon_collection_Secrets_of_Atlantis_09.webp"
+        }
+      ]
+    },
+    {
+      "id": "eZeq4AnrIBJ2UaUaRDza",
+      "title": "Secrets of the Dark Knights",
+      "isLimited": false,
+      "sortOrder": 8,
+      "coverImageUrl": "https://dcdl-companion.com/img/mementos/Secrets_of_the_Dark_Knights/icon_collection_Secrets_of_the_Dark_Knights_cover.webp",
+      "url": "https://dcdl-companion.com/mementos.html?comic=eZeq4AnrIBJ2UaUaRDza",
+      "mementos": [
+        {
+          "name": "The Dawnbreaker",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 1,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Secrets_of_the_Dark_Knights/icon_collection_Secrets_of_the_Dark_Knights_01.webp"
+        },
+        {
+          "name": "Murder Machine",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 2,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Secrets_of_the_Dark_Knights/icon_collection_Secrets_of_the_Dark_Knights_02.webp"
+        },
+        {
+          "name": "The Merciless",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 3,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Secrets_of_the_Dark_Knights/icon_collection_Secrets_of_the_Dark_Knights_03.webp"
+        },
+        {
+          "name": "The Drowned",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 4,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Secrets_of_the_Dark_Knights/icon_collection_Secrets_of_the_Dark_Knights_04.webp"
+        },
+        {
+          "name": "The Devastator",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 5,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Secrets_of_the_Dark_Knights/icon_collection_Secrets_of_the_Dark_Knights_05.webp"
+        },
+        {
+          "name": "Red Death",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 6,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Secrets_of_the_Dark_Knights/icon_collection_Secrets_of_the_Dark_Knights_06.webp"
+        },
+        {
+          "name": "The Batman Who Laughs",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 7,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Secrets_of_the_Dark_Knights/icon_collection_Secrets_of_the_Dark_Knights_07.webp"
+        },
+        {
+          "name": "Map of the Dark Multiverse",
+          "description": "",
+          "starColorTier": "Red 5-Star",
+          "sortOrder": 8,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Secrets_of_the_Dark_Knights/icon_collection_Secrets_of_the_Dark_Knights_08.webp"
+        },
+        {
+          "name": "Barbatos",
+          "description": "",
+          "starColorTier": "Red 5-Star",
+          "sortOrder": 9,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Secrets_of_the_Dark_Knights/icon_collection_Secrets_of_the_Dark_Knights_09.webp"
+        }
+      ]
+    }
+  ]
+}

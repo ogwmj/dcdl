@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO and Page Information -->
+    <title>DC: Dark Legion - Monitor's Mementos</title>
+    <link rel="canonical" href="https://dcdl-companion.com/mementos.html">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Russo+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <link href="/css/theme.css" rel="stylesheet">
+    <link href="/css/mementos/ui.css" rel="stylesheet">
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+</head>
+<body class="text-gray-200">
+    <div id="page-loader">
+        <div class="loader-spinner"></div>
+        <p>Loading Mementos...</p>
+    </div>
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="ogwmj" data-description="Support me on Buy me a coffee!" data-message="" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+    <notification-center></notification-center>
+    <auth-ui status-container-id="auth-status-desktop"></auth-ui>
+    <feedback-widget></feedback-widget>
+    <div class="background-hero"></div>
+    <navigation-widget></navigation-widget>
+    
+    <main class="relative z-10 max-w-7xl mx-auto p-4 md:p-8" data-squad-name="All Squads">
+        <header id="main-header" class="py-8 md:py-12 text-center transition-all duration-300">
+            <h1 id="page-title" class="text-5xl md:text-7xl font-extrabold mb-4 glowing-text text-white">Monitor's Mementos</h1>
+            <p id="page-description" class="text-xl md:text-2xl text-blue-200">A complete collection of comic book mementos.</p>
+        </header>
+
+        <!-- Main view for displaying all comic books -->
+        <section id="comics-view">
+            <div class="mb-12">
+                <h2 class="section-title">Limited Edition Issues</h2>
+                <div id="limited-comics-container" class="comics-grid">
+                    <!-- Comic cards will be injected here -->
+                </div>
+            </div>
+            <div>
+                <h2 class="section-title">Standard Issues</h2>
+                <div id="standard-comics-container" class="comics-grid">
+                    <!-- Comic cards will be injected here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- View for displaying a single comic's mementos -->
+        <section id="mementos-view" class="hidden">
+            <div class="mb-8">
+                <a href="/mementos.html" id="back-to-comics-btn" class="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to All Comics
+                </a>
+            </div>
+            <div id="memento-detail-grid" class="mementos-grid">
+                <!-- Memento detail cards will be injected here -->
+            </div>
+        </section>
+
+        <!-- New section for Featured Creators -->
+        <section id="featured-creators-section" class="mt-12">
+            <h2 class="section-title">Creator Spotlight</h2>
+            <p class="text-slate-400">This content would not be possible without the support from the creators below!</p>
+            <div id="featured-creators-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <!-- Creator cards will be injected here -->
+                <p class="text-center text-slate-400 col-span-full">Loading featured creators...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="relative z-10 text-gray-500 text-sm py-8 text-center">
+        <p class="mt-2">DC: Dark Legion 2025 DC. Software code 2025 FunPlus International AG. DC LOGO and all related characters and elements &copy; &amp; &trade; DC.</p>
+        <p class="mt-2">Proud DC: Dark Legion Content Creator.</p>
+        <p class="mt-4"><a href="/api/index.html" class="text-blue-400 hover:text-blue-300 underline">API Documentation</a></p>
+    </footer>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+
+    <script type="module" src="/js/mementos/ui.js"></script>
+    <script type="module" src="/js/auth-ui.js"></script>
+    <script type="module" src="/js/feedback-widget.js"></script>
+    <script type="module" src="/js/notification-center.js"></script>
+    <script type="text/javascript" src="/js/navigation-widget.js"></script>
+</body>
+</html>

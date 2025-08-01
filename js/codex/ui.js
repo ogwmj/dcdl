@@ -1,7 +1,7 @@
 /**
  * @file js/codex/ui.js
  * @description Adds a dedicated Skills tab to the dossier.
- * @version 8.1.0
+ * @version 8.3.0
  */
 
 // --- Firebase & Data ---
@@ -65,9 +65,69 @@ const DOM = {
     resetFiltersBtn: document.getElementById('reset-filters-btn'),
     viewGridBtn: document.getElementById('view-grid-btn'),
     viewListBtn: document.getElementById('view-list-btn'),
+    // Admin Panel
+    adminPanel: document.getElementById('admin-panel'),
+    bulkRegenAllBtn: document.getElementById('bulk-regenerate-all-btn'),
+    bulkRegenOverwriteBtn: document.getElementById('bulk-regenerate-overwrite-btn'),
+    bulkProgressContainer: document.getElementById('bulk-progress'),
+    bulkProgressBar: document.getElementById('bulk-progress-bar'),
+    bulkProgressText: document.getElementById('bulk-progress-text'),
+};
+
+// --- Confirmation Modal ---
+const confirmationModal = {
+    backdrop: document.getElementById('confirmation-modal-backdrop'),
+    title: document.getElementById('confirmation-modal-title'),
+    text: document.getElementById('confirmation-modal-text'),
+    confirmBtn: document.getElementById('confirmation-modal-confirm-btn'),
+    cancelBtn: document.getElementById('confirmation-modal-cancel-btn'),
+    _resolve: null,
+
+    show(text, title = 'Confirm Action') {
+        if (!this.backdrop) return Promise.resolve(window.confirm(text)); // Fallback
+        this.title.textContent = title;
+        this.text.textContent = text;
+        this.backdrop.classList.remove('hidden');
+        return new Promise(resolve => {
+            this._resolve = resolve;
+        });
+    },
+
+    hide(result) {
+        if (!this.backdrop) return;
+        this.backdrop.classList.add('hidden');
+        if (this._resolve) {
+            this._resolve(result);
+            this._resolve = null;
+        }
+    }
 };
 
 // --- START: Helper & Utility Functions ---
+
+/**
+ * Generates the HTML for social media icons based on a creator's profile data.
+ * @param {object} socials - An object containing social media URLs.
+ * @returns {string} The generated HTML string for the icons.
+ */
+function generateSocialIconsHtml(socials) {
+    if (!socials || Object.keys(socials).length === 0) return '';
+
+    const socialLinks = [
+        { key: 'discord', icon: 'fab fa-discord' },
+        { key: 'youtube', icon: 'fab fa-youtube' },
+        { key: 'twitch', icon: 'fab fa-twitch' },
+        { key: 'x', icon: 'fab fa-twitter' },
+        { key: 'tiktok', icon: 'fab fa-tiktok' },
+        { key: 'instagram', icon: 'fab fa-instagram' }
+    ];
+
+    return socialLinks
+        .filter(link => socials[link.key])
+        .map(link => `<a href="${socials[link.key]}" target="_blank" rel="noopener noreferrer" title="${link.key}"><i class="${link.icon}"></i></a>`)
+        .join('');
+}
+
 
 function createStarDisplayHTML(levelString) {
     if (!levelString || levelString === 'N/A' || levelString === 'Unlocked') {
@@ -174,6 +234,8 @@ function createChampionCard(champion) {
     const communityLevel = champion.communityAverageLevel || 'N/A';
     const communityStarsHTML = createStarDisplayHTML(communityLevel);
 
+    // Added 'hide-on-mobile' class to specific buttons
+    // Added 'admin-actions-placeholder' for the admin button
     card.innerHTML = `
         <div class="card-inner">
             <div class="card-front">
@@ -191,36 +253,16 @@ function createChampionCard(champion) {
             <div class="card-back">
                 <div class="card-actions-container">
                     <button class="card-action-btn" data-action="dossier">Full Dossier</button>
-                    <button class="card-action-btn" data-action="comic">Comic View</button>
-                    <button class="card-action-btn" data-action="download">Download Card</button>
+                    <button class="card-action-btn hide-on-mobile" data-action="comic">Comic View</button>
+                    <button class="card-action-btn hide-on-mobile" data-action="download">Download Card</button>
+                    <div class="admin-actions-placeholder" data-champion-id="${champion.id}"></div>
                     <div class="roster-button-placeholder" data-champion-id="${champion.id}" data-champion-name="${encodeURIComponent(champion.name)}"></div>
                 </div>
             </div>
         </div>
     `;
 
-    card.querySelector('[data-action="dossier"]').addEventListener('click', (e) => {
-        e.stopPropagation();
-        showDossierModal(champion.id);
-    });
-
-    card.querySelector('[data-action="comic"]').addEventListener('click', (e) => {
-        e.stopPropagation();
-        showComicModal(champion.id);
-    });
-
-    card.querySelector('[data-action="download"]').addEventListener('click', (e) => {
-        e.stopPropagation();
-        const button = e.currentTarget;
-        button.textContent = 'Generating...';
-        button.disabled = true;
-        
-        generateAndUploadCardImage(champion.id).finally(() => {
-            button.textContent = 'Download Card';
-            button.disabled = false;
-        });
-    });
-
+    // Event listeners are now delegated to the grid container to handle dynamically added admin buttons
     return card;
 }
 
@@ -637,10 +679,16 @@ async function renderPlayerTips(championId) {
     tipsSnap.forEach(doc => {
         const tip = doc.data();
         const date = tip.createdAt?.toDate().toLocaleDateString() || 'A while ago';
+        const socialsHtml = generateSocialIconsHtml(tip.creatorSocials);
+
         tipsHtml += `
             <div class="tip-card">
                 <p class="tip-meta">Shared on ${date}</p>
                 <p class="tip-text">${tip.text}</p>
+                <div class="tip-author-info">
+                    <span class="tip-author-name">${tip.creatorName || 'A Creator'}</span>
+                    ${socialsHtml ? `<div class="tip-author-socials">${socialsHtml}</div>` : ''}
+                </div>
             </div>
         `;
     });
@@ -694,11 +742,27 @@ async function handleTipSubmit(event, championId) {
     button.textContent = 'Submitting...';
 
     try {
+        const userDocRef = doc(db, `artifacts/dc-dark-legion-builder/users/${currentUserId}`);
+        const userDocSnap = await getDoc(userDocRef);
+
+        let creatorName = 'A Creator';
+        let creatorSocials = {};
+
+        if (userDocSnap.exists()) {
+            const userData = userDocSnap.data();
+            creatorName = userData.username || creatorName;
+            if (userData.creatorProfile && userData.creatorProfile.socials) {
+                creatorSocials = userData.creatorProfile.socials;
+            }
+        }
+
         await addDoc(collection(db, `artifacts/dc-dark-legion-builder/public/data/champions/${championId}/playerTips`), {
             userId: currentUserId,
             text: tipText,
             createdAt: serverTimestamp(),
-            upvotes: 0
+            upvotes: 0,
+            creatorName: creatorName,
+            creatorSocials: creatorSocials
         });
         dispatchNotification('Tip submitted successfully!', 'success');
         form.reset();
@@ -736,21 +800,31 @@ async function downloadImage(imageUrl, filename) {
     }
 }
 
-async function generateAndUploadCardImage(championId) {
-    dispatchNotification('Preparing card...', 'info', 4000);
-
+async function generateAndUploadCardImage(championId, force = false, isBulk = false) {
     const champion = ALL_CHAMPIONS.find(c => c.id === championId);
+    if (!champion) {
+        dispatchNotification('Error: Champion not found.', 'error');
+        return;
+    }
+    
     const cleanName = sanitizeName(champion.name);
 
-    if (champion && champion.cardImageUrl) {
-        dispatchNotification('Starting download...', 'success', 2000);
-        await downloadImage(champion.cardImageUrl, `${cleanName}-card.png`);
+    if (champion.cardImageUrl && !force) {
+        if (!isBulk) {
+            dispatchNotification('Card exists. Starting download...', 'info');
+            await downloadImage(champion.cardImageUrl, `${cleanName}-card.png`);
+        }
         return;
+    }
+    
+    if (!isBulk) {
+        dispatchNotification('Preparing card...', 'info', 4000);
     }
 
     const originalCardElement = document.querySelector(`.champion-card[data-champion-id="${championId}"]`);
     if (!originalCardElement) {
-        dispatchNotification('Error finding champion card on page.', 'error', 4000);
+        if (!isBulk) dispatchNotification('Error finding champion card on page.', 'error');
+        console.error('Could not find card element for', champion.name, 'to generate image.');
         return;
     }
 
@@ -769,15 +843,9 @@ async function generateAndUploadCardImage(championId) {
     const communityAverageEl = clone.querySelector('.community-average');
     const cardBack = clone.querySelector('.card-back');
 
-    if (communityAverageEl) {
-        communityAverageEl.style.display = 'none';
-    }
-    if (cardInner) {
-        cardInner.style.transform = 'rotateY(0deg)';
-    }
-    if (cardBack) {
-        cardBack.style.display = 'none';
-    }
+    if (communityAverageEl) communityAverageEl.style.display = 'none';
+    if (cardInner) cardInner.style.transform = 'rotateY(0deg)';
+    if (cardBack) cardBack.style.display = 'none';
 
     try {
         const canvas = await html2canvas(clone, { 
@@ -791,30 +859,105 @@ async function generateAndUploadCardImage(championId) {
         const result = await saveImage({
             championId: champion.id,
             championName: cleanName,
-            imageDataUrl: imageDataUrl
+            imageDataUrl: imageDataUrl,
+            force: force
         });
 
-        if (champion && result.data.url) {
-            champion.cardImageUrl = result.data.url;
+        if (result.data.url) {
+            const champIndex = ALL_CHAMPIONS.findIndex(c => c.id === championId);
+            if (champIndex !== -1) {
+                ALL_CHAMPIONS[champIndex].cardImageUrl = result.data.url;
+            }
         }
 
-        logAnalyticsEvent('generate_card_image', { champion_id: championId });
-        dispatchNotification('Card image created! Starting download...', 'success', 2000);
-        await downloadImage(result.data.imageDataUrl, `${cleanName}-card.png`);
-    } catch (error) {
-        if (error.code === 'functions/unauthenticated') {
-            console.warn('Guest user tried to generate an image.');
-            dispatchNotification('Please log in to generate new card images.', 'info', 5000);
+        logAnalyticsEvent('generate_card_image', { champion_id: championId, forced: force });
+        
+        if (!isBulk) {
+            dispatchNotification('Card image created! Starting download...', 'success');
+            await downloadImage(result.data.imageDataUrl, `${cleanName}-card.png`);
         } else {
-            console.error("Failed to call saveChampionCardImage function:", error);
-            dispatchNotification('Could not generate or save card image.', 'error');
+            dispatchNotification(`Generated: ${champion.name}`, 'success', 1500);
         }
+    } catch (error) {
+        console.error("Failed to call saveChampionCardImage function:", error);
+        const errorMessage = error.details?.message || 'Could not generate or save card image.';
+        dispatchNotification(errorMessage, 'error');
     } finally {
         document.body.removeChild(clone);
     }
 }
 
 // --- END: Image Generation & Download ---
+
+// --- START: Admin Functionality ---
+
+async function handleBulkRegenerate(overwrite) {
+    const confirmationText = overwrite
+        ? "This will regenerate and overwrite images for ALL champions. This can take a long time and is irreversible. Are you sure?"
+        : "This will generate images for all champions that are currently missing one. Are you sure?";
+
+    const confirmed = await confirmationModal.show(confirmationText, 'Bulk Image Generation');
+    if (!confirmed) return;
+
+    DOM.bulkProgressContainer.classList.remove('hidden');
+    
+    const championsToProcess = overwrite ? ALL_CHAMPIONS : ALL_CHAMPIONS.filter(c => !c.cardImageUrl);
+    const total = championsToProcess.length;
+
+    if (total === 0) {
+        DOM.bulkProgressText.textContent = "No champions to process.";
+        setTimeout(() => DOM.bulkProgressContainer.classList.add('hidden'), 3000);
+        return;
+    }
+
+    let processedCount = 0;
+    for (const champion of championsToProcess) {
+        try {
+            await generateAndUploadCardImage(champion.id, overwrite, true);
+        } catch (error) {
+            console.error(`Failed to process ${champion.name} in bulk:`, error);
+            dispatchNotification(`Bulk failed on: ${champion.name}`, 'error');
+        } finally {
+            processedCount++;
+            const percentage = (processedCount / total) * 100;
+            DOM.bulkProgressBar.style.width = `${percentage}%`;
+            DOM.bulkProgressText.textContent = `Processing ${processedCount} of ${total}: ${champion.name}`;
+        }
+    }
+
+    DOM.bulkProgressText.textContent = `Bulk generation complete! Processed ${processedCount} champions.`;
+    setTimeout(() => {
+        DOM.bulkProgressContainer.classList.add('hidden');
+        DOM.bulkProgressBar.style.width = '0%';
+    }, 5000);
+}
+
+
+function updateAdminUI() {
+    const isAdmin = currentUserRoles.includes('admin');
+    if (DOM.adminPanel) {
+        DOM.adminPanel.classList.toggle('hidden', !isAdmin);
+    }
+    
+    document.querySelectorAll('.admin-actions-placeholder').forEach(placeholder => {
+        const championId = placeholder.dataset.championId;
+        const existingButton = placeholder.nextElementSibling;
+        if (existingButton && existingButton.dataset.action === 'regenerate') {
+            existingButton.remove();
+        }
+
+        if (isAdmin) {
+            const regenerateBtn = document.createElement('button');
+            regenerateBtn.className = 'card-action-btn';
+            regenerateBtn.textContent = 'Regen Card';
+            regenerateBtn.dataset.action = 'regenerate';
+            regenerateBtn.dataset.championId = championId;
+            placeholder.parentNode.insertBefore(regenerateBtn, placeholder.nextSibling);
+        }
+    });
+}
+
+// --- END: Admin Functionality ---
 
 // --- START: Filter & Sort Logic ---
 
@@ -1073,6 +1216,11 @@ function updateAllRosterButtons() {
     });
 }
 
+function updateUserSpecificUI() {
+    updateAdminUI();
+    updateAllRosterButtons();
+}
+
 // --- END: Roster and Role Association ---
 
 // --- START: Grid/List View Rendering ---
@@ -1089,7 +1237,7 @@ function renderGridView(championsToRender) {
         const card = createChampionCard(champion);
         DOM.grid.appendChild(card);
     });
-    updateAllRosterButtons();
+    updateUserSpecificUI();
 }
 
 function renderListView(championsToRender) {
@@ -1141,12 +1289,12 @@ document.addEventListener('firebase-ready', () => {
             currentUserId = user ? user.uid : null;
             if (user && !user.isAnonymous) {
                 await fetchUserRoles(user.uid);
-                fetchUserRoster(user.uid);
+                await fetchUserRoster(user.uid);
             } else {
                 USER_ROSTER_IDS.clear();
                 currentUserRoles = [];
-                updateAllRosterButtons();
             }
+            updateUserSpecificUI();
         });
 
         logAnalyticsEvent('page_view', { page_title: document.title, page_path: '/codex.html' });
@@ -1167,9 +1315,52 @@ DOM.dossierModalBackdrop.addEventListener('click', (e) => {
     if (e.target === DOM.dossierModalBackdrop) hideDossierModal();
 });
 
+// Confirmation Modal Listeners
+confirmationModal.confirmBtn.addEventListener('click', () => confirmationModal.hide(true));
+confirmationModal.cancelBtn.addEventListener('click', () => confirmationModal.hide(false));
+confirmationModal.backdrop.addEventListener('click', (e) => {
+    if (e.target === confirmationModal.backdrop) confirmationModal.hide(false);
+});
+
 // Attach listeners for Dossier tabs directly
 DOM.dossierRightColumn.querySelectorAll('.dossier-tab-btn').forEach(btn => {
     btn.addEventListener('click', handleTabClick);
+});
+
+// Delegated Event Listener for Card Actions
+DOM.grid.addEventListener('click', (e) => {
+    const button = e.target.closest('.card-action-btn');
+    if (!button) return;
+    e.stopPropagation();
+
+    const action = button.dataset.action;
+    const card = button.closest('.champion-card');
+    const championId = card.dataset.championId;
+
+    switch (action) {
+        case 'dossier':
+            showDossierModal(championId);
+            break;
+        case 'comic':
+            showComicModal(championId);
+            break;
+        case 'download':
+            button.textContent = 'Generating...';
+            button.disabled = true;
+            generateAndUploadCardImage(championId, false).finally(() => {
+                button.textContent = 'Download Card';
+                button.disabled = false;
+            });
+            break;
+        case 'regenerate':
+            button.textContent = 'Working...';
+            button.disabled = true;
+            generateAndUploadCardImage(championId, true).finally(() => {
+                button.textContent = 'Regen Card';
+                button.disabled = false;
+            });
+            break;
+    }
 });
 
 // Filter & View Listeners
@@ -1177,5 +1368,13 @@ DOM.filterControls.addEventListener('click', handleFilterClick);
 DOM.searchInput.addEventListener('input', () => applyFiltersAndSort());
 DOM.viewGridBtn.addEventListener('click', handleViewChange);
 DOM.viewListBtn.addEventListener('click', handleViewChange);
+
+// Admin Listeners
+if (DOM.bulkRegenAllBtn) {
+    DOM.bulkRegenAllBtn.addEventListener('click', () => handleBulkRegenerate(false));
+}
+if (DOM.bulkRegenOverwriteBtn) {
+    DOM.bulkRegenOverwriteBtn.addEventListener('click', () => handleBulkRegenerate(true));
+}
 
 // --- END: Event Listeners ---

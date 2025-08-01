@@ -4,9 +4,9 @@ class NavigationWidget extends HTMLElement {
       <nav class="bg-slate-900 bg-opacity-80 backdrop-filter backdrop-blur-md shadow-lg sticky top-0 z-50">
           <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <div class="flex items-center justify-between h-16">
-                  <a href="index.html" class="text-white text-2xl font-bold">DC:DL Tools</a>
+                  <a href="/index.html" class="text-white text-2xl font-bold">DC:DL Tools</a>
                   <div class="hidden md:flex items-center space-x-4">
-                      <a href="https://dcdl-companion.com/index.html" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
+
                       <div class="relative group">
                           <button class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium inline-flex items-center" aria-haspopup="true">
                               <span>Hypertime Details</span>
@@ -33,16 +33,26 @@ class NavigationWidget extends HTMLElement {
 
                       <div class="relative group">
                           <button class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium inline-flex items-center" aria-haspopup="true">
-                              <span>Tips</span>
+                              <span>Tips & Tools</span>
                               <svg class="w-4 h-4 ml-1 text-gray-400 group-hover:text-white transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                           </button>
                           <div class="absolute hidden group-hover:block bg-slate-900 bg-opacity-90 backdrop-filter backdrop-blur-md rounded-md shadow-lg py-1 w-48 z-50 top-full">
                               <a href="https://dcdl-companion.com/info/rewards.html" class="nav-link block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Daily Login Rewards</a>
                               <a href="https://dcdl-companion.com/info/calculator.html" class="nav-link block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Pull Rate Guide</a>
+                              <a href="https://dcdl-companion.com/bot.html" class="nav-link block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Companion Bot</a>
+                          </div>
+                      </div>
+
+                      <div class="relative group">
+                          <button class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium inline-flex items-center" aria-haspopup="true">
+                              <span>Batcave</span>
+                              <svg class="w-4 h-4 ml-1 text-gray-400 group-hover:text-white transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                          </button>
+                          <div class="absolute hidden group-hover:block bg-slate-900 bg-opacity-90 backdrop-filter backdrop-blur-md rounded-md shadow-lg py-1 w-48 z-50 top-full">
+                                <a href="https://dcdl-companion.com/mementos.html" class="nav-link block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Monitor's Mementos</a>
                           </div>
                       </div>
                       
-                      <!-- Account Dropdown -->
                       <div class="relative group">
                           <button class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium inline-flex items-center" aria-haspopup="true">
                               <span>Account</span>
@@ -52,6 +62,7 @@ class NavigationWidget extends HTMLElement {
                               <span class="block px-4 py-2 text-sm text-gray-400">Loading...</span>
                           </div>
                       </div>
+                      
                   </div>
                   <div class="-mr-2 flex md:hidden">
                       <button type="button" id="mobile-menu-button" class="bg-slate-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
@@ -64,7 +75,6 @@ class NavigationWidget extends HTMLElement {
           </div>
           <div class="md:hidden hidden" id="mobile-menu">
               <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                  <a href="https://dcdl-companion.com/index.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
                   <div class="!mt-3">
                       <span class="px-3 pt-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Hypertime Details</span>
                       <a href="https://dcdl-companion.com/calendar.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Bleed Calendar</a>
@@ -78,9 +88,14 @@ class NavigationWidget extends HTMLElement {
                       <a href="https://dcdl-companion.com/squads.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Squads</a>
                   </div>
                   <div class="!mt-3">
-                      <span class="px-3 pt-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Tips</span>
+                      <span class="px-3 pt-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Tips & Tools</span>
                       <a href="https://dcdl-companion.com/info/rewards.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Daily Login Rewards</a>
                       <a href="https://dcdl-companion.com/info/calculator.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Pull Rate Guide</a>
+                      <a href="https://dcdl-companion.com/bot.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Companion Bot</a>
+                  </div>
+                  <div class="!mt-3">
+                      <span class="px-3 pt-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Batcave</span>
+                      <a href="https://dcdl-companion.com/mementos.html" class="nav-link text-gray-300 hover:bg-slate-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Monitor's Mementos</a>
                   </div>
                   <div id="auth-status-mobile" class="pt-4 mt-2 border-t border-slate-700"></div>
               </div>

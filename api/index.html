@@ -114,7 +114,7 @@
             </section>
 
             <!-- Endpoint 3: Effects -->
-            <section id="effects" class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
+            <section id="effects" class="mb-16 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
                 <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Effects</h2>
                 <p class="mb-6 text-gray-600 dark:text-gray-400">This endpoint lists all possible status effects and keywords found in skill descriptions.</p>
 
@@ -139,7 +139,7 @@
             </section>
 
             <!-- Endpoint 4: Legacy Pieces -->
-            <section id="legacy_pieces" class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
+            <section id="legacy_pieces" class="mb-16 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
                 <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Legacy Pieces</h2>
                 <p class="mb-6 text-gray-600 dark:text-gray-400">This endpoint lists all possible legacy pieces and available class assignments.</p>
 
@@ -162,6 +162,44 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Endpoint 5: Mementos -->
+            <section id="mementos" class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Mementos</h2>
+                <p class="mb-6 text-gray-600 dark:text-gray-400">This endpoint lists all mementos and their parent comics.</p>
+
+                <div class="flex items-center space-x-4 mb-6">
+                    <span class="text-sm font-semibold inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-green-300">GET</span>
+                    <code class="text-sm md:text-base p-2 bg-gray-100 dark:bg-gray-700 rounded-md text-gray-700 dark:text-gray-300 mono">https://dcdl-companion.com/api/mementos.json</code>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Response Schema</h3>
+                        <div class="space-y-3 text-sm">
+                            <p><code class="mono font-semibold">updated_at</code>: <span class="text-gray-500 dark:text-gray-400">String</span> - The timestamp of the last update.</p>
+                            <p><code class="mono font-semibold">memento_collections</code>: <span class="text-gray-500 dark:text-gray-400">Array[Object]</span> - A list of memento collections.</p>
+                            <p class="ml-4"><code class="mono font-semibold">id</code>: <span class="text-gray-500 dark:text-gray-400">String</span> - The unique identifier for the collection.</p>
+                            <p class="ml-4"><code class="mono font-semibold">title</code>: <span class="text-gray-500 dark:text-gray-400">String</span> - The title of the memento collection.</p>
+                            <p class="ml-4"><code class="mono font-semibold">isLimited</code>: <span class="text-gray-500 dark:text-gray-400">Boolean</span> - Indicates if the collection is a limited time item.</p>
+                            <p class="ml-4"><code class="mono font-semibold">sortOrder</code>: <span class="text-gray-500 dark:text-gray-400">Number</span> - The sort order of the collection.</p>
+                            <p class="ml-4"><code class="mono font-semibold">coverImageUrl</code>: <span class="text-gray-500 dark:text-gray-400">String</span> - URL for the collection's cover image.</p>
+                            <p class="ml-4"><code class="mono font-semibold">url</code>: <span class="text-gray-500 dark:text-gray-400">String</span> - URL to the collection's page.</p>
+                            <p class="ml-4"><code class="mono font-semibold">mementos</code>: <span class="text-gray-500 dark:text-gray-400">Array[Object]</span> - A list of mementos within the collection.</p>
+                            <p class="ml-8"><code class="mono font-semibold">name</code>: <span class="text-gray-500 dark:text-gray-400">String</span> - The name of the memento.</p>
+                            <p class="ml-8"><code class="mono font-semibold">description</code>: <span class="text-gray-500 dark:text-gray-400">String</span> - The description of the memento.</p>
+                            <p class="ml-8"><code class="mono font-semibold">starColorTier</code>: <span class="text-gray-500 dark:text-gray-400">String</span> - The rarity and star tier of the memento.</p>
+                            <p class="ml-8"><code class="mono font-semibold">sortOrder</code>: <span class="text-gray-500 dark:text-gray-400">Number</span> - The sort order of the memento within the collection.</p>
+                            <p class="ml-8"><code class="mono font-semibold">imageUrl</code>: <span class="text-gray-500 dark:text-gray-400">String</span> - URL for the memento's image.</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Example Response</h3>
+                        <pre class="bg-gray-900 text-white p-4 rounded-lg text-xs overflow-x-auto h-96"><code id="mementos-json-example" class="mono">Loading...</code></pre>
+                    </div>
+                </div>
+            </section>
+
         </main>
 
         <footer class="text-center mt-16 text-gray-500 dark:text-gray-400 text-sm">
@@ -219,6 +257,7 @@
             fetchAndDisplayJSON('./synergies.json', 'synergies-json-example', 'synergies');
             fetchAndDisplayJSON('./effects.json', 'effects-json-example', 'effects'); 
             fetchAndDisplayJSON('./legacy_pieces.json', 'legacy-pieces-json-example', 'legacy_pieces'); 
+            fetchAndDisplayJSON('./mementos.json', 'mementos-json-example', 'memento_collections'); 
         });
     </script>
 

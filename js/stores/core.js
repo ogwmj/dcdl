@@ -12,7 +12,7 @@ const MS_IN_SECOND = 1000;
 const MS_IN_MINUTE = 60 * MS_IN_SECOND;
 const MS_IN_HOUR = 60 * MS_IN_MINUTE;
 const MS_IN_DAY = 24 * MS_IN_HOUR;
-const ANVIL_GEM_VALUE = 60;
+const ANVIL_GEM_VALUE = 120;
 
 // --- Gem & Anvil Income Tiers ---
 const GEM_INCOME_TIERS = {

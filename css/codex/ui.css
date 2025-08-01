@@ -11,6 +11,13 @@
     --base-bg-color: #0d1226;
 }
 
+/* Hide elements on mobile devices */
+@media (max-width: 767px) {
+    .hide-on-mobile {
+        display: none !important;
+    }
+}
+
 .hidden {
     display: none;
 }

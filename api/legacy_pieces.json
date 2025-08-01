@@ -1,17 +1,19 @@
 {
-  "updated_at": "2025-07-18T14:07:06.167Z",
-  "effects": [
+  "updated_at": "2025-07-31T19:05:59.354Z",
+  "legacy_pieces": [
     {
       "name": "Honkin' Huge Hammer",
       "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/HonkinHugeHammer.webp",
       "classes": [
         "Warrior",
         "Guardian"
       ]
     },
     {
-      "name": "Modoron Smoke Bomb",
       "baseRarity": "Epic",
+      "name": "Modoran Sonic Bomb",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/ModoranSonicBomb.webp",
       "classes": [
         "Warrior",
         "Guardian"
@@ -20,6 +22,7 @@
     {
       "name": "Explosive Javelin",
       "baseRarity": "Legendary",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/ExplosiveJavelin.webp",
       "classes": [
         "Warrior",
         "Guardian"
@@ -28,6 +31,7 @@
     {
       "name": "Cold Gun",
       "baseRarity": "Legendary",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/ColdGun.webp",
       "classes": [
         "Firepower",
         "Magical",
@@ -37,6 +41,7 @@
     {
       "name": "Thanagarian Mace",
       "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/ThanagarianMace.webp",
       "classes": [
         "Warrior",
         "Guardian"
@@ -45,6 +50,7 @@
     {
       "name": "T-Sphere Weakness Analyzer",
       "baseRarity": "Mythic",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/TSphereWeaknessAnalyzer.webp",
       "classes": [
         "Firepower",
         "Magical",
@@ -54,6 +60,7 @@
     {
       "name": "Green Lantern Power Battery",
       "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/GreenLanternPowerBattery.webp",
       "classes": [
         "Supporter",
         "Intimidator"
@@ -62,6 +69,7 @@
     {
       "name": "Starheart Staff",
       "baseRarity": "Mythic",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/StarheartStaff.webp",
       "classes": [
         "Supporter",
         "Intimidator"
@@ -70,6 +78,7 @@
     {
       "name": "Improved Fear Gas Vial",
       "baseRarity": "Legendary",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/ImprovedFearGasVial.webp",
       "classes": [
         "Warrior",
         "Guardian"
@@ -78,6 +87,7 @@
     {
       "name": "Purple Ray Radiation",
       "baseRarity": "Mythic",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/PurpleRayRadiation.webp",
       "classes": [
         "Supporter",
         "Intimidator"
@@ -86,6 +96,7 @@
     {
       "name": "Duplication Mirror",
       "baseRarity": "Mythic",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/DuplicationMirror.webp",
       "classes": [
         "Warrior",
         "Guardian"
@@ -94,6 +105,7 @@
     {
       "name": "Robot Duplicate",
       "baseRarity": "Mythic",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/RobotDuplicate.webp",
       "classes": [
         "Supporter",
         "Intimidator"
@@ -102,6 +114,7 @@
     {
       "name": "Charged Escrima Sticks",
       "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/ChargedEscrimaSticks.webp",
       "classes": [
         "Firepower",
         "Magical",
@@ -111,6 +124,7 @@
     {
       "name": "Dart with Poison Ivy Poison",
       "baseRarity": "Mythic",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/DartwithPoisonIvyPoison.webp",
       "classes": [
         "Firepower",
         "Magical",
@@ -120,6 +134,7 @@
     {
       "name": "House of El Symbol",
       "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/HouseofElSymbol.webp",
       "classes": [
         "Warrior",
         "Guardian"
@@ -128,6 +143,7 @@
     {
       "name": "Coluan Force Field Belt",
       "baseRarity": "Legendary",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/ColuanForceFieldBelt.webp",
       "classes": [
         "Supporter",
         "Intimidator"
@@ -136,6 +152,7 @@
     {
       "name": "Sigil Magic",
       "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/SigilMagic.webp",
       "classes": [
         "Firepower",
         "Magical",
@@ -145,6 +162,7 @@
     {
       "name": "Demon's Sword",
       "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/DemonsSword.webp",
       "classes": [
         "Firepower",
         "Magical",
@@ -154,14 +172,16 @@
     {
       "name": "Not So Huge Hammer",
       "baseRarity": "Legendary",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/NotSoHugeHammer.webp",
       "classes": [
         "Warrior",
         "Guardian"
       ]
     },
     {
-      "name": "Razer Rib Umbrella",
       "baseRarity": "Epic",
+      "name": "Razor Rib Umbrella",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/RazorRibUmbrella.webp",
       "classes": [
         "Warrior",
         "Guardian"
@@ -170,6 +190,7 @@
     {
       "name": "Imp Doll",
       "baseRarity": "Mythic",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/ImpDoll.webp",
       "classes": [
         "Firepower",
         "Magical",
@@ -179,6 +200,7 @@
     {
       "name": "Starfire's Starbolts",
       "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/StarfiresStarbolts.webp",
       "classes": [
         "Supporter",
         "Intimidator"
@@ -187,6 +209,7 @@
     {
       "name": "Fear Reaper",
       "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/FearReaper.webp",
       "classes": [
         "Warrior",
         "Guardian"
@@ -195,6 +218,7 @@
     {
       "name": "Dual Katanas",
       "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/DualKatanas.webp",
       "classes": [
         "Firepower",
         "Magical",
@@ -204,6 +228,7 @@
     {
       "name": "Superman's Cape",
       "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/SupermansCape.webp",
       "classes": [
         "Warrior",
         "Guardian"
@@ -212,6 +237,7 @@
     {
       "name": "Cocoon Gun",
       "baseRarity": "Legendary",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/CocoonGun.webp",
       "classes": [
         "Supporter",
         "Intimidator"
@@ -220,6 +246,7 @@
     {
       "name": "Energy Mace",
       "baseRarity": "Legendary",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/EnergyMace.webp",
       "classes": [
         "Supporter",
         "Intimidator"
@@ -228,6 +255,7 @@
     {
       "name": "Pied Piper Flute",
       "baseRarity": "Epic",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/PiedPiperFlute.webp",
       "classes": [
         "Supporter",
         "Intimidator"
@@ -236,6 +264,7 @@
     {
       "name": "Replica Time Commander",
       "baseRarity": "Epic",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/ReplicaTimeCommander.webp",
       "classes": [
         "Firepower",
         "Magical",
@@ -245,6 +274,7 @@
     {
       "name": "Plastic Explosive",
       "baseRarity": "Legendary",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/PlasticExplosive.webp",
       "classes": [
         "Firepower",
         "Magical",
@@ -252,8 +282,9 @@
       ]
     },
     {
-      "name": "Amazonian Alloy Shield",
       "baseRarity": "Mythic",
+      "name": "Amazonium Alloy Shield",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/AmazoniumAlloyShield.webp",
       "classes": [
         "Warrior",
         "Guardian"
@@ -262,6 +293,7 @@
     {
       "name": "Wand of the Magi",
       "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/WandoftheMagi.webp",
       "classes": [
         "Supporter",
         "Intimidator"
@@ -270,6 +302,7 @@
     {
       "name": "Gabriel Horn",
       "baseRarity": "Mythic",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/GabrielHorn.webp",
       "classes": [
         "Warrior",
         "Guardian"
@@ -278,6 +311,7 @@
     {
       "name": "Flash-Bulb Kite",
       "baseRarity": "Epic",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/FlashBulbKite.webp",
       "classes": [
         "Supporter",
         "Intimidator"
@@ -286,6 +320,7 @@
     {
       "name": "Promethium Claws",
       "baseRarity": "Mythic",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/PromethiumClaws.webp",
       "classes": [
         "Warrior",
         "Guardian"
@@ -294,6 +329,7 @@
     {
       "name": "Modified Joker Venom Grenade",
       "baseRarity": "Mythic",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/ModifiedJokerVenomGrenade.webp",
       "classes": [
         "Supporter",
         "Intimidator"
@@ -302,6 +338,7 @@
     {
       "name": "Kuru Pendant",
       "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/KuruPendant.webp",
       "classes": [
         "Warrior",
         "Guardian"
@@ -310,6 +347,7 @@
     {
       "name": "Sinestro Corps Ring",
       "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/SinestroCorpsRing.webp",
       "classes": [
         "Magical"
       ]
@@ -317,6 +355,7 @@
     {
       "name": "Gas Derringer",
       "baseRarity": "Legendary",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/GasDerringer.webp",
       "classes": [
         "Firepower",
         "Magical",
@@ -326,6 +365,7 @@
     {
       "name": "Tectonic Disruptor",
       "baseRarity": "Mythic",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/TectonicDisruptor.webp",
       "classes": [
         "Firepower",
         "Magical",
@@ -335,6 +375,7 @@
     {
       "name": "Fool's Scepter",
       "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/FoolsScepter.webp",
       "classes": [
         "Supporter",
         "Intimidator"
@@ -343,6 +384,7 @@
     {
       "name": "Super Six-String",
       "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/SuperSixString.webp",
       "classes": [
         "Supporter",
         "Intimidator"
@@ -351,6 +393,7 @@
     {
       "name": "Mind Control Hat",
       "baseRarity": "Mythic",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/MindControlHat.webp",
       "classes": [
         "Supporter",
         "Intimidator"
@@ -359,6 +402,7 @@
     {
       "name": "Lawton Rifle Scope",
       "baseRarity": "Epic",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/LawtonRifleScope.webp",
       "classes": [
         "Firepower",
         "Magical",
