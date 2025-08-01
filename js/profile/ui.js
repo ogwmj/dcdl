@@ -1,9 +1,9 @@
 /**
  * @file js/profile/ui.js
- * @description Handles UI and logic for the user profile page, including username and password changes.
+ * @description Handles UI and logic for the user profile page, including the embedded auth form.
  */
 
-import { getAuth, onAuthStateChanged, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged, EmailAuthProvider, reauthenticateWithCredential, updatePassword, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
@@ -11,7 +11,14 @@ import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstat
 // --- DOM ELEMENT REFERENCES ---
 const DOM = {
     profileContent: document.getElementById('profile-content'),
-    authRequiredMessage: document.getElementById('auth-required-message'),
+    // --- EMBEDDED AUTH FORM ELEMENTS ---
+    embeddedAuthContainer: document.getElementById('embedded-auth-container'),
+    authTabs: document.getElementById('auth-tabs'),
+    embeddedLoginForm: document.getElementById('embedded-login-form'),
+    embeddedRegisterForm: document.getElementById('embedded-register-form'),
+    authErrorMessage: document.getElementById('auth-error-message'),
+    forgotPasswordLink: document.getElementById('forgot-password-link'),
+    // --- EXISTING PROFILE ELEMENTS ---
     passwordChangeContainer: document.getElementById('password-change-container'),
     nonEmailProviderMessage: document.getElementById('non-email-provider-message'),
     profileUpdateForm: document.getElementById('profile-update-form'),
@@ -38,29 +45,80 @@ const DOM = {
     creatorInstagramInput: document.getElementById('creator-instagram-input'),
     creatorUpdateBtnText: document.getElementById('creator-update-btn-text'),
     creatorUpdateSpinner: document.getElementById('creator-update-spinner'),
-    // New Game Detail Inputs
     ingameNameInput: document.getElementById('ingame-name-input'),
     earthIdInput: document.getElementById('earth-id-input'),
     allowDiscordMessagesInput: document.getElementById('allow-discord-messages-input'),
 };
 
 let auth, db, storage;
-// The App ID is needed to construct the correct Firestore path.
 const appId = typeof __app_id !== 'undefined' ? __app_id : 'dc-dark-legion-builder';
 
-/**
- * @function showNotification
- * @description A helper to dispatch toast notifications.
- */
 function showNotification(message, type) {
     const event = new CustomEvent('show-toast', { detail: { message, type } });
     document.dispatchEvent(event);
 }
 
-/**
- * @function handleProfileUpdate
- * @description Handles submission for updating username, game details, and/or password.
- */
+// --- EMBEDDED AUTH LOGIC ---
+function handleAuthError(error) {
+    let message = 'An unknown error occurred.';
+    switch (error.code) {
+        case 'auth/invalid-email': message = 'Please enter a valid email address.'; break;
+        case 'auth/user-not-found':
+        case 'auth/invalid-credential':
+        case 'auth/wrong-password': message = 'Invalid email or password.'; break;
+        case 'auth/email-already-in-use': message = 'An account with this email already exists.'; break;
+        case 'auth/weak-password': message = 'Password must be at least 6 characters long.'; break;
+        default: console.error("Authentication error:", error);
+    }
+    DOM.authErrorMessage.textContent = message;
+}
+
+async function handleEmbeddedLogin(e) {
+    e.preventDefault();
+    DOM.authErrorMessage.textContent = '';
+    const email = DOM.embeddedLoginForm.querySelector('#embedded-login-email').value;
+    const password = DOM.embeddedLoginForm.querySelector('#embedded-login-password').value;
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+        handleAuthError(error);
+    }
+}
+
+async function handleEmbeddedRegister(e) {
+    e.preventDefault();
+    DOM.authErrorMessage.textContent = '';
+    const email = DOM.embeddedRegisterForm.querySelector('#embedded-register-email').value;
+    const password = DOM.embeddedRegisterForm.querySelector('#embedded-register-password').value;
+    const confirmPassword = DOM.embeddedRegisterForm.querySelector('#embedded-register-confirm-password').value;
+
+    if (password !== confirmPassword) {
+        DOM.authErrorMessage.textContent = "Passwords do not match.";
+        return;
+    }
+    try {
+        await createUserWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+        handleAuthError(error);
+    }
+}
+
+async function handleForgotPassword() {
+    DOM.authErrorMessage.textContent = '';
+    const email = DOM.embeddedLoginForm.querySelector('#embedded-login-email').value;
+    if (!email) {
+        DOM.authErrorMessage.textContent = "Please enter your email address above to reset your password.";
+        return;
+    }
+    try {
+        await sendPasswordResetEmail(auth, email);
+        showNotification(`Password reset email sent to ${email}.`, "success");
+    } catch (error) {
+        handleAuthError(error);
+    }
+}
+
+// --- ORIGINAL PROFILE LOGIC ---
 async function handleProfileUpdate(e) {
     e.preventDefault();
     const user = auth.currentUser;
@@ -85,7 +143,6 @@ async function handleProfileUpdate(e) {
     let gameProfileUpdated = false;
     let errorOccurred = false;
 
-    // Consolidate all profile data into a single object for one Firestore write.
     const profileDataToUpdate = {};
 
     if (newUsername && newUsername !== DOM.usernameInput.dataset.initialValue) {
@@ -148,8 +205,7 @@ async function handleProfileUpdate(e) {
 
         if (updatedItems.length > 0) {
             showNotification(`${updatedItems.join(' & ')} updated successfully!`, "success");
-            if (passwordUpdated) DOM.profileUpdateForm.reset(); // Reset form only on password change
-            // Repopulate form after potential reset
+            if (passwordUpdated) DOM.profileUpdateForm.reset();
             DOM.usernameInput.value = DOM.usernameInput.dataset.initialValue;
             const currentGameProfile = JSON.parse(DOM.profileUpdateForm.dataset.initialGameProfile);
             DOM.ingameNameInput.value = currentGameProfile.inGameName || '';
@@ -165,14 +221,9 @@ async function handleProfileUpdate(e) {
     e.target.querySelector('button[type="submit"]').disabled = false;
 }
 
-/**
- * @function handleLogoSelection
- * @description Handles the file input change to read the image and generate a Base64 preview.
- */
 function handleLogoSelection(event) {
     const file = event.target.files[0];
     if (!file) return;
-
     if (!file.type.startsWith('image/')) {
         showNotification('Please select an image file (PNG, JPG, GIF).', 'error');
         event.target.value = '';
@@ -183,18 +234,11 @@ function handleLogoSelection(event) {
         event.target.value = '';
         return;
     }
-
     const reader = new FileReader();
-    reader.onload = (e) => {
-        DOM.creatorLogoPreview.src = e.target.result;
-    };
+    reader.onload = (e) => { DOM.creatorLogoPreview.src = e.target.result; };
     reader.readAsDataURL(file);
 }
 
-/**
- * @function handleCreatorProfileUpdate
- * @description Handles submission for updating creator-specific information.
- */
 async function handleCreatorProfileUpdate(e) {
     e.preventDefault();
     const user = auth.currentUser;
@@ -212,7 +256,6 @@ async function handleCreatorProfileUpdate(e) {
             const tempStoragePath = `temp_uploads/${user.uid}/logo.png`;
             const storageRef = ref(storage, tempStoragePath);
             const base64String = logoUrl.split(',')[1];
-            
             await uploadString(storageRef, base64String, 'base64');
         }
 
@@ -234,9 +277,7 @@ async function handleCreatorProfileUpdate(e) {
 
         const userProfileRef = doc(db, "artifacts", appId, "users", user.uid);
         await setDoc(userProfileRef, { creatorProfile: creatorProfileData }, { merge: true });
-
         showNotification("Profile info saved! Your new logo is being processed and will appear shortly.", "success");
-
     } catch (error) {
         console.error("Creator profile update error:", error);
         showNotification("Failed to update creator profile.", "error");
@@ -247,18 +288,11 @@ async function handleCreatorProfileUpdate(e) {
     }
 }
 
-
-/**
- * @function populateCreatorForm
- * @description Fills the creator form with data from Firestore.
- */
 function populateCreatorForm(creatorProfile) {
     if (!creatorProfile) return;
-
     const placeholderSrc = 'https://via.placeholder.com/96';
     DOM.creatorLogoPreview.src = creatorProfile.logo || placeholderSrc;
     DOM.creatorDescriptionInput.value = creatorProfile.description || '';
-
     if (creatorProfile.socials) {
         DOM.creatorYoutubeInput.value = creatorProfile.socials.youtube || '';
         DOM.creatorTwitchInput.value = creatorProfile.socials.twitch || '';
@@ -269,10 +303,6 @@ function populateCreatorForm(creatorProfile) {
     }
 }
 
-/**
- * @function renderRoleBadges
- * @description Renders badges for the user's roles, or a default 'Member' badge.
- */
 function renderRoleBadges(roles = []) {
     if (!DOM.userRolesContainer) return;
     DOM.userRolesContainer.innerHTML = '';
@@ -292,22 +322,15 @@ function renderRoleBadges(roles = []) {
     }
 }
 
-/**
- * @function setupAccountTabs
- * @description Creates and manages the visibility of account management tabs based on user roles.
- */
 function setupAccountTabs(roles = []) {
     if (!DOM.accountTabsNav || !DOM.accountTabsContent) return;
-
     const availableRoles = new Set(['Member', ...roles]);
     DOM.accountTabsNav.innerHTML = ''; 
-
     const allPanels = DOM.accountTabsContent.querySelectorAll('.tab-panel');
 
     availableRoles.forEach(role => {
         const panelId = `${role.toLowerCase()}-panel`;
         const panel = document.getElementById(panelId);
-        
         if (panel) {
             const button = document.createElement('button');
             button.className = 'tab-button';
@@ -318,35 +341,27 @@ function setupAccountTabs(roles = []) {
     });
 
     const tabButtons = DOM.accountTabsNav.querySelectorAll('.tab-button');
-
     DOM.accountTabsNav.addEventListener('click', (e) => {
         if (e.target.matches('.tab-button')) {
             const targetPanelId = e.target.dataset.targetPanel;
-            
             tabButtons.forEach(btn => btn.classList.remove('active'));
             e.target.classList.add('active');
-
             allPanels.forEach(panel => panel.classList.add('hidden'));
-
             const targetPanel = document.getElementById(targetPanelId);
-            if (targetPanel) {
-                targetPanel.classList.remove('hidden');
-            }
+            if (targetPanel) targetPanel.classList.remove('hidden');
         }
     });
-
-    if (tabButtons.length > 0) {
-        tabButtons[0].click();
-    }
+    if (tabButtons.length > 0) tabButtons[0].click();
 }
 
 /**
  * @function setupPageForUser
- * @description Configures the page based on the user's authentication state and provider.
+ * @description Configures the page based on the user's authentication state.
  */
 async function setupPageForUser(user) {
     if (user && !user.isAnonymous) {
-        DOM.authRequiredMessage.classList.add('hidden');
+        // --- LOGGED-IN STATE ---
+        DOM.embeddedAuthContainer.classList.add('hidden');
         DOM.profileContent.classList.remove('hidden');
         DOM.userEmailDisplay.textContent = user.email;
 
@@ -359,17 +374,14 @@ async function setupPageForUser(user) {
                 DOM.usernameDisplay.textContent = username || "Not set";
                 DOM.usernameInput.value = username || "";
                 DOM.usernameInput.dataset.initialValue = username || "";
-
                 renderRoleBadges(userData.roles);
                 setupAccountTabs(userData.roles);
                 populateCreatorForm(userData.creatorProfile);
-
                 const gameProfile = userData.gameProfile || {};
                 DOM.ingameNameInput.value = gameProfile.inGameName || '';
                 DOM.earthIdInput.value = gameProfile.earthId || '';
                 DOM.allowDiscordMessagesInput.checked = gameProfile.allowDiscordMessages === true;
                 DOM.profileUpdateForm.dataset.initialGameProfile = JSON.stringify(gameProfile);
-
             } else {
                 DOM.usernameDisplay.textContent = "Not set";
                 DOM.usernameInput.dataset.initialValue = "";
@@ -391,15 +403,9 @@ async function setupPageForUser(user) {
             DOM.nonEmailProviderMessage.classList.remove('hidden');
         }
     } else {
+        // --- LOGGED-OUT STATE ---
         DOM.profileContent.classList.add('hidden');
-        DOM.authRequiredMessage.classList.remove('hidden');
-        
-        const messageElement = DOM.authRequiredMessage.querySelector('p');
-        if (user && user.isAnonymous) {
-            messageElement.textContent = "A full account is required to access this page. Please log in or sign up.";
-        } else {
-            messageElement.textContent = "Please log in to view your profile.";
-        }
+        DOM.embeddedAuthContainer.classList.remove('hidden');
     }
 }
 
@@ -412,15 +418,33 @@ document.addEventListener('DOMContentLoaded', () => {
             db = getFirestore(app);
             storage = getStorage(app);
 
-            if (DOM.profileUpdateForm) {
-                DOM.profileUpdateForm.addEventListener('submit', handleProfileUpdate);
-            }
-            if (DOM.creatorUpdateForm) {
-                DOM.creatorUpdateForm.addEventListener('submit', handleCreatorProfileUpdate);
-            }
-            if (DOM.creatorLogoInput) {
-                DOM.creatorLogoInput.addEventListener('change', handleLogoSelection);
-            }
+            // --- EMBEDDED AUTH EVENT LISTENERS ---
+            DOM.embeddedLoginForm.addEventListener('submit', handleEmbeddedLogin);
+            DOM.embeddedRegisterForm.addEventListener('submit', handleEmbeddedRegister);
+            DOM.forgotPasswordLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                handleForgotPassword();
+            });
+            DOM.authTabs.addEventListener('click', (e) => {
+                if (e.target.matches('[data-auth-tab]')) {
+                    DOM.authErrorMessage.textContent = '';
+                    const targetTab = e.target.dataset.authTab;
+                    DOM.authTabs.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    if (targetTab === 'login') {
+                        DOM.embeddedLoginForm.classList.remove('hidden');
+                        DOM.embeddedRegisterForm.classList.add('hidden');
+                    } else {
+                        DOM.embeddedLoginForm.classList.add('hidden');
+                        DOM.embeddedRegisterForm.classList.remove('hidden');
+                    }
+                }
+            });
+
+            // --- PROFILE FORM EVENT LISTENERS ---
+            if (DOM.profileUpdateForm) DOM.profileUpdateForm.addEventListener('submit', handleProfileUpdate);
+            if (DOM.creatorUpdateForm) DOM.creatorUpdateForm.addEventListener('submit', handleCreatorProfileUpdate);
+            if (DOM.creatorLogoInput) DOM.creatorLogoInput.addEventListener('change', handleLogoSelection);
     
             onAuthStateChanged(auth, (user) => {
                 setupPageForUser(user);
@@ -428,10 +452,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
         } catch (e) {
             console.error("Profile Page: Firebase initialization failed.", e);
-            if(DOM.authRequiredMessage) {
-                DOM.authRequiredMessage.textContent = "Could not connect to authentication service.";
-                DOM.authRequiredMessage.classList.remove('hidden');
-            }
         }
     }, { once: true });
 });

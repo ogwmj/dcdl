@@ -7,15 +7,13 @@ import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/
 import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 
 const DOM = {
-    linkingContainer: document.getElementById('discord-linking-container'),
-    linkingStatusText: document.getElementById('discord-linking-status'),
     profileContent: document.getElementById('profile-content'),
     authRequiredMessage: document.getElementById('auth-required-message'),
 };
 
 function showNotification(message, type) {
-    console.log('showNotification');
-    const event = new CustomEvent('show-toast', { detail: { message, type } });
+    const duration = 20000;
+    const event = new CustomEvent('show-toast', { detail: { message, type, duration } });
     document.dispatchEvent(event);
 }
 
@@ -34,8 +32,7 @@ async function finalizeDiscordLink(token) {
                 const result = await linkAccount({ token: token });
 
                 if (result.data.success) {
-                    DOM.linkingStatusText.textContent = '✅ Success! Your Discord account has been linked. This page will now reload.';
-                    showNotification('Account linked successfully!', 'success');
+                    showNotification('Account linked successfully! Reloading profile.', 'success');
                     setTimeout(() => {
                         window.history.replaceState({}, document.title, window.location.pathname);
                         window.location.reload();
@@ -46,11 +43,9 @@ async function finalizeDiscordLink(token) {
             } catch (error) {
                 console.error("Error linking Discord account:", error);
                 const errorMessage = error.message || "The link may be invalid or expired. Please try again.";
-                DOM.linkingStatusText.innerHTML = `❌ Error: Could not link account.<br><span class="text-sm text-slate-400">${errorMessage}</span>`;
                 showNotification(`Error linking account: ${errorMessage}`, 'error');
             }
         } else {
-            DOM.linkingStatusText.innerHTML = 'Please log in to the website first, then click the link from Discord again.';
             showNotification('You must be logged in to link your account.', 'info');
         }
     });
@@ -68,7 +63,6 @@ function handleUrlParameters() {
         // A token is present, so we show the linking UI.
         if (DOM.profileContent) DOM.profileContent.classList.add('hidden');
         if (DOM.authRequiredMessage) DOM.authRequiredMessage.classList.add('hidden');
-        if (DOM.linkingContainer) DOM.linkingContainer.classList.remove('hidden');
         
         finalizeDiscordLink(authToken);
     }

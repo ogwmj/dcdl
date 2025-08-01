@@ -34,11 +34,6 @@
             <p class="text-xl md:text-2xl text-blue-200">Manage your account settings.</p>
         </header>
 
-        <section id="discord-linking-container" class="hidden text-center p-8 bg-slate-800 rounded-lg">
-            <div class="loading-spinner mx-auto"></div>
-            <p id="discord-linking-status" class="text-blue-200 mt-4 text-lg">Linking your Discord account...</p>
-        </section>
-
         <section id="profile-content" class="mb-12 hidden">
             <div class="user-info-card mb-8">
                     <h2 class="guide-section-title !text-left !border-b-0 !pb-0 !mb-4">User Information</h2>
@@ -191,6 +186,46 @@
                 <div id="non-email-provider-message" class="hidden">
                     <p class="text-center text-slate-400">Account management is only available for accounts created with an email and password.</p>
                 </div>
+            </div>
+        </section>
+
+        <section id="embedded-auth-container" class="hidden max-w-lg mx-auto bg-slate-900/70 p-6 md:p-8 rounded-lg border border-blue-500/20">
+            <div id="auth-tabs" class="flex border-b border-slate-700 mb-6">
+                <button data-auth-tab="login" class="tab-button active">Login</button>
+                <button data-auth-tab="register" class="tab-button">Register</button>
+            </div>
+
+            <form id="embedded-login-form" class="auth-form space-y-6">
+                <div class="input-group">
+                    <label for="embedded-login-email">Email</label>
+                    <input type="email" id="embedded-login-email" class="form-input" required autocomplete="email">
+                </div>
+                <div class="input-group">
+                    <label for="embedded-login-password">Password</label>
+                    <input type="password" id="embedded-login-password" class="form-input" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary w-full">Login</button>
+                <p class="text-center text-sm"><a href="#" id="forgot-password-link" class="text-blue-400 hover:underline">Forgot Password?</a></p>
+            </form>
+
+            <form id="embedded-register-form" class="auth-form hidden space-y-6">
+                <div class="input-group">
+                    <label for="embedded-register-email">Email</label>
+                    <input type="email" id="embedded-register-email" class="form-input" required autocomplete="email">
+                </div>
+                <div class="input-group">
+                    <label for="embedded-register-password">Password</label>
+                    <input type="password" id="embedded-register-password" class="form-input" required autocomplete="new-password">
+                    <p class="text-xs text-slate-400 mt-1">Must be at least 6 characters long.</p>
+                </div>
+                <div class="input-group">
+                    <label for="embedded-register-confirm-password">Confirm Password</label>
+                    <input type="password" id="embedded-register-confirm-password" class="form-input" required autocomplete="new-password">
+                </div>
+                <button type="submit" class="btn btn-primary w-full">Create Account</button>
+            </form>
+             <div class="text-center mt-4">
+                <p id="auth-error-message" class="text-red-400 text-sm h-4"></p>
             </div>
         </section>
 
