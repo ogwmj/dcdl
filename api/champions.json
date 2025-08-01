@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-07-31T19:40:40.913Z",
+  "updated_at": "2025-08-01T14:52:02.342Z",
   "champions": [
     {
       "name": "Atom",
@@ -2996,6 +2996,69 @@
         "Shazam",
         "The Flash"
       ]
+    },
+    {
+      "baseRarity": "Limited Mythic",
+      "class": "Assassin",
+      "inherentSynergies": [
+        "League of Assassins",
+        "Metahuman"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Shadow Strike",
+          "description": "Talia al Ghul vanishes in a cloud of smoke, then reappears behind her target to perform a spinning slash, dealing Physical DMG to enemies within range.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Recharge",
+          "description": "Talia al Ghul sacrifices a portion of her Max HP to gain Energy.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Unleashed Rage",
+          "description": "Talia al Ghul sacrifices some of her current HPto deal Physical DMG to nearby enemies. Targets with high remaining HP take increased DMG.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Lazarun Boost",
+          "description": "Increases Talia al Ghul's Crit Rate. When an enemy [excluding summons] is defeated, she restores a portion of her Max HP for each [League of Assassins] ally present.",
+          "type": "Buff",
+          "effects": [
+            "Healing",
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Coordinated Ambush",
+          "description": "Increases all Champions' ATK and [Assassin] Champions' ATK additionally.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "name": "Talia al Ghul",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TaliaalGhul-card.png",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TaliaalGhul.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Talia%20al%20Ghul"
     },
     {
       "name": "The Penguin",
