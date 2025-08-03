@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-08-01T14:52:02.342Z",
+  "updated_at": "2025-08-03T12:05:37.568Z",
   "champions": [
     {
       "name": "Atom",
@@ -377,9 +377,9 @@
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Hawkgirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Hawkgirl",
       "relatedChampions": [
-        "Catwoman",
-        "Vixen",
-        "Wonder Woman"
+        "Aquaman",
+        "Black Canary",
+        "Harley Quinn"
       ]
     },
     {
@@ -444,7 +444,7 @@
           "name": "Empathic Perception"
         }
       ],
-      "communityAverageLevel": "Blue 4-Star",
+      "communityAverageLevel": "Blue 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Starfire.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Starfire",
       "relatedChampions": [
@@ -648,7 +648,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Supergirl-card.png",
-      "communityAverageLevel": "Blue 3-Star",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Supergirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Supergirl",
       "relatedChampions": [
@@ -1879,8 +1879,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "White 4-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Deadshot-card.png",
+      "communityAverageLevel": "White 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Deadshot.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Deadshot"
     },
@@ -2677,7 +2677,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Superboy-card.png",
-      "communityAverageLevel": "Blue 3-Star",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Superboy.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Superboy",
       "relatedChampions": [
@@ -3057,8 +3057,14 @@
       ],
       "name": "Talia al Ghul",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TaliaalGhul-card.png",
+      "communityAverageLevel": "Purple 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TaliaalGhul.webp",
-      "codexUrl": "https://dcdl-companion.com/codex.html?search=Talia%20al%20Ghul"
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Talia%20al%20Ghul",
+      "relatedChampions": [
+        "Bane",
+        "Batgirl",
+        "Harley Quinn"
+      ]
     },
     {
       "name": "The Penguin",
@@ -3189,8 +3195,8 @@
           ]
         }
       ],
-      "communityAverageLevel": "White 5-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Shazam-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Shazam.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Shazam"
     },
