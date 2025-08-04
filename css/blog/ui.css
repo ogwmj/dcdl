@@ -1,0 +1,331 @@
+/**
+ * @file css/blog/ui.css
+ * @description Styles for the blog list and detail pages.
+ */
+
+/* Blog List View */
+.blog-post-card {
+    background-color: rgba(15, 23, 42, 0.7);
+    border: 1px solid #334155;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3), 0 4px 6px -1px rgba(0,0,0,0.4);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: #cbd5e1;
+}
+.blog-post-card:hover {
+    transform: translateY(-5px);
+    border-color: #4f46e5;
+    box-shadow: 0 10px 20px -5px rgba(79,70,229,0.2);
+}
+.blog-post-card h3 {
+    font-family: 'Russo One', sans-serif;
+    font-size: 1.75rem;
+    color: #e2e8f0;
+}
+.blog-post-card .post-meta {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    margin-bottom: 1rem;
+}
+.blog-post-card .post-meta a:hover {
+    text-decoration: underline;
+}
+.blog-post-card .post-excerpt {
+    color: #cbd5e1;
+    line-height: 1.6;
+}
+.blog-post-card .post-footer {
+    margin-top: auto;
+    padding-top: 1rem;
+    font-size: 0.9rem;
+    color: #94a3b8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Blog Detail View */
+.blog-post-content {
+    color: #cbd5e1;
+    font-size: 1.125rem;
+    line-height: 1.7;
+}
+/* ... other blog post content styles ... */
+
+
+/* Embedded Banners */
+.embedded-squad-banner {
+    margin: 2rem auto;
+}
+.embedded-squad-banner {
+    display: block;
+    text-decoration: none;
+    border: 1px solid #3b82f6;
+    border-radius: 0.75rem;
+    background: rgba(15, 23, 42, 0.8);
+    overflow: hidden;
+    transition: all 0.2s ease-in-out;
+}
+.embedded-squad-banner:hover {
+    border-color: #a5b4fc;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+.embedded-squad-banner-header h4 {
+    font-family: 'Russo One', sans-serif;
+    font-size: 1.5rem;
+    color: #bfdbfe;
+    padding: 1em 1em 0.5em 1em;
+}
+.embedded-squad-banner-header p {
+    padding: 0 1.5em 1em 1.5em;
+}
+.squad-character-art-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+    padding: 1.5rem;
+}
+.squad-character-art {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    border: 1px solid #475569;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    transition: transform 0.2s ease-in-out;
+}
+.embedded-squad-banner:hover .squad-character-art {
+    transform: scale(1.05);
+}
+.embedded-champion-card {
+    margin: 2rem auto;
+    max-width: 320px; /* Or another size you prefer */
+}
+
+/* Add this new rule for the image itself */
+.featured-champion-image {
+    width: 100%;
+    height: auto;
+    border-radius: 0.75rem; /* 12px */
+    border: 1px solid #475569;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+}
+
+/* Comments Section */
+#comments-section .guide-section-title {
+    font-family: 'Russo One', sans-serif;
+    font-size: 2.25rem;
+    color: #e2e8f0;
+    padding-bottom: 0.75rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #3b82f6;
+    text-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+}
+.comments-container {
+    background-color: rgba(15, 23, 42, 0.8);
+    border: 1px solid #334155;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+}
+#comment-form h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 1rem;
+}
+#comment-form textarea {
+    width: 100%;
+    min-height: 120px;
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    color: #e2e8f0;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+#comment-form textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+.comment {
+    display: flex;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #334155;
+}
+#comments-list > .comment:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+.comment-author-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 2px solid #475569;
+    background-color: #0d1226;
+}
+.comment-body {
+    width: 100%;
+}
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+.comment-author-name {
+    font-weight: 700;
+    color: #fff;
+}
+.comment-date {
+    color: #94a3b8;
+    font-size: 0.8rem;
+}
+.comment-text {
+    color: #cbd5e1;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+.comment-actions button {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+    padding: 0.25rem;
+}
+.comment-actions button:hover {
+    color: #ef4444;
+}
+#insert-squad-placeholder:disabled,
+#insert-champion-placeholder:disabled {
+    background-color: #374151; /* gray-700 */
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.btn-danger {
+    padding: 0.5rem 1rem;
+    background-color: #dc2626;
+    color: white;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+.btn-danger:hover {
+    background-color: #b91c1c;
+}
+
+/* The main container for the post's text content */
+.blog-post-content {
+    background-color: rgba(15, 23, 42, 0.85); /* slate-900 with 85% opacity */
+    border: 1px solid #334155; /* slate-700 */
+    border-radius: 0.75rem; /* 12px */
+    padding: 1.5rem 2rem; /* More padding on the sides */
+    margin-top: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* General text styles within the post */
+.blog-post-content p {
+    margin-bottom: 1.25em;
+    line-height: 1.7;
+    color: #d1d5db; /* gray-300 */
+}
+
+/* Headings (h2, h3, h4) */
+.blog-post-content h1,
+.blog-post-content h2,
+.blog-post-content h3,
+.blog-post-content h4 {
+    font-family: 'Russo One', sans-serif;
+    color: #e2e8f0; /* slate-200 */
+    margin-top: 2em;
+    margin-bottom: 1em;
+    padding-bottom: 0.3em;
+    border-bottom: 1px solid #475569; /* slate-600 */
+}
+
+.blog-post-content h1 {
+    font-size: 2rem;
+}
+
+.blog-post-content h2 {
+    font-size: 1.875rem;
+}
+
+.blog-post-content h3 {
+    font-size: 1.5rem;
+}
+
+.blog-post-content h4 {
+    font-size: 1.25rem;
+}
+
+/* Links */
+.blog-post-content a {
+    color: #60a5fa; /* blue-400 */
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.blog-post-content a:hover {
+    color: #93c5fd; /* blue-300 */
+    text-decoration: underline;
+}
+
+/* Unordered and Ordered Lists */
+.blog-post-content ul,
+.blog-post-content ol {
+    margin-left: 1.5rem;
+    margin-bottom: 1.25em;
+    color: #d1d5db; /* gray-300 */
+}
+
+.blog-post-content li {
+    margin-bottom: 0.5em;
+    padding-left: 0.5em;
+}
+
+.blog-post-content ul {
+    list-style-type: disc;
+}
+
+.blog-post-content ol {
+    list-style-type: decimal;
+}
+
+/* Blockquotes */
+.blog-post-content blockquote {
+    margin: 1.5em 0;
+    padding-left: 1.5em;
+    border-left: 4px solid #3b82f6; /* blue-500 */
+    background-color: rgba(30, 41, 59, 0.5); /* slate-800 with opacity */
+    color: #9ca3af; /* gray-400 */
+    font-style: italic;
+}
+
+.blog-post-content blockquote p {
+    margin-bottom: 0;
+}
+
+/* Horizontal Rule */
+.blog-post-content hr {
+    border: 0;
+    height: 1px;
+    background-color: #475569; /* slate-600 */
+    margin: 3em 0;
+}
