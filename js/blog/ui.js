@@ -118,12 +118,14 @@ async function main() {
     const postId = urlParams.get('id');
 
     if (postId) {
+        logEvent(analytics, 'blog_post_view', { post_id: postId });
         filterControls.style.display = 'none';
         listViewHeader.style.display = 'none';
         listContainer.style.display = 'none';
         detailContainer.style.display = 'block';
         await renderDetailView(postId);
     } else {
+        logEvent(analytics, 'blog_list_view');
         filterControls.style.display = 'block';
         listViewHeader.style.display = 'block';
         listContainer.style.display = 'block';
@@ -186,6 +188,7 @@ async function renderListView() {
 
 // Function to handle pagination
 async function loadMorePosts() {
+    logEvent(analytics, 'blog_load_more');
     const loadMoreBtn = document.getElementById('load-more-btn');
     loadMoreBtn.disabled = true;
     loadMoreBtn.textContent = 'Loading...';
@@ -481,6 +484,7 @@ async function handleCreatePostSubmit(e) {
         if (isEditMode) {
             const postDocRef = doc(db, 'blogPosts', currentEditingPostId);
             await updateDoc(postDocRef, postData);
+            logEvent(analytics, 'blog_update_post', { post_id: currentEditingPostId });
             showNotification('Post updated successfully!', 'success');
         } else {
             postData.creatorId = currentUser.uid;
@@ -489,6 +493,7 @@ async function handleCreatePostSubmit(e) {
             postData.commentCount = 0;
             const postsCollection = collection(db, 'blogPosts');
             await addDoc(postsCollection, postData);
+            logEvent(analytics, 'blog_create_post', { post_id: newPostRef.id });
             showNotification('Post created successfully!', 'success');
         }
         closeCreateModal();
@@ -508,6 +513,7 @@ async function handleDeletePost(postId) {
         const postDocRef = doc(db, 'blogPosts', postId);
         await deleteDoc(postDocRef);
         showNotification("Post deleted successfully. You will be redirected.", "success");
+        logEvent(analytics, 'blog_delete_post', { post_id: postId });
         setTimeout(() => {
             window.location.href = '/blog.html';
         }, 2000);
@@ -534,8 +540,8 @@ async function handleCommentSubmit(e, postId) {
         // The client's only job is to create the comment document.
         const commentsCollection = collection(db, 'blogPosts', postId, 'comments');
         await addDoc(commentsCollection, commentData);
+        logEvent(analytics, 'blog_add_comment', { post_id: postId });
 
-        // The Cloud Function will handle the counter. The client just needs to re-render.
         await renderComments(postId);
         showNotification("Comment added successfully!", "success");
 
@@ -553,8 +559,8 @@ async function handleDeleteComment(postId, commentId) {
         // The client's only job is to delete the comment document.
         const commentDocRef = doc(db, 'blogPosts', postId, 'comments', commentId);
         await deleteDoc(commentDocRef);
-        
-        // The Cloud Function will handle the counter. The client just needs to re-render.
+        logEvent(analytics, 'blog_delete_comment', { post_id: postId, comment_id: commentId });
+
         await renderComments(postId);
         showNotification("Comment deleted.", "success");
 
