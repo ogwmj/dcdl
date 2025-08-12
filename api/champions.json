@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-08-03T12:05:37.568Z",
+  "updated_at": "2025-08-12T16:24:43.890Z",
   "champions": [
     {
       "name": "Atom",
@@ -304,8 +304,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "White 5-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/GreenLantern-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/GreenLantern.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Green%20Lantern"
     },
@@ -648,7 +648,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Supergirl-card.png",
-      "communityAverageLevel": "Blue 4-Star",
+      "communityAverageLevel": "Blue 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Supergirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Supergirl",
       "relatedChampions": [
@@ -958,8 +958,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Blue 3-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Deathstroke-card.png",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Deathstroke.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Deathstroke",
       "relatedChampions": [
@@ -1166,8 +1166,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "White 5-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Aquaman-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Aquaman.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Aquaman"
     },
@@ -2370,8 +2370,8 @@
           "type": "Passive"
         }
       ],
-      "communityAverageLevel": "White 5-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Batgirl-card.png",
+      "communityAverageLevel": "White 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Batgirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Batgirl"
     },
@@ -2987,8 +2987,8 @@
           "type": "Passive"
         }
       ],
-      "communityAverageLevel": "Blue 4-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Superman-card.png",
+      "communityAverageLevel": "Blue 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Superman.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Superman",
       "relatedChampions": [
@@ -3128,8 +3128,8 @@
           "description": "Increases all Champions' MEN."
         }
       ],
-      "communityAverageLevel": "White 4-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png",
+      "communityAverageLevel": "White 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/ThePenguin.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=The%20Penguin"
     },
