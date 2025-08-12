@@ -40,17 +40,22 @@
 
         <!-- Main view for displaying all comic books -->
         <section id="comics-view">
-            <div class="mb-12">
-                <h2 class="section-title">Limited Edition Issues</h2>
-                <div id="limited-comics-container" class="comics-grid">
-                    <!-- Comic cards will be injected here -->
+            <div id="comic-controls" class="mb-8 p-4 bg-slate-800/50 rounded-lg">
+                <div class="relative">
+                    <input type="text" id="comic-search-input" placeholder="Search for a comic series..." class="w-full bg-slate-900/80 border border-slate-700 rounded-md py-2 pl-10 pr-4 text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                 </div>
             </div>
-            <div>
+
+            <div id="limited-comics-section" class="mb-12">
+                <h2 class="section-title">Limited Edition Issues</h2>
+                <div id="limited-comics-container" class="comics-grid">
+                    </div>
+            </div>
+            <div id="standard-comics-section">
                 <h2 class="section-title">Standard Issues</h2>
                 <div id="standard-comics-container" class="comics-grid">
-                    <!-- Comic cards will be injected here -->
-                </div>
+                    </div>
             </div>
         </section>
 

@@ -38,6 +38,9 @@ const DOM = {
     mementoControls: document.getElementById('memento-controls'),
     mementoSearchInput: document.getElementById('memento-search-input'),
     removeDuplicatesBtn: document.getElementById('remove-duplicates-btn'),
+    comicSearchInput: document.getElementById('comic-search-input'),
+    limitedComicsSection: document.getElementById('limited-comics-section'),
+    standardComicsSection: document.getElementById('standard-comics-section')
 };
 
 // #endregion
@@ -99,6 +102,8 @@ function createComicCardLink(comic) {
     cardLink.className = 'comic-card';
     cardLink.href = `?comic=${comic.id}`;
     cardLink.dataset.comicId = comic.id;
+    
+    cardLink.dataset.comicTitle = comic.title.toLowerCase(); 
     let limitedBadge = comic.isLimited ? '<div class="limited-badge">Limited</div>' : '';
     cardLink.innerHTML = `
         <div class="comic-cover-wrapper">
@@ -414,6 +419,39 @@ function handleMementoSearch(event) {
     });
 }
 
+/**
+ * @function handleComicSearch
+ * @description Filters the displayed comic series based on the search input value.
+ * Hides comic cards that do not match and hides section titles if they become empty.
+ */
+function handleComicSearch(event) {
+    const searchTerm = event.target.value.toLowerCase().trim();
+
+    // Filter cards in the "Limited" section
+    const limitedCards = DOM.limitedComicsContainer.querySelectorAll('.comic-card');
+    let limitedVisibleCount = 0;
+    limitedCards.forEach(card => {
+        const comicTitle = card.dataset.comicTitle;
+        const isVisible = comicTitle.includes(searchTerm);
+        card.style.display = isVisible ? 'block' : 'none';
+        if (isVisible) limitedVisibleCount++;
+    });
+    // Hide the entire limited section if no cards are visible
+    DOM.limitedComicsSection.style.display = limitedVisibleCount > 0 ? 'block' : 'none';
+
+    // Filter cards in the "Standard" section
+    const standardCards = DOM.standardComicsContainer.querySelectorAll('.comic-card');
+    let standardVisibleCount = 0;
+    standardCards.forEach(card => {
+        const comicTitle = card.dataset.comicTitle;
+        const isVisible = comicTitle.includes(searchTerm);
+        card.style.display = isVisible ? 'block' : 'none';
+        if (isVisible) standardVisibleCount++;
+    });
+    // Hide the entire standard section if no cards are visible
+    DOM.standardComicsSection.style.display = standardVisibleCount > 0 ? 'block' : 'none';
+}
+
 
 // #endregion
 
@@ -506,6 +544,7 @@ document.addEventListener('firebase-ready', () => {
     // Add event listeners for the new features
     DOM.removeDuplicatesBtn.addEventListener('click', handleRemoveDuplicates);
     DOM.mementoSearchInput.addEventListener('input', handleMementoSearch);
+    DOM.comicSearchInput.addEventListener('input', handleComicSearch);
 
 }, { once: true });
 
