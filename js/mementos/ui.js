@@ -13,6 +13,7 @@ import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.6.
 
 let db, auth, analytics, userId;
 const comicDataCache = new Map();
+const allMementosCache = new Map();
 let userCollection = new Map(); // Stores user's memento counts { mementoId: count }
 let userWishlist = []; // Stores user's wishlist [mementoId, mementoId]
 const APP_ID = 'dc-dark-legion-builder';
@@ -95,15 +96,18 @@ function switchView(viewName) {
     }
 }
 
-function createComicCardLink(comic) {
+function createComicCardLink(comic, mementos) {
     const formattedTitle = formatTitleForImage(comic.title);
     const coverImageUrl = `https://dcdl-companion.com/img/mementos/${formattedTitle}/icon_collection_${formattedTitle}_cover.webp`;
     const cardLink = document.createElement('a');
     cardLink.className = 'comic-card';
     cardLink.href = `?comic=${comic.id}`;
     cardLink.dataset.comicId = comic.id;
-    
-    cardLink.dataset.comicTitle = comic.title.toLowerCase(); 
+    cardLink.dataset.comicTitle = comic.title.toLowerCase();
+
+    const mementoNames = mementos.map(m => m.name.toLowerCase()).join('|');
+    cardLink.dataset.mementos = mementoNames;
+
     let limitedBadge = comic.isLimited ? '<div class="limited-badge">Limited</div>' : '';
     cardLink.innerHTML = `
         <div class="comic-cover-wrapper">
@@ -119,10 +123,19 @@ function displayComicsView(comics) {
     resetHeader();
     DOM.limitedComicsContainer.innerHTML = '';
     DOM.standardComicsContainer.innerHTML = '';
+    
     const limitedComics = comics.filter(c => c.isLimited).sort((a, b) => a.sortOrder - b.sortOrder);
     const standardComics = comics.filter(c => !c.isLimited).sort((a, b) => a.sortOrder - b.sortOrder);
-    limitedComics.forEach(comic => DOM.limitedComicsContainer.appendChild(createComicCardLink(comic)));
-    standardComics.forEach(comic => DOM.standardComicsContainer.appendChild(createComicCardLink(comic)));
+
+    limitedComics.forEach(comic => {
+        const mementosForComic = allMementosCache.get(comic.id) || [];
+        DOM.limitedComicsContainer.appendChild(createComicCardLink(comic, mementosForComic));
+    });
+    standardComics.forEach(comic => {
+        const mementosForComic = allMementosCache.get(comic.id) || [];
+        DOM.standardComicsContainer.appendChild(createComicCardLink(comic, mementosForComic));
+    });
+    
     switchView('comics');
     hideLoader();
     displayFeaturedCreators(FEATURED_CREATOR_PUBLIC_IDS);
@@ -261,6 +274,9 @@ async function fetchAllComics() {
 }
 
 async function fetchMementosForComic(comicId) {
+    if (allMementosCache.has(comicId)) {
+        return allMementosCache.get(comicId);
+    }
     try {
         const mementosColRef = collection(db, `/artifacts/${APP_ID}/public/data/mementoComics/${comicId}/mementos`);
         const q = query(mementosColRef, orderBy('sortOrder', 'asc'));
@@ -270,6 +286,34 @@ async function fetchMementosForComic(comicId) {
         console.error(`Mementos UI: Error fetching mementos for comic ${comicId}:`, error);
         return [];
     }
+}
+
+async function fetchAllMementosAndComics() {
+    if (comicDataCache.size > 0 && allMementosCache.size > 0) {
+        return Array.from(comicDataCache.values());
+    }
+
+    // First, get all comics.
+    const comicsColRef = collection(db, `/artifacts/${APP_ID}/public/data/mementoComics`);
+    const qComics = query(comicsColRef, orderBy('sortOrder', 'asc'));
+    const comicsSnapshot = await getDocs(qComics);
+    const comics = [];
+    comicsSnapshot.forEach(doc => {
+        const comicData = { id: doc.id, ...doc.data() };
+        comics.push(comicData);
+        comicDataCache.set(comicData.id, comicData);
+    });
+
+    // Then, for each comic, fetch its mementos.
+    const mementoPromises = comics.map(comic => fetchMementosForComic(comic.id));
+    const allMementoSets = await Promise.all(mementoPromises);
+
+    // Populate the cache.
+    comics.forEach((comic, index) => {
+        allMementosCache.set(comic.id, allMementoSets[index]);
+    });
+
+    return comics;
 }
 
 async function fetchUserCollection() {
@@ -427,30 +471,23 @@ function handleMementoSearch(event) {
 function handleComicSearch(event) {
     const searchTerm = event.target.value.toLowerCase().trim();
 
-    // Filter cards in the "Limited" section
-    const limitedCards = DOM.limitedComicsContainer.querySelectorAll('.comic-card');
-    let limitedVisibleCount = 0;
-    limitedCards.forEach(card => {
-        const comicTitle = card.dataset.comicTitle;
-        const isVisible = comicTitle.includes(searchTerm);
-        card.style.display = isVisible ? 'block' : 'none';
-        if (isVisible) limitedVisibleCount++;
-    });
-    // Hide the entire limited section if no cards are visible
-    DOM.limitedComicsSection.style.display = limitedVisibleCount > 0 ? 'block' : 'none';
+    const filterCards = (container, section) => {
+        const cards = container.querySelectorAll('.comic-card');
+        let visibleCount = 0;
+        cards.forEach(card => {
+            const comicTitle = card.dataset.comicTitle || '';
+            const mementoNames = card.dataset.mementos || '';
+            const isVisible = comicTitle.includes(searchTerm) || mementoNames.includes(searchTerm);
+            card.style.display = isVisible ? 'block' : 'none';
+            if (isVisible) visibleCount++;
+        });
+        section.style.display = visibleCount > 0 ? 'block' : 'none';
+    };
 
-    // Filter cards in the "Standard" section
-    const standardCards = DOM.standardComicsContainer.querySelectorAll('.comic-card');
-    let standardVisibleCount = 0;
-    standardCards.forEach(card => {
-        const comicTitle = card.dataset.comicTitle;
-        const isVisible = comicTitle.includes(searchTerm);
-        card.style.display = isVisible ? 'block' : 'none';
-        if (isVisible) standardVisibleCount++;
-    });
-    // Hide the entire standard section if no cards are visible
-    DOM.standardComicsSection.style.display = standardVisibleCount > 0 ? 'block' : 'none';
+    filterCards(DOM.limitedComicsContainer, DOM.limitedComicsSection);
+    filterCards(DOM.standardComicsContainer, DOM.standardComicsSection);
 }
+
 
 
 // #endregion
@@ -492,7 +529,7 @@ async function initializePage() {
         const params = new URLSearchParams(window.location.search);
         const comicId = params.get('comic');
 
-        await fetchAllComics();
+        const allComics = await fetchAllMementosAndComics();
 
         if (comicId) {
             const comicData = comicDataCache.get(comicId);
@@ -501,11 +538,11 @@ async function initializePage() {
                 const mementos = await fetchMementosForComic(comicId);
                 displayMementosView(comicData, mementos);
             } else {
-                displayComicsView(Array.from(comicDataCache.values()));
+                displayComicsView(allComics);
             }
         } else {
             logEvent(analytics, 'page_view', { page_title: "Monitor's Mementos" });
-            displayComicsView(Array.from(comicDataCache.values()));
+            displayComicsView(allComics);
         }
     } catch (error) {
         console.error("Mementos UI: A critical error occurred during page initialization:", error);
