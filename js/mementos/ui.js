@@ -1,12 +1,12 @@
 /**
  * @file js/mementos/ui.js
  * @fileoverview Handles UI interactions for The Monitor's Mementos page.
- * @version 1.3.0 - Added wishlist functionality.
+ * @version 1.4.0 - Added remove duplicates and search functionality.
  */
 
 import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, collection, getDocs, query, orderBy, doc, getDoc, setDoc, updateDoc, deleteField } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, query, orderBy, doc, getDoc, setDoc, updateDoc, deleteField, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
 // #region --- GLOBAL VARIABLES & CONFIG ---
@@ -35,6 +35,9 @@ const DOM = {
     standardComicsContainer: document.getElementById('standard-comics-container'),
     mementoDetailGrid: document.getElementById('memento-detail-grid'),
     featuredCreatorsContainer: document.getElementById('featured-creators-container'),
+    mementoControls: document.getElementById('memento-controls'),
+    mementoSearchInput: document.getElementById('memento-search-input'),
+    removeDuplicatesBtn: document.getElementById('remove-duplicates-btn'),
 };
 
 // #endregion
@@ -84,6 +87,9 @@ function switchView(viewName) {
     if (DOM.featuredCreatorsContainer && DOM.featuredCreatorsContainer.parentElement) {
         DOM.featuredCreatorsContainer.parentElement.classList.toggle('hidden', viewName === 'mementos');
     }
+     if (DOM.mementoControls) {
+        DOM.mementoControls.style.display = viewName === 'mementos' ? 'flex' : 'none';
+    }
 }
 
 function createComicCardLink(comic) {
@@ -130,6 +136,8 @@ function displayMementosView(comic, mementos) {
         const mementoEl = document.createElement('div');
         mementoEl.className = 'memento-card';
         mementoEl.id = `memento-${memento.id}`;
+
+        mementoEl.dataset.mementoName = memento.name.toLowerCase();
         
         let actionsHtml = '';
         if (userId) {
@@ -343,6 +351,72 @@ async function fetchPublicCreatorProfiles(publicIds) {
 
 // #endregion
 
+// #region --- NEW FEATURE LOGIC ---
+
+/**
+ * @function handleRemoveDuplicates
+ * @description Sets the count of any memento with a count > 1 back to 1.
+ * This uses a batch write to efficiently update all necessary documents in Firestore.
+ */
+async function handleRemoveDuplicates() {
+    if (!userId) return;
+
+    const duplicates = Array.from(userCollection.entries()).filter(([id, count]) => count > 1);
+
+    if (duplicates.length === 0) {
+        document.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'No duplicate mementos found.', type: 'info' } }));
+        return;
+    }
+
+    DOM.removeDuplicatesBtn.disabled = true;
+    DOM.removeDuplicatesBtn.textContent = 'Removing...';
+
+    const docRef = doc(db, `artifacts/${APP_ID}/users/${userId}/mementos/collection`);
+    const batch = writeBatch(db);
+    const updates = {};
+
+    duplicates.forEach(([mementoId, count]) => {
+        updates[`mementos.${mementoId}`] = 1;
+        userCollection.set(mementoId, 1);
+    });
+
+    batch.update(docRef, updates);
+
+    try {
+        await batch.commit();
+        logEvent(analytics, 'remove_memento_duplicates', { count: duplicates.length });
+        document.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'All duplicates have been removed!', type: 'success' } }));
+    } catch (error) {
+        console.error("Error removing duplicates:", error);
+        document.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'Failed to remove duplicates.', type: 'error' } }));
+        // Revert optimistic update on failure if necessary
+        await fetchUserCollection();
+    } finally {
+        updateMementosUIWithUserData();
+        DOM.removeDuplicatesBtn.disabled = false;
+        DOM.removeDuplicatesBtn.innerHTML = '<i class="fas fa-clone"></i> Remove All Duplicates';
+    }
+}
+
+/**
+ * @function handleMementoSearch
+ * @description Filters the displayed mementos based on the search input value.
+ * It hides cards that do not match the search term.
+ */
+function handleMementoSearch(event) {
+    const searchTerm = event.target.value.toLowerCase().trim();
+    const mementoCards = DOM.mementoDetailGrid.querySelectorAll('.memento-card');
+
+    mementoCards.forEach(card => {
+        const mementoName = card.dataset.mementoName;
+        const isVisible = mementoName.includes(searchTerm);
+        card.style.display = isVisible ? 'flex' : 'none';
+    });
+}
+
+
+// #endregion
+
 // #region --- EVENT LISTENERS & INITIALIZATION ---
 
 function handleActionsClick(event) {
@@ -428,6 +502,10 @@ document.addEventListener('firebase-ready', () => {
     
     initializePage();
     DOM.mementoDetailGrid.addEventListener('click', handleActionsClick);
+    
+    // Add event listeners for the new features
+    DOM.removeDuplicatesBtn.addEventListener('click', handleRemoveDuplicates);
+    DOM.mementoSearchInput.addEventListener('input', handleMementoSearch);
 
 }, { once: true });
 
