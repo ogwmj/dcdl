@@ -299,9 +299,13 @@ function createInteractiveGearGrid(containerId) {
     const updateVisuals = () => {
         slots.forEach(slotKey => {
             const lowerSlot = slotKey.toLowerCase();
-            const selectedRarity = currentGearState[lowerSlot] || 'None';
+            const gearState = currentGearState[lowerSlot] || { rarity: 'None', hasSynergy: false };
+            
             container.querySelectorAll(`[data-slot="${lowerSlot}"] .gear-pip`).forEach(pip => {
-                pip.classList.toggle('selected', pip.dataset.rarity === selectedRarity);
+                const isSelected = pip.dataset.rarity === gearState.rarity;
+                pip.classList.toggle('selected', isSelected);
+                
+                pip.classList.toggle('has-synergy', isSelected && gearState.hasSynergy);
             });
         });
     };
@@ -309,13 +313,22 @@ function createInteractiveGearGrid(containerId) {
     container.addEventListener('click', (e) => {
         if (!e.target.matches('.gear-pip')) return;
         const target = e.target;
-        const slot = target.closest('.gear-grid-row').dataset.slot;
+        const row = target.closest('.gear-grid-row');
+        const slot = row.dataset.slot;
         const rarity = target.dataset.rarity;
 
         if (slot === 'master') {
-            slots.forEach(s => currentGearState[s.toLowerCase()] = rarity);
+            slots.forEach(s => {
+                currentGearState[s.toLowerCase()] = { rarity: rarity, hasSynergy: false };
+            });
         } else {
-            currentGearState[slot] = rarity;
+            const currentSlotState = currentGearState[slot];
+            
+            if (currentSlotState && currentSlotState.rarity === rarity) {
+                currentSlotState.hasSynergy = !currentSlotState.hasSynergy;
+            } else {
+                currentGearState[slot] = { rarity: rarity, hasSynergy: false };
+            }
         }
         updateVisuals();
     });
@@ -342,20 +355,27 @@ function createInteractiveGearGrid(containerId) {
 
     const update = (newState) => {
         if (!newState) {
-             currentGearState = { head: 'None', arms: 'None', chest: 'None', legs: 'None', waist: 'None' };
+             currentGearState = {
+                 head: { rarity: 'None', hasSynergy: false },
+                 arms: { rarity: 'None', hasSynergy: false },
+                 chest: { rarity: 'None', hasSynergy: false },
+                 legs: { rarity: 'None', hasSynergy: false },
+                 waist: { rarity: 'None', hasSynergy: false }
+             };
         } else {
              currentGearState = {
-                 head: newState.head?.rarity || 'None',
-                 arms: newState.arms?.rarity || 'None',
-                 chest: newState.chest?.rarity || 'None',
-                 legs: newState.legs?.rarity || 'None',
-                 waist: newState.waist?.rarity || 'None',
+                 head: { rarity: newState.head?.rarity || 'None', hasSynergy: newState.head?.hasSynergy || false },
+                 arms: { rarity: newState.arms?.rarity || 'None', hasSynergy: newState.arms?.hasSynergy || false },
+                 chest: { rarity: newState.chest?.rarity || 'None', hasSynergy: newState.chest?.hasSynergy || false },
+                 legs: { rarity: newState.legs?.rarity || 'None', hasSynergy: newState.legs?.hasSynergy || false },
+                 waist: { rarity: newState.waist?.rarity || 'None', hasSynergy: newState.waist?.hasSynergy || false },
              };
         }
         updateVisuals();
     };
 
     render();
+    update(null);
     return { update };
 }
 
@@ -791,11 +811,11 @@ async function handleAddUpdateChampion() {
             starColorTier: DOM.champStarColor.value,
             forceLevel: selectedForceLevel,
             gear: {
-                head: { rarity: currentGearState.head || 'None' },
-                arms: { rarity: currentGearState.arms || 'None' },
-                legs: { rarity: currentGearState.legs || 'None' },
-                chest: { rarity: currentGearState.chest || 'None' },
-                waist: { rarity: currentGearState.waist || 'None' },
+                head: { rarity: currentGearState.head.rarity, hasSynergy: currentGearState.head.hasSynergy },
+                arms: { rarity: currentGearState.arms.rarity, hasSynergy: currentGearState.arms.hasSynergy },
+                legs: { rarity: currentGearState.legs.rarity, hasSynergy: currentGearState.legs.hasSynergy },
+                chest: { rarity: currentGearState.chest.rarity, hasSynergy: currentGearState.chest.hasSynergy },
+                waist: { rarity: currentGearState.waist.rarity, hasSynergy: currentGearState.waist.hasSynergy },
             },
             legacyPiece: legacyPieceData,
         };
@@ -821,11 +841,11 @@ async function handleAddUpdateChampion() {
             starColorTier: DOM.champStarColor.value,
             forceLevel: selectedForceLevel,
             gear: {
-                head: { rarity: currentGearState.head || 'None' },
-                arms: { rarity: currentGearState.arms || 'None' },
-                legs: { rarity: currentGearState.legs || 'None' },
-                chest: { rarity: currentGearState.chest || 'None' },
-                waist: { rarity: currentGearState.waist || 'None' },
+                head: { rarity: currentGearState.head.rarity, hasSynergy: currentGearState.head.hasSynergy },
+                arms: { rarity: currentGearState.arms.rarity, hasSynergy: currentGearState.arms.hasSynergy },
+                legs: { rarity: currentGearState.legs.rarity, hasSynergy: currentGearState.legs.hasSynergy },
+                chest: { rarity: currentGearState.chest.rarity, hasSynergy: currentGearState.chest.hasSynergy },
+                waist: { rarity: currentGearState.waist.rarity, hasSynergy: currentGearState.waist.hasSynergy },
             },
             legacyPiece: legacyPieceData
         };
@@ -1206,7 +1226,13 @@ function handleExportRoster() {
     if (playerRoster.length === 0) { showToast("Roster is empty, nothing to export.", "warning"); return; }
     const exportableRoster = playerRoster.map(c => ({
         dbChampionId: c.dbChampionId, starColorTier: c.starColorTier, forceLevel: c.forceLevel || 0,
-        gear: { head: { rarity: c.gear.head.rarity }, arms: { rarity: c.gear.arms.rarity }, legs: { rarity: c.gear.legs.rarity }, chest: { rarity: c.gear.chest.rarity }, waist: { rarity: c.gear.waist.rarity }, },
+        gear: {
+            head: { rarity: c.gear.head.rarity, hasSynergy: c.gear.head.hasSynergy || false },
+            arms: { rarity: c.gear.arms.rarity, hasSynergy: c.gear.arms.hasSynergy || false },
+            legs: { rarity: c.gear.legs.rarity, hasSynergy: c.gear.legs.hasSynergy || false },
+            chest: { rarity: c.gear.chest.rarity, hasSynergy: c.gear.chest.hasSynergy || false },
+            waist: { rarity: c.gear.waist.rarity, hasSynergy: c.gear.waist.hasSynergy || false },
+        },
         legacyPiece: { id: c.legacyPiece.id, starColorTier: c.legacyPiece.starColorTier || "Unlocked" }
     }));
     const jsonData = JSON.stringify(exportableRoster, null, 2);
@@ -1254,9 +1280,11 @@ function handleImportRoster(event) {
                         class: baseChampionData.class || "N/A", isHealer: baseChampionData.isHealer === true, inherentSynergies: baseChampionData.inherentSynergies || [],
                         starColorTier: importedChamp.starColorTier || "Unlocked", forceLevel: importedChamp.forceLevel || 0,
                         gear: {
-                            head: { rarity: importedChamp.gear?.head?.rarity || "None" }, arms: { rarity: importedChamp.gear?.arms?.rarity || "None" },
-                            legs: { rarity: importedChamp.gear?.legs?.rarity || "None" }, chest: { rarity: importedChamp.gear?.chest?.rarity || "None" },
-                            waist: { rarity: importedChamp.gear?.waist?.rarity || "None" },
+                            head: { rarity: importedChamp.gear?.head?.rarity || "None", hasSynergy: importedChamp.gear?.head?.hasSynergy || false },
+                            arms: { rarity: importedChamp.gear?.arms?.rarity || "None", hasSynergy: importedChamp.gear?.arms?.hasSynergy || false },
+                            legs: { rarity: importedChamp.gear?.legs?.rarity || "None", hasSynergy: importedChamp.gear?.legs?.hasSynergy || false },
+                            chest: { rarity: importedChamp.gear?.chest?.rarity || "None", hasSynergy: importedChamp.gear?.chest?.hasSynergy || false },
+                            waist: { rarity: importedChamp.gear?.waist?.rarity || "None", hasSynergy: importedChamp.gear?.waist?.hasSynergy || false },
                         },
                         legacyPiece: legacyPieceData
                     });

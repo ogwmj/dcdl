@@ -38,6 +38,7 @@ export const GAME_CONSTANTS = {
     SYNERGY_ACTIVATION_COUNT: 3,
     SYNERGY_DEPTH_BONUS: 750,
     INDIVIDUAL_SCORE_WEIGHT: 1.25,
+    SYNERGY_GEAR_MODIFIER: 1.20, 
     LEGACY_TIERS_ORDERED: ["Unlocked", "White 1-Star", "White 2-Star", "White 3-Star", "White 4-Star", "White 5-Star", "Blue 1-Star", "Blue 2-Star", "Blue 3-Star", "Blue 4-Star", "Blue 5-Star", "Purple 1-Star", "Purple 2-Star", "Purple 3-Star", "Purple 4-Star", "Purple 5-Star", "Gold 1-Star", "Gold 2-Star", "Gold 3-Star", "Gold 4-Star", "Gold 5-Star", "Red 1-Star", "Red 2-Star", "Red 3-Star", "Red 4-Star", "Red 5-Star"],
 };
 
@@ -68,7 +69,13 @@ export class TeamCalculator {
         if (champion.gear && typeof champion.gear === 'object') {
             Object.values(champion.gear).forEach(gearPiece => {
                 if (gearPiece && gearPiece.rarity) {
-                    totalEquipmentMultiplier += gameConstants.STANDARD_GEAR_RARITY_MODIFIER[gearPiece.rarity] || 0;
+                    let gearModifier = gameConstants.STANDARD_GEAR_RARITY_MODIFIER[gearPiece.rarity] || 0;
+                    
+                    if (gearPiece.hasSynergy) {
+                        gearModifier *= gameConstants.SYNERGY_GEAR_MODIFIER;
+                    }
+                    
+                    totalEquipmentMultiplier += gearModifier;
                 }
             });
         }
