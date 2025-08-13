@@ -1306,3 +1306,24 @@ div.dt-length {
 #roster-search-group {
     margin-left: auto;
 }
+#custom-tooltip {
+    position: absolute;
+    background-color: #1e293b;
+    color: #e2e8f0;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    border: 1px solid #475569;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    z-index: 10000;
+    font-size: 0.875rem;
+    max-width: 250px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    visibility: hidden;
+}
+
+#custom-tooltip.visible {
+    opacity: 1;
+    visibility: visible;
+}

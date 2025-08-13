@@ -758,6 +758,28 @@ function attachEventListeners() {
             renderRosterGrid();
         });
     }
+
+    const tooltipTrigger = document.getElementById('gear-synergy-tooltip-trigger');
+    if (tooltipTrigger) {
+        const tooltipText = 'Click a selected gear pip again to toggle its Synergy status. Synergy gear provides a 20% score bonus.';
+
+        tooltipTrigger.addEventListener('mouseover', (e) => {
+            const triggerRect = e.target.getBoundingClientRect();
+            DOM.customTooltip.textContent = tooltipText;
+            DOM.customTooltip.classList.remove('hidden');
+            DOM.customTooltip.classList.add('visible');
+
+            const top = triggerRect.top + window.scrollY - DOM.customTooltip.offsetHeight - 5;
+            const left = triggerRect.left + window.scrollX + (triggerRect.width / 2) - (DOM.customTooltip.offsetWidth / 2);
+            
+            DOM.customTooltip.style.top = `${top}px`;
+            DOM.customTooltip.style.left = `${left}px`;
+        });
+
+        tooltipTrigger.addEventListener('mouseout', () => {
+            DOM.customTooltip.classList.remove('visible');
+        });
+    }
 }
 
 /**
