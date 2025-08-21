@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-08-12T16:24:43.890Z",
+  "updated_at": "2025-08-21T11:30:43.739Z",
   "champions": [
     {
       "name": "Atom",
@@ -648,7 +648,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Supergirl-card.png",
-      "communityAverageLevel": "Blue 5-Star",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Supergirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Supergirl",
       "relatedChampions": [
@@ -959,7 +959,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Deathstroke-card.png",
-      "communityAverageLevel": "Blue 4-Star",
+      "communityAverageLevel": "Blue 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Deathstroke.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Deathstroke",
       "relatedChampions": [
@@ -1239,10 +1239,6 @@
       "name": "Mera",
       "baseRarity": "Legendary",
       "class": "Supporter",
-      "inherentSynergies": [
-        "Atlanteans",
-        "Energy Wielder"
-      ],
       "isHealer": true,
       "skills": [
         {
@@ -1293,6 +1289,11 @@
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Mera-card.png",
       "communityAverageLevel": "Gold 2-Star",
+      "inherentSynergies": [
+        "Atlanteans",
+        "Energy Wielder",
+        "Justice League"
+      ],
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Mera.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Mera"
     },
@@ -2677,7 +2678,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Superboy-card.png",
-      "communityAverageLevel": "Blue 4-Star",
+      "communityAverageLevel": "Blue 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Superboy.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Superboy",
       "relatedChampions": [
