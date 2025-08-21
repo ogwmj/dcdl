@@ -775,3 +775,27 @@ input:checked + .slider:before {
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
 }
+
+/* Make the image container a positioning parent for the overlay */
+.card-image-container {
+    position: relative;
+}
+
+/* New styles for the overlay image */
+.legacy-piece-overlay {
+    position: absolute;
+    z-index: 2;
+    bottom: 8px;
+    right: 8px;
+    width: 64px;
+    height: 64px;
+    
+    /* Styling to make the icon pop */
+    object-fit: contain;
+    background-color: rgba(15, 23, 42, 0.8); /* Dark background */
+    border-radius: 50%; /* Circular shape */
+    padding: 4px; /* Inner spacing */
+    
+    /* Smooth transition for hover effect */
+    transition: all 0.2s ease-in-out;
+}

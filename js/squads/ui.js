@@ -600,19 +600,25 @@ async function renderDetailView(squadId) {
     const lineupHtml = squad.members.map(member => {
         const champion = ALL_DATA.champions.find(c => c.id === member.dbChampionId);
         const imageUrl = champion?.cardImageUrl || '/img/champions/cards/default.png';
-        const legacyPieceName = member.legacyPiece?.name;
         
-        const legacyPieceHtml = (legacyPieceName && legacyPieceName !== 'None')
-            ? `<p class="text-purple-400 text-xs font-semibold mt-2 flex items-center justify-center gap-2"><i class="fas fa-gem"></i>${legacyPieceName}</p>`
-            : '';
+        // 1. Logic to create the overlay image
+        let legacyPieceOverlayHtml = '';
+        if (member.legacyPiece && member.legacyPiece.name) {
+            const legacyPieceImageUrl = getLegacyPieceImageUrl(member.legacyPiece.name);
+            // We'll use a new CSS class called "legacy-piece-overlay"
+            legacyPieceOverlayHtml = `<img src="${legacyPieceImageUrl}" alt="${member.legacyPiece.name}" class="legacy-piece-overlay" title="${member.legacyPiece.name}">`;
+        }
 
+        // 2. Updated return statement with the overlay placed in the image container
         return `
             <div class="champion-card-enhanced is-small">
-                <div class="card-image-container"><img src="${imageUrl}" class="card-avatar-top" onerror="this.onerror=null;this.src='/img/champions/cards/default.png';"></div>
+                <div class="card-image-container">
+                    <img src="${imageUrl}" class="card-avatar-top" onerror="this.onerror=null;this.src='/img/champions/cards/default.png';">
+                    ${legacyPieceOverlayHtml}
+                </div>
                 <div class="card-content-bottom">
                     <h4 class="champion-name">${member.name}</h4>
                     <p class="champion-class">${member.class}</p>
-                    ${legacyPieceHtml}
                 </div>
             </div>`;
     }).join('');
@@ -741,6 +747,19 @@ async function renderDetailView(squadId) {
     });
     
     setupSkillTabs();
+}
+
+/**
+ * Creates the full image URL for a legacy piece by sanitizing its name.
+ * This replicates the logic from the legacyPieceApi.js script.
+ * @param {string} pieceName - The name of the legacy piece.
+ * @returns {string} The constructed image URL.
+ */
+function getLegacyPieceImageUrl(pieceName) {
+    if (!pieceName) return '';
+    // Sanitize the name by removing all characters except letters, numbers, and periods.
+    const sanitizedName = pieceName.replace(/[^a-zA-Z0-9.]/g, '');
+    return `https://dcdl-companion.com/img/legacy_pieces/${sanitizedName}.webp`;
 }
 
 /**
