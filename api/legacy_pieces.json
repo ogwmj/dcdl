@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-08-01T14:55:50.240Z",
+  "updated_at": "2025-08-27T18:35:23.148Z",
   "legacy_pieces": [
     {
       "name": "Honkin' Huge Hammer",
@@ -417,6 +417,15 @@
         "Firepower",
         "Magical",
         "Assassin"
+      ]
+    },
+    {
+      "name": "Themysciran Royal Sceptre",
+      "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/ThemysciranRoyalSceptre.webp",
+      "classes": [
+        "Warrior",
+        "Guardian"
       ]
     }
   ]

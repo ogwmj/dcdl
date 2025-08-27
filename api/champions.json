@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-08-21T11:30:43.739Z",
+  "updated_at": "2025-08-27T18:35:11.815Z",
   "champions": [
     {
       "name": "Atom",
@@ -959,7 +959,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Deathstroke-card.png",
-      "communityAverageLevel": "Blue 3-Star",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Deathstroke.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Deathstroke",
       "relatedChampions": [
@@ -2041,6 +2041,75 @@
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Bazooka%20Bro"
     },
     {
+      "baseRarity": "Limited Mythic",
+      "name": "Queen Hippolyta",
+      "class": "Guardian",
+      "inherentSynergies": [
+        "Amazons",
+        "Metahuman"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Luck of Tyche",
+          "description": "Queen Hippolyta grants a shield to the ally with the lowest HP percentage for 10s.",
+          "type": "Defense",
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Hera's Protection",
+          "description": "At the start of the battle, all allies' Physical DEF is increased for a period of time.",
+          "type": "Defense",
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Athena's Shield",
+          "description": "Queen Hippolyta stands firm and raises her sceptre, radiating divine power. Absorbs DMG taken by allies within 14 meters.",
+          "type": "Defense",
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Gaea's Gift",
+          "description": "At the start of battle, Queen Hippolyta gains Energy. After casting Ultimate, Queen Hippolyta takes less DMG.",
+          "type": "Defense",
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Queen's Patronage",
+          "description": "Increases all Champions' HP and [Guardian] Champion's Physical DEF.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "undefined",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/QueenHippolyta.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Queen%20Hippolyta",
+      "relatedChampions": [
+        "Deadshot",
+        "Harley Quinn",
+        "Two-Face"
+      ]
+    },
+    {
       "name": "Scarecrow",
       "baseRarity": "Limited Mythic",
       "class": "Guardian",
@@ -2372,7 +2441,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Batgirl-card.png",
-      "communityAverageLevel": "White 5-Star",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Batgirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Batgirl"
     },
@@ -2770,7 +2839,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BlackAdam-card.png",
-      "communityAverageLevel": "Gold 1-Star",
+      "communityAverageLevel": "Gold 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BlackAdam.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Black%20Adam"
     },
