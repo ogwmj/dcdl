@@ -1,7 +1,7 @@
 /* --- Main Timeline Container --- */
 .timeline-container {
     display: grid;
-    grid-auto-columns: 210px;
+    grid-auto-columns: 105px; /* Base column is 1 "week" */
     grid-auto-flow: column;
     grid-template-rows: auto auto;
     row-gap: 40px;
@@ -13,10 +13,10 @@
 
 /* --- Container for each event card --- */
 .timeline-event {
-    width: 420px;
-    grid-column: span 2;
+    /* width is controlled by grid-column span, not fixed */
     padding: 0 10px;
     box-sizing: border-box;
+    /* Spacing is now controlled by margin-left in the JS */
 }
 
 /* Make the whole card a cursor-pointer EXCEPT for the champion-link */
@@ -166,8 +166,9 @@
     .timeline-event {
         width: 100%;
         padding: 0 1rem 1.5rem 1rem;
-        grid-column: auto;
+        grid-column: auto !important; /* Override inline style for mobile */
         grid-row: auto;
+        margin-left: 0 !important; /* Override inline style for mobile */
     }
     .timeline-content h3 { font-size: 1.5rem; }
 }

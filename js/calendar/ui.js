@@ -1,7 +1,7 @@
 /**
  * @file js/calendar/ui.js
- * @description Fetches and renders the Limited Mythic champion rotation calendar.
- * @version 3.0.0 - Displays Community Average data.
+ * @description Renders a dateless, sequential visualization of the champion rotation.
+ * @version 4.1.0 - Corrected layout logic for grid positioning.
  */
 
 // Import necessary functions from the Firebase SDK
@@ -19,6 +19,7 @@ const comicModalBackdrop = document.getElementById('comic-modal-backdrop');
 const comicModalBody = document.getElementById('comic-modal-body');
 const comicModalClose = document.getElementById('comic-modal-close');
 const championDetailsCache = new Map();
+const TRANSITION_CHAMPION_ID = "UWB4OFzxMVgnCmeD0CJL"; // Champion that starts the 4-week schedule
 
 // --- HELPER & COMIC VIEW FUNCTIONS (No changes here) ---
 async function fetchChampionDetails(relatedIds) {
@@ -70,14 +71,6 @@ function hideComicModal() {
 
 // --- CORE FUNCTIONS ---
 
-function createSchedule() {
-    return sortedChampionsList.map((champion, i) => ({
-        ...champion,
-        startWeek: (i * 2) + 1,
-        endWeek: ((i * 2) + 1) + 3,
-    }));
-}
-
 /**
  * Takes a string like "Gold 4-Star" and returns styled star icons.
  * @param {string} ratingString - The star rating value.
@@ -102,17 +95,15 @@ function createStarRatingHtml(ratingString) {
     return `<div class="roster-stars tier-${tier}">${starsHtml}</div>`;
 }
 
-function renderTimeline(schedule, currentWeek) {
+function renderTimeline(schedule) {
     if (!DOM.timelineContainer) return;
+    
+    const transitionIndex = schedule.findIndex(champ => champ.id === TRANSITION_CHAMPION_ID);
     let timelineHtml = '';
+    let currentColumn = 1;
+
     schedule.forEach((event, index) => {
         const rowClass = index % 2 === 0 ? 'odd' : 'even';
-        let statusClass = 'is-upcoming';
-        if (currentWeek >= event.startWeek && currentWeek <= event.endWeek) {
-            statusClass = 'is-active';
-        } else if (currentWeek > event.endWeek) {
-            statusClass = 'is-past';
-        }
 
         let communityAvgHtml = '';
         if (event.id !== 'TBA') {
@@ -126,24 +117,36 @@ function renderTimeline(schedule, currentWeek) {
                     </div>
                 </div>`;
         }
-
+        
         const championName = event.name || "To Be Announced";
         const championLink = event.id === 'TBA' ? championName : `<a href="calculator.html?addChampion=${event.id}" class="champion-link">${championName}</a>`;
 
+        // Determine the interval to the *next* champion based on the *current* champion's index
+        const isAfterTransition = transitionIndex !== -1 && index >= transitionIndex;
+        const interval = isAfterTransition ? 4 : 2;
+        
+        let intervalText = isAfterTransition ? "4-Week Sequential" : "2-Week Staggered";
+        if (index === 0) {
+            intervalText = "Start of Rotation";
+        }
+
         timelineHtml += `
-            <div id="event-${index}" class="timeline-event ${rowClass} ${statusClass}" role="button" tabindex="0" data-champion-id="${event.id}" style="grid-column-start: ${index + 1};">
+            <div id="event-${index}" class="timeline-event ${rowClass}" role="button" tabindex="0" data-champion-id="${event.id}" style="grid-column: ${currentColumn} / span 4;">
                 <div class="timeline-content">
                     <div class="timeline-main-info">
                         <img src="${event.avatar}" alt="${championName}" class="timeline-avatar" onerror="this.src='img/champions/avatars/dc_logo.webp'">
                         <div class="timeline-text-content">
                              <h3>${championLink}</h3>
-                             <p class="date-range">Weeks ${event.startWeek} &ndash; ${event.endWeek}</p>
+                             <p class="date-range">${intervalText}</p>
                              <span class="duration-tag">4 Week Cycle</span>
                         </div>
                     </div>
                     ${communityAvgHtml}
                 </div>
             </div>`;
+        
+        // Advance the column counter for the next champion
+        currentColumn += interval;
     });
     DOM.timelineContainer.innerHTML = timelineHtml;
 }
@@ -182,13 +185,7 @@ async function initializeCalendar(analytics) {
             ? rotationOrder.map(id => (id === 'TBA' ? { id: 'TBA', name: 'To Be Announced', avatar: 'img/champions/avatars/dc_logo.webp' } : championsMap.get(id))).filter(Boolean)
             : [...championsMap.values()].sort((a, b) => a.name.localeCompare(b.name));
 
-        const schedule = createSchedule();
-        const rotationStartDate = new Date("2025-06-09T00:00:00Z");
-        const msPerWeek = 7 * 24 * 60 * 60 * 1000;
-        const weeksSinceStart = Math.floor((Date.now() - rotationStartDate.getTime()) / msPerWeek);
-        const currentWeek = weeksSinceStart + 1;
-
-        renderTimeline(schedule, currentWeek);
+        renderTimeline(sortedChampionsList);
 
         if (analytics) {
             logEvent(analytics, 'page_view', { page_title: document.title, page_location: window.location.href, page_path: window.location.pathname });
