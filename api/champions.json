@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-08-27T18:35:11.815Z",
+  "updated_at": "2025-09-11T14:38:48.315Z",
   "champions": [
     {
       "name": "Atom",
@@ -305,7 +305,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/GreenLantern-card.png",
-      "communityAverageLevel": "Blue 1-Star",
+      "communityAverageLevel": "White 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/GreenLantern.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Green%20Lantern"
     },
@@ -373,7 +373,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Hawkgirl-card.png",
-      "communityAverageLevel": "Purple 3-Star",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Hawkgirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Hawkgirl",
       "relatedChampions": [
@@ -444,7 +444,7 @@
           "name": "Empathic Perception"
         }
       ],
-      "communityAverageLevel": "Blue 5-Star",
+      "communityAverageLevel": "Purple 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Starfire.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Starfire",
       "relatedChampions": [
@@ -1357,8 +1357,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "White 5-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Robin-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Robin.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Robin"
     },
@@ -2049,58 +2049,59 @@
         "Metahuman"
       ],
       "isHealer": false,
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/QueenHippolyta-card.png",
       "skills": [
         {
-          "name": "Luck of Tyche",
-          "description": "Queen Hippolyta grants a shield to the ally with the lowest HP percentage for 10s.",
+          "isUltimate": false,
           "type": "Defense",
+          "name": "Luck of Tyche",
           "effects": [
             "Buff",
             "Defense"
           ],
-          "isUltimate": false
+          "description": "Queen Hippolyta grants a shield to the ally with the lowest HP percentage for 10s."
         },
         {
+          "type": "Defense",
+          "isUltimate": false,
           "name": "Hera's Protection",
           "description": "At the start of the battle, all allies' Physical DEF is increased for a period of time.",
+          "effects": [
+            "Buff",
+            "Defense"
+          ]
+        },
+        {
+          "description": "Queen Hippolyta stands firm and raises her sceptre, radiating divine power. Absorbs DMG taken by allies within 14 meters, during which she gains [Super Armor] and cannot recover Energy.",
           "type": "Defense",
+          "isUltimate": true,
           "effects": [
             "Buff",
             "Defense"
           ],
-          "isUltimate": false
+          "name": "Athena's Shield"
         },
         {
-          "name": "Athena's Shield",
-          "description": "Queen Hippolyta stands firm and raises her sceptre, radiating divine power. Absorbs DMG taken by allies within 14 meters.",
-          "type": "Defense",
+          "isUltimate": false,
           "effects": [
             "Buff",
             "Defense"
           ],
-          "isUltimate": true
-        },
-        {
-          "name": "Gaea's Gift",
+          "type": "Defense",
           "description": "At the start of battle, Queen Hippolyta gains Energy. After casting Ultimate, Queen Hippolyta takes less DMG.",
-          "type": "Defense",
-          "effects": [
-            "Buff",
-            "Defense"
-          ],
-          "isUltimate": false
+          "name": "Gaea's Gift"
         },
         {
-          "name": "Queen's Patronage",
           "description": "Increases all Champions' HP and [Guardian] Champion's Physical DEF.",
           "type": "Passive",
+          "name": "Queen's Patronage",
+          "isUltimate": false,
           "effects": [
             "Passive"
-          ],
-          "isUltimate": false
+          ]
         }
       ],
-      "cardImageUrl": "undefined",
+      "communityAverageLevel": "Red 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/QueenHippolyta.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Queen%20Hippolyta",
       "relatedChampions": [
@@ -2747,7 +2748,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Superboy-card.png",
-      "communityAverageLevel": "Blue 3-Star",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Superboy.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Superboy",
       "relatedChampions": [
@@ -3127,7 +3128,7 @@
       ],
       "name": "Talia al Ghul",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TaliaalGhul-card.png",
-      "communityAverageLevel": "Purple 4-Star",
+      "communityAverageLevel": "Gold 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TaliaalGhul.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Talia%20al%20Ghul",
       "relatedChampions": [
