@@ -1,6 +1,73 @@
 {
-  "updated_at": "2025-09-11T14:38:48.315Z",
+  "updated_at": "2025-09-24T14:23:23.202Z",
   "champions": [
+    {
+      "name": "Swamp Thing",
+      "class": "Warrior",
+      "baseRarity": "Limited Mythic",
+      "inherentSynergies": [
+        "Justice League Dark",
+        "Metahuman"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "isUltimate": false,
+          "name": "Vine Lash",
+          "description": "Swamp Thing lashes out with his vines, dealing Spiritual DMG to an enemy and reducing their current Energy.",
+          "type": "Spiritual",
+          "effects": [
+            "Control",
+            "DMG"
+          ]
+        },
+        {
+          "type": "Buff",
+          "isUltimate": false,
+          "description": "After the start of the battle, Swamp Think gains stackable Spiritual AMP.",
+          "effects": [
+            "Buff"
+          ],
+          "name": "Natural Remedy"
+        },
+        {
+          "effects": [
+            "Control",
+            "AoE DMG"
+          ],
+          "description": "Swamp Thing leaps into the air, dealing Spiritual DMG to enemies in a circular area and reducing their current Energy.",
+          "isUltimate": true,
+          "type": "Spiritual",
+          "name": "Overgrowth"
+        },
+        {
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false,
+          "type": "Buff",
+          "name": "Swamp Surge",
+          "description": "At the start of battle, Swamp Thing summons [Swamp]. Its effect doubles if at least 3 [Justice League Dark] allies are present."
+        },
+        {
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false,
+          "description": "Increases all Champions' Spiritual DEF and additionally for [Warrior] Champions.",
+          "type": "Passive",
+          "name": "Green Whisper"
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/SwampThing-card.png",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/SwampThing.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Swamp%20Thing",
+      "relatedChampions": [
+        "Harley Quinn",
+        "Poison Ivy",
+        "Raven"
+      ]
+    },
     {
       "name": "Atom",
       "baseRarity": "Legendary",
@@ -373,7 +440,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Hawkgirl-card.png",
-      "communityAverageLevel": "Blue 4-Star",
+      "communityAverageLevel": "Blue 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Hawkgirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Hawkgirl",
       "relatedChampions": [
@@ -444,7 +511,7 @@
           "name": "Empathic Perception"
         }
       ],
-      "communityAverageLevel": "Purple 1-Star",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Starfire.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Starfire",
       "relatedChampions": [
@@ -648,7 +715,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Supergirl-card.png",
-      "communityAverageLevel": "Blue 4-Star",
+      "communityAverageLevel": "Blue 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Supergirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Supergirl",
       "relatedChampions": [
@@ -1424,7 +1491,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/RedHood-card.png",
-      "communityAverageLevel": "Gold 4-Star",
+      "communityAverageLevel": "Gold 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/RedHood.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Red%20Hood"
     },
@@ -1552,7 +1619,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/MartianManhunter-card.png",
-      "communityAverageLevel": "Blue 5-Star",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/MartianManhunter.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Martian%20Manhunter",
       "relatedChampions": [
@@ -2748,7 +2815,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Superboy-card.png",
-      "communityAverageLevel": "Blue 4-Star",
+      "communityAverageLevel": "Blue 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Superboy.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Superboy",
       "relatedChampions": [
@@ -3128,7 +3195,7 @@
       ],
       "name": "Talia al Ghul",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TaliaalGhul-card.png",
-      "communityAverageLevel": "Gold 2-Star",
+      "communityAverageLevel": "Purple 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TaliaalGhul.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Talia%20al%20Ghul",
       "relatedChampions": [

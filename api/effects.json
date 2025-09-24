@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-07-09T12:14:56.025Z",
+  "updated_at": "2025-09-24T14:24:43.317Z",
   "effects": [
     {
       "name": "Stunning",
@@ -26,6 +26,10 @@
       "description": "When the target is hit by a skill other than a basic attack, summoner performs a counterattack on the attacker, dealing Spiritual DMG."
     },
     {
+      "name": "Super Armor",
+      "description": "Prevents actions or skills from being interrupted by enemy attacks."
+    },
+    {
       "name": "Taunted",
       "description": "Forces the affected target to attack the summoner with basic attacks."
     },
@@ -35,7 +39,7 @@
     },
     {
       "name": "Krypton Energy",
-      "description": "At 4, 12, and 27 Krypton Energy Points all [Superman Family] allies ATK is increase by 25%, 50%, and 75% respectively."
+      "description": "At 4, 12, and 27 Krypton Energy Points all [Superman Family] allies ATK is increased by 25%, 50%, and 75% respectively."
     },
     {
       "name": "Engine Oil",
@@ -52,6 +56,10 @@
     {
       "name": "Robustness",
       "description": "Increases the target's Physical DEF for 20 seconds."
+    },
+    {
+      "name": "Swamp",
+      "description": "Reduces DMG taken by allies within range."
     },
     {
       "name": "Taunt",
