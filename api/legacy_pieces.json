@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-08-27T18:35:23.148Z",
+  "updated_at": "2025-09-24T14:24:48.612Z",
   "legacy_pieces": [
     {
       "name": "Honkin' Huge Hammer",
@@ -260,6 +260,15 @@
       "classes": [
         "Supporter",
         "Intimidator"
+      ]
+    },
+    {
+      "baseRarity": "Mythic+",
+      "name": "Antler Crown",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/AntlerCrown.webp",
+      "classes": [
+        "Warrior",
+        "Guardian"
       ]
     },
     {
