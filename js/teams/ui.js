@@ -73,6 +73,13 @@ const DOM = {
     selectedLPName: document.getElementById('selected-lp-name'),
     rosterSearchInput: document.getElementById('roster-search-input'),
     rosterFiltersWrapper: document.getElementById('roster-filters-wrapper'),
+    toggleOptimalBtn: document.getElementById('toggle-optimal-btn'),
+    toggleManualBtn: document.getElementById('toggle-manual-btn'),
+    optimalFinderContent: document.getElementById('optimal-finder-content'),
+    manualBuilderContent: document.getElementById('manual-builder-content'),
+    manualTeamSlots: document.getElementById('manual-team-slots'),
+    manualTeamResultsOutput: document.getElementById('manual-team-results-output'),
+    manualRosterSelectionGrid: document.getElementById('manual-roster-selection-grid'),
 };
 
 /**
@@ -100,6 +107,8 @@ let activeHealerFilter = false;
 let activeSearchTerm = '';
 let shouldScrollToRoster = false;
 let urlParamsHandled = false;
+let manualTeam = [];
+let evaluatedManualTeam = null; 
 
 // =================================================================================================
 // #region INITIALIZATION
@@ -688,6 +697,10 @@ function attachEventListeners() {
     DOM.customChampDropdownTrigger.addEventListener('click', toggleChampionDropdown);
     DOM.champSelectDb.addEventListener('change', (e) => updateChampionFormDisplay(e.target.value));
     DOM.calculateBtn.addEventListener('click', handleCalculate);
+    DOM.toggleOptimalBtn.addEventListener('click', () => switchBuilderMode('optimal'));
+    DOM.toggleManualBtn.addEventListener('click', () => switchBuilderMode('manual'));
+
+
     DOM.excludeSavedTeamCheckbox.addEventListener('change', (e) => {
         if (teamExclusionMultiSelect) {
             teamExclusionMultiSelect.setDisabled(!e.target.checked);
@@ -794,6 +807,153 @@ function navigateToStep(stepNum) {
     DOM.step1Content.classList.toggle('hidden-step', !isStep1);
     DOM.step2Content.classList.toggle('hidden-step', isStep1);
     logEvent(analytics, 'navigate_step', { step: stepNum });
+}
+
+/**
+ * @description Switches between the Optimal Finder and Manual Builder UI.
+ * @param {string} mode - The mode to switch to ('optimal' or 'manual').
+ */
+function switchBuilderMode(mode) {
+    const isOptimal = mode === 'optimal';
+    DOM.toggleOptimalBtn.classList.toggle('active', isOptimal);
+    DOM.optimalFinderContent.classList.toggle('hidden', !isOptimal);
+    
+    DOM.toggleManualBtn.classList.toggle('active', !isOptimal);
+    DOM.manualBuilderContent.classList.toggle('hidden', isOptimal);
+
+    if (!isOptimal) {
+        // When switching to manual, render the necessary UI
+        renderManualBuilderUI();
+    }
+
+    if (!isStep1) switchBuilderMode('optimal'); // Default to optimal finder when going to step 2
+
+    logEvent(analytics, 'switch_builder_mode', { mode: mode });
+}
+
+/**
+ * @description Renders the entire UI for the Manual Builder mode.
+ */
+function renderManualBuilderUI() {
+    renderManualTeamSlots();
+    renderManualRosterSelection();
+    updateManualTeamEvaluation();
+}
+
+/**
+ * @description Renders the 5 team slots, filling them with selected champions or placeholders.
+ */
+function renderManualTeamSlots() {
+    DOM.manualTeamSlots.innerHTML = '';
+    for (let i = 0; i < 5; i++) {
+        const slot = document.createElement('div');
+        slot.className = 'manual-team-slot';
+        slot.dataset.index = i;
+
+        const champion = manualTeam[i];
+        if (champion) {
+            const card = createRosterCard(champion);
+            // Remove roster-specific actions and add a remove button
+            card.querySelector('.card-actions')?.remove();
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-manual-champ-btn';
+            removeBtn.innerHTML = '&times;';
+            removeBtn.title = `Remove ${champion.name}`;
+            removeBtn.onclick = (e) => {
+                e.stopPropagation();
+                handleRemoveFromManualTeam(i);
+            };
+            slot.appendChild(card);
+            slot.appendChild(removeBtn);
+        } else {
+            slot.innerHTML = `<i class="fas fa-plus-circle text-4xl"></i><span class="mt-2 text-sm font-semibold">Empty Slot</span>`;
+        }
+        DOM.manualTeamSlots.appendChild(slot);
+    }
+}
+
+/**
+ * @description Renders the player's full roster for selection.
+ */
+function renderManualRosterSelection() {
+    DOM.manualRosterSelectionGrid.innerHTML = '';
+    const manualTeamIds = new Set(manualTeam.map(c => c.id));
+    
+    playerRoster
+        .sort((a,b) => TeamCalculator.calculateIndividualChampionScore(b, GAME_CONSTANTS) - TeamCalculator.calculateIndividualChampionScore(a, GAME_CONSTANTS))
+        .forEach(champ => {
+            const card = createRosterCard(champ);
+            card.querySelector('.card-actions')?.remove(); // Remove edit/delete buttons
+            
+            if (manualTeamIds.has(champ.id)) {
+                card.classList.add('is-on-team');
+            } else {
+                card.addEventListener('click', () => handleAddToManualTeam(champ));
+            }
+            DOM.manualRosterSelectionGrid.appendChild(card);
+        });
+    applyChampionCardBackgrounds();
+}
+
+/**
+ * @description Adds a champion to the manual team if there's space.
+ * @param {object} champion - The champion object from playerRoster.
+ */
+function handleAddToManualTeam(champion) {
+    if (manualTeam.length >= 5) {
+        showToast("Team is already full.", "warning");
+        return;
+    }
+    if (manualTeam.some(c => c.id === champion.id)) {
+        showToast(`${champion.name} is already on the team.`, "info");
+        return;
+    }
+    manualTeam.push(champion);
+    logEvent(analytics, 'manual_add_champion', { champion_name: champion.name });
+    renderManualBuilderUI(); // Re-render everything
+}
+
+/**
+ * @description Removes a champion from the manual team by their index.
+ * @param {number} index - The index of the champion in the manualTeam array.
+ */
+function handleRemoveFromManualTeam(index) {
+    const removedChamp = manualTeam.splice(index, 1);
+    if (removedChamp.length > 0) {
+        logEvent(analytics, 'manual_remove_champion', { champion_name: removedChamp[0].name });
+    }
+    renderManualBuilderUI(); // Re-render everything
+}
+
+/**
+ * @description Evaluates the manual team and displays the results.
+ */
+function updateManualTeamEvaluation() {
+    if (manualTeam.length < 5) {
+        DOM.manualTeamResultsOutput.innerHTML = `<p class="text-center text-slate-400 pt-4 text-lg">Add ${5 - manualTeam.length} more champion(s) to evaluate the team.</p>`;
+        evaluatedManualTeam = null;
+        return;
+    }
+    
+    const calculator = new TeamCalculator(dbSynergies, GAME_CONSTANTS);
+    evaluatedManualTeam = calculator.evaluateTeam(ensureIndividualScores(manualTeam, dbChampions));
+    
+    const scoreBreakdownHtml = getScoreBreakdownHtml(evaluatedManualTeam);
+    let html = `
+        <div class="p-6 bg-slate-900/70 backdrop-blur-sm rounded-lg border border-blue-500/20">
+            <div class="text-center mb-6">
+                <h3 class="text-3xl font-bold text-blue-300">Manual Team Score</h3>
+                <p class="text-xl text-slate-300">Total Score: <strong class="text-white font-bold">${Math.round(evaluatedManualTeam.totalScore)}</strong></p>
+            </div>
+            ${scoreBreakdownHtml}
+            <div class="mt-8 text-center flex justify-center items-center flex-wrap gap-4">
+                <button id="save-manual-team-btn" class="btn btn-primary">Save This Team</button>
+            </div>
+        </div>`;
+    DOM.manualTeamResultsOutput.innerHTML = html;
+
+    // Attach listener to the new save button
+    document.getElementById('save-manual-team-btn').addEventListener('click', saveCurrentBestTeam);
 }
 
 // =================================================================================================
@@ -1776,8 +1936,14 @@ function renderSavedTeams() {
  * @async
  */
 async function saveCurrentBestTeam() {
-    if (!currentDisplayedTeam) { showToast("No team to save.", "warning"); return; }
-    const defaultName = `Team (Score: ${Math.round(currentDisplayedTeam.totalScore)})`;
+    const teamToSave = DOM.manualBuilderContent.classList.contains('hidden') ? currentDisplayedTeam : evaluatedManualTeam;
+
+    if (!teamToSave) { 
+        showToast("No valid team to save.", "warning"); 
+        return; 
+    }
+
+    const defaultName = `Team (Score: ${Math.round(teamToSave.totalScore)})`;
     openTeamNameModal(defaultName, 'Save Team', async (teamName) => {
         if (!userId) { showToast("You must be logged in to save teams.", "error"); return; }
         const teamData = {

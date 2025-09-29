@@ -147,44 +147,71 @@
             </div>
 
             <div id="step-2-content" class="wizard-step hidden-step">
-                <section class="mb-12 p-6 bg-slate-900 bg-opacity-70 backdrop-blur-sm rounded-lg border border-blue-500/20">
-                    <h2 class="text-2xl font-bold text-blue-300 mb-6">Find Optimal Team</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                        <div>
-                            <h3 class="text-lg font-semibold text-blue-200 border-b border-blue-500/20 pb-2 mb-4">Filtering Options</h3>
-                            <div class="input-group mb-4">
-                                <label for="synergy-search-input">Include Champions with these Synergies:</label>
-                                <div id="synergy-multiselect-container" class="custom-multiselect-container">
-                                    <div class="pills-input-wrapper"><input type="text" id="synergy-search-input" placeholder="Select one or more synergies..."></div>
-                                    <div id="synergy-options-panel" class="custom-options-panel hidden"></div>
+                <div class="mb-8 flex justify-center">
+                    <div class="p-1 rounded-lg bg-slate-800 flex items-center border border-slate-700">
+                        <button id="toggle-optimal-btn" class="px-6 py-2 text-sm font-bold rounded-md transition-colors duration-300">
+                            <i class="fas fa-magic mr-2"></i>Optimal Finder
+                        </button>
+                        <button id="toggle-manual-btn" class="px-6 py-2 text-sm font-bold rounded-md transition-colors duration-300">
+                            <i class="fas fa-hand-pointer mr-2"></i>Manual Builder
+                        </button>
+                    </div>
+                </div>
+                <div id="optimal-finder-content">
+                    <section class="mb-12 p-6 bg-slate-900 bg-opacity-70 backdrop-blur-sm rounded-lg border border-blue-500/20">
+                        <h2 class="text-2xl font-bold text-blue-300 mb-6">Find Optimal Team</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                            <div>
+                                <h3 class="text-lg font-semibold text-blue-200 border-b border-blue-500/20 pb-2 mb-4">Filtering Options</h3>
+                                <div class="input-group mb-4">
+                                    <label for="synergy-search-input">Include Champions with these Synergies:</label>
+                                    <div id="synergy-multiselect-container" class="custom-multiselect-container">
+                                        <div class="pills-input-wrapper"><input type="text" id="synergy-search-input" placeholder="Select one or more synergies..."></div>
+                                        <div id="synergy-options-panel" class="custom-options-panel hidden"></div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <input id="require-healer-checkbox" type="checkbox" class="h-5 w-5 rounded bg-slate-700 border-slate-500 text-indigo-500 focus:ring-indigo-600">
+                                    <label for="require-healer-checkbox" class="ml-3 checkbox-label">Require Healer in Team?</label>
                                 </div>
                             </div>
-                            <div class="flex items-center">
-                                <input id="require-healer-checkbox" type="checkbox" class="h-5 w-5 rounded bg-slate-700 border-slate-500 text-indigo-500 focus:ring-indigo-600">
-                                <label for="require-healer-checkbox" class="ml-3 checkbox-label">Require Healer in Team?</label>
+                            <div>
+                                <h3 class="text-lg font-semibold text-blue-200 border-b border-blue-500/20 pb-2 mb-4">Exclusion Options</h3>
+                                <div class="flex items-center mb-4">
+                                    <input id="exclude-saved-team-checkbox" type="checkbox" class="h-5 w-5 rounded bg-slate-700 border-slate-500 text-indigo-500 focus:ring-indigo-600">
+                                    <label for="exclude-saved-team-checkbox" class="ml-3 checkbox-label">Exclude Champions from Saved Teams?</label>
+                                </div>
+                                <div class="input-group">
+                                    <label for="team-exclusion-multiselect-container" class="sr-only">Select Teams to Exclude</label>
+                                    <div id="team-exclusion-multiselect-container"></div>
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <h3 class="text-lg font-semibold text-blue-200 border-b border-blue-500/20 pb-2 mb-4">Exclusion Options</h3>
-                             <div class="flex items-center mb-4">
-                                <input id="exclude-saved-team-checkbox" type="checkbox" class="h-5 w-5 rounded bg-slate-700 border-slate-500 text-indigo-500 focus:ring-indigo-600">
-                                <label for="exclude-saved-team-checkbox" class="ml-3 checkbox-label">Exclude Champions from Saved Teams?</label>
-                            </div>
-                            <div class="input-group">
-                                <label for="team-exclusion-multiselect-container" class="sr-only">Select Teams to Exclude</label>
-                                <div id="team-exclusion-multiselect-container"></div>
-                            </div>
+                        <div class="text-center mt-8">
+                            <button id="calculate-btn" class="btn btn-primary text-lg px-12 py-4">Calculate Optimal Team</button>
                         </div>
+                    </section>
+                    
+                    <div id="results-output" class="min-h-[200px]">
+                        <p class="text-center text-slate-400 pt-8 text-xl">Calculate a team to see results here.</p>
                     </div>
-                    <div class="text-center mt-8">
-                        <button id="calculate-btn" class="btn btn-primary text-lg px-12 py-4">Calculate Optimal Team</button>
-                    </div>
-                </section>
-                
-                <div id="results-output" class="min-h-[200px]">
-                    <p class="text-center text-slate-400 pt-8 text-xl">Calculate a team to see results here.</p>
                 </div>
-
+                <div id="manual-builder-content" class="hidden">
+                    <section class="mb-12 p-6 bg-slate-900 bg-opacity-70 backdrop-blur-sm rounded-lg border border-blue-500/20">
+                        <h2 class="text-2xl font-bold text-blue-300 mb-6">Manually Build Your Team</h2>
+                        <p class="text-center text-slate-400 mb-6">Your current team composition. Add champions from your roster below.</p>
+                        <div id="manual-team-slots" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+                            </div>
+                        <div id="manual-team-results-output">
+                            </div>
+                    </section>
+                    
+                    <section class="p-6 bg-slate-900 bg-opacity-70 backdrop-blur-sm rounded-lg border border-blue-500/20">
+                        <h3 class="text-xl font-bold text-blue-300 mb-4">Click a Champion to Add to Your Team</h3>
+                        <div id="manual-roster-selection-grid" class="codex-grid">
+                            </div>
+                    </section>
+                </div>
                 <div class="mt-16">
                     <h2 class="text-3xl font-bold text-blue-300 mb-6">Saved Teams</h2>
                     <div id="saved-teams-list" class="space-y-8">
@@ -192,6 +219,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </main>
 
