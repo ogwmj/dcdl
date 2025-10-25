@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-09-24T14:23:23.202Z",
+  "updated_at": "2025-10-25T14:59:53.564Z",
   "champions": [
     {
       "name": "Swamp Thing",
@@ -60,6 +60,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/SwampThing-card.png",
+      "communityAverageLevel": "Blue 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/SwampThing.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Swamp%20Thing",
       "relatedChampions": [
@@ -285,8 +286,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Blue 2-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Batman-card.png",
+      "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Batman.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Batman"
     },
@@ -372,7 +373,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/GreenLantern-card.png",
-      "communityAverageLevel": "White 5-Star",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/GreenLantern.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Green%20Lantern"
     },
@@ -440,7 +441,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Hawkgirl-card.png",
-      "communityAverageLevel": "Blue 3-Star",
+      "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Hawkgirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Hawkgirl",
       "relatedChampions": [
@@ -715,7 +716,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Supergirl-card.png",
-      "communityAverageLevel": "Blue 3-Star",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Supergirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Supergirl",
       "relatedChampions": [
@@ -723,6 +724,20 @@
         "Shazam",
         "The Flash"
       ]
+    },
+    {
+      "name": "Wonder Woman Death Metal",
+      "baseRarity": "Limited Mythic",
+      "isHealer": false,
+      "inherentSynergies": [
+        "Death Metal",
+        "Amazons",
+        "Metahuman"
+      ],
+      "class": "Warrior",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/WonderWomanDeathMetal-card.png",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/WonderWomanDeathMetal.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Wonder%20Woman%20Death%20Metal"
     },
     {
       "name": "Poison Ivy",
@@ -813,6 +828,70 @@
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Chop%20Chop"
     },
     {
+      "name": "Wonder Girl",
+      "baseRarity": "Mythic",
+      "class": "Warrior",
+      "isHealer": false,
+      "inherentSynergies": [
+        "Amazons",
+        "Teen Titans",
+        "Metahuman"
+      ],
+      "skills": [
+        {
+          "name": "Lasso of Persuasion",
+          "description": "Donna Troy unleashes a flurry of lashes at an enemy, dealing Physical DMG and applying [Astral Willpower].",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Divine Protection",
+          "description": "When an enemy reaches 4 stack(s) of [Astral Willpower], Donna Troy gainbs a shield  equal to a percentage of her HP, and all [Amazons] allies' DMG dealt is increased.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Amazonian Resolve",
+          "description": "Donna Troy charges at an enemy and slashes, knocking them down, dealing Physical DMG and applying 3 stack(s) of {Astral Willpower]. Also reduces the target's Physical DEF by 25%.",
+          "type": "Physical",
+          "effects": [
+            "Control",
+            "DMG",
+            "Debuff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Shield of Unity",
+          "description": "At the start of batttle, all [Amazons] and [Teen Titans] gain Physical DEF Up.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Battle Harmony",
+          "description": "Increases [Amazons] Champions' Physical DEF.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/WonderGirl-card.png",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/WonderGirl.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Wonder%20Girl"
+    },
+    {
       "name": "Krypto",
       "inherentSynergies": [
         "Superman Family",
@@ -895,7 +974,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Patrolman-card.png",
-      "communityAverageLevel": "Blue 2-Star",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Patrolman.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Patrolman"
     },
@@ -1026,7 +1105,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Deathstroke-card.png",
-      "communityAverageLevel": "Blue 4-Star",
+      "communityAverageLevel": "Blue 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Deathstroke.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Deathstroke",
       "relatedChampions": [
@@ -1298,7 +1377,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Raven-card.png",
-      "communityAverageLevel": "Blue 1-Star",
+      "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Raven.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Raven"
     },
@@ -1355,12 +1434,12 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Mera-card.png",
-      "communityAverageLevel": "Gold 2-Star",
       "inherentSynergies": [
         "Atlanteans",
         "Energy Wielder",
         "Justice League"
       ],
+      "communityAverageLevel": "Gold 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Mera.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Mera"
     },
@@ -1555,7 +1634,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Arsenal-card.png",
-      "communityAverageLevel": "White 4-Star",
+      "communityAverageLevel": "White 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Arsenal.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Arsenal"
     },
@@ -1687,7 +1766,7 @@
       ],
       "name": "Ra's al Ghul",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/RasalGhul-card.png",
-      "communityAverageLevel": "White 2-Star",
+      "communityAverageLevel": "White 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Ra'salGhul.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Ra's%20al%20Ghul",
       "relatedChampions": [
@@ -1884,7 +1963,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png",
-      "communityAverageLevel": "Blue 1-Star",
+      "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/DoctorFate.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Doctor%20Fate"
     },
@@ -2168,7 +2247,7 @@
           ]
         }
       ],
-      "communityAverageLevel": "Red 5-Star",
+      "communityAverageLevel": "Purple 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/QueenHippolyta.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Queen%20Hippolyta",
       "relatedChampions": [
@@ -2533,7 +2612,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Homefun-card.png",
-      "communityAverageLevel": "Blue 2-Star",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Homefun.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Homefun"
     },
@@ -2597,8 +2676,8 @@
           ]
         }
       ],
-      "communityAverageLevel": "White 5-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Bane-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Bane.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Bane"
     },
@@ -2728,8 +2807,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "White 5-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/HarleyQuinn.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Harley%20Quinn"
     },
@@ -2970,7 +3049,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/GreenArrow-card.png",
-      "communityAverageLevel": "Gold 2-Star",
+      "communityAverageLevel": "Gold 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/GreenArrow.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Green%20Arrow"
     },
@@ -3195,7 +3274,7 @@
       ],
       "name": "Talia al Ghul",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TaliaalGhul-card.png",
-      "communityAverageLevel": "Purple 5-Star",
+      "communityAverageLevel": "Purple 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TaliaalGhul.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Talia%20al%20Ghul",
       "relatedChampions": [
@@ -3270,6 +3349,20 @@
       "communityAverageLevel": "White 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/ThePenguin.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=The%20Penguin"
+    },
+    {
+      "name": "Nurse Harley",
+      "inherentSynergies": [
+        "Birds of Prey",
+        "Arkham's Most Wanted",
+        "Weapon Master"
+      ],
+      "isHealer": false,
+      "class": "Firepower",
+      "baseRarity": "Limited Mythic",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/NurseHarley-card.png",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/NurseHarley.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Nurse%20Harley"
     },
     {
       "name": "Shazam",
@@ -3421,7 +3514,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TheFlash-card.png",
-      "communityAverageLevel": "Blue 1-Star",
+      "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TheFlash.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=The%20Flash"
     },
@@ -3485,7 +3578,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Nightwing-card.png",
-      "communityAverageLevel": "Blue 3-Star",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Nightwing.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Nightwing",
       "relatedChampions": [
