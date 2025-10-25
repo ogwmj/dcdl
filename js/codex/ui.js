@@ -1061,6 +1061,176 @@ function handleFilterClick(e) {
     applyFiltersAndSort();
 }
 
+function createSynergyPillbox() {
+    const container = DOM.synergyContainer;
+    container.innerHTML = `<div class="pills-input-wrapper" tabindex="0">
+                                <input type="text" id="synergy-search-input" placeholder="Select synergies...">
+                           </div>
+                           <div class="custom-options-panel hidden"></div>`;
+    
+    const inputWrapper = container.querySelector('.pills-input-wrapper');
+    const searchInput = container.querySelector('#synergy-search-input');
+    const optionsPanel = container.querySelector('.custom-options-panel');
+
+    const synergyNames = Object.values(ALL_SYNERGIES).map(s => s.name).sort();
+    let state = { available: [...synergyNames], selected: [] };
+
+    const render = () => {
+        inputWrapper.querySelectorAll('.pill').forEach(p => p.remove());
+        state.selected.forEach(value => {
+            const pill = document.createElement('div');
+            pill.className = 'pill';
+            pill.innerHTML = `${getSynergyIcon(value)}<span>${value}</span>`;
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'pill-remove';
+            removeBtn.innerHTML = '&times;';
+            removeBtn.onclick = (e) => { e.stopPropagation(); deselect(value); };
+            pill.appendChild(removeBtn);
+            inputWrapper.insertBefore(pill, searchInput);
+        });
+
+        optionsPanel.innerHTML = '';
+        const filteredOptions = state.available.filter(opt => opt.toLowerCase().includes(searchInput.value.toLowerCase()));
+        
+        filteredOptions.forEach(value => {
+            const optionEl = document.createElement('div');
+            optionEl.className = 'custom-option';
+            optionEl.innerHTML = `${getSynergyIcon(value)}<span>${value}</span>`;
+            optionEl.onclick = () => select(value);
+            optionsPanel.appendChild(optionEl);
+        });
+    };
+
+    const select = (value) => {
+        state.selected.push(value);
+        state.available = state.available.filter(v => v !== value);
+        searchInput.value = '';
+        render();
+        logAnalyticsEvent('filter_change', { filter_group: 'synergy', filter_value: value, is_active: true });
+        applyFiltersAndSort();
+        searchInput.focus();
+    };
+
+    const deselect = (value) => {
+        state.selected = state.selected.filter(v => v !== value);
+        state.available.push(value);
+        state.available.sort();
+        render();
+        logAnalyticsEvent('filter_change', { filter_group: 'synergy', filter_value: value, is_active: false });
+        applyFiltersAndSort();
+    };
+
+    inputWrapper.addEventListener('click', () => {
+        optionsPanel.classList.remove('hidden');
+        searchInput.focus();
+    });
+    searchInput.addEventListener('input', render);
+    document.addEventListener('click', (e) => {
+        if (!container.contains(e.target)) {
+            optionsPanel.classList.add('hidden');
+        }
+    });
+
+    render();
+
+    return {
+        getSelectedValues: () => state.selected,
+        reset: () => {
+            state = { available: [...synergyNames], selected: [] };
+            render();
+        },
+        setSelected: (selectedValues) => {
+            state.selected = selectedValues.filter(v => synergyNames.includes(v));
+            state.available = synergyNames.filter(v => !state.selected.includes(v));
+            render();
+        }
+    };
+}
+
+function createSortDropdown() {
+    const container = DOM.sortSelectContainer;
+    container.innerHTML = ''; 
+
+    const options = [
+        { value: 'name_asc', label: 'Name (A-Z)' },
+        { value: 'name_desc', label: 'Name (Z-A)' },
+        { value: 'rarity_desc', label: 'Rarity (Highest First)' },
+        { value: 'rarity_asc', label: 'Rarity (Lowest First)' },
+    ];
+    let state = {
+        isOpen: false,
+        selectedValue: activeFilters.sort,
+    };
+
+    const trigger = document.createElement('button');
+    trigger.className = 'custom-select-trigger';
+
+    const optionsPanel = document.createElement('div');
+    optionsPanel.className = 'custom-select-options hidden';
+
+    const updateTriggerText = () => {
+        const selectedOption = options.find(opt => opt.value === state.selectedValue);
+        trigger.textContent = selectedOption ? selectedOption.label : 'Select...';
+    };
+
+    const updateSelectedOptionClass = () => {
+        optionsPanel.querySelectorAll('.custom-select-option').forEach(opt => {
+            opt.classList.toggle('selected', opt.dataset.value === state.selectedValue);
+        });
+    };
+    
+    const select = (value) => {
+        state.selectedValue = value;
+        state.isOpen = false;
+        container.classList.remove('is-open');
+        optionsPanel.classList.add('hidden');
+        
+        updateTriggerText();
+        updateSelectedOptionClass();
+
+        logAnalyticsEvent('sort_change', { sort_by: value });
+        applyFiltersAndSort();
+    };
+
+    const toggle = () => {
+        state.isOpen = !state.isOpen;
+        container.classList.toggle('is-open', state.isOpen);
+        optionsPanel.classList.toggle('hidden', !state.isOpen);
+    };
+
+    options.forEach(opt => {
+        const optionEl = document.createElement('div');
+        optionEl.className = 'custom-select-option';
+        optionEl.dataset.value = opt.value;
+        optionEl.textContent = opt.label;
+        optionEl.addEventListener('click', () => select(opt.value));
+        optionsPanel.appendChild(optionEl);
+    });
+    
+    trigger.addEventListener('click', toggle);
+    
+    container.appendChild(trigger);
+    container.appendChild(optionsPanel);
+
+    document.addEventListener('click', (e) => {
+        if (!container.contains(e.target) && state.isOpen) {
+            toggle();
+        }
+    });
+
+    updateTriggerText();
+    updateSelectedOptionClass();
+
+    return {
+        getValue: () => state.selectedValue,
+        setValue: (value) => {
+            state.selectedValue = options.some(o => o.value === value) ? value : 'name_asc';
+            updateTriggerText();
+            updateSelectedOptionClass();
+        }
+    };
+}
+
 function resetAllFilters() {
     activeFilters = { search: '', sort: 'name_asc', class: new Set(), rarity: new Set(), synergy: [], isHealer: false };
     updateFilterControlsFromState();
@@ -1079,6 +1249,9 @@ function populateFilters() {
     DOM.rarityFiltersContainer.innerHTML = rarities.map(r => 
         `<button class="filter-btn" data-group="rarity" data-value="${r}">${r}</button>`
     ).join('');
+
+    synergyPillbox = createSynergyPillbox();
+    sortDropdown = createSortDropdown();
 }
 
 // --- END: Filter & Sort Logic ---
