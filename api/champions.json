@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-10-25T14:59:53.564Z",
+  "updated_at": "2025-10-30T20:36:09.671Z",
   "champions": [
     {
       "name": "Swamp Thing",
@@ -716,7 +716,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Supergirl-card.png",
-      "communityAverageLevel": "Blue 4-Star",
+      "communityAverageLevel": "Blue 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Supergirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Supergirl",
       "relatedChampions": [
@@ -736,6 +736,54 @@
       ],
       "class": "Warrior",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/WonderWomanDeathMetal-card.png",
+      "skills": [
+        {
+          "name": "Metalwork",
+          "description": "Wonder Woman Death Metal swings her chainsaw, dealing physical damage based on her ATK and Physical DEF to nearby enemies.",
+          "type": "Physical",
+          "effects": [
+            "AoE DMG",
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Wrought Iron",
+          "description": "Increases WonderWoman Death Metal's Physical PEN. When an enemy is defeated nearby, she restores 20 Energy.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Peak Intensity",
+          "description": "Wonder Woman Death Metal enters her ultimate form, continuously consuming Energy until it's depleted (drain rate increases over time). While active, she gains [Super Armor], can recover Energy, and enhances her basic attacks with chain lightning that arcs to up to 5 enemies (including her target), dealing physical DMG. Upon casting her Ultimate, Wonder Woman Death Metal gains bonus Physical DEF for each [Amazons] ally present.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Bonds of Sisterhood",
+          "description": "Every 5s after the start of battle, Physical DMG taken by [Amazons] Champions is reduced, stacking up to 4 times.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Heavy Mettle",
+          "description": "Increases all Champions' Physical DEF and [Warrior] Champions' ATK. Applies globally.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/WonderWomanDeathMetal.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Wonder%20Woman%20Death%20Metal"
     },
@@ -888,6 +936,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/WonderGirl-card.png",
+      "communityAverageLevel": "White 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/WonderGirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Wonder%20Girl"
     },
@@ -2247,7 +2296,7 @@
           ]
         }
       ],
-      "communityAverageLevel": "Purple 2-Star",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/QueenHippolyta.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Queen%20Hippolyta",
       "relatedChampions": [
@@ -3361,6 +3410,56 @@
       "class": "Firepower",
       "baseRarity": "Limited Mythic",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/NurseHarley-card.png",
+      "skills": [
+        {
+          "name": "Insanity Erosion",
+          "description": "Deals physical damage equal to a percentage of her ATK and inflicts 4 stack(s) of [Corrosion].",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG",
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Madness Actualization",
+          "description": "Nurse Harley's active attacks deal more damage. For every 1 stack(s) of debuffes on the target, the damage is increased by an additional percentage.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Corrosive Sanity",
+          "description": "Nurse Harley enters [Self-Actualization] for 13s. While in this state, her basic attacks fire corrosive shots, each dealing Physical DMG and inflicting 2 stack(s) of [Corrosion].",
+          "type": "Passive",
+          "effects": [
+            "DMG",
+            "Debuff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Arkham's Awakening",
+          "description": "At the start of battle, Nurse Harley gains 1 stack of [Attack Growth] for each [Arkham's Most Wanted] ally present, up to 5 stacks. Each stack increases her ATK.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Adrenaline Frenzy",
+          "description": "Increases all Champion's ATK with an additional bonus for [Firepower] Champions. Applies globally.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/NurseHarley.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Nurse%20Harley"
     },

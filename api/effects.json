@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-09-24T14:24:43.317Z",
+  "updated_at": "2025-10-30T20:37:11.018Z",
   "effects": [
     {
       "name": "Stunning",
@@ -96,6 +96,10 @@
     {
       "name": "Memtal Breakdown",
       "description": "Incapacitates and slightly shrinks the target, and reduces their MEN."
+    },
+    {
+      "name": "Corrosion",
+      "description": "Deals Physical DMG equal to a percentage of Nurse Harley's ATK per second, stacking up to 100 time(s)."
     },
     {
       "name": "Deadly Mark",
