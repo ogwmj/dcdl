@@ -237,7 +237,7 @@ async function generateShareBanner(team) {
     const totalAvatarWidth = (team.members.length - 1) * step + avatarSize;
     let startX = (w - totalAvatarWidth) / 2;
     
-    const rarityColors = { 'Epic': '#8b5cf6', 'Legendary': '#facc15', 'Mythic': '#ef4444', 'Limited Mythic': '#ef4444' };
+    const rarityColors = { 'Epic': '#8b5cf6', 'Legendary': '#facc15', 'Mythic': '#ef4444', 'Limited Mythic': '#ef4444', 'Iconic': '#44b0ef' };
 
     function darkenColor(hex, percent) {
         hex = hex.replace(/^#/, '');
