@@ -26,7 +26,7 @@ function generateLegacyPieceStarTierModifiers() {
 generateLegacyPieceStarTierModifiers();
 
 export const GAME_CONSTANTS = {
-    CHAMPION_BASE_RARITY_SCORE: { "Epic": 100, "Legendary": 150, "Mythic": 220, "Limited Mythic": 260 },
+    CHAMPION_BASE_RARITY_SCORE: { "Epic": 100, "Legendary": 150, "Mythic": 220, "Limited Mythic": 260, "Iconic": 360 },
     STANDARD_GEAR_RARITIES: ["None", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Mythic Enhanced"],
     STANDARD_GEAR_RARITY_MODIFIER: { "None": 0.0, "Uncommon": 0.02, "Rare": 0.05, "Epic": 0.10, "Legendary": 0.15, "Mythic": 0.20, "Mythic Enhanced": 0.25 },
     LEGACY_PIECE_BASE_RARITY_MODIFIER: { "None": 0.0, "Epic": 0.10, "Legendary": 0.15, "Mythic": 0.20, "Mythic+": 0.25 },
