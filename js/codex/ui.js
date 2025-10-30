@@ -19,7 +19,7 @@ let COMICS_DATA = {};
 let synergyPillbox = null;
 let sortDropdown = null;
 let currentChampionList = [];
-const RARITY_ORDER = { 'Epic': 1, 'Legendary': 2, 'Mythic': 3, 'Limited Mythic': 4 };
+const RARITY_ORDER = { 'Epic': 1, 'Legendary': 2, 'Mythic': 3, 'Limited Mythic': 4, 'Iconic': 5 };
 const CACHE_KEY = 'codexData';
 const CACHE_DURATION_MS = 12 * 60 * 60 * 1000;
 
@@ -1240,7 +1240,7 @@ function resetAllFilters() {
 
 function populateFilters() {
     const classes = [...new Set(ALL_CHAMPIONS.map(c => c.class).filter(Boolean))].sort();
-    const rarities = ['Epic', 'Legendary', 'Mythic', 'Limited Mythic'];
+    const rarities = ['Epic', 'Legendary', 'Mythic', 'Limited Mythic', 'Iconic'];
 
     DOM.classFiltersContainer.innerHTML = classes.map(c => 
         `<button class="class-filter-btn" data-group="class" data-value="${c}" title="${c}">${getClassIcon(c)}</button>`
