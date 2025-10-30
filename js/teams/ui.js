@@ -806,6 +806,12 @@ function navigateToStep(stepNum) {
     DOM.step2Btn.classList.toggle('active', !isStep1);
     DOM.step1Content.classList.toggle('hidden-step', !isStep1);
     DOM.step2Content.classList.toggle('hidden-step', isStep1);
+
+    if (!isStep1) {
+        // This is the correct place for this default behavior
+        switchBuilderMode('optimal');
+    }
+
     logEvent(analytics, 'navigate_step', { step: stepNum });
 }
 
@@ -825,8 +831,6 @@ function switchBuilderMode(mode) {
         // When switching to manual, render the necessary UI
         renderManualBuilderUI();
     }
-
-    if (!isStep1) switchBuilderMode('optimal'); // Default to optimal finder when going to step 2
 
     logEvent(analytics, 'switch_builder_mode', { mode: mode });
 }
@@ -1948,9 +1952,25 @@ async function saveCurrentBestTeam() {
         if (!userId) { showToast("You must be logged in to save teams.", "error"); return; }
         const teamData = {
             name: teamName,
-            members: currentDisplayedTeam.members.map(m => ({ dbChampionId: m.dbChampionId, name: m.name, baseRarity: m.baseRarity, class: m.class, isHealer: m.isHealer === true, starColorTier: m.starColorTier, forceLevel: m.forceLevel || 0, gear: m.gear, legacyPiece: m.legacyPiece, inherentSynergies: m.inherentSynergies || [], individualScore: m.individualScore })),
-            totalScore: currentDisplayedTeam.totalScore, activeSynergies: currentDisplayedTeam.activeSynergies, scoreBreakdown: currentDisplayedTeam.scoreBreakdown,
-            baseScoreSum: currentDisplayedTeam.baseScoreSum, uniqueClassesCount: currentDisplayedTeam.uniqueClassesCount, classDiversityBonusApplied: currentDisplayedTeam.classDiversityBonusApplied,
+            members: teamToSave.members.map(m => ({
+                dbChampionId: m.dbChampionId,
+                name: m.name,
+                baseRarity: m.baseRarity,
+                class: m.class,
+                isHealer: m.isHealer === true,
+                starColorTier: m.starColorTier,
+                forceLevel: m.forceLevel || 0,
+                gear: m.gear,
+                legacyPiece: m.legacyPiece,
+                inherentSynergies: m.inherentSynergies || [],
+                individualScore: m.individualScore
+            })),
+            totalScore: teamToSave.totalScore,
+            activeSynergies: teamToSave.activeSynergies,
+            scoreBreakdown: teamToSave.scoreBreakdown,
+            baseScoreSum: teamToSave.baseScoreSum,
+            uniqueClassesCount: teamToSave.uniqueClassesCount,
+            classDiversityBonusApplied: teamToSave.classDiversityBonusApplied,
             createdAt: serverTimestamp()
         };
         try {
