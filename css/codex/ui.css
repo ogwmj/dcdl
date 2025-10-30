@@ -315,8 +315,8 @@
     --glow-color: var(--rarity-mythic-color);
 }
 .rarity-bg-Iconic, .rarity-bg-Iconic {
-    border-color: var(--rarity-mythic-color);
-    --glow-color: var(--rarity-mythic-color);
+    border-color: var(--rarity-iconic-color);
+    --glow-color: var(--rarity-iconic-color);
 }
 
 .champion-card::before {
