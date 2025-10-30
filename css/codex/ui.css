@@ -8,6 +8,7 @@
     --rarity-epic-color: #8b5cf6;
     --rarity-legendary-color: #facc15;
     --rarity-mythic-color: #ef4444;
+    --rarity-iconic-color: #44b0ef;
     --base-bg-color: #0d1226;
 }
 
@@ -313,6 +314,10 @@
     border-color: var(--rarity-mythic-color);
     --glow-color: var(--rarity-mythic-color);
 }
+.rarity-bg-Iconic, .rarity-bg-Iconic {
+    border-color: var(--rarity-mythic-color);
+    --glow-color: var(--rarity-mythic-color);
+}
 
 .champion-card::before {
     content: '';
@@ -326,7 +331,7 @@
     opacity: 0.6;
 }
 
-.rarity-bg-Limited-Mythic::after {
+.rarity-bg-Limited-Mythic::after, .rarity-bg-Iconic::after {
     content: '';
     position: absolute;
     top: 0;
@@ -613,6 +618,7 @@
 .champion-list-item.rarity-Legendary { border-color: var(--rarity-legendary-color); }
 .champion-list-item.rarity-Mythic,
 .champion-list-item.rarity-Limited-Mythic { border-color: var(--rarity-mythic-color); }
+.champion-list-item.rarity-Iconic { border-color: var(--rarity-iconic-color); }
 
 .list-item-avatar img {
     width: 50px;
