@@ -325,6 +325,13 @@ main.relative {
 	background-color: rgba(121, 22, 163, 0.5);
 }
 
+#team-builder-modal-content .item-card.rarity-iconic,
+#tierlist-modal-content .item-card.rarity-iconic,
+.tier-list-wrapper .item-card.rarity-iconic,
+#team-view .item-card.rarity-iconic {
+	border-color: #44b0ef;
+	background-color: rgba(28, 65, 121, 0.5);
+}
 
 /* --- Tier List Editor & Forum Post Modals --- */
 .modal-backdrop {
