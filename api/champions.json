@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-10-30T20:36:09.671Z",
+  "updated_at": "2025-11-06T18:10:34.123Z",
   "champions": [
     {
       "name": "Swamp Thing",
@@ -716,7 +716,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Supergirl-card.png",
-      "communityAverageLevel": "Blue 3-Star",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Supergirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Supergirl",
       "relatedChampions": [
@@ -727,7 +727,6 @@
     },
     {
       "name": "Wonder Woman Death Metal",
-      "baseRarity": "Limited Mythic",
       "isHealer": false,
       "inherentSynergies": [
         "Death Metal",
@@ -784,6 +783,8 @@
           "isUltimate": false
         }
       ],
+      "baseRarity": "Iconic",
+      "communityAverageLevel": "Purple 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/WonderWomanDeathMetal.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Wonder%20Woman%20Death%20Metal"
     },
@@ -874,6 +875,66 @@
       "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/ChopChop.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Chop%20Chop"
+    },
+    {
+      "name": "The Riddler",
+      "baseRarity": "Limited Mythic",
+      "class": "Supporter",
+      "inherentSynergies": [
+        "Arkham's Most Wanted",
+        "Weapon Master"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Riddle Me This",
+          "description": "The Riddler poses a puzzle, inflicting stack(s) of [Enigma] on each enemy within range.",
+          "type": "Debuff",
+          "effects": [
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Surprise!",
+          "description": "After The Riddler casts his Ultimate or a skill, there is a chance to inflict additional [Enigma] on all enemies.",
+          "type": "Debuff",
+          "effects": [
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "The Grand Enigma",
+          "description": "The Riddler unveils his grand enigma, grant all allies a shield equal to a percentage of his Attack.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "The Arkham Shuffle",
+          "description": "Each [Arkham's Most Wanted] ally present increases the strength of The Riddler's shields.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Riddle Interlude",
+          "description": "Increases all Champion's Physical Defense with an additional percentage for [Supporter] Champions. Applies globally.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TheRiddler-card.png",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TheRiddler.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=The%20Riddler"
     },
     {
       "name": "Wonder Girl",
@@ -1619,7 +1680,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/RedHood-card.png",
-      "communityAverageLevel": "Gold 3-Star",
+      "communityAverageLevel": "Gold 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/RedHood.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Red%20Hood"
     },
@@ -2144,7 +2205,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/KillerCroc-card.png",
-      "communityAverageLevel": "Gold 2-Star",
+      "communityAverageLevel": "Gold 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/KillerCroc.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Killer%20Croc"
     },
@@ -3460,6 +3521,7 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "Red 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/NurseHarley.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Nurse%20Harley"
     },
@@ -3677,7 +3739,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Nightwing-card.png",
-      "communityAverageLevel": "Blue 4-Star",
+      "communityAverageLevel": "Blue 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Nightwing.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Nightwing",
       "relatedChampions": [

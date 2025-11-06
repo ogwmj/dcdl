@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-10-30T23:32:21.416Z",
+  "updated_at": "2025-11-06T18:10:43.010Z",
   "legacy_pieces": [
     {
       "name": "Honkin' Huge Hammer",
@@ -352,6 +352,15 @@
       "classes": [
         "Warrior",
         "Guardian"
+      ]
+    },
+    {
+      "name": "Conundrum Cane",
+      "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/ConundrumCane.webp",
+      "classes": [
+        "Supporter",
+        "Intimidator"
       ]
     },
     {

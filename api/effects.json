@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-10-30T20:37:11.018Z",
+  "updated_at": "2025-11-06T18:10:37.777Z",
   "effects": [
     {
       "name": "Stunning",
@@ -136,6 +136,10 @@
     {
       "name": "Self-Actualization",
       "description": "Increases ATK and enhances attacks to deal AoE damage in a small area."
+    },
+    {
+      "name": "Enigma",
+      "description": "Randomly applies one of the following (prioritizing effects the target doesn't already have or has the fewest stack(s) of: Reduces Spiritual Amplification, Reduces Attack, or Reduces Physical and Spiritual Defense."
     }
   ]
 }
