@@ -115,7 +115,7 @@ function createComicCardLink(comic, mementos) {
             let limitedBadge = comic.isLimited ? '<div class="limited-badge">Limited</div>' : '';
         }
     } else {
-        let limitedBadge = comic.isLimited ? '<div class="limited-badge">Limited</div>' : '';
+        let limitedBadge = '';
     }
 
     
