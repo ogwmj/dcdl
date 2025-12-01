@@ -108,14 +108,15 @@ function createComicCardLink(comic, mementos) {
     const mementoNames = mementos.map(m => m.name.toLowerCase()).join('|');
     cardLink.dataset.mementos = mementoNames;
 
+    let limitedBadge = '';
     if (comic.isLimited) {
         if (comic.archived) {
-            let limitedBadge = comic.isLimited ? '<div class="archived-badge">Archived</div>' : '';
+            limitedBadge = comic.isLimited ? '<div class="archived-badge">Archived</div>' : '';
         } else {
-            let limitedBadge = comic.isLimited ? '<div class="limited-badge">Limited</div>' : '';
+            limitedBadge = comic.isLimited ? '<div class="limited-badge">Limited</div>' : '';
         }
     } else {
-        let limitedBadge = '';
+        limitedBadge = '';
     }
 
     
