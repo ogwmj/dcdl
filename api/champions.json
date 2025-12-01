@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-11-06T18:10:34.123Z",
+  "updated_at": "2025-12-01T15:45:57.070Z",
   "champions": [
     {
       "name": "Swamp Thing",
@@ -60,7 +60,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/SwampThing-card.png",
-      "communityAverageLevel": "Blue 3-Star",
+      "communityAverageLevel": "Purple 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/SwampThing.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Swamp%20Thing",
       "relatedChampions": [
@@ -132,7 +132,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Atom-card.png",
-      "communityAverageLevel": "Gold 2-Star",
+      "communityAverageLevel": "Gold 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Atom.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Atom"
     },
@@ -512,7 +512,7 @@
           "name": "Empathic Perception"
         }
       ],
-      "communityAverageLevel": "Blue 4-Star",
+      "communityAverageLevel": "Blue 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Starfire.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Starfire",
       "relatedChampions": [
@@ -650,8 +650,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "White 5-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BlackCanary-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BlackCanary.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Black%20Canary"
     },
@@ -784,7 +784,7 @@
         }
       ],
       "baseRarity": "Iconic",
-      "communityAverageLevel": "Purple 1-Star",
+      "communityAverageLevel": "Purple 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/WonderWomanDeathMetal.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Wonder%20Woman%20Death%20Metal"
     },
@@ -933,6 +933,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TheRiddler-card.png",
+      "communityAverageLevel": "Blue 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TheRiddler.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=The%20Riddler"
     },
@@ -997,7 +998,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/WonderGirl-card.png",
-      "communityAverageLevel": "White 5-Star",
+      "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/WonderGirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Wonder%20Girl"
     },
@@ -1153,7 +1154,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/RedRobin-card.png",
-      "communityAverageLevel": "White 5-Star",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/RedRobin.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Red%20Robin"
     },
@@ -1681,6 +1682,7 @@
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/RedHood-card.png",
       "communityAverageLevel": "Gold 4-Star",
+      "canUpgrade": true,
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/RedHood.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Red%20Hood"
     },
@@ -1876,7 +1878,7 @@
       ],
       "name": "Ra's al Ghul",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/RasalGhul-card.png",
-      "communityAverageLevel": "White 3-Star",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Ra'salGhul.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Ra's%20al%20Ghul",
       "relatedChampions": [
@@ -2009,8 +2011,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Gold 2-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Vixen-card.png",
+      "communityAverageLevel": "Gold 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Vixen.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Vixen"
     },
@@ -2268,8 +2270,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "White 5-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Cyborg-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Cyborg.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Cyborg"
     },
@@ -2357,7 +2359,7 @@
           ]
         }
       ],
-      "communityAverageLevel": "Blue 4-Star",
+      "communityAverageLevel": "Purple 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/QueenHippolyta.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Queen%20Hippolyta",
       "relatedChampions": [
@@ -2501,8 +2503,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "White 5-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Two-Face-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Two-Face.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Two-Face"
     },
@@ -3384,7 +3386,7 @@
       ],
       "name": "Talia al Ghul",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TaliaalGhul-card.png",
-      "communityAverageLevel": "Purple 1-Star",
+      "communityAverageLevel": "Purple 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TaliaalGhul.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Talia%20al%20Ghul",
       "relatedChampions": [
@@ -3521,7 +3523,7 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Red 1-Star",
+      "communityAverageLevel": "Purple 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/NurseHarley.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Nurse%20Harley"
     },
@@ -3588,7 +3590,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Shazam-card.png",
-      "communityAverageLevel": "Blue 1-Star",
+      "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Shazam.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Shazam"
     },
@@ -3739,7 +3741,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Nightwing-card.png",
-      "communityAverageLevel": "Blue 3-Star",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Nightwing.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Nightwing",
       "relatedChampions": [
