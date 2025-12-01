@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dcdl-cache-v20';
+const CACHE_NAME = 'dcdl-cache-v21';
 const urlsToCache = [];
 
 self.addEventListener('install', event => {
