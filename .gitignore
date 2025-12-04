@@ -21,6 +21,9 @@ Gemfile.lock
 dev/
 .DS_Store
 
+# WIN Development
+desktop.ini
+
 node_modules/
 functions/
 admin/
