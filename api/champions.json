@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-01T15:45:57.070Z",
+  "updated_at": "2025-12-18T13:59:56.909Z",
   "champions": [
     {
       "name": "Swamp Thing",
@@ -60,7 +60,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/SwampThing-card.png",
-      "communityAverageLevel": "Purple 1-Star",
+      "communityAverageLevel": "Purple 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/SwampThing.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Swamp%20Thing",
       "relatedChampions": [
@@ -287,7 +287,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Batman-card.png",
-      "communityAverageLevel": "Blue 2-Star",
+      "communityAverageLevel": "Blue 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Batman.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Batman"
     },
@@ -784,7 +784,7 @@
         }
       ],
       "baseRarity": "Iconic",
-      "communityAverageLevel": "Purple 3-Star",
+      "communityAverageLevel": "Purple 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/WonderWomanDeathMetal.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Wonder%20Woman%20Death%20Metal"
     },
@@ -933,7 +933,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TheRiddler-card.png",
-      "communityAverageLevel": "Blue 3-Star",
+      "communityAverageLevel": "Purple 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TheRiddler.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=The%20Riddler"
     },
@@ -1216,7 +1216,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Deathstroke-card.png",
-      "communityAverageLevel": "Blue 3-Star",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Deathstroke.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Deathstroke",
       "relatedChampions": [
@@ -1285,8 +1285,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Blue 4-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Constantine-card.png",
+      "communityAverageLevel": "Blue 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Constantine.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Constantine",
       "relatedChampions": [
@@ -1681,8 +1681,8 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/RedHood-card.png",
-      "communityAverageLevel": "Gold 4-Star",
       "canUpgrade": true,
+      "communityAverageLevel": "Gold 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/RedHood.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Red%20Hood"
     },
@@ -1951,7 +1951,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/CaptainCold-card.png",
-      "communityAverageLevel": "Gold 2-Star",
+      "communityAverageLevel": "Gold 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/CaptainCold.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Captain%20Cold"
     },
@@ -2359,7 +2359,7 @@
           ]
         }
       ],
-      "communityAverageLevel": "Purple 3-Star",
+      "communityAverageLevel": "Purple 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/QueenHippolyta.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Queen%20Hippolyta",
       "relatedChampions": [
@@ -2367,6 +2367,66 @@
         "Harley Quinn",
         "Two-Face"
       ]
+    },
+    {
+      "baseRarity": "Limited Mythic",
+      "name": "Artemis",
+      "class": "Guardian",
+      "inherentSynergies": [
+        "Amazons",
+        "Metahuman"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Lasso of Conquer",
+          "description": "Artemis slashes her target repeatedly, dealing physical damage equal to a percentage of her Attack plus Physical Defense.",
+          "type": "Physical",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Blade of Vengeance",
+          "description": "Increases Artemis's Physical Defense, and reduces her damage taken.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Duel of the Amazons",
+          "description": "Artemis deals physical damage equal to a percentage of her Attack plus her Physical Defense to an enemy, then challenges them to a duel.",
+          "type": "Physical",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Fated Target",
+          "description": "At the start of battle, increases Artemis's Attack and Physical Defense for each [Amazons] ally present.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Hunter's Resolve",
+          "description": "Increases all Champions' HP by a percentage with an additional percentage for [Guardian] Champions.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Artemis-card.png",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Artemis.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Artemis"
     },
     {
       "name": "Scarecrow",
@@ -2433,8 +2493,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Blue 2-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Scarecrow-card.png",
+      "communityAverageLevel": "Blue 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Scarecrow.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Scarecrow",
       "relatedChampions": [
@@ -2636,7 +2696,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/LexLuthor-card.png",
-      "communityAverageLevel": "Blue 1-Star",
+      "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/LexLuthor.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Lex%20Luthor"
     },
@@ -3523,7 +3583,7 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Purple 5-Star",
+      "communityAverageLevel": "Gold 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/NurseHarley.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Nurse%20Harley"
     },

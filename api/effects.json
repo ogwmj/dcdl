@@ -1,9 +1,13 @@
 {
-  "updated_at": "2025-11-06T18:10:37.777Z",
+  "updated_at": "2025-12-18T14:00:04.028Z",
   "effects": [
     {
       "name": "Stunning",
       "description": "The targeted Champion's are affected by control and cannot take any action."
+    },
+    {
+      "name": "Duel",
+      "description": "Deals more damage to the larget, has less Spiritual Defense, and is immune to control effects. The target can only attack Artemis with basic attacks."
     },
     {
       "name": "Ivy Thorn",
