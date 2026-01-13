@@ -358,7 +358,13 @@ async function showDossierModal(championId) {
     DOM.dossierModalBackdrop.classList.add('is-visible');
     DOM.dossierModalBody.scrollTop = 0;
 
-    const champion = ALL_CHAMPIONS.find(c => c.id === championId);
+    let champion;
+    if (window.PRELOADED_CHAMPION && window.PRELOADED_CHAMPION.id === championId) {
+        champion = window.PRELOADED_CHAMPION;
+    } else {
+        champion = ALL_CHAMPIONS.find(c => c.id === championId);
+    }
+
     if (!champion) {
         DOM.dossierLeftColumn.innerHTML = `<p class="text-red-500">Champion not found.</p>`;
         DOM.dossierRightColumn.innerHTML = '';
@@ -1312,6 +1318,16 @@ function loadData(data) {
 async function init() {
     try {
         readFiltersFromURL();
+        
+        // 1. Check if Server-Side Rendering (SSR) provided data
+        // This makes the page load instantly without a second database call
+        if (window.PRELOADED_CHAMPION) {
+             // Merge the preloaded champion into our global list so it exists for the modal
+             if (!ALL_CHAMPIONS.some(c => c.id === window.PRELOADED_CHAMPION.id)) {
+                 ALL_CHAMPIONS.push(window.PRELOADED_CHAMPION);
+             }
+        }
+
         const cachedData = getCachedData();
 
         if (cachedData) {
@@ -1323,7 +1339,28 @@ async function init() {
             loadData(firestoreData);
             showLoading(false);
         }
-        handleDirectLink();
+
+        // 2. NEW: Handle Direct Links like /champion/batman
+        const pathSegments = window.location.pathname.split('/');
+        // pathSegments might be ["", "champion", "aquaman"]
+        const isChampionPath = pathSegments[1] === 'champion';
+        const championIdFromUrl = pathSegments[2];
+
+        if (isChampionPath && championIdFromUrl) {
+            // Check if looking for comic view
+            const params = new URLSearchParams(window.location.search);
+            const isComicView = params.get('view') === 'comic';
+
+            if (isComicView) {
+                showComicModal(championIdFromUrl);
+            } else {
+                showDossierModal(championIdFromUrl);
+            }
+        } else {
+            // Fallback to old ?search= style
+            handleDirectLink();
+        }
+        
     } catch (error) {
         console.error("Failed to load champion data:", error);
         if (DOM.grid) {

@@ -575,10 +575,11 @@ exports.calculateCommunityAverages = functions.pubsub
     );
 
 const {ImageAnnotatorClient} = require("@google-cloud/vision");
-const visionClient = new ImageAnnotatorClient();
 
 exports.moderateCreatorLogo = functions.storage.object().onFinalize(
     async (object) => {
+      const visionClient = new ImageAnnotatorClient();
+      
       const filePath = object.name;
       const bucket = admin.storage().bucket(object.bucket);
 
