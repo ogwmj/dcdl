@@ -1,4 +1,29 @@
 {
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "firestore.rules",
+      "firestore.indexes.json",
+      "functions/**",
+      ".git/**",
+      ".github/**",
+      ".venv/**",
+      "node_modules/**",
+      "**/.*",
+      "*.log"
+    ],
+    "rewrites": [
+      {
+        "source": "/champion/**",
+        "function": "ssrApp"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
   "functions": [
     {
       "source": "functions",
