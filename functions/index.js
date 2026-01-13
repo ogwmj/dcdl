@@ -306,43 +306,59 @@ const ssrApp = express();
  * * IMPORTANT: Ensure you have copied 'public/codex.html' to 'functions/public/codex.html'
  */
 ssrApp.get('/champion/:championId', async (req, res) => {
-  const { championId } = req.params;
-  const view = req.query.view; // Support ?view=comic
+  const { championId } = req.params; // e.g., "aquaman"
+  const view = req.query.view;
 
   try {
-      // 1. Fetch Data
-      const champRef = db.doc(`artifacts/dc-dark-legion-builder/public/data/champions/${championId}`);
-      const comicId = championId.replace(/-/g, '_'); 
-      const comicRef = db.doc(`artifacts/dc-dark-legion-builder/public/data/characterComics/${comicId}`);
-
-      const [champSnap, comicSnap] = await Promise.all([champRef.get(), comicRef.get()]);
-
-      // 2. Read the HTML template
-      // UPDATED: Looks for codex.html in the same directory as index.js
-      const templatePath = path.resolve(__dirname, 'codex.html'); // eslint-disable-line no-undef
+      const championsCollection = db.collection('artifacts/dc-dark-legion-builder/public/data/champions');
       
-      if (!fs.existsSync(templatePath)) {
-        functions.logger.error("SSR Error: codex.html not found in functions directory.");
-        return res.status(500).send("Server Error: Template missing. Did you copy codex.html to functions/?");
+      // 1. Try finding by Document ID first (e.g. ORnp42...)
+      let champSnap = await championsCollection.doc(championId).get();
+      let champion = null;
+
+      // 2. If not found by ID, try querying by NAME (Case Sensitive workaround)
+      if (!champSnap.exists) {
+          // "aquaman" -> "Aquaman" (Capitalize first letter)
+          const capitalized = championId.charAt(0).toUpperCase() + championId.slice(1).toLowerCase();
+          
+          // Try finding "Aquaman"
+          const querySnap = await championsCollection.where('name', '==', capitalized).limit(1).get();
+          
+          if (!querySnap.empty) {
+              champSnap = querySnap.docs[0];
+              champion = champSnap.data();
+              // Inject ID manually since it's not in the data usually
+              champion.id = champSnap.id; 
+          }
+      } else {
+          champion = champSnap.data();
+          champion.id = champSnap.id;
       }
 
+      // Read template
+      const templatePath = path.resolve(__dirname, 'codex.html'); // eslint-disable-line no-undef
+      if (!fs.existsSync(templatePath)) {
+        return res.status(500).send("Template missing.");
+      }
       let html = fs.readFileSync(templatePath, 'utf8');
 
-      // 3. FIX RELATIVE PATHS
-      // We inject <base href="/"> immediately after <head> so css/theme.css resolves to root
+      // Inject Base URL
       if (!html.includes('<base href="/">')) {
         html = html.replace('<head>', '<head><base href="/">');
       }
 
-      if (!champSnap.exists) {
-        // Still return the page (with base tag fix) so client-side JS handles the 404 UI
+      // If still not found, return 404 page
+      if (!champion) {
         return res.status(404).send(html); 
       }
 
-      const champion = champSnap.data();
+      // 3. Fetch Comic Data (Try guessing the comic ID)
+      const comicId = champion.name.toLowerCase().replace(/\s+/g, '_');
+      const comicRef = db.doc(`artifacts/dc-dark-legion-builder/public/data/characterComics/${comicId}`);
+      const comicSnap = await comicRef.get();
       const comic = comicSnap.exists ? comicSnap.data() : null;
 
-      // 4. Prepare Meta Data
+      // 4. Meta Tags
       let title = `${champion.name} | DC: Dark Legion Codex`;
       let desc = `${champion.name} (${champion.class}) guide, skills, and synergies.`;
       let ogImage = champion.cardImageUrl || `https://dcdl-companion.com/img/champions/full/${championId}.webp`;
@@ -353,7 +369,6 @@ ssrApp.get('/champion/:championId', async (req, res) => {
           ogImage = comic.imageUrl || ogImage;
       }
 
-      // 5. Inject Meta Tags & Data
       const metaHtml = `
           <title>${title}</title>
           <meta name="description" content="${desc}">
@@ -370,7 +385,6 @@ ssrApp.get('/champion/:championId', async (req, res) => {
 
       html = html.replace('<title>DC: Dark Legion - Champion Codex</title>', metaHtml);
 
-      // 6. Set Cache Control (1 Hour)
       res.set('Cache-Control', 'public, max-age=3600, s-maxage=3600');
       res.send(html);
 
@@ -579,7 +593,7 @@ const {ImageAnnotatorClient} = require("@google-cloud/vision");
 exports.moderateCreatorLogo = functions.storage.object().onFinalize(
     async (object) => {
       const visionClient = new ImageAnnotatorClient();
-      
+
       const filePath = object.name;
       const bucket = admin.storage().bucket(object.bucket);
 

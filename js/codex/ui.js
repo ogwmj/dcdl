@@ -1318,13 +1318,12 @@ function loadData(data) {
 async function init() {
     try {
         readFiltersFromURL();
-        
-        // 1. Check if Server-Side Rendering (SSR) provided data
-        // This makes the page load instantly without a second database call
+
+        // 1. Handle Preloaded SSR Data
         if (window.PRELOADED_CHAMPION) {
-             // Merge the preloaded champion into our global list so it exists for the modal
-             if (!ALL_CHAMPIONS.some(c => c.id === window.PRELOADED_CHAMPION.id)) {
-                 ALL_CHAMPIONS.push(window.PRELOADED_CHAMPION);
+             const preloaded = window.PRELOADED_CHAMPION;
+             if (!ALL_CHAMPIONS.some(c => c.id === preloaded.id)) {
+                 ALL_CHAMPIONS.push(preloaded);
              }
         }
 
@@ -1340,24 +1339,35 @@ async function init() {
             showLoading(false);
         }
 
-        // 2. NEW: Handle Direct Links like /champion/batman
+        // 2. INTELLIGENT ROUTING
         const pathSegments = window.location.pathname.split('/');
-        // pathSegments might be ["", "champion", "aquaman"]
         const isChampionPath = pathSegments[1] === 'champion';
-        const championIdFromUrl = pathSegments[2];
+        const urlParam = pathSegments[2]; // e.g. "aquaman" or "ORnp42..."
 
-        if (isChampionPath && championIdFromUrl) {
-            // Check if looking for comic view
-            const params = new URLSearchParams(window.location.search);
-            const isComicView = params.get('view') === 'comic';
+        if (isChampionPath && urlParam) {
+            const decodedParam = decodeURIComponent(urlParam).toLowerCase();
 
-            if (isComicView) {
-                showComicModal(championIdFromUrl);
+            // SEARCH: Check by ID first, then by Name (case-insensitive)
+            const champion = ALL_CHAMPIONS.find(c => 
+                c.id.toLowerCase() === decodedParam || 
+                sanitizeName(c.name).toLowerCase() === decodedParam ||
+                c.name.toLowerCase() === decodedParam
+            );
+
+            if (champion) {
+                const params = new URLSearchParams(window.location.search);
+                const isComicView = params.get('view') === 'comic';
+                
+                // IMPORTANT: Pass the REAL ID (ORnp42...) to the modal, not "aquaman"
+                if (isComicView) {
+                    showComicModal(champion.id);
+                } else {
+                    showDossierModal(champion.id);
+                }
             } else {
-                showDossierModal(championIdFromUrl);
+                dispatchNotification(`Champion "${urlParam}" not found.`, 'error');
             }
         } else {
-            // Fallback to old ?search= style
             handleDirectLink();
         }
         
