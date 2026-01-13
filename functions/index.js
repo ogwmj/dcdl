@@ -319,7 +319,7 @@ ssrApp.get('/champion/:championId', async (req, res) => {
 
       // 2. Read the HTML template
       // UPDATED: Looks for codex.html in the same directory as index.js
-      const templatePath = path.resolve(__dirname, 'codex.html');
+      const templatePath = path.resolve(__dirname, 'codex.html'); // eslint-disable-line no-undef
       
       if (!fs.existsSync(templatePath)) {
         functions.logger.error("SSR Error: codex.html not found in functions directory.");
