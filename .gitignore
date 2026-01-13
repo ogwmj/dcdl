@@ -25,7 +25,6 @@ dev/
 desktop.ini
 
 node_modules/
-functions/
 admin/
 .firebaserc
 venv/

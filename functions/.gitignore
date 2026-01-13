@@ -1,0 +1,6 @@
+# Ignore the duplicate HTML file
+codex.html
+
+# Standard ignores
+node_modules/
+*.log

@@ -1,0 +1,8 @@
+# Exclude these from deployment
+.git
+.gitignore
+node_modules
+test
+firebase-debug.log
+
+# Note: We do NOT list codex.html here, so it WILL be uploaded
