@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-18T13:59:56.909Z",
+  "updated_at": "2026-01-14T19:28:58.184Z",
   "champions": [
     {
       "name": "Swamp Thing",
@@ -60,7 +60,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/SwampThing-card.png",
-      "communityAverageLevel": "Purple 2-Star",
+      "communityAverageLevel": "Purple 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/SwampThing.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Swamp%20Thing",
       "relatedChampions": [
@@ -784,7 +784,7 @@
         }
       ],
       "baseRarity": "Iconic",
-      "communityAverageLevel": "Purple 4-Star",
+      "communityAverageLevel": "Purple 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/WonderWomanDeathMetal.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Wonder%20Woman%20Death%20Metal"
     },
@@ -850,9 +850,71 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png",
-      "communityAverageLevel": "Blue 2-Star",
+      "communityAverageLevel": "Blue 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/PoisonIvy.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Poison%20Ivy"
+    },
+    {
+      "baseRarity": "Limited Mythic",
+      "name": "Lobo",
+      "isHealer": false,
+      "class": "Firepower",
+      "skills": [
+        {
+          "name": "My Dawg",
+          "description": "Lobo tosses Dawg forward, dealing physical damage equal to a percentage of Lobo's Attack to an enemy.",
+          "type": "Physical",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "You Got Fragged",
+          "description": "At the start of battle, Lobo's Attack is increased by a percentage. His basic attacks reduce the target's healing received.",
+          "type": "Buff",
+          "effects": [
+            "Buff",
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Spacehog Rampage",
+          "description": "Lobo sharges forward on his bike, dealing physical damage equal to a percentage of his Attack to enemies in a recutangular area. Lobo's basic attacks are empowered, dealing physical damage equal to a percentage of his Attack to the target.",
+          "type": "Physical",
+          "effects": [
+            "AoE DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Lo-Bros",
+          "description": "After Lobo casts his Ultimate, he summons two space dolphins to join the fight periodically. Each dolphin's attacks deal physical damage equal to a percentage of Lobo's Attack (counted as basic attacks).",
+          "type": "Buff",
+          "effects": [
+            "DMG",
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Main Wingman",
+          "description": "Increases all Champions' Attack and [Firepower] Champion's HP globally.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "inherentSynergies": [
+        "Suicide Squad",
+        "Weapon Master"
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Lobo-card.png",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Lobo.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Lobo"
     },
     {
       "name": "Chop Chop",
@@ -933,7 +995,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TheRiddler-card.png",
-      "communityAverageLevel": "Purple 3-Star",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TheRiddler.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=The%20Riddler"
     },
@@ -2359,7 +2421,7 @@
           ]
         }
       ],
-      "communityAverageLevel": "Purple 2-Star",
+      "communityAverageLevel": "Purple 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/QueenHippolyta.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Queen%20Hippolyta",
       "relatedChampions": [
@@ -2760,7 +2822,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Batgirl-card.png",
-      "communityAverageLevel": "Blue 1-Star",
+      "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Batgirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Batgirl"
     },
@@ -3583,7 +3645,7 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Gold 2-Star",
+      "communityAverageLevel": "Gold 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/NurseHarley.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Nurse%20Harley"
     },
