@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-01-14T19:28:58.184Z",
+  "updated_at": "2026-01-22T18:38:20.991Z",
   "champions": [
     {
       "name": "Swamp Thing",
@@ -995,7 +995,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TheRiddler-card.png",
-      "communityAverageLevel": "Blue 4-Star",
+      "communityAverageLevel": "Blue 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TheRiddler.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=The%20Riddler"
     },
@@ -1940,7 +1940,7 @@
       ],
       "name": "Ra's al Ghul",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/RasalGhul-card.png",
-      "communityAverageLevel": "Blue 4-Star",
+      "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Ra'salGhul.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Ra's%20al%20Ghul",
       "relatedChampions": [
@@ -2487,6 +2487,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Artemis-card.png",
+      "communityAverageLevel": "White 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Artemis.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Artemis"
     },
@@ -2975,8 +2976,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "White 5-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Stargirl-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Stargirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Stargirl"
     },
@@ -3508,7 +3509,7 @@
       ],
       "name": "Talia al Ghul",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TaliaalGhul-card.png",
-      "communityAverageLevel": "Purple 3-Star",
+      "communityAverageLevel": "Purple 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TaliaalGhul.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Talia%20al%20Ghul",
       "relatedChampions": [

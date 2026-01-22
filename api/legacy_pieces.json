@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-11-06T18:10:43.010Z",
+  "updated_at": "2026-01-22T18:40:02.604Z",
   "legacy_pieces": [
     {
       "name": "Honkin' Huge Hammer",
@@ -208,6 +208,15 @@
       ]
     },
     {
+      "baseRarity": "Mythic+",
+      "name": "Mistress",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/Mistress.webp",
+      "classes": [
+        "Warrior",
+        "Guardian"
+      ]
+    },
+    {
       "name": "Starfire's Starbolts",
       "baseRarity": "Mythic+",
       "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/StarfiresStarbolts.webp",
@@ -223,6 +232,16 @@
       "classes": [
         "Warrior",
         "Guardian"
+      ]
+    },
+    {
+      "name": "Psycho Syringe",
+      "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/PsychoSyringe.webp",
+      "classes": [
+        "Firepower",
+        "Magical",
+        "Assassin"
       ]
     },
     {
@@ -325,6 +344,16 @@
       "classes": [
         "Supporter",
         "Intimidator"
+      ]
+    },
+    {
+      "name": "Spacehog",
+      "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/Spacehog.webp",
+      "classes": [
+        "Firepower",
+        "Magical",
+        "Assassin"
       ]
     },
     {
