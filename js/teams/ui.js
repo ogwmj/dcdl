@@ -793,6 +793,29 @@ function attachEventListeners() {
             DOM.customTooltip.classList.remove('visible');
         });
     }
+
+    const forceTooltipTrigger = document.getElementById('force-level-tooltip-trigger');
+    if (forceTooltipTrigger) {
+        const forceTooltipText = 'Represents the investment of "AC/DC Shards" in the Force allocation screen. Level 0 = No investment. Level 5 = Fully maxed out Nodes. This is just average based, and your own estimate.';
+
+        forceTooltipTrigger.addEventListener('mouseover', (e) => {
+            const triggerRect = e.target.getBoundingClientRect();
+            
+            DOM.customTooltip.textContent = forceTooltipText;
+            DOM.customTooltip.classList.remove('hidden');
+            DOM.customTooltip.classList.add('visible');
+
+            const top = triggerRect.top + window.scrollY - DOM.customTooltip.offsetHeight - 8;
+            const left = triggerRect.left + window.scrollX + (triggerRect.width / 2) - (DOM.customTooltip.offsetWidth / 2);
+            
+            DOM.customTooltip.style.top = `${top}px`;
+            DOM.customTooltip.style.left = `${left}px`;
+        });
+
+        forceTooltipTrigger.addEventListener('mouseout', () => {
+            DOM.customTooltip.classList.remove('visible');
+        });
+    }
 }
 
 /**
