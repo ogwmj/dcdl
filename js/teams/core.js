@@ -476,7 +476,7 @@ export class TeamCalculator {
  * @returns {Array<Array<any>>} An array of combination arrays.
  */
 function generateCombinations(array, k) {
-    if (k === 0) return [[]]; // Base case for picking 0 items
+    if (k === 0) return [[]];
     const result = [];
     function backtrack(startIndex, currentCombination) {
         if (currentCombination.length === k) {
@@ -495,33 +495,33 @@ function generateCombinations(array, k) {
 
 /**
  * Ensures all members of a team array have their individual score calculated.
- * This is a utility for handling older data formats or re-calculating scores.
+ * STRICTLY merges database data to ensure synergies are present on the returned object.
  * @param {Array<object>} members - The array of team members.
  * @param {Array<object>} dbChampions - The full database of champions for lookups.
- * @returns {Array<object>} The team members array with scores.
+ * @returns {Array<object>} The team members array with scores and FULL properties.
  */
 export function ensureIndividualScores(members, dbChampions) {
     if (!members || !Array.isArray(members)) return [];
     
     return members.map(member => {
-        const newMember = { ...member };
+        // 1. Find the master data for this champion (contains synergies, class, etc.)
+        const baseChampDetails = dbChampions.find(c => c.id === member.dbChampionId) || {};
         
-        // Always recalculate score to ensure consistency, not just if it's undefined
-        const baseChampDetails = dbChampions.find(c => c.id === newMember.dbChampionId) || {};
-        
-        const memberForScoreCalc = {
-            ...baseChampDetails,
-            ...newMember,
-            gear: newMember.gear || {}, // Ensure gear is an object
+        // 2. Merge master data WITH the user's specific instance data (stars, gear, etc.)
+        const mergedMember = {
+            ...baseChampDetails, // <--- THIS is the fix. Ensures synergies are always present.
+            ...member,
+            gear: member.gear || {}, 
             legacyPiece: {
-                ...(newMember.legacyPiece || {}),
-                rarity: newMember.legacyPiece?.rarity || "None",
-                starColorTier: newMember.legacyPiece?.starColorTier || "Unlocked"
+                ...(member.legacyPiece || {}),
+                rarity: member.legacyPiece?.rarity || "None",
+                starColorTier: member.legacyPiece?.starColorTier || "Unlocked"
             }
         };
         
-        newMember.individualScore = TeamCalculator.calculateIndividualChampionScore(memberForScoreCalc, GAME_CONSTANTS);
+        // 3. Calculate score using this complete object
+        mergedMember.individualScore = TeamCalculator.calculateIndividualChampionScore(mergedMember, GAME_CONSTANTS);
         
-        return newMember;
+        return mergedMember;
     });
 }
