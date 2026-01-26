@@ -108,7 +108,7 @@ let activeSearchTerm = '';
 let shouldScrollToRoster = false;
 let urlParamsHandled = false;
 let manualTeam = [];
-let evaluatedManualTeam = null; 
+let evaluatedManualTeam = null;
 
 // =================================================================================================
 // #region INITIALIZATION
@@ -931,11 +931,25 @@ function handleRemoveFromManualTeam(index) {
 
 /**
  * @description Evaluates the manual team and displays the results.
+ * Includes "Auto-Fill" functionality when team is incomplete.
  */
 function updateManualTeamEvaluation() {
     if (manualTeam.length < 5) {
-        DOM.manualTeamResultsOutput.innerHTML = `<p class="text-center text-slate-400 pt-4 text-lg">Add ${5 - manualTeam.length} more champion(s) to evaluate the team.</p>`;
+        const slotsNeeded = 5 - manualTeam.length;
+        DOM.manualTeamResultsOutput.innerHTML = `
+            <div class="text-center pt-4">
+                <p class="text-slate-400 text-lg mb-4">Add ${slotsNeeded} more champion(s) to evaluate the team.</p>
+                <button id="auto-fill-btn" class="btn btn-secondary flex items-center gap-2 mx-auto">
+                    <i class="fas fa-magic"></i> Auto-Fill Remaining
+                </button>
+            </div>`;
+        
         evaluatedManualTeam = null;
+        
+        const autoFillBtn = document.getElementById('auto-fill-btn');
+        if (autoFillBtn) {
+            autoFillBtn.addEventListener('click', handleAutoFill);
+        }
         return;
     }
     
@@ -956,8 +970,77 @@ function updateManualTeamEvaluation() {
         </div>`;
     DOM.manualTeamResultsOutput.innerHTML = html;
 
-    // Attach listener to the new save button
     document.getElementById('save-manual-team-btn').addEventListener('click', saveCurrentBestTeam);
+}
+
+/**
+ * @description Handles the Auto-Fill request by calculating optimal completions.
+ */
+async function handleAutoFill() {
+    if (playerRoster.length < 5) { 
+        showToast("You need at least 5 champions in your roster.", "warning"); 
+        return; 
+    }
+
+    openModal('processingModal', `<div class="modal-content"><h3>Auto-Filling...</h3><div class="loading-spinner mx-auto"></div><p id="processing-status" class="text-slate-300 mt-4 text-center">Analyzing roster...</p></div>`);
+
+    try {
+        const calculator = new TeamCalculator(dbSynergies, GAME_CONSTANTS);
+        
+        // Prepare data with scores
+        const rosterWithScores = playerRoster.map(champ => ({ 
+            ...champ, 
+            individualScore: TeamCalculator.calculateIndividualChampionScore(champ, GAME_CONSTANTS) 
+        }));
+        const currentFixedMembers = ensureIndividualScores(manualTeam, dbChampions);
+
+        const requireHealer = DOM.requireHealerCheckbox.checked;
+        const excludeTeams = DOM.excludeSavedTeamCheckbox.checked;
+        
+        let excludedChampionDbIds = [];
+        if (excludeTeams && teamExclusionMultiSelect) {
+            const exclusionTeamIds = teamExclusionMultiSelect.getSelectedValues();
+            if (exclusionTeamIds.length > 0) {
+                const championsToExcludeSet = new Set();
+                exclusionTeamIds.forEach(teamId => {
+                    const teamToExclude = savedTeams.find(st => st.id === teamId);
+                    if (teamToExclude?.members) {
+                        teamToExclude.members.forEach(member => championsToExcludeSet.add(member.dbChampionId));
+                    }
+                });
+                excludedChampionDbIds = Array.from(championsToExcludeSet);
+            }
+        }
+
+        const bestCompletion = await calculator.findOptimalCompletion(
+            currentFixedMembers,
+            rosterWithScores,
+            {
+                requireHealer,
+                excludedChampionDbIds,
+                updateProgress: (status) => { 
+                    const statusP = document.getElementById('processing-status');
+                    if (statusP) statusP.textContent = status;
+                }
+            }
+        );
+
+        if (bestCompletion) {
+            // Update manualTeam with the full set of members
+            manualTeam = bestCompletion.members;
+            renderManualBuilderUI();
+            showToast("Team auto-filled successfully!", "success");
+            logEvent(analytics, 'auto_fill_success', { slots_filled: 5 - currentFixedMembers.length });
+        } else {
+             showToast("Could not find a valid completion for this team.", "warning");
+        }
+
+    } catch (e) {
+        showToast(e.message, "error");
+        logEvent(analytics, 'auto_fill_failed', { error_message: e.message });
+    } finally {
+        closeModal('processingModal');
+    }
 }
 
 // =================================================================================================

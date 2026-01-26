@@ -246,6 +246,73 @@ export class TeamCalculator {
         if (teamCombinations.length === 0) throw new Error("Could not generate any valid teams with the current criteria.");
         await updateProgress(`Generated ${teamCombinations.length} combinations. Evaluating...`, 20);
 
+        return this.processBatchEvaluation(teamCombinations, updateProgress);
+    }
+
+    /**
+     * Completes a partial team by finding the optimal remaining members.
+     * @param {Array<object>} fixedMembers - The manually selected champions.
+     * @param {Array<object>} fullRoster - The entire available roster.
+     * @param {object} options - Options object (requireHealer, exclusions, updateProgress).
+     */
+    async findOptimalCompletion(fixedMembers, fullRoster, options) {
+        const { requireHealer, excludedChampionDbIds = [], updateProgress } = options;
+        const slotsToFill = 5 - fixedMembers.length;
+        
+        if (slotsToFill <= 0) return this.evaluateTeam(fixedMembers);
+        
+        const fixedIds = new Set(fixedMembers.map(m => m.id));
+        const excludedDbIds = new Set(excludedChampionDbIds);
+        
+        // Candidates are roster members NOT in the fixed team AND NOT excluded
+        const candidates = fullRoster.filter(c => !fixedIds.has(c.id) && !excludedDbIds.has(c.dbChampionId));
+
+        if (candidates.length < slotsToFill) {
+            throw new Error(`Not enough available champions to fill the remaining ${slotsToFill} slot(s).`);
+        }
+
+        await updateProgress(`Generating completion options...`, 10);
+        
+        let combinationsToCheck = [];
+        const hasHealer = fixedMembers.some(m => m.isHealer);
+
+        // Logic to generate valid combinations based on Healer Requirement
+        if (requireHealer && !hasHealer) {
+            // We need to find at least one healer in the candidates
+            const healers = candidates.filter(c => c.isHealer);
+            if (healers.length === 0) throw new Error("No available healers to satisfy the 'Require Healer' condition.");
+            
+            // For each healer, we need (slotsToFill - 1) others from the remaining candidates
+            healers.forEach(healer => {
+                const otherCandidates = candidates.filter(c => c.id !== healer.id);
+                if (otherCandidates.length >= (slotsToFill - 1)) {
+                    // Note: If slotsToFill is 1, this returns [[]] which works perfectly (combo becomes [healer])
+                    const subCombos = generateCombinations(otherCandidates, slotsToFill - 1);
+                    subCombos.forEach(sub => {
+                        combinationsToCheck.push([healer, ...sub]);
+                    });
+                }
+            });
+        } else {
+            // Standard case: just pick 'slotsToFill' from candidates
+            combinationsToCheck = generateCombinations(candidates, slotsToFill);
+        }
+
+        if (combinationsToCheck.length === 0) {
+             throw new Error("Could not generate valid completion options.");
+        }
+
+        // Convert partial combos into full teams for evaluation
+        const fullTeamCombinations = combinationsToCheck.map(combo => [...fixedMembers, ...combo]);
+
+        await updateProgress(`Evaluating ${fullTeamCombinations.length} possible completions...`, 20);
+        return this.processBatchEvaluation(fullTeamCombinations, updateProgress);
+    }
+
+    /**
+     * Shared helper to process evaluation in batches to prevent UI freeze.
+     */
+    processBatchEvaluation(teamCombinations, updateProgress) {
         return new Promise((resolve) => {
             let bestTeam = null;
             let maxComparisonScore = -1;
@@ -409,6 +476,7 @@ export class TeamCalculator {
  * @returns {Array<Array<any>>} An array of combination arrays.
  */
 function generateCombinations(array, k) {
+    if (k === 0) return [[]]; // Base case for picking 0 items
     const result = [];
     function backtrack(startIndex, currentCombination) {
         if (currentCombination.length === k) {
