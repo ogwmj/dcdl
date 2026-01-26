@@ -99,7 +99,13 @@ export class TeamCalculator {
         return finalScore;
     }
 
-    evaluateTeam(teamMembers) {
+    /**
+     * Evaluates a team configuration.
+     * @param {Array<object>} teamMembers - The team members.
+     * @param {number} [synergyPriority=1.0] - Multiplier for synergy bonuses. 
+     * Use >1.0 to forcefully bias selection towards synergy matches.
+     */
+    evaluateTeam(teamMembers, synergyPriority = 1.0) {
         const baseScoreSum = teamMembers.reduce((sum, member) => sum + (member.individualScore || 0), 0);
         let scoreAfterPercentageSynergies = baseScoreSum;
         let totalPercentageBonusAppliedValue = 0;
@@ -128,7 +134,8 @@ export class TeamCalculator {
                     .sort((a, b) => b.countRequired - a.countRequired)[0];
 
                 if (applicableTier) {
-                    calculatedBonus = (synergyDef.bonusValue || 0) * (applicableTier.countRequired || 0);
+                    // Apply Priority Multiplier
+                    calculatedBonus = (synergyDef.bonusValue || 0) * (applicableTier.countRequired || 0) * synergyPriority;
                     accumulatedBaseFlatBonus += calculatedBonus;
 
                     activeSynergiesForTeam.push({
@@ -143,11 +150,14 @@ export class TeamCalculator {
             } else {
                 if (synergyDef.bonusValue && memberCount >= this.constants.SYNERGY_ACTIVATION_COUNT) {
                     if (synergyDef.bonusType === 'percentage') {
-                        calculatedBonus = scoreAfterPercentageSynergies * (synergyDef.bonusValue / 100);
+                        // Apply Priority Multiplier
+                        const boost = (synergyDef.bonusValue / 100) * synergyPriority;
+                        calculatedBonus = scoreAfterPercentageSynergies * boost;
                         totalPercentageBonusAppliedValue += calculatedBonus;
                         scoreAfterPercentageSynergies += calculatedBonus;
                     } else if (synergyDef.bonusType === 'flat') {
-                        calculatedBonus = synergyDef.bonusValue;
+                        // Apply Priority Multiplier
+                        calculatedBonus = synergyDef.bonusValue * synergyPriority;
                         accumulatedBaseFlatBonus += calculatedBonus;
                     }
                     activeSynergiesForTeam.push({
@@ -179,7 +189,8 @@ export class TeamCalculator {
 
             if (memberCount > minActivationCount) {
                 const extraMembers = memberCount - minActivationCount;
-                synergyDepthBonusValue += extraMembers * (this.constants.SYNERGY_DEPTH_BONUS || 0);
+                // Apply Priority Multiplier
+                synergyDepthBonusValue += extraMembers * (this.constants.SYNERGY_DEPTH_BONUS || 0) * synergyPriority;
             }
         });
         subtotalAfterSynergies += synergyDepthBonusValue;
@@ -246,7 +257,8 @@ export class TeamCalculator {
         if (teamCombinations.length === 0) throw new Error("Could not generate any valid teams with the current criteria.");
         await updateProgress(`Generated ${teamCombinations.length} combinations. Evaluating...`, 20);
 
-        return this.processBatchEvaluation(teamCombinations, updateProgress);
+        // Standard optimization uses 1.0 priority
+        return this.processBatchEvaluation(teamCombinations, updateProgress, 1.0);
     }
 
     /**
@@ -306,13 +318,19 @@ export class TeamCalculator {
         const fullTeamCombinations = combinationsToCheck.map(combo => [...fixedMembers, ...combo]);
 
         await updateProgress(`Evaluating ${fullTeamCombinations.length} possible completions...`, 20);
-        return this.processBatchEvaluation(fullTeamCombinations, updateProgress);
+        
+        // Use a HIGH Synergy Priority (5.0) to force the Auto-Fill to respect existing synergies
+        // even if the raw power of other units is higher.
+        return this.processBatchEvaluation(fullTeamCombinations, updateProgress, 5.0);
     }
 
     /**
      * Shared helper to process evaluation in batches to prevent UI freeze.
+     * @param {Array} teamCombinations - The teams to test.
+     * @param {Function} updateProgress - Callback.
+     * @param {number} synergyPriority - Multiplier for synergy scoring.
      */
-    processBatchEvaluation(teamCombinations, updateProgress) {
+    processBatchEvaluation(teamCombinations, updateProgress, synergyPriority = 1.0) {
         return new Promise((resolve) => {
             let bestTeam = null;
             let maxComparisonScore = -1;
@@ -320,7 +338,8 @@ export class TeamCalculator {
             const processBatch = () => {
                 const batchEndTime = Date.now() + 16;
                 while (Date.now() < batchEndTime && currentIndex < teamCombinations.length) {
-                    const evaluatedTeam = this.evaluateTeam(teamCombinations[currentIndex]);
+                    // Pass the synergy priority here
+                    const evaluatedTeam = this.evaluateTeam(teamCombinations[currentIndex], synergyPriority);
 
                     if (evaluatedTeam.comparisonScore > maxComparisonScore) {
                         maxComparisonScore = evaluatedTeam.comparisonScore;
@@ -335,6 +354,15 @@ export class TeamCalculator {
                     requestAnimationFrame(processBatch);
                 } else {
                     updateProgress("Finalizing best team...", 98);
+                    
+                    // CRITICAL STEP: 
+                    // If we used a biased priority (e.g. 5.0) to find the team,
+                    // we must re-evaluate the winner with normal priority (1.0) 
+                    // so the UI displays the correct, realistic score.
+                    if (bestTeam && synergyPriority !== 1.0) {
+                        bestTeam = this.evaluateTeam(bestTeam.members, 1.0);
+                    }
+                    
                     resolve(bestTeam);
                 }
             };
@@ -504,13 +532,19 @@ export function ensureIndividualScores(members, dbChampions) {
     if (!members || !Array.isArray(members)) return [];
     
     return members.map(member => {
-        // 1. Find the master data for this champion (contains synergies, class, etc.)
+        // 1. Find the master data for this champion
         const baseChampDetails = dbChampions.find(c => c.id === member.dbChampionId) || {};
         
-        // 2. Merge master data WITH the user's specific instance data (stars, gear, etc.)
+        // 2. Merge data, but EXPLICITLY force synergies from the DB to prevent stale local data from overwriting it.
         const mergedMember = {
-            ...baseChampDetails, // <--- THIS is the fix. Ensures synergies are always present.
-            ...member,
+            ...baseChampDetails, 
+            ...member, // User data (stars, gear)
+            
+            // CRITICAL FIX: Always use the database's synergy list. 
+            // This ignores any empty/stale synergy arrays that might exist on the 'member' object.
+            inherentSynergies: baseChampDetails.inherentSynergies || [],
+            class: baseChampDetails.class || "N/A",
+
             gear: member.gear || {}, 
             legacyPiece: {
                 ...(member.legacyPiece || {}),
