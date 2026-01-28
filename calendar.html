@@ -1,77 +1,1672 @@
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DC: Dark Legion - Bleed Calendar</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Russo+One&display=swap" rel="stylesheet">
-    <link href="css/theme.css" rel="stylesheet">
-    <link href="css/calendar/ui.css" rel="stylesheet">
-    <link href="css/comic-view.css" rel="stylesheet">
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <title>DC: Dark Legion Bleed Calendar & Rotation Schedule - January 2026</title>
+        <meta name="description" content="Official tracker for DC: Dark Legion 'Bleed' events and Limited Mythic champion rotations. Current schedule for servers: Earths 206-340, Earths 341-361, Earths 362-371, Earths 372-385, Earths 386+. Plan your summons for Superman, The Joker, and more.">
+        <meta name="keywords" content="DC Dark Legion, Bleed Calendar, Server Rotation, Mythic Champions, DC Dark Legion Guide, FunPlus, Superman, The Joker, Recruitment Schedule">
+        <meta name="author" content="DC: Dark Legion Tools">
+        <meta name="robots" content="index, follow">
 
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
-</head>
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="DC: Dark Legion - Bleed Calendar (January 2026)">
+        <meta property="og:description" content="Don't miss the next Mythic. Check the live rotation schedule for all Earths including Earths 206-340, Earths 341-361, Earths 362-371, Earths 372-385, Earths 386+.">
 
-<body>
-    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="ogwmj" data-description="Support me on Buy me a coffee!" data-message="" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
-    <notification-center></notification-center>
-    <auth-ui status-container-id="auth-status-desktop"></auth-ui>
-    <feedback-widget></feedback-widget>
-    <div class="background-hero"></div>
-    <navigation-widget></navigation-widget>
-    <discord-widget></discord-widget>
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "Article",
+          "headline": "DC: Dark Legion Bleed Calendar & Rotation Schedule",
+          "datePublished": "2026-01-28T16:22:38.981457",
+          "author": { "@type": "Organization", "name": "DC: Dark Legion Tools" },
+          "description": "Comprehensive schedule for Limited Mythic champion rotations in DC: Dark Legion."
+        }
+        </script>
 
-    <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <header class="text-center mb-16">
-            <h1 class="text-4xl md:text-6xl font-extrabold mb-3 glowing-text">Bleed Calendar</h1>
-            <p class="text-lg md:text-xl text-blue-200">Track the rotating availability of Limited Mythic champions.</p>
-        </header>
-
-        <main id="timeline-container" class="timeline-container"></main>
-
-        <section class="text-center mt-6">
-            <p class="text-sm md:text-sm text-blue-200">*Subject to unannounced changes.</p>
-        </section>
-
-    </div>
-
-    <div id="comic-modal-backdrop">
-        <div id="comic-modal-content">
-            <button id="comic-modal-close" aria-label="Close">&times;</button>
-            <div id="comic-modal-body">
-                </div>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Russo+One&display=swap" rel="stylesheet">
+        <link href="css/theme.css" rel="stylesheet">
+        <link href="css/calendar/ui.css" rel="stylesheet">
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="manifest" href="/site.webmanifest">
+    </head>
+    <body>
+        <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="ogwmj" data-description="Support me on Buy me a coffee!" data-message="" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+        <notification-center></notification-center>
+        <auth-ui status-container-id="auth-status-desktop"></auth-ui>
+        <feedback-widget></feedback-widget>
+        <div class="background-hero"></div>
+        <div class="sticky top-0 w-full z-50">
+             <navigation-widget></navigation-widget>
         </div>
-    </div>
 
-    <footer class="relative z-10 text-gray-500 text-sm py-8 text-center">
-        <p class="mt-2">DC: Dark Legion 2025 DC. Software code 2025 FunPlus International AG. DC LOGO and all related characters and elements &copy; &amp; &trade; DC.</p>
-        <p class="mt-2">Proud DC: Dark Legion Content Creator.</p>
-        <p class="mt-4"><a href="/api/index.html" class="text-blue-400 hover:text-blue-300 underline">API Documentation</a></p>
-    </footer>
+        <main class="container mx-auto px-4 pt-12 pb-20">
+            
+            <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+                <header id="main-header" class="py-8 md:py-12 text-center transition-all duration-300">
+                    <h1 id="page-title" class="text-5xl md:text-7xl font-extrabold mb-4 glowing-text text-white">Bleed Calendars</h1>
+                    <p id="page-description" class="text-xl md:text-2xl text-blue-200">Track the rotating availability of Limited Mythic champions.</p>
+                </header>
+            </div>
 
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').then(registration => {
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                }, err => {
-                    console.log('ServiceWorker registration failed: ', err);
+            <div id="top-scroll-container" class="w-full max-w-[1280px] mx-auto overflow-x-auto mb-2 custom-scroll">
+                <div id="top-scroll-content" class="h-1"></div>
+            </div>
+
+            <div id="main-scroll-container" class="calendar-wrapper w-full max-w-[1280px] mx-auto overflow-x-auto pb-6 p-2 bg-[#111827] rounded-xl border border-slate-800 shadow-2xl custom-scroll">
+                <div class="calendar-container">
+                    
+                    <div class="server-row bg-transparent shadow-none border-none">
+                        <div class="row-header bg-transparent shadow-none"></div> 
+                        <div class="events-track">
+                            
+                            <div class="week-cell bg-transparent border-none justify-end pb-2">
+                                <span class="text-slate-500 font-mono text-xs uppercase tracking-widest">Bleed 1</span>
+                            </div>
+                            
+                            <div class="week-cell bg-transparent border-none justify-end pb-2">
+                                <span class="text-slate-500 font-mono text-xs uppercase tracking-widest">Bleed 2</span>
+                            </div>
+                            
+                            <div class="week-cell bg-transparent border-none justify-end pb-2">
+                                <span class="text-slate-500 font-mono text-xs uppercase tracking-widest">Bleed 3</span>
+                            </div>
+                            
+                            <div class="week-cell bg-transparent border-none justify-end pb-2">
+                                <span class="text-slate-500 font-mono text-xs uppercase tracking-widest">Bleed 4</span>
+                            </div>
+                            
+                            <div class="week-cell bg-transparent border-none justify-end pb-2">
+                                <span class="text-slate-500 font-mono text-xs uppercase tracking-widest">Bleed 5</span>
+                            </div>
+                            
+                            <div class="week-cell bg-transparent border-none justify-end pb-2">
+                                <span class="text-slate-500 font-mono text-xs uppercase tracking-widest">Bleed 6</span>
+                            </div>
+                            
+                            <div class="week-cell bg-transparent border-none justify-end pb-2">
+                                <span class="text-slate-500 font-mono text-xs uppercase tracking-widest">Bleed 7</span>
+                            </div>
+                            
+                            <div class="week-cell bg-transparent border-none justify-end pb-2">
+                                <span class="text-slate-500 font-mono text-xs uppercase tracking-widest">Bleed 8</span>
+                            </div>
+                            
+                            <div class="week-cell bg-transparent border-none justify-end pb-2">
+                                <span class="text-slate-500 font-mono text-xs uppercase tracking-widest">Bleed 9</span>
+                            </div>
+                            
+                            <div class="week-cell bg-transparent border-none justify-end pb-2">
+                                <span class="text-slate-500 font-mono text-xs uppercase tracking-widest">Bleed 10</span>
+                            </div>
+                            
+                            <div class="week-cell bg-transparent border-none justify-end pb-2">
+                                <span class="text-slate-500 font-mono text-xs uppercase tracking-widest">Bleed 11</span>
+                            </div>
+                            
+                            <div class="week-cell bg-transparent border-none justify-end pb-2">
+                                <span class="text-slate-500 font-mono text-xs uppercase tracking-widest">Bleed 12</span>
+                            </div>
+                            
+                            <div class="week-cell bg-transparent border-none justify-end pb-2">
+                                <span class="text-slate-500 font-mono text-xs uppercase tracking-widest">Bleed 13</span>
+                            </div>
+                            
+                            <div class="week-cell bg-transparent border-none justify-end pb-2">
+                                <span class="text-slate-500 font-mono text-xs uppercase tracking-widest">Bleed 14</span>
+                            </div>
+                            
+                            <div class="week-cell bg-transparent border-none justify-end pb-2">
+                                <span class="text-slate-500 font-mono text-xs uppercase tracking-widest">Bleed 15</span>
+                            </div>
+                            
+                            <div class="week-cell bg-transparent border-none justify-end pb-2">
+                                <span class="text-slate-500 font-mono text-xs uppercase tracking-widest">Bleed 16</span>
+                            </div>
+                            
+                            <div class="week-cell bg-transparent border-none justify-end pb-2">
+                                <span class="text-slate-500 font-mono text-xs uppercase tracking-widest">Bleed 17</span>
+                            </div>
+                            
+                            <div class="week-cell bg-transparent border-none justify-end pb-2">
+                                <span class="text-slate-500 font-mono text-xs uppercase tracking-widest">Bleed 18</span>
+                            </div>
+                            
+                            <div class="week-cell bg-transparent border-none justify-end pb-2">
+                                <span class="text-slate-500 font-mono text-xs uppercase tracking-widest">Bleed 19</span>
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                    
+                    <div class="server-row">
+                        <div class="row-header text-white">
+                            Earths 206-340
+                        </div>
+
+                        <div class="events-track">
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Superman-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Superman-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Cyborg-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Cyborg-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/TheJoker-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheJoker-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Bane-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Bane-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Scarecrow-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Scarecrow-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Deathstroke-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Deathstroke-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Batgirl-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Batgirl-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Cyborg-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Cyborg-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Sinestro-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Sinestro-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/BlackCanary-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/BlackCanary-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/LexLuthor-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/LexLuthor-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Stargirl-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Stargirl-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Zatanna-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Zatanna-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Raven-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Raven-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Robin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Robin-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Constantine-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Constantine-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Nightwing-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Nightwing-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Batgirl-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Batgirl-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/RedRobin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/RedRobin-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Robin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Robin-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Supergirl-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Supergirl-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Superboy-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Superboy-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Raven-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Raven-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Hawkgirl-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Hawkgirl-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/BlackCanary-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/BlackCanary-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/MartianManhunter-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/MartianManhunter-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Atom-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Atom-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Mera-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Mera-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Vixen-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Vixen-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Starfire-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Starfire-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Arsenal-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Arsenal-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/QueenHippolyta-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/QueenHippolyta-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Nightwing-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Nightwing-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Batgirl-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Batgirl-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/RedRobin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/RedRobin-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Robin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Robin-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/SwampThing-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/SwampThing-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Raven-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Raven-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/TheRiddler-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheRiddler-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Bane-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Bane-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Lobo-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Lobo-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Artemis-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Artemis-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Arsenal-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Arsenal-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/WonderGirl-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/WonderGirl-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="server-row">
+                        <div class="row-header text-white">
+                            Earths 341-361
+                        </div>
+
+                        <div class="events-track">
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Superman-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Superman-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Cyborg-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Cyborg-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/TheJoker-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheJoker-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Bane-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Bane-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Scarecrow-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Scarecrow-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Deathstroke-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Deathstroke-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Batgirl-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Batgirl-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Cyborg-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Cyborg-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Sinestro-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Sinestro-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/BlackCanary-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/BlackCanary-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/LexLuthor-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/LexLuthor-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Stargirl-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Stargirl-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Zatanna-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Zatanna-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Raven-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Raven-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Robin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Robin-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Constantine-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Constantine-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Nightwing-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Nightwing-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Batgirl-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Batgirl-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/RedRobin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/RedRobin-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Robin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Robin-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Supergirl-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Supergirl-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Superboy-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Superboy-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Raven-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Raven-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Hawkgirl-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Hawkgirl-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/BlackCanary-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/BlackCanary-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Starfire-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Starfire-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Arsenal-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Arsenal-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/QueenHippolyta-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/QueenHippolyta-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Superboy-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Superboy-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Raven-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Raven-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/SwampThing-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/SwampThing-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Raven-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Raven-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/TheRiddler-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheRiddler-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Bane-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Bane-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Lobo-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Lobo-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Artemis-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Artemis-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Arsenal-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Arsenal-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/WonderGirl-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/WonderGirl-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="server-row">
+                        <div class="row-header text-white">
+                            Earths 362-371
+                        </div>
+
+                        <div class="events-track">
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Superman-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Superman-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Cyborg-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Cyborg-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/TheJoker-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheJoker-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Bane-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Bane-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Scarecrow-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Scarecrow-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Deathstroke-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Deathstroke-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Batgirl-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Batgirl-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Cyborg-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Cyborg-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Sinestro-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Sinestro-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/BlackCanary-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/BlackCanary-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/LexLuthor-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/LexLuthor-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Stargirl-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Stargirl-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Zatanna-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Zatanna-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Raven-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Raven-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Robin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Robin-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Constantine-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Constantine-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Superboy-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Superboy-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Raven-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Raven-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Nightwing-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Nightwing-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Batgirl-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Batgirl-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/RedRobin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/RedRobin-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Robin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Robin-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Starfire-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Starfire-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Arsenal-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Arsenal-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/QueenHippolyta-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/QueenHippolyta-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/SwampThing-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/SwampThing-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Raven-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Raven-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Supergirl-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Supergirl-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/TheRiddler-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheRiddler-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Bane-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Bane-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Lobo-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Lobo-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Artemis-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Artemis-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Arsenal-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Arsenal-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/WonderGirl-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/WonderGirl-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="server-row">
+                        <div class="row-header text-white">
+                            Earths 372-385
+                        </div>
+
+                        <div class="events-track">
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Superman-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Superman-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Cyborg-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Cyborg-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/TheJoker-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheJoker-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Bane-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Bane-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Scarecrow-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Scarecrow-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Deathstroke-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Deathstroke-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Batgirl-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Batgirl-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Cyborg-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Cyborg-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Sinestro-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Sinestro-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/BlackCanary-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/BlackCanary-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/LexLuthor-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/LexLuthor-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Stargirl-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Stargirl-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Zatanna-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Zatanna-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Raven-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Raven-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Robin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Robin-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Constantine-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Constantine-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Supergirl-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Supergirl-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Nightwing-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Nightwing-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Batgirl-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Batgirl-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/RedRobin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/RedRobin-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Robin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Robin-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Starfire-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Starfire-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Arsenal-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Arsenal-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/QueenHippolyta-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/QueenHippolyta-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/SwampThing-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/SwampThing-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Raven-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Raven-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Superboy-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Superboy-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Raven-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Raven-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/TheRiddler-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheRiddler-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Bane-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Bane-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Lobo-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Lobo-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Artemis-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Artemis-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Arsenal-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Arsenal-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/WonderGirl-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/WonderGirl-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="server-row">
+                        <div class="row-header text-white">
+                            Earths 386+
+                        </div>
+
+                        <div class="events-track">
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Superman-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Superman-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Cyborg-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Cyborg-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/TheJoker-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheJoker-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Bane-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Bane-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Scarecrow-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Scarecrow-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Deathstroke-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Deathstroke-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Batgirl-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Batgirl-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Cyborg-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Cyborg-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Sinestro-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Sinestro-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/BlackCanary-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/BlackCanary-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/LexLuthor-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/LexLuthor-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Stargirl-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Stargirl-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Constantine-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Constantine-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Zatanna-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Zatanna-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Raven-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Raven-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Robin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Robin-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Supergirl-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Supergirl-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Aquaman-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Shazam-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Nightwing-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Nightwing-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Batgirl-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Batgirl-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/RedRobin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/RedRobin-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Robin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Robin-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Starfire-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Starfire-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Arsenal-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Arsenal-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/QueenHippolyta-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/QueenHippolyta-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/SwampThing-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/SwampThing-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Raven-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Raven-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Superboy-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Superboy-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Raven-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Raven-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/TheRiddler-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheRiddler-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Bane-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Bane-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Two-Face-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Lobo-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Lobo-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Deadshot-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/TheFlash-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="week-cell group">
+                                <img src="https://dcdl-companion.com/img/champions/cards/Artemis-card.png" class="card-img hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Artemis-card.png" loading="lazy">
+                                
+                                
+                                <div class="related-row">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/Arsenal-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/Arsenal-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png" loading="lazy">
+                                    
+                                    <img src="https://dcdl-companion.com/img/champions/cards/WonderGirl-card.png" class="related-thumb hover-zoom" data-full-img="https://dcdl-companion.com/img/champions/cards/WonderGirl-card.png" loading="lazy">
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                </div>
+            </div> 
+            
+            <div class="seo-block max-w-4xl mx-auto mt-16 text-center px-4">
+                 <h2 class="text-2xl font-bold mb-6">DC: Dark Legion Limited Mythic Rotation Guide</h2>
+                 <p class="text-slate-400 text-sm leading-7 mb-4">
+                    Welcome to the unofficial <strong>Bleed Calendar</strong> for DC: Dark Legion. This tool tracks the "Bleed" recruitment events where 
+                    Legendary and Mythic champions become available for a limited time. Because different servers operate on different schedules based on 
+                    their launch date, it is crucial to check your specific Server Group.
+                 </p>
+                 <p class="text-slate-400 text-sm leading-7">
+                    Currently tracking rotations for: <strong>Earths 206-340, Earths 341-361, Earths 362-371, Earths 372-385, Earths 386+</strong>. 
+                    Use this horizontal timeline to predict when champions like <strong>The Joker</strong>, <strong>Superman</strong>, 
+                    and <strong>The Batman Who Laughs</strong> will return. Click on any portrait to view the full card art and synergy details.
+                 </p>
+            </div>
+        </main>
+
+        <footer class="relative z-10 text-gray-500 text-sm py-8 text-center">
+            <p class="mt-2">DC: Dark Legion 2025 DC. Software code 2025 FunPlus International AG. DC LOGO and all related characters and elements &copy; &amp; &trade; DC.</p>
+            <p class="mt-2">Proud DC: Dark Legion Content Creator.</p>
+            <p class="mt-4"><a href="/api/index.html" class="text-blue-400 hover:text-blue-300 underline">API Documentation</a></p>
+        </footer>
+
+        <div id="image-modal" class="fixed inset-0 z-[100] hidden bg-black/80 flex items-center justify-center p-4">
+            <div class="relative max-w-4xl w-full max-h-full flex justify-center">
+                <button onclick="closeModal()" class="absolute -top-12 right-0 text-white text-4xl hover:text-red-500">&times;</button>
+                <img id="modal-img" src="" class="max-h-[90vh] max-w-full rounded-lg shadow-2xl border-2 border-slate-700" style="object-fit: contain;">
+            </div>
+        </div>
+
+        <script>
+            // --- SYNCED SCROLLBAR LOGIC ---
+            const topScroll = document.getElementById('top-scroll-container');
+            const mainScroll = document.getElementById('main-scroll-container');
+            const topContent = document.getElementById('top-scroll-content');
+            const mainContent = document.querySelector('.calendar-container');
+
+            function syncScrollWidth() {
+                if(mainContent && topContent) {
+                    topContent.style.width = mainContent.scrollWidth + 'px';
+                }
+            }
+
+            topScroll.addEventListener('scroll', () => {
+                if (mainScroll.scrollLeft !== topScroll.scrollLeft) {
+                    mainScroll.scrollLeft = topScroll.scrollLeft;
+                }
+            });
+
+            mainScroll.addEventListener('scroll', () => {
+                if (topScroll.scrollLeft !== mainScroll.scrollLeft) {
+                    topScroll.scrollLeft = mainScroll.scrollLeft;
+                }
+            });
+
+            window.addEventListener('load', syncScrollWidth);
+            window.addEventListener('resize', syncScrollWidth);
+
+            // --- MODAL LOGIC ---
+            const modal = document.getElementById('image-modal');
+            const modalImg = document.getElementById('modal-img');
+
+            function openModal(imgSrc) {
+                modalImg.src = imgSrc;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            }
+
+            function closeModal() {
+                modal.classList.add('hidden');
+                modalImg.src = '';
+                document.body.style.overflow = 'auto'; 
+            }
+
+            document.querySelectorAll('.hover-zoom').forEach(img => {
+                img.addEventListener('click', function(e) {
+                    e.stopPropagation(); 
+                    const fullImgSrc = this.getAttribute('data-full-img');
+                    openModal(fullImgSrc);
                 });
             });
-        }
-    </script>
 
-    <script type="module" src="js/auth-ui.js"></script>
-    <script type="module" src="js/feedback-widget.js"></script>
-    <script type="module" src="js/discord-widget.js"></script>
-    <script type="module" src="js/notification-center.js"></script>
-    <script type="text/javascript" src="js/navigation-widget.js"></script>
-    <script type="module" src="js/calendar/ui.js"></script>
-</body>
+            modal.addEventListener('click', function(e) {
+                 if (e.target === modal || e.target.closest('.relative') === null ) {
+                    closeModal();
+                 }
+            });
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                    closeModal();
+                }
+            });
 
-</html>
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js').then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    }, err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+                });
+            }
+        </script>
+
+        <script type="module" src="js/auth-ui.js"></script>
+        <script type="module" src="js/feedback-widget.js"></script>
+        <script type="module" src="js/discord-widget.js"></script>
+        <script type="module" src="js/notification-center.js"></script>
+        <script type="text/javascript" src="js/navigation-widget.js"></script>
+    </body>
+    </html>
+    
