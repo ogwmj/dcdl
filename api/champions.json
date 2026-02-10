@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-02-09T21:34:33.625Z",
+  "updated_at": "2026-02-10T13:18:54.203Z",
   "champions": [
     {
       "name": "Swamp Thing",
@@ -1515,51 +1515,51 @@
       "communityAverageLevel": "Blue 3-Star",
       "skills": [
         {
-          "isUltimate": false,
-          "name": "Flock Together",
+          "type": "Spiritual",
           "effects": [
             "Healing",
             "DMG",
             "AoE DMG"
           ],
-          "description": "Raven summons a multitude of magical ravens through the Rift, dealing Spiritual DMG to enemies within a rectangular area in fronf of her. Raven restores HP equal to 50% of the DMG deealt.",
-          "type": "Spiritual"
+          "name": "Flock Together",
+          "description": "Raven summons a multitude of magical ravens through the Rift, dealing Spiritual DMG to enemies within a rectangular area in fronf of her. Raven restores HP equal to 50% of the DMG dealt.",
+          "isUltimate": false
         },
         {
-          "name": "Demon's Shield",
           "isUltimate": false,
           "type": "Healing",
-          "description": "Raven bends rtime and space, swapping places with a selected ally whose HP is below 50% and healing them for a percentage of Raven's ATK over time.",
+          "name": "Demon's Shield",
           "effects": [
             "Healing"
-          ]
+          ],
+          "description": "Raven bends rtime and space, swapping places with a selected ally whose HP is below 50% and healing them for a percentage of Raven's ATK over time."
         },
         {
-          "name": "Demon's Flight",
-          "type": "Healing",
           "effects": [
             "Healing"
           ],
           "description": "Raven transforms and circles overhead, healing all allies within a circular area in front of her by 240% / 320% / 400% / 480% / 560% of her ATK, and increasing their Spiritual DEF by 20% / 25% / 30% / 35% / 40% for 12s.",
-          "isUltimate": true
+          "isUltimate": true,
+          "name": "Demon's Flight",
+          "type": "Healing"
         },
         {
-          "isUltimate": false,
-          "name": "Dark Soul",
+          "description": "Increases Raven’s Healing Done by 5% / 10% / 15% / 20% / 25%.\nAt the start of battle, each [Justice League Dark] ally present increases Raven’s Healing Done by 2% / 4% / 6% / 8% / 10%.",
           "effects": [
             "Buff"
           ],
-          "description": "Increases Raven’s Healing Done by 5% / 10% / 15% / 20% / 25%.\nAt the start of battle, each [Justice League Dark] ally present increases Raven’s Healing Done by 2% / 4% / 6% / 8% / 10%.",
+          "isUltimate": false,
+          "name": "Dark Soul",
           "type": "Buff"
         },
         {
-          "effects": [
-            "Passive"
-          ],
           "name": "Daughter of Darkness",
           "type": "Passive",
+          "description": "Increases all Champions' ATK.",
           "isUltimate": false,
-          "description": "Increases all Champions' ATK."
+          "effects": [
+            "Passive"
+          ]
         }
       ],
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Raven.webp",
@@ -3091,10 +3091,6 @@
       "class": "Supporter",
       "baseRarity": "Limited Mythic",
       "isHealer": false,
-      "inherentSynergies": [
-        "Superman Family",
-        "Metahuman"
-      ],
       "skills": [
         {
           "name": "Chill",
@@ -3146,6 +3142,11 @@
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Superboy-card.png",
       "communityAverageLevel": "Blue 3-Star",
+      "inherentSynergies": [
+        "Superman Family",
+        "Metahuman",
+        "Teen Titans"
+      ],
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Superboy.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Superboy",
       "relatedChampions": [
