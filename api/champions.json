@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-02-10T13:18:54.203Z",
+  "updated_at": "2026-02-11T19:04:28.624Z",
   "champions": [
     {
       "name": "Swamp Thing",
@@ -312,6 +312,72 @@
       "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/GoodDayAK.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Good%20Day%20AK"
+    },
+    {
+      "name": "Wally West",
+      "isHealer": false,
+      "baseRarity": "Limited Mythic",
+      "class": "Firepower",
+      "skills": [
+        {
+          "name": "Everywhere at Once",
+          "description": "Wally blitzes an enemy from all directions, dealing physical damage equal to a percentage of his Attack, plus an additional percentag if the target has a shield.",
+          "type": "Physical",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Relentless Attack",
+          "description": "Each stack of [Speed Force] additionally increases Wally's Attack by a stacking percentage. 1 stack of [Speed Force] is lost every 5s.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Infinity Mass Punch",
+          "description": "Wally channels the Speed Force to unleash Infinity Mass Punch, dealing physical damage equal to a percentage of his Attack to an enemy. Each stack of [Speed Force] increases the damage multiplier by a percentage, up to a maximum of Wally's Attack.",
+          "type": "Physical",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Titan of Speed",
+          "description": "At the start of battle, Wally gains stacks of [Speed Force], doubled if there are at least 3 [Teen Titans] allies present.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "One Step Ahead",
+          "description": "Increases all Champions' Spiritual Defense, with an additional percentrage for [Firepower] Champions.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "inherentSynergies": [
+        "Teen Titans",
+        "Flash Family",
+        "Metahumans"
+      ],
+      "cardImageUrl": "undefined",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/WallyWest.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Wally%20West",
+      "relatedChampions": [
+        "Arsenal",
+        "Cyborg",
+        "Raven"
+      ]
     },
     {
       "name": "Green Lantern",

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-01-22T18:40:02.604Z",
+  "updated_at": "2026-02-11T19:04:22.990Z",
   "legacy_pieces": [
     {
       "name": "Honkin' Huge Hammer",
@@ -381,6 +381,16 @@
       "classes": [
         "Warrior",
         "Guardian"
+      ]
+    },
+    {
+      "name": "Speed Metal Suit",
+      "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/SpeedMetalSuit.webp",
+      "classes": [
+        "Firepower",
+        "Magical",
+        "Assassin"
       ]
     },
     {
