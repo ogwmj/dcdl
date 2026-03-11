@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-10-25T15:01:55.993Z",
+  "updated_at": "2026-03-11T13:10:29.371Z",
   "synergies": [
     {
       "name": "Outsiders",
@@ -167,9 +167,19 @@
       "description": "Damage reduction and increased damage.",
       "tiers": [
         {
-          "appliesTo": "synergy_members",
+          "tierDescription": "Reduces all allies' damage taken by 12% and increases all allies' damage dealt by 12% until the end of the battle.",
           "countRequired": 1,
-          "tierDescription": "20% Damage Reduction, followed by 20% Damage Increased for 10s respectively."
+          "appliesTo": "all_champions"
+        },
+        {
+          "appliesTo": "all_champions",
+          "countRequired": 2,
+          "tierDescription": "Reduces all allies' damage taken by 16% and increases all allies' damage dealt by 16% until the end of the battle."
+        },
+        {
+          "countRequired": 3,
+          "appliesTo": "all_champions",
+          "tierDescription": "Reduces all allies' damage taken by 20% and increases all allies' damage dealt by 20% until the end of the battle."
         }
       ],
       "factionImageUrl": "https://dcdl-companion.com/img/factions/Death_Metal.png",

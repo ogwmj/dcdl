@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-02-11T19:04:28.624Z",
+  "updated_at": "2026-03-11T13:10:21.945Z",
   "champions": [
     {
       "name": "Swamp Thing",
@@ -368,9 +368,10 @@
       "inherentSynergies": [
         "Teen Titans",
         "Flash Family",
-        "Metahumans"
+        "Metahuman"
       ],
-      "cardImageUrl": "undefined",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/WallyWest-card.png",
+      "communityAverageLevel": "White 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/WallyWest.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Wally%20West",
       "relatedChampions": [
@@ -850,7 +851,7 @@
         }
       ],
       "baseRarity": "Iconic",
-      "communityAverageLevel": "Purple 3-Star",
+      "communityAverageLevel": "Purple 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/WonderWomanDeathMetal.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Wonder%20Woman%20Death%20Metal"
     },
@@ -979,7 +980,7 @@
         "Weapon Master"
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Lobo-card.png",
-      "communityAverageLevel": "White 2-Star",
+      "communityAverageLevel": "Blue 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Lobo.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Lobo",
       "relatedChampions": [
@@ -1067,7 +1068,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TheRiddler-card.png",
-      "communityAverageLevel": "Blue 5-Star",
+      "communityAverageLevel": "Purple 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TheRiddler.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=The%20Riddler",
       "relatedChampions": [
@@ -1566,6 +1567,69 @@
       "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Aquaman.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Aquaman"
+    },
+    {
+      "name": "Batman Death Metal",
+      "class": "Magical",
+      "baseRarity": "Iconic",
+      "inherentSynergies": [
+        "Death Metal",
+        "Bat Family",
+        "Energy Wielder"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "isUltimate": false,
+          "description": "Batman Death Metal slams the ground, dealing spiritual damage equal to a percentage of his Attack to enemies within range.",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "name": "Gotham Calling",
+          "type": "Spiritual"
+        },
+        {
+          "effects": [
+            "Buff"
+          ],
+          "description": "After the start of battle, whenever an allied Champion is defeated, Batman Death Metal's Ultimate summons an additional Blackest Bat. Each Blackest Bat inherits a percentage of his Attack and HP from Batman Death Metal and lasts 15s.",
+          "isUltimate": false,
+          "name": "Rock After Death",
+          "type": "Buff"
+        },
+        {
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": true,
+          "description": "Batman Death Metal goes wild on his guitar, dealing spiritual damage equal to a percentage of his Attack to enemies within range, then summons two Blackest Bats to join the fight. Each Blackest Bat inherits a percentage of his Attack and HP from Batman Death Metal and lasts 15s.",
+          "name": "Raise the Shred",
+          "type": "Spiritual"
+        },
+        {
+          "effects": [
+            "Buff"
+          ],
+          "description": "At the start of battle, damage dealt by Batman Death Metal and his Blackest Bats is increased by 30% at level 1, 50% at level 2, 70% at level 3, 85% at level 4, and 100% at level 5.",
+          "isUltimate": false,
+          "type": "Buff",
+          "name": "Heavier Mettle"
+        },
+        {
+          "name": "Sword & Sorcery",
+          "type": "Passive",
+          "description": "Increases all Champions' Physical Defense and [Magical] Champions' Attack. Applies globally.",
+          "isUltimate": false,
+          "effects": [
+            "Passive"
+          ]
+        }
+      ],
+      "cardImageUrl": "undefined",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BatmanDeathMetal.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Batman%20Death%20Metal"
     },
     {
       "name": "Raven",
@@ -3729,7 +3793,7 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Gold 4-Star",
+      "communityAverageLevel": "Red 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/NurseHarley.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Nurse%20Harley"
     },

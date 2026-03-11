@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-02-11T19:04:22.990Z",
+  "updated_at": "2026-03-11T13:10:38.039Z",
   "legacy_pieces": [
     {
       "name": "Honkin' Huge Hammer",
@@ -91,6 +91,16 @@
       "classes": [
         "Supporter",
         "Intimidator"
+      ]
+    },
+    {
+      "name": "Blackest Bats",
+      "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/BlackestBats.webp",
+      "classes": [
+        "Firepower",
+        "Magical",
+        "Assassin"
       ]
     },
     {
