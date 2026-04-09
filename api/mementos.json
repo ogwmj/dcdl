@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-01T15:45:50.962Z",
+  "updated_at": "2026-04-09T15:50:01.068Z",
   "memento_collections": [
     {
       "id": "FAoQgHHf2NxhIRmitsDj",
@@ -663,7 +663,6 @@
       "title": "Arkham Asylum Artifacts",
       "isLimited": true,
       "sortOrder": 5,
-      "archived": true,
       "coverImageUrl": "https://dcdl-companion.com/img/mementos/Arkham_Asylum_Artifacts/icon_collection_Arkham_Asylum_Artifacts_cover.webp",
       "url": "https://dcdl-companion.com/mementos.html?comic=c0g1WJqzhyjCgin3dvdi",
       "mementos": [
@@ -737,7 +736,6 @@
       "title": "Know Your Enemy",
       "isLimited": true,
       "sortOrder": 6,
-      "archived": true,
       "coverImageUrl": "https://dcdl-companion.com/img/mementos/Know_Your_Enemy/icon_collection_Know_Your_Enemy_cover.webp",
       "url": "https://dcdl-companion.com/mementos.html?comic=BIBNCxraBWKmnLyVHo8P",
       "mementos": [
@@ -957,7 +955,6 @@
       "title": "Bat-Family Ties",
       "isLimited": true,
       "sortOrder": 7,
-      "archived": true,
       "coverImageUrl": "https://dcdl-companion.com/img/mementos/Bat_Family_Ties/icon_collection_Bat_Family_Ties_cover.webp",
       "url": "https://dcdl-companion.com/mementos.html?comic=QtaAFo6tNkJ5xhG51rWz",
       "mementos": [
@@ -1031,7 +1028,6 @@
       "title": "Guardians of Gotham",
       "isLimited": true,
       "sortOrder": 8,
-      "archived": true,
       "coverImageUrl": "https://dcdl-companion.com/img/mementos/Guardians_of_Gotham/icon_collection_Guardians_of_Gotham_cover.webp",
       "url": "https://dcdl-companion.com/mementos.html?comic=9qoNyabhWW77qyRZdRX6",
       "mementos": [
@@ -1170,6 +1166,298 @@
           "starColorTier": "Red 5-Star",
           "sortOrder": 9,
           "imageUrl": "https://dcdl-companion.com/img/mementos/Secrets_of_the_Dark_Knights/icon_collection_Secrets_of_the_Dark_Knights_09.webp"
+        }
+      ]
+    },
+    {
+      "id": "UK03xLZosmRL5DZ9KnsI",
+      "title": "Absolute Control",
+      "isLimited": true,
+      "sortOrder": 9,
+      "coverImageUrl": "https://dcdl-companion.com/img/mementos/Absolute_Control/icon_collection_Absolute_Control_cover.webp",
+      "url": "https://dcdl-companion.com/mementos.html?comic=UK03xLZosmRL5DZ9KnsI",
+      "mementos": [
+        {
+          "name": "Killer Cros Experimental Treatment",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 1,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Absolute_Control/icon_collection_Absolute_Control_01.webp"
+        },
+        {
+          "name": "Deadshot's Daughter's Info",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 2,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Absolute_Control/icon_collection_Absolute_Control_02.webp"
+        },
+        {
+          "name": "Non-Addictive Venom",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 3,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Absolute_Control/icon_collection_Absolute_Control_03.webp"
+        },
+        {
+          "name": "Bullet From Shattered Black Mask",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 4,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Absolute_Control/icon_collection_Absolute_Control_04.webp"
+        },
+        {
+          "name": "Green Interceptor",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 5,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Absolute_Control/icon_collection_Absolute_Control_05.webp"
+        },
+        {
+          "name": "Destiny Bullet",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 6,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Absolute_Control/icon_collection_Absolute_Control_06.webp"
+        },
+        {
+          "name": "Oliver Queen's Mayoral Record",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 7,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Absolute_Control/icon_collection_Absolute_Control_07.webp"
+        },
+        {
+          "name": "Magic-Infused Kryptonite",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 8,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Absolute_Control/icon_collection_Absolute_Control_08.webp"
+        },
+        {
+          "name": "Parallax View",
+          "description": "",
+          "starColorTier": "Red 5-Star",
+          "sortOrder": 9,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Absolute_Control/icon_collection_Absolute_Control_09.webp"
+        }
+      ]
+    },
+    {
+      "id": "3KMW8Cp9T6Gnm3xP98YZ",
+      "title": "Mob Mentality",
+      "isLimited": true,
+      "sortOrder": 10,
+      "coverImageUrl": "https://dcdl-companion.com/img/mementos/Mob_Mentality/icon_collection_Mob_Mentality_cover.webp",
+      "url": "https://dcdl-companion.com/mementos.html?comic=3KMW8Cp9T6Gnm3xP98YZ",
+      "mementos": [
+        {
+          "name": "Falcone Family Tree",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 1,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Mob_Mentality/icon_collection_Mob_Mentality_01.webp"
+        },
+        {
+          "name": "Intergang's Crime Bible",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 2,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Mob_Mentality/icon_collection_Mob_Mentality_02.webp"
+        },
+        {
+          "name": "Chip from the Blood Gem",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 3,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Mob_Mentality/icon_collection_Mob_Mentality_03.webp"
+        },
+        {
+          "name": "Lexcorp Direct Line",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 4,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Mob_Mentality/icon_collection_Mob_Mentality_04.webp"
+        },
+        {
+          "name": "Explosive Pneguin Spy Tech",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 5,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Mob_Mentality/icon_collection_Mob_Mentality_05.webp"
+        },
+        {
+          "name": "Cold Gun Recording Device",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 6,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Mob_Mentality/icon_collection_Mob_Mentality_06.webp"
+        },
+        {
+          "name": "The Riddler's Cane",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 7,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Mob_Mentality/icon_collection_Mob_Mentality_07.webp"
+        },
+        {
+          "name": "League of Assassins Membership Sigil",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 8,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Mob_Mentality/icon_collection_Mob_Mentality_08.webp"
+        },
+        {
+          "name": "Jokerz Smile Tattoo",
+          "description": "",
+          "starColorTier": "Red 5-Star",
+          "sortOrder": 9,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Mob_Mentality/icon_collection_Mob_Mentality_09.webp"
+        }
+      ]
+    },
+    {
+      "id": "f3tY6sbiPTkjlNlB5qNT",
+      "title": "Identity Crisis",
+      "isLimited": true,
+      "sortOrder": 11,
+      "coverImageUrl": "https://dcdl-companion.com/img/mementos/Identity_Crisis/icon_collection_Identity_Crisis_cover.webp",
+      "url": "https://dcdl-companion.com/mementos.html?comic=f3tY6sbiPTkjlNlB5qNT",
+      "mementos": [
+        {
+          "name": "Kent Nelson Identity File",
+          "description": "",
+          "starColorTier": "Purple 3-Star",
+          "sortOrder": 1,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Identity_Crisis/icon_collection_Identity_Crisis_01.webp"
+        },
+        {
+          "name": "The Joker's Fingerprints",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 2,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Identity_Crisis/icon_collection_Identity_Crisis_02.webp"
+        },
+        {
+          "name": "Ra's Al Ghul Historical Records",
+          "description": "",
+          "sortOrder": 3,
+          "starColorTier": "Gold 4-Star",
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Identity_Crisis/icon_collection_Identity_Crisis_03.webp"
+        },
+        {
+          "name": "Cyborg Personality File",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 4,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Identity_Crisis/icon_collection_Identity_Crisis_04.webp"
+        },
+        {
+          "name": "Batgirl's Identity File",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 5,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Identity_Crisis/icon_collection_Identity_Crisis_05.webp"
+        },
+        {
+          "name": "Team Arrow Identity Files",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 6,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Identity_Crisis/icon_collection_Identity_Crisis_06.webp"
+        },
+        {
+          "name": "Martian Manhunter Alter Ego List",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 7,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Identity_Crisis/icon_collection_Identity_Crisis_07.webp"
+        },
+        {
+          "name": "Superman Speech Analysis",
+          "description": "",
+          "starColorTier": "Red 5-Star",
+          "sortOrder": 8,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Identity_Crisis/icon_collection_Identity_Crisis_08.webp"
+        },
+        {
+          "name": "Billionaire Financial Records",
+          "description": "",
+          "starColorTier": "Red 5-Star",
+          "sortOrder": 9,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Identity_Crisis/icon_collection_Identity_Crisis_09.webp"
+        }
+      ]
+    },
+    {
+      "id": "C0mRz8ADaPsVhJ69ZsvR",
+      "title": "Wish Fulfillment",
+      "isLimited": true,
+      "sortOrder": 12,
+      "coverImageUrl": "https://dcdl-companion.com/img/mementos/Wish_Fulfillment/icon_collection_Wish_Fulfillment_cover.webp",
+      "url": "https://dcdl-companion.com/mementos.html?comic=C0mRz8ADaPsVhJ69ZsvR",
+      "mementos": [
+        {
+          "name": "Robin's Parent Trap",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 1,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Wish_Fulfillment/icon_collection_Wish_Fulfillment_01.webp"
+        },
+        {
+          "name": "Deathstroke's Family Reunion",
+          "description": "",
+          "starColorTier": "Gold 4-Star",
+          "sortOrder": 2,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Wish_Fulfillment/icon_collection_Wish_Fulfillment_02.webp"
+        },
+        {
+          "name": "Luthor's Image Makeover",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 3,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Wish_Fulfillment/icon_collection_Wish_Fulfillment_03.webp"
+        },
+        {
+          "name": "Hawkgirl's Reincarnation Escape",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 4,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Wish_Fulfillment/icon_collection_Wish_Fulfillment_04.webp"
+        },
+        {
+          "name": "Superman's Two Worlds",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 5,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Wish_Fulfillment/icon_collection_Wish_Fulfillment_05.webp"
+        },
+        {
+          "name": "Constantine's Balancing the Scales",
+          "description": "",
+          "starColorTier": "Gold 5-Star",
+          "sortOrder": 6,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Wish_Fulfillment/icon_collection_Wish_Fulfillment_06.webp"
+        },
+        {
+          "name": "Raven's Demon Side",
+          "description": "",
+          "starColorTier": "Red 5-Star",
+          "sortOrder": 7,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Wish_Fulfillment/icon_collection_Wish_Fulfillment_07.webp"
+        },
+        {
+          "name": "Zatanna's Magical Bargain",
+          "description": "",
+          "starColorTier": "Red 5-Star",
+          "sortOrder": 8,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Wish_Fulfillment/icon_collection_Wish_Fulfillment_08.webp"
+        },
+        {
+          "name": "Lobo's Space Dolphins",
+          "description": "",
+          "starColorTier": "Red 5-Star",
+          "sortOrder": 9,
+          "imageUrl": "https://dcdl-companion.com/img/mementos/Wish_Fulfillment/icon_collection_Wish_Fulfillment_09.webp"
         }
       ]
     }

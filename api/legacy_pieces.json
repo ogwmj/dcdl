@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-03-11T13:10:38.039Z",
+  "updated_at": "2026-04-09T15:51:22.751Z",
   "legacy_pieces": [
     {
       "name": "Honkin' Huge Hammer",
@@ -310,6 +310,15 @@
       ]
     },
     {
+      "name": "Orphan Blades",
+      "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/OrphanBlades.webp",
+      "classes": [
+        "Warrior",
+        "Guardian"
+      ]
+    },
+    {
       "name": "Replica Time Commander",
       "baseRarity": "Epic",
       "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/ReplicaTimeCommander.webp",
@@ -446,6 +455,15 @@
         "Firepower",
         "Magical",
         "Assassin"
+      ]
+    },
+    {
+      "name": "Solar Recovery Suit",
+      "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/SolarRecoverySuit.webp",
+      "classes": [
+        "Warrior",
+        "Guardian"
       ]
     },
     {

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-03-11T13:10:21.945Z",
+  "updated_at": "2026-04-09T15:49:33.233Z",
   "champions": [
     {
       "name": "Swamp Thing",
@@ -371,7 +371,7 @@
         "Metahuman"
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/WallyWest-card.png",
-      "communityAverageLevel": "White 5-Star",
+      "communityAverageLevel": "White 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/WallyWest.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Wally%20West",
       "relatedChampions": [
@@ -980,7 +980,7 @@
         "Weapon Master"
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Lobo-card.png",
-      "communityAverageLevel": "Blue 5-Star",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Lobo.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Lobo",
       "relatedChampions": [
@@ -1068,7 +1068,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TheRiddler-card.png",
-      "communityAverageLevel": "Purple 1-Star",
+      "communityAverageLevel": "Blue 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TheRiddler.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=The%20Riddler",
       "relatedChampions": [
@@ -1627,7 +1627,8 @@
           ]
         }
       ],
-      "cardImageUrl": "undefined",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BatmanDeathMetal-card.png",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BatmanDeathMetal.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Batman%20Death%20Metal"
     },
@@ -1768,7 +1769,6 @@
       ],
       "isHealer": false,
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Robin-card.png",
-      "communityAverageLevel": "Blue 1-Star",
       "skills": [
         {
           "isUltimate": false,
@@ -1819,6 +1819,7 @@
           "name": "League Synergy"
         }
       ],
+      "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Robin.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Robin"
     },
@@ -2628,7 +2629,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Artemis-card.png",
-      "communityAverageLevel": "White 2-Star",
+      "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Artemis.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Artemis",
       "relatedChampions": [
@@ -2996,6 +2997,74 @@
       "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Homefun.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Homefun"
+    },
+    {
+      "baseRarity": "Limited Mythic",
+      "name": "Orphan",
+      "class": "Warrior",
+      "inherentSynergies": [
+        "Bat Family",
+        "Birds of Prey",
+        "Weapon Master"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Mark of Cain",
+          "description": "Cassandra Cain unleashes a powerful slash, dealing physical damage equal to a percentage of her Attack to enemies within range. After casting, she slashes forward upon each successful dodge, dealing physical damage equal to a percentage of her Attack to enemies within range.",
+          "type": "Passive",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Shiva's Scion",
+          "description": "Cassandra Cain unleashes a flurry of slashes, dealing physical damage equal to a percentage of her Attack to enemies within range.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Shadow Strike",
+          "description": "Increases Cassandra Cain's Crit Rate by a percentage. After casting her Ultimate, her Crit Damage is increased by a percentage for 10s.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "False Retreat",
+          "description": "Increases Cassandra Cain's Dodge by a percentage. At the start of battle, if there are at least 3 [Bat Family] allies present, her Dodge is increased by an additional percentage.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Warrior Spirit",
+          "description": "Increases all Champions' HP by a percentage, with an additional percentage for [Warrior] Champions. Applies globally.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "undefined",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Orphan.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Orphan",
+      "relatedChampions": [
+        "Batgirl",
+        "Red Robin",
+        "Robin"
+      ]
     },
     {
       "name": "Bane",
@@ -3431,7 +3500,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/GreenArrow-card.png",
-      "communityAverageLevel": "Gold 3-Star",
+      "communityAverageLevel": "Gold 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/GreenArrow.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Green%20Arrow"
     },
@@ -3515,8 +3584,8 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Blue 3-Star",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TheJoker-card.png",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TheJoker.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=The%20Joker",
       "relatedChampions": [
@@ -3793,7 +3862,7 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Red 1-Star",
+      "communityAverageLevel": "Gold 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/NurseHarley.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Nurse%20Harley"
     },
@@ -4011,7 +4080,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Nightwing-card.png",
-      "communityAverageLevel": "Blue 4-Star",
+      "communityAverageLevel": "Blue 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Nightwing.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Nightwing",
       "relatedChampions": [
