@@ -65,22 +65,33 @@ document.addEventListener("DOMContentLoaded", () => {
         window.addEventListener('mouseup', handlePointerUp);
     }
 
+    // --- HELPER: GET TRUE MOUSE POSITION ---
+    function getMousePos(e) {
+        const rect = canvas.getBoundingClientRect();
+        // Calculate the ratio of internal resolution to actual CSS screen size
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+
+        return {
+            x: (e.clientX - rect.left) * scaleX,
+            y: (e.clientY - rect.top) * scaleY
+        };
+    }
+
     // --- PAN AND ZOOM LOGIC ---
     function handleZoom(e) {
         e.preventDefault();
-        const rect = canvas.getBoundingClientRect();
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
+        const pos = getMousePos(e); // Use the helper
 
         const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
         
-        const worldX = (mouseX - camera.x) / camera.scale;
-        const worldY = (mouseY - camera.y) / camera.scale;
+        const worldX = (pos.x - camera.x) / camera.scale;
+        const worldY = (pos.y - camera.y) / camera.scale;
 
         camera.scale = Math.max(0.5, Math.min(camera.scale * zoomFactor, 10));
 
-        camera.x = mouseX - worldX * camera.scale;
-        camera.y = mouseY - worldY * camera.scale;
+        camera.x = pos.x - worldX * camera.scale;
+        camera.y = pos.y - worldY * camera.scale;
 
         drawMap();
     }
@@ -89,14 +100,17 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target !== canvas) return;
         isDragging = true;
         hasDragged = false;
-        dragStart = { x: e.clientX - camera.x, y: e.clientY - camera.y };
+        
+        const pos = getMousePos(e); // Use the helper
+        dragStart = { x: pos.x - camera.x, y: pos.y - camera.y };
     }
 
     function handlePointerMove(e) {
         if (!isDragging) return;
         
-        const newCameraX = e.clientX - dragStart.x;
-        const newCameraY = e.clientY - dragStart.y;
+        const pos = getMousePos(e); // Use the helper
+        const newCameraX = pos.x - dragStart.x;
+        const newCameraY = pos.y - dragStart.y;
         
         if (Math.abs(newCameraX - camera.x) > 3 || Math.abs(newCameraY - camera.y) > 3) {
             hasDragged = true;
@@ -120,7 +134,6 @@ document.addEventListener("DOMContentLoaded", () => {
     function getNextAvailableId() {
         let id = 1;
         const usedIds = new Set(placedBases.map(b => b.id));
-        // Keep incrementing until we find a number not currently in use
         while (usedIds.has(id)) {
             id++;
         }
@@ -128,12 +141,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function processMapClick(e) {
-        const rect = canvas.getBoundingClientRect();
-        const clickX = e.clientX - rect.left;
-        const clickY = e.clientY - rect.top;
+        const pos = getMousePos(e); // Use the helper!
 
-        const worldX = (clickX - camera.x) / camera.scale;
-        const worldY = (clickY - camera.y) / camera.scale;
+        // Calculate world coordinates accurately 
+        const worldX = (pos.x - camera.x) / camera.scale;
+        const worldY = (pos.y - camera.y) / camera.scale;
 
         const gridX = Math.floor(worldX / PIXELS_PER_TILE / 2) * 2;
         const gridY = Math.floor(worldY / PIXELS_PER_TILE / 2) * 2;
@@ -152,11 +164,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!isPlacementValid(gridX, gridY)) {
             canvas.style.border = "2px solid red";
-            setTimeout(() => canvas.style.border = "none", 300);
+            setTimeout(() => canvas.style.border = "1px solid var(--border-color, #333)", 300); // restored your theme border!
             return;
         }
 
-        // Add new base using the lowest available gap ID
         placedBases.push({ 
             id: getNextAvailableId(), 
             gridX: gridX, 
@@ -164,7 +175,6 @@ document.addEventListener("DOMContentLoaded", () => {
             playerName: '' 
         });
         
-        // Sort the array so the legend stays in numerical order (1, 2, 3...)
         placedBases.sort((a, b) => a.id - b.id);
         
         updateLegendUI();
