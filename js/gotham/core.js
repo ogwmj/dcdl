@@ -8,6 +8,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const CANVAS_SIZE = 1024;
     const PIXELS_PER_TILE = CANVAS_SIZE / GRID_SIZE; // 4 pixels
 
+    // --- ASSET MANAGEMENT ---
+    // Update these paths to match your exact file extensions (.png, .webp, etc.)
+    const imagePaths = {
+        cityHall: 'img/gotham/cityhall.webp',
+        plaza: 'img/gotham/plazas.webp',
+        armory: 'img/gotham/armories.webp'
+    };
+    const loadedImages = {};
+
     // Simulated Firestore Configuration Data
     const mapConfig = {
         sizes: {
@@ -15,9 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
             plaza: 6,
             armory: 4
         },
-        outOfBoundsAreas: [
-            // Example: { x: 0, y: 0, width: 256, height: 10 }
-        ]
+        outOfBoundsAreas: []
     };
 
     // Application State
@@ -30,15 +37,41 @@ document.addEventListener("DOMContentLoaded", () => {
     let hasDragged = false;
     let dragStart = { x: 0, y: 0 };
 
-    // Building Presets Data
+    // Building Presets Data (Now referencing Image Keys instead of Colors)
     const presets = {
-        cityHall: { coords: [[128, 128]], color: '#f1c40f' },
-        plazas: { coords: [[68, 128], [98, 98], [128, 68], [158, 98], [188, 128], [158, 158], [128, 188], [98, 158]], color: '#3498db' },
-        armories: { coords: [[100, 122], [122, 98], [135, 156], [157, 135]], color: '#9b59b6' },
-        ultimateArmories: { coords: [[108, 147], [147, 108]], color: '#8e44ad' }
+        cityHall: { coords: [[128, 128]], imageKey: 'cityHall' },
+        plazas: { coords: [[68, 128], [98, 98], [128, 68], [158, 98], [188, 128], [158, 158], [128, 188], [98, 158]], imageKey: 'plaza' },
+        armories: { coords: [[100, 122], [122, 98], [135, 156], [157, 135]], imageKey: 'armory' },
+        ultimateArmories: { coords: [[108, 147], [147, 108]], imageKey: 'armory' }
     };
 
-    init();
+    // Preload Images before initializing the app
+    preloadImages(() => {
+        init();
+    });
+
+    function preloadImages(onComplete) {
+        let loadedCount = 0;
+        const keys = Object.keys(imagePaths);
+        
+        if (keys.length === 0) return onComplete();
+
+        keys.forEach(key => {
+            const img = new Image();
+            img.src = imagePaths[key];
+            img.onload = () => {
+                loadedImages[key] = img;
+                loadedCount++;
+                if (loadedCount === keys.length) onComplete();
+            };
+            img.onerror = () => {
+                console.error(`Failed to load image: ${imagePaths[key]}`);
+                // Still increment so the app doesn't hang forever if one image fails
+                loadedCount++;
+                if (loadedCount === keys.length) onComplete();
+            };
+        });
+    }
 
     function init() {
         bindEvents();
@@ -68,7 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- HELPER: GET TRUE MOUSE POSITION ---
     function getMousePos(e) {
         const rect = canvas.getBoundingClientRect();
-        // Calculate the ratio of internal resolution to actual CSS screen size
         const scaleX = canvas.width / rect.width;
         const scaleY = canvas.height / rect.height;
 
@@ -81,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- PAN AND ZOOM LOGIC ---
     function handleZoom(e) {
         e.preventDefault();
-        const pos = getMousePos(e); // Use the helper
+        const pos = getMousePos(e);
 
         const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
         
@@ -100,15 +132,14 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target !== canvas) return;
         isDragging = true;
         hasDragged = false;
-        
-        const pos = getMousePos(e); // Use the helper
+        const pos = getMousePos(e);
         dragStart = { x: pos.x - camera.x, y: pos.y - camera.y };
     }
 
     function handlePointerMove(e) {
         if (!isDragging) return;
         
-        const pos = getMousePos(e); // Use the helper
+        const pos = getMousePos(e);
         const newCameraX = pos.x - dragStart.x;
         const newCameraY = pos.y - dragStart.y;
         
@@ -141,9 +172,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function processMapClick(e) {
-        const pos = getMousePos(e); // Use the helper!
+        const pos = getMousePos(e);
 
-        // Calculate world coordinates accurately 
         const worldX = (pos.x - camera.x) / camera.scale;
         const worldY = (pos.y - camera.y) / camera.scale;
 
@@ -164,7 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!isPlacementValid(gridX, gridY)) {
             canvas.style.border = "2px solid red";
-            setTimeout(() => canvas.style.border = "1px solid var(--border-color, #333)", 300); // restored your theme border!
+            setTimeout(() => canvas.style.border = "1px solid var(--border-color, #333)", 300);
             return;
         }
 
@@ -229,10 +259,11 @@ document.addEventListener("DOMContentLoaded", () => {
             ctx.fillRect(area.x * PIXELS_PER_TILE, area.y * PIXELS_PER_TILE, area.width * PIXELS_PER_TILE, area.height * PIXELS_PER_TILE);
         });
 
-        drawPresetGroup(presets.cityHall.coords, mapConfig.sizes.cityHall, presets.cityHall.color);
-        drawPresetGroup(presets.plazas.coords, mapConfig.sizes.plaza, presets.plazas.color);
-        drawPresetGroup(presets.armories.coords, mapConfig.sizes.armory, presets.armories.color);
-        if (currentMode === 'ultimate') drawPresetGroup(presets.ultimateArmories.coords, mapConfig.sizes.armory, presets.ultimateArmories.color);
+        // Pass the imageKey instead of color
+        drawPresetGroup(presets.cityHall.coords, mapConfig.sizes.cityHall, presets.cityHall.imageKey);
+        drawPresetGroup(presets.plazas.coords, mapConfig.sizes.plaza, presets.plazas.imageKey);
+        drawPresetGroup(presets.armories.coords, mapConfig.sizes.armory, presets.armories.imageKey);
+        if (currentMode === 'ultimate') drawPresetGroup(presets.ultimateArmories.coords, mapConfig.sizes.armory, presets.ultimateArmories.imageKey);
 
         placedBases.forEach(base => {
             const pixelX = base.gridX * PIXELS_PER_TILE;
@@ -242,7 +273,6 @@ document.addEventListener("DOMContentLoaded", () => {
             ctx.fillStyle = '#e74c3c';
             ctx.fillRect(pixelX, pixelY, pixelSize, pixelSize);
             
-            // Reduced Font Size so it fits neatly into the 8x8 pixel bounding box
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 6px Arial';
             ctx.textAlign = 'center';
@@ -268,13 +298,23 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.stroke();
     }
 
-    function drawPresetGroup(coords, size, color) {
-        ctx.fillStyle = color;
+    // Now expects an imageKey to fetch from our preloaded asset dictionary
+    function drawPresetGroup(coords, size, imageKey) {
+        const img = loadedImages[imageKey];
         const pixelSize = size * PIXELS_PER_TILE;
+        
         coords.forEach(([cx, cy]) => {
             const x = (cx * PIXELS_PER_TILE) - (pixelSize / 2);
             const y = (cy * PIXELS_PER_TILE) - (pixelSize / 2);
-            ctx.fillRect(x, y, pixelSize, pixelSize);
+            
+            if (img) {
+                // If image successfully loaded, draw it
+                ctx.drawImage(img, x, y, pixelSize, pixelSize);
+            } else {
+                // Fallback to a grey block if the path was wrong
+                ctx.fillStyle = '#555';
+                ctx.fillRect(x, y, pixelSize, pixelSize);
+            }
         });
     }
 
