@@ -1,0 +1,161 @@
+.dcdl-page-layout {
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.planner-container {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 20px;
+    height: calc(100vh - 100px); /* Adjust based on navbar height */
+}
+
+/* Matching the site's dark panels */
+.card-panel {
+    background-color: var(--panel-bg, #1a1a1a);
+    border: 1px solid var(--border-color, #333);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.planner-sidebar {
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+}
+
+.text-accent {
+    color: var(--accent-color, #00d2ff);
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.form-group, .slider-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #ddd;
+}
+
+.dcdl-input {
+    width: 100%;
+    padding: 10px;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    color: white;
+    border-radius: 4px;
+}
+
+.slider-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    color: #ccc;
+}
+
+.dcdl-divider {
+    border: 0;
+    border-top: 1px solid #444;
+    margin: 20px 0;
+}
+
+.hint-text {
+    font-size: 0.85em;
+    color: #aaa;
+    margin-bottom: 15px;
+}
+
+.player-legend {
+    flex-grow: 1;
+    overflow-y: auto;
+    background: #111;
+    border: 1px solid #333;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.legend-item span {
+    min-width: 30px;
+    height: 30px;
+    background: #e74c3c;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.planner-canvas-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background: #0d0d0d;
+}
+
+#map-canvas {
+    max-width: 100%;
+    max-height: 100%;
+    cursor: crosshair;
+    background: #222;
+    transition: border 0.1s ease; /* For the red collision flash */
+}
+
+.w-100 { width: 100%; }
+.mt-2 { margin-top: 10px; }
+.btn { padding: 12px; font-weight: bold; cursor: pointer; border-radius: 4px; border: none; }
+.btn-primary { background: #007bff; color: white; }
+.btn-primary:hover { background: #0056b3; }
+.btn-danger { background: #dc3545; color: white; }
+.btn-danger:hover { background: #c82333; }
+
+.hint-box {
+    background: #222;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    border-left: 3px solid #00d2ff;
+}
+
+.hint-box p {
+    margin: 5px 0;
+    font-size: 0.85em;
+    color: #ccc;
+}
+
+.planner-canvas-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Important to hide canvas overflow when zoomed */
+    background: #0d0d0d;
+}
+
+#map-canvas {
+    max-width: 100%;
+    max-height: 100%;
+    background: #1a1a1a; /* slightly lighter than wrapper */
+    cursor: grab;
+    transition: border 0.1s ease;
+}
+
+#map-canvas:active {
+    cursor: grabbing;
+}

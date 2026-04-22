@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Planner | DCDL</title>
+    <link rel="stylesheet" href="css/theme.css"> 
+    <link rel="stylesheet" href="css/gotham/ui.css">
+</head>
+<body>
+    
+    <main class="content-wrapper dcdl-page-layout">
+        <div class="planner-container">
+            
+            <aside class="planner-sidebar card-panel">
+                <h2 class="text-accent">Map Settings</h2>
+                
+                <div class="form-group">
+                    <label for="mode-select">Game Mode:</label>
+                    <select id="mode-select" class="dcdl-input">
+                        <option value="gotham">Gotham</option>
+                        <option value="ultimate">Ultimate Gotham</option>
+                    </select>
+                </div>
+
+                <hr class="dcdl-divider">
+
+                <h2 class="text-accent">Player Bases</h2>
+                <div class="hint-box">
+                    <p><strong>Left-Click:</strong> Place / Remove Base</p>
+                    <p><strong>Click & Drag:</strong> Pan Map</p>
+                    <p><strong>Scroll Wheel:</strong> Zoom In / Out</p>
+                </div>
+                
+                <div id="player-legend" class="player-legend">
+                    </div>
+
+                <div class="action-buttons">
+                    <button id="btn-export" class="btn btn-primary w-100">Export Image</button>
+                    <button id="btn-clear" class="btn btn-danger w-100 mt-2">Clear Map</button>
+                </div>
+            </aside>
+
+            <section class="planner-canvas-wrapper card-panel" id="canvas-container">
+                <canvas id="map-canvas" width="1024" height="1024"></canvas>
+            </section>
+            
+        </div>
+    </main>
+
+    <script src="js/gotham/core.js"></script>
+</body>
+</html>
