@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DC: Dark Legion - Gotham Planner</title>
+    <title>DC: Dark Legion - Map Planner</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Russo+One&display=swap" rel="stylesheet">
     <link href="css/gotham/ui.css" rel="stylesheet">
     <link href="css/theme.css" rel="stylesheet">
 
@@ -25,46 +25,64 @@
     <div class="background-hero"></div>
     <navigation-widget></navigation-widget>
 
-    <main class="relative z-10 max-w-7xl mx-auto p-4 md:p-8">
-        <header class="py-8 md:py-12 text-center">
-            <h1 class="text-5xl md:text-7xl font-extrabold mb-4 glowing-text text-white">Gotham Planner</h1>
-            <p class="text-xl md:text-2xl text-blue-200">Plan your league's base placement.</p>
+    <main class="relative z-10 max-w-[1600px] mx-auto p-4 md:p-6 lg:p-8">
+        <header class="py-6 md:py-8 text-center">
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-3 glowing-text text-white" style="font-family: 'Russo One', sans-serif;">Gotham Planner</h1>
+            <p class="text-lg md:text-xl text-blue-200 opacity-90">Strategize and coordinate your league's base placement.</p>
         </header>
     
         <div class="planner-container">
             
-            <aside class="planner-sidebar card-panel">
-                <h2 class="text-accent">Map Settings</h2>
+            <aside class="planner-sidebar bg-slate-800/80 backdrop-blur-md border border-slate-700 shadow-2xl rounded-2xl p-6 flex flex-col h-full">
                 
-                <div class="form-group">
-                    <label for="mode-select">Game Mode:</label>
-                    <select id="mode-select" class="dcdl-input">
-                        <option value="gotham">Gotham</option>
-                        <option value="ultimate">Ultimate Gotham</option>
-                    </select>
+                <div class="mb-6">
+                    <label for="mode-select" class="block text-sm font-bold text-blue-400 uppercase tracking-wider mb-2">Game Mode</label>
+                    <div class="relative">
+                        <select id="mode-select" class="w-full bg-slate-900 border border-slate-600 text-white rounded-xl px-4 py-3 appearance-none outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer">
+                            <option value="gotham">Gotham</option>
+                            <option value="ultimate">Ultimate Gotham</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
+                    </div>
                 </div>
 
-                <hr class="dcdl-divider">
-
-                <h2 class="text-accent">Player Bases</h2>
-                <div class="hint-box">
-                    <p><strong>Left-Click:</strong> Place / Remove Base</p>
-                    <p><strong>Click & Drag:</strong> Pan Map</p>
-                    <p><strong>Scroll Wheel:</strong> Zoom In / Out</p>
+                <div class="bg-blue-900/20 border-l-4 border-blue-500 p-4 rounded-r-xl mb-6">
+                    <h3 class="text-blue-400 font-bold text-sm uppercase mb-2">Controls</h3>
+                    <ul class="text-sm text-blue-100/80 space-y-1">
+                        <li><span class="text-white font-semibold">Left-Click:</span> Place / Remove Base</li>
+                        <li><span class="text-white font-semibold">Click & Drag:</span> Pan Map</li>
+                        <li><span class="text-white font-semibold">Scroll Wheel:</span> Zoom In / Out</li>
+                    </ul>
                 </div>
                 
-                <div id="player-legend" class="player-legend">
+                <h2 class="text-sm font-bold text-blue-400 uppercase tracking-wider mb-3">Player Roster</h2>
+                
+                <div id="player-legend" class="player-legend custom-scrollbar bg-slate-900/50 border border-slate-700/50 rounded-xl p-3 mb-6">
                     </div>
 
-                <div class="action-buttons">
-                    <button id="btn-save" class="btn btn-success w-100">Save to Profile</button>
-                    <button id="btn-export" class="btn btn-primary w-100 mt-2">Export Map</button>
-                    <button id="btn-clear" class="btn btn-danger w-100 mt-2">Clear Map</button>
+                <div class="flex flex-col gap-3 mt-auto pt-4 border-t border-slate-700/50">
+                    <button id="btn-save" class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all duration-200 flex justify-center items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"/></svg>
+                        Save to Profile
+                    </button>
+                    
+                    <button id="btn-export" class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-[0_0_15px_rgba(59,130,246,0.2)] hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all duration-200 flex justify-center items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>
+                        Export Map
+                    </button>
+                    
+                    <button id="btn-clear" class="w-full py-2.5 px-4 bg-slate-700 hover:bg-red-600 text-slate-200 hover:text-white font-semibold rounded-xl transition-colors duration-200 flex justify-center items-center gap-2 mt-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                        Clear Map
+                    </button>
                 </div>
             </aside>
 
-            <section class="planner-canvas-wrapper card-panel" id="canvas-container">
-                <canvas id="map-canvas" width="1024" height="1024"></canvas>
+            <section class="planner-canvas-wrapper bg-[#080c17] border-2 border-slate-700/80 shadow-2xl rounded-2xl relative overflow-hidden" id="canvas-container">
+                <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#3b82f6 1px, transparent 1px); background-size: 30px 30px;"></div>
+                <canvas id="map-canvas" width="1024" height="1024" class="relative z-10"></canvas>
             </section>
             
         </div>
