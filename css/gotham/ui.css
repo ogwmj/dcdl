@@ -125,6 +125,8 @@
 .btn-primary:hover { background: #0056b3; }
 .btn-danger { background: #dc3545; color: white; }
 .btn-danger:hover { background: #c82333; }
+.btn-success { background: #28a745; color: white; }
+.btn-success:hover { background: #218838; }
 
 .hint-box {
     background: #222;
