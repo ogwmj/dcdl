@@ -1,6 +1,7 @@
 import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const canvas = document.getElementById('map-canvas');
@@ -8,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const legendContainer = document.getElementById('player-legend');
     
     // --- FIREBASE VARIABLES ---
-    let auth, db;
+    let auth, db, analytics;
 
     // --- ISOMETRIC GRID CONFIGURATION ---
     const GRID_SIZE = 256;
@@ -62,9 +63,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const app = getApp();
             auth = getAuth(app);
             db = getFirestore(app);
+            analytics = getAnalytics(app);
 
             preloadImages(() => {
                 init();
+                logEvent(analytics, 'map_planner_opened', { initial_mode: currentMode });
             });
         } catch (e) {
             console.error("Gotham Planner: Firebase initialization failed.", e);
@@ -104,7 +107,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function bindEvents() {
         document.getElementById('mode-select').addEventListener('change', async (e) => { 
-            currentMode = e.target.value; 
+            currentMode = e.target.value;
+            if (analytics) logEvent(analytics, 'map_mode_changed', { mode: currentMode });
             if (auth && auth.currentUser) {
                 await loadMapData(currentMode);
             } else {
@@ -115,7 +119,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         document.getElementById('btn-save').addEventListener('click', saveMapData);
-        document.getElementById('btn-clear').addEventListener('click', () => { placedBases = []; updateLegendUI(); drawMap(); });
+        document.getElementById('btn-clear').addEventListener('click', () => {
+            placedBases = [];
+            updateLegendUI();
+            drawMap();
+            if (analytics) logEvent(analytics, 'map_cleared', { mode: currentMode });
+        });
         document.getElementById('btn-export').addEventListener('click', exportCombinedImage);
 
         canvas.addEventListener('wheel', handleZoom, { passive: false });
@@ -151,6 +160,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 bases: placedBases,
                 updatedAt: new Date()
             });
+
+            if (analytics) logEvent(analytics, 'map_saved', { 
+                mode: currentMode, 
+                base_count: placedBases.length 
+            });
+
             btn.innerText = "Saved!";
             setTimeout(() => btn.innerText = "Save to Profile", 2000);
         } catch (error) {
@@ -504,6 +519,11 @@ document.addEventListener("DOMContentLoaded", () => {
         link.download = `dcdl-map-${currentMode}.png`;
         link.href = exportCanvas.toDataURL("image/png");
         link.click();
+
+        if (analytics) logEvent(analytics, 'map_exported', { 
+            mode: currentMode, 
+            base_count: placedBases.length 
+        });
     }
 
     function buildAdminUI() {
