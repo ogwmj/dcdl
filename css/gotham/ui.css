@@ -18,6 +18,13 @@
 }
 
 /* Canvas Styling */
+/* Add min-height: 0 to both main grid panels to prevent blowout */
+.planner-sidebar,
+.planner-canvas-wrapper {
+    min-height: 0; 
+    min-width: 0;
+}
+
 .planner-canvas-wrapper {
     display: flex;
     justify-content: center;
@@ -27,7 +34,9 @@
 #map-canvas {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* Ensures the canvas scales perfectly without stretching */
+    max-width: 100%;     /* Added strict max boundaries */
+    max-height: 100%;    /* Added strict max boundaries */
+    object-fit: contain; 
     background: transparent;
     cursor: grab;
 }
