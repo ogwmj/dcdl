@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-18T14:00:04.028Z",
+  "updated_at": "2026-05-08T13:25:49.808Z",
   "effects": [
     {
       "name": "Stunning",
@@ -50,12 +50,20 @@
       "description": "Each stack slows the target, stacking up to 5 times. Cannot be dispelled."
     },
     {
+      "name": "Frostbite",
+      "description": "Reduces Attack by a scaling percentage."
+    },
+    {
       "name": "Bewitch",
       "description": "Causes the target to slowly move towards summoner."
     },
     {
       "name": "Speed Force Resonance",
       "description": "Increases Dodge."
+    },
+    {
+      "name": "Absolute Zero Armor",
+      "description": "Restores a percentage of Max HP immediately, then an additional percentage over time. While this effect is active, when hit by an enemy basic attack, there is a 50% base chance to inflict [Frostbit] on the attacker for 5s."
     },
     {
       "name": "Robustness",
@@ -80,6 +88,10 @@
     {
       "name": "Silence",
       "description": "Prevents the use of active skills."
+    },
+    {
+      "name": "Freeze",
+      "description": "Incapacitates the target."
     },
     {
       "name": "Holographic Decoy",

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-09T15:49:33.233Z",
+  "updated_at": "2026-05-08T13:25:44.727Z",
   "champions": [
     {
       "name": "Swamp Thing",
@@ -371,7 +371,7 @@
         "Metahuman"
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/WallyWest-card.png",
-      "communityAverageLevel": "White 4-Star",
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/WallyWest.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Wally%20West",
       "relatedChampions": [
@@ -528,7 +528,6 @@
       "isHealer": true,
       "baseRarity": "Limited Mythic",
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Starfire-card.png",
-      "communityAverageLevel": "Blue 4-Star",
       "skills": [
         {
           "effects": [
@@ -580,6 +579,7 @@
           ]
         }
       ],
+      "communityAverageLevel": "Blue 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Starfire.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Starfire",
       "relatedChampions": [
@@ -851,7 +851,7 @@
         }
       ],
       "baseRarity": "Iconic",
-      "communityAverageLevel": "Purple 2-Star",
+      "communityAverageLevel": "Purple 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/WonderWomanDeathMetal.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Wonder%20Woman%20Death%20Metal"
     },
@@ -980,7 +980,7 @@
         "Weapon Master"
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Lobo-card.png",
-      "communityAverageLevel": "Blue 4-Star",
+      "communityAverageLevel": "Blue 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Lobo.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Lobo",
       "relatedChampions": [
@@ -1088,7 +1088,6 @@
         "Metahuman"
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/WonderGirl-card.png",
-      "communityAverageLevel": "Blue 2-Star",
       "skills": [
         {
           "description": "Donna Troy unleashes a flurry of lashes at an enemy, dealing Physical DMG and applying [Astral Willpower].",
@@ -1139,6 +1138,7 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "Blue 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/WonderGirl.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Wonder%20Girl"
     },
@@ -1628,7 +1628,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BatmanDeathMetal-card.png",
-      "communityAverageLevel": "Blue 4-Star",
+      "communityAverageLevel": "Blue 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BatmanDeathMetal.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Batman%20Death%20Metal"
     },
@@ -1754,7 +1754,7 @@
         "Energy Wielder",
         "Justice League"
       ],
-      "communityAverageLevel": "Gold 3-Star",
+      "communityAverageLevel": "Gold 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Mera.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Mera"
     },
@@ -1965,7 +1965,6 @@
       ],
       "isHealer": false,
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/MartianManhunter-card.png",
-      "communityAverageLevel": "Blue 4-Star",
       "skills": [
         {
           "isUltimate": false,
@@ -2015,6 +2014,7 @@
           "isUltimate": false
         }
       ],
+      "communityAverageLevel": "Blue 4-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/MartianManhunter.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Martian%20Manhunter",
       "relatedChampions": [
@@ -2090,6 +2090,68 @@
         "Krypto",
         "Robin"
       ]
+    },
+    {
+      "name": "Mr. Freeze",
+      "baseRarity": "Limited Mythic",
+      "class": "Guardian",
+      "inherentSynergies": [
+        "Arkham's Most Wanted",
+        "Weapon Master"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Nora's Tears",
+          "description": "Mr. Freeze deals spiritual damage equal to a percentage of his Attack to an enemy, with a base chance to inflict [Frozen] for 2s.",
+          "type": "Spiritual",
+          "effects": [
+            "Control",
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Cryo-Field",
+          "description": "Reduces Mr. Freeze's combined single-target damage taken by a percentage. After casting his Ultimate, his combined single-target damage taken is reduced by an additional percentage for 10s.",
+          "type": "Defense",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Cold to the Touch",
+          "description": "Mr. Freeze gains [Absolute Zero Armor] for 10s.",
+          "type": "Healing",
+          "effects": [
+            "Healing",
+            "Debuff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Ice Cold",
+          "description": "Mr. Freeze is immune to [Frozen], and his Max HP is increased by a percentage. When hit by single-target damage from an enemy skill or Ultimate, there is a 50% base chance to inflict [Frozen] on the attacker for 2s.",
+          "type": "Control",
+          "effects": [
+            "Control"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Glacier",
+          "description": "Increases all Champions' Physical Defense by a percentage with an additional percentage for [Guardian] Champions. Applies globally.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "undefined",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Mr.Freeze.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Mr.%20Freeze"
     },
     {
       "name": "Captain Cold",
@@ -2343,7 +2405,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Deadshot-card.png",
-      "communityAverageLevel": "White 5-Star",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Deadshot.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Deadshot"
     },
@@ -2563,7 +2625,7 @@
           ]
         }
       ],
-      "communityAverageLevel": "Purple 1-Star",
+      "communityAverageLevel": "Blue 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/QueenHippolyta.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Queen%20Hippolyta",
       "relatedChampions": [
@@ -2629,7 +2691,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Artemis-card.png",
-      "communityAverageLevel": "Blue 2-Star",
+      "communityAverageLevel": "Blue 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Artemis.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Artemis",
       "relatedChampions": [
@@ -2774,7 +2836,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Two-Face-card.png",
-      "communityAverageLevel": "Blue 1-Star",
+      "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Two-Face.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Two-Face"
     },
@@ -2838,7 +2900,7 @@
         }
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Zatanna-card.png",
-      "communityAverageLevel": "Blue 2-Star",
+      "communityAverageLevel": "Blue 3-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Zatanna.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Zatanna",
       "relatedChampions": [
@@ -3057,7 +3119,8 @@
           "isUltimate": false
         }
       ],
-      "cardImageUrl": "undefined",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Orphan-card.png",
+      "communityAverageLevel": "Blue 1-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Orphan.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Orphan",
       "relatedChampions": [
@@ -3862,7 +3925,7 @@
           "isUltimate": false
         }
       ],
-      "communityAverageLevel": "Gold 4-Star",
+      "communityAverageLevel": "Gold 5-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/NurseHarley.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Nurse%20Harley"
     },

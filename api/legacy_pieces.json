@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-09T15:51:22.751Z",
+  "updated_at": "2026-05-08T13:25:57.914Z",
   "legacy_pieces": [
     {
       "name": "Honkin' Huge Hammer",
@@ -474,6 +474,15 @@
         "Firepower",
         "Magical",
         "Assassin"
+      ]
+    },
+    {
+      "name": "Nora's Embrace",
+      "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/NorasEmbrace.webp",
+      "classes": [
+        "Warrior",
+        "Guardian"
       ]
     },
     {
