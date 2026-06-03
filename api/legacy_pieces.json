@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-08T13:25:57.914Z",
+  "updated_at": "2026-06-03T15:26:27.343Z",
   "legacy_pieces": [
     {
       "name": "Honkin' Huge Hammer",
@@ -322,6 +322,16 @@
       "name": "Replica Time Commander",
       "baseRarity": "Epic",
       "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/ReplicaTimeCommander.webp",
+      "classes": [
+        "Firepower",
+        "Magical",
+        "Assassin"
+      ]
+    },
+    {
+      "name": "Knightbow",
+      "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/Knightbow.webp",
       "classes": [
         "Firepower",
         "Magical",

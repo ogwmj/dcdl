@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-08T13:25:44.727Z",
+  "updated_at": "2026-06-03T15:26:07.010Z",
   "champions": [
     {
       "name": "Swamp Thing",
@@ -587,6 +587,70 @@
         "Poison Ivy",
         "The Penguin"
       ]
+    },
+    {
+      "baseRarity": "Limited Mythic",
+      "name": "Red Hood Knightfight",
+      "class": "Firepower",
+      "inherentSynergies": [
+        "Bat Family",
+        "League of Assassins",
+        "Weapon Master"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "type": "Physical",
+          "description": "Red Hood Knightfight fires a volley of arrows, dealing physical damage equal to a percentage of his Attack plus a percentage of the target's Max HP to enemies within range. Total damage is capped at a percentage of Red Hood Knightfight's Attack.",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "name": "Gotham's Last Guardian",
+          "isUltimate": true
+        },
+        {
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "name": "Red Wing",
+          "isUltimate": false,
+          "type": "Physical",
+          "description": "Red Hood Knightfight fires a volley of arrows, dealing physical damage equal to a percentage of his Attack to enemies in a fan-shaped area."
+        },
+        {
+          "effects": [
+            "Buff"
+          ],
+          "name": "Group Tactics",
+          "isUltimate": false,
+          "type": "Buff",
+          "description": "Increases Red Hood Knightfight's Crit Damage by a base percentage. Each [Bat Family] or [League of Assassins] ally increases Red Hood Knightfight's Crit Rate by an additional percentage."
+        },
+        {
+          "type": "Physical",
+          "description": "When Red Hood Knightfight lands a critical hit, he throws a grenade, dealing physical damage equal to a percentage of his Attack plus a percentage of the target's Max HP to enemies within range. Total damage is capped at a percentage of Red Hood Knightfight's Attack. Can trigger ogeronce every 5s.",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": false,
+          "name": "Hold the Line"
+        },
+        {
+          "description": "Increases all Champions' Attack by a percentage and [Firepower] Champions' Physical Defense by a percentage. Applies globally.",
+          "type": "Passive",
+          "isUltimate": false,
+          "name": "Lead by Example",
+          "effects": [
+            "Passive"
+          ]
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/RedHoodKnightfight-card.png",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/RedHoodKnightfight.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Red%20Hood%20Knightfight"
     },
     {
       "name": "Wonder Woman",
@@ -2149,9 +2213,14 @@
           "isUltimate": false
         }
       ],
-      "cardImageUrl": "undefined",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/MrFreeze-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Mr.Freeze.webp",
-      "codexUrl": "https://dcdl-companion.com/codex.html?search=Mr.%20Freeze"
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Mr.%20Freeze",
+      "relatedChampions": [
+        "Bane",
+        "Poison Ivy",
+        "The Penguin"
+      ]
     },
     {
       "name": "Captain Cold",
