@@ -1175,8 +1175,8 @@ function createRosterCard(champion) {
     const starRating = getStarRatingHTML(champion.starColorTier);
     const forceLevel = `<p class="force-level">Force Lvl: ${champion.forceLevel}</p>`;
     const synergies = (champion.inherentSynergies || []).map(getSynergyIcon).join('');
-    const upgradeButton = (champion.baseRarity === 'Legendary' && champion.canUpgrade) 
-        ? `<button class="card-action-btn upgrade" data-action="upgrade" data-id="${champion.id}" title="Upgrade to Mythic"><i class="fas fa-arrow-up"></i></button>` : '';
+    const upgradeButton = ((champion.baseRarity === 'Legendary' || champion.baseRarity === 'Mythic') && champion.canUpgrade) 
+        ? `<button class="card-action-btn upgrade" data-action="upgrade" data-id="${champion.id}" title="Upgrade Champion"><i class="fas fa-arrow-up"></i></button>` : '';
 
     card.innerHTML = `
         <div class="card-background-image"></div>
@@ -1413,6 +1413,19 @@ async function handleUpgradeChampion(id) {
     const champIndex = playerRoster.findIndex(c => c.id === id);
     if (champIndex === -1) { showToast("Champion not found for upgrade.", "error"); return; }
     const champ = playerRoster[champIndex];
+
+    let nextRarity = "";
+    let nextStarTier = "";
+    if (champ.baseRarity === "Legendary") {
+        nextRarity = "Mythic";
+        nextStarTier = "Purple 5-Star";
+    } else if (champ.baseRarity === "Mythic") {
+        nextRarity = "Limited Mythic";
+        nextStarTier = "Purple 5-Star";
+    } else {
+        return; // Safety catch
+    }
+
     const message = `Upgrade ${champ.name} from Legendary to Mythic? This is permanent and also upgrades their star tier to Purple 5-Star.`;
     openConfirmModal('Confirm Upgrade', message, async () => {
         const upgradedChamp = { ...champ };
