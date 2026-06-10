@@ -535,14 +535,22 @@ export function ensureIndividualScores(members, dbChampions) {
         // 1. Find the master data for this champion
         const baseChampDetails = dbChampions.find(c => c.id === member.dbChampionId) || {};
         
-        // 2. Merge data, but EXPLICITLY force synergies from the DB to prevent stale local data from overwriting it.
+        // 2. Re-construct the correct synergies:
+        // Pull base synergies from the database, plus the upgradeSynergy if the rarity has been increased.
+        let resolvedSynergies = [...(baseChampDetails.inherentSynergies || [])];
+        if (member.baseRarity && member.baseRarity !== baseChampDetails.baseRarity && baseChampDetails.upgradeSynergy) {
+            if (!resolvedSynergies.includes(baseChampDetails.upgradeSynergy)) {
+                resolvedSynergies.push(baseChampDetails.upgradeSynergy);
+            }
+        }
+
+        // 3. Merge data safely
         const mergedMember = {
             ...baseChampDetails, 
-            ...member, // User data (stars, gear)
+            ...member, // User data (stars, gear, baseRarity safely overrides DB)
             
-            // CRITICAL FIX: Always use the database's synergy list. 
-            // This ignores any empty/stale synergy arrays that might exist on the 'member' object.
-            inherentSynergies: baseChampDetails.inherentSynergies || [],
+            // CRITICAL FIX: Preserve the resolved synergy array (Base + Upgrades)
+            inherentSynergies: resolvedSynergies,
             class: baseChampDetails.class || "N/A",
 
             gear: member.gear || {}, 
@@ -553,7 +561,7 @@ export function ensureIndividualScores(members, dbChampions) {
             }
         };
         
-        // 3. Calculate score using this complete object
+        // 4. Calculate score using this complete object
         mergedMember.individualScore = TeamCalculator.calculateIndividualChampionScore(mergedMember, GAME_CONSTANTS);
         
         return mergedMember;

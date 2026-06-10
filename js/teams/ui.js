@@ -1437,6 +1437,19 @@ async function handleUpgradeChampion(id) {
         upgradedChamp.starColorTier = "Purple 5-Star";
         upgradedChamp.individualScore = TeamCalculator.calculateIndividualChampionScore(upgradedChamp, GAME_CONSTANTS);
         playerRoster[champIndex] = upgradedChamp;
+
+        if (typeof manualTeam !== 'undefined') {
+            const mtIndex = manualTeam.findIndex(c => c.id === upgradedChamp.id);
+            if (mtIndex !== -1) {
+                manualTeam[mtIndex] = upgradedChamp;
+                updateManualTeamEvaluation();
+                // Re-render the visual slots if the builder isn't hidden
+                if (DOM.manualBuilderContent && !DOM.manualBuilderContent.classList.contains('hidden')) {
+                    renderManualBuilderUI();
+                }
+            }
+        }
+
         await recalculateAndUpdateSavedTeams(upgradedChamp);
         await saveRosterToFirestore();
         renderRosterGrid();
