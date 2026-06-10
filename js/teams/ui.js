@@ -1432,9 +1432,9 @@ async function handleUpgradeChampion(id) {
         if (upgradedChamp.upgradeSynergy && !upgradedChamp.inherentSynergies.includes(upgradedChamp.upgradeSynergy)) {
             upgradedChamp.inherentSynergies.push(upgradedChamp.upgradeSynergy);
         }
-        upgradedChamp.baseRarity = "Mythic";
+        upgradedChamp.baseRarity = nextRarity;
         upgradedChamp.canUpgrade = false;
-        upgradedChamp.starColorTier = "Purple 5-Star";
+        upgradedChamp.starColorTier = nextStarTier;
         upgradedChamp.individualScore = TeamCalculator.calculateIndividualChampionScore(upgradedChamp, GAME_CONSTANTS);
         playerRoster[champIndex] = upgradedChamp;
 
@@ -1453,7 +1453,7 @@ async function handleUpgradeChampion(id) {
         await recalculateAndUpdateSavedTeams(upgradedChamp);
         await saveRosterToFirestore();
         renderRosterGrid();
-        showToast(`${upgradedChamp.name} upgraded to Mythic!`, 'success');
+        showToast(`${upgradedChamp.name} upgraded to ${nextRarity}!`, 'success');
         logEvent(analytics, 'upgrade_champion', { champion_name: upgradedChamp.name });
     });
 }
