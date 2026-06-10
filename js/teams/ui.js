@@ -1426,7 +1426,7 @@ async function handleUpgradeChampion(id) {
         return; // Safety catch
     }
 
-    const message = `Upgrade ${champ.name} from Legendary to Mythic? This is permanent and also upgrades their star tier to Purple 5-Star.`;
+    const message = `Upgrade ${champ.name} from ${baseRarity} to ${nextRarity}? This is permanent and also upgrades their star tier to ${nextStarTier}.`;
     openConfirmModal('Confirm Upgrade', message, async () => {
         const upgradedChamp = { ...champ };
         if (upgradedChamp.upgradeSynergy && !upgradedChamp.inherentSynergies.includes(upgradedChamp.upgradeSynergy)) {
