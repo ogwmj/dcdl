@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-08T13:25:49.808Z",
+  "updated_at": "2026-06-24T12:10:50.696Z",
   "effects": [
     {
       "name": "Stunning",
@@ -8,6 +8,10 @@
     {
       "name": "Duel",
       "description": "Deals more damage to the larget, has less Spiritual Defense, and is immune to control effects. The target can only attack Artemis with basic attacks."
+    },
+    {
+      "name": "Awakened",
+      "description": "Immediately gains 50 Energy and has [Super Armor] while in this state."
     },
     {
       "name": "Ivy Thorn",

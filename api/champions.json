@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-03T15:26:07.010Z",
+  "updated_at": "2026-06-24T12:11:07.607Z",
   "champions": [
     {
       "name": "Swamp Thing",
@@ -288,6 +288,8 @@
           "description": "Increases [Warrior] Champions' Dodge."
         }
       ],
+      "canUpgrade": true,
+      "upgradeMechanism": "Bleed",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Batman.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Batman"
     },
@@ -1629,6 +1631,7 @@
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Aquaman-card.png",
       "communityAverageLevel": "Blue 2-Star",
+      "canUpgrade": true,
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Aquaman.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Aquaman"
     },
@@ -2702,6 +2705,70 @@
         "Harley Quinn",
         "Two-Face"
       ]
+    },
+    {
+      "baseRarity": "Limited Mythic",
+      "name": "Supergirl Woman of Tomorrow",
+      "inherentSynergies": [
+        "Superman Family",
+        "Justice League",
+        "Metahuman"
+      ],
+      "class": "Warrior",
+      "isHealer": true,
+      "skills": [
+        {
+          "type": "Physical",
+          "description": "Before awakening: Supergirl Woman of Tomorrow commands Krypto to heal the ally with the lowest HP percentage for a percentage of her Attack, then continue healing the target for an additional matching percentage of her Attack over 5s. After awakening: Supergirl Woman of Tomorrow fires Heat Vision, dealing physical damage equal to a percentage of her Attack to enemies in a fan-shaped area.",
+          "name": "Argo City Special",
+          "isUltimate": false,
+          "effects": [
+            "Healing",
+            "AoE DMG"
+          ]
+        },
+        {
+          "type": "Buff",
+          "description": "Increases Supergirl Woman of Tomorrow's Max HP by a percentage. After awakening: Also reduces Supergirl Woman of Tomorrow's spiritual damage taken by a percentage until the end of battle.",
+          "name": "Build Strength",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Walk the Dog",
+          "isUltimate": true,
+          "effects": [
+            "Healing",
+            "AoE DMG",
+            "Buff"
+          ],
+          "type": "Healing",
+          "description": "Before awakening: Supergirl Woman of Tomorrow heals allies in a circular area for a percentage of her Attack and reduces the targets' spiritual damage taken by a percentage for 15s. After awakening: Supergirl Woman of Tomorrow races through the enemy lines at super speed, kicking up a sandstorm that deals physical damage equal to a percecntage of her Attack to enemies in a circular area. Passive: When 1 friendly Champion has been defeated, or after SupeSupergirl Woman of Tomorrow casts her Ultimate for the 2nd tie, she immediately enters [Awakened] state until the end of the battle."
+        },
+        {
+          "type": "Buff",
+          "description": "At the start of battle, increases all allies' physical damage dealt by a percentage until the end of battle. This effect is doubled for [Superman Family] and [Justice League] Allies. After awakening: Also increases Supergirl Woman of Tomorrow's Physical Penetration by 20% until the end of battle.",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false,
+          "name": "Resolute"
+        },
+        {
+          "type": "Passive",
+          "description": "Increases all Champion's Spiritual Defence by a percentage and [Warrior] Champions' Spiritual Defence by an additional percentage.",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false,
+          "name": "Inspire Confidence"
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/SupergirlWomanofTomorrow-card.png",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/SupergirlWomanofTomorrow.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Supergirl%20Woman%20of%20Tomorrow"
     },
     {
       "baseRarity": "Limited Mythic",
@@ -4149,6 +4216,8 @@
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TheFlash-card.png",
       "communityAverageLevel": "Blue 3-Star",
+      "canUpgrade": true,
+      "upgradeMechanism": "Bleed",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TheFlash.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=The%20Flash"
     },
