@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-24T12:11:07.607Z",
+  "updated_at": "2026-07-29T12:57:42.051Z",
   "champions": [
     {
       "name": "Swamp Thing",
@@ -652,7 +652,12 @@
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/RedHoodKnightfight-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/RedHoodKnightfight.webp",
-      "codexUrl": "https://dcdl-companion.com/codex.html?search=Red%20Hood%20Knightfight"
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Red%20Hood%20Knightfight",
+      "relatedChampions": [
+        "Batgirl",
+        "Red Robin",
+        "Robin"
+      ]
     },
     {
       "name": "Wonder Woman",
@@ -1078,6 +1083,68 @@
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Chop%20Chop"
     },
     {
+      "baseRarity": "Limited Mythic",
+      "name": "Batman Knightfight",
+      "isHealer": false,
+      "class": "Warrior",
+      "skills": [
+        {
+          "name": "Knight's Reckoning",
+          "description": "Batman Knightfight sweeps his blade, dealing physical damange equal to a percentage of hi Attack to enemies within range. If the attack fails to defeat and enemy, he immediately follows up with another strike that deals physical damage equal to half the percentage of the first attack.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Whirling Verdict",
+          "description": "Batman Knightfight whirls his blade around him, dealing physical damage equal to a percentage of his Attack to enemies within range.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Legacy of the Bat",
+          "description": "At the start of battle, all [Bat Family] allies' Crit Damage is increased by a percentage. When Batman Knightfight lands a critical hit, [Whirling Verdict]'s cooldown is reduced by 1s. This can trigger every 1s.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Unbroken Resolve",
+          "description": "Increases Batman Knightfight's Max HP by a percentage. His Attack increases by a percentage for every 1% of HP lost, stacking up to a perceentage.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Battlefield Doctrine",
+          "description": "Increases all Champions' HP by a percentage and [Warrior] Champions' ATK by an additional percentage.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "inherentSynergies": [
+        "Bat Family",
+        "Weapon Master"
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BatmanKnightfight-card.png",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BatmanKnightfight.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Batman%20Knightfight"
+    },
+    {
       "name": "The Riddler",
       "baseRarity": "Limited Mythic",
       "class": "Supporter",
@@ -1361,6 +1428,8 @@
           "name": "Seeing Red"
         }
       ],
+      "canUpgrade": true,
+      "upgradeMechanism": "Bleed",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/RedRobin.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Red%20Robin"
     },
