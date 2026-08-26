@@ -1,10 +1,19 @@
 {
-  "updated_at": "2026-07-29T12:45:17.985Z",
+  "updated_at": "2026-08-26T12:36:05.417Z",
   "legacy_pieces": [
     {
       "name": "Honkin' Huge Hammer",
       "baseRarity": "Mythic+",
       "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/HonkinHugeHammer.webp",
+      "classes": [
+        "Warrior",
+        "Guardian"
+      ]
+    },
+    {
+      "name": "Teen Titans Utility Belt",
+      "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/TeenTitansUtilityBelt.webp",
       "classes": [
         "Warrior",
         "Guardian"

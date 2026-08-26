@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-29T12:57:42.051Z",
+  "updated_at": "2026-08-26T12:42:24.085Z",
   "champions": [
     {
       "name": "Swamp Thing",
@@ -1142,7 +1142,12 @@
       ],
       "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BatmanKnightfight-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BatmanKnightfight.webp",
-      "codexUrl": "https://dcdl-companion.com/codex.html?search=Batman%20Knightfight"
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Batman%20Knightfight",
+      "relatedChampions": [
+        "Batgirl",
+        "Red Robin",
+        "Robin"
+      ]
     },
     {
       "name": "The Riddler",
@@ -3176,6 +3181,72 @@
       "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/LexLuthor.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Lex%20Luthor"
+    },
+    {
+      "name": "Beast Boy",
+      "baseRarity": "Limited Mythic",
+      "inherentSynergies": [
+        "Teen Titans",
+        "Outsiders",
+        "Metahuman"
+      ],
+      "class": "Guardian",
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Rhino Rush",
+          "description": "Beast Boy transforms into a rhino and charges at an enemy, dealing physical damage equal to a percentage of his Attack, with a fixed chance to inflict [Stunned] on the target for 2s.",
+          "type": "Physical",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Gorilla Might",
+          "description": "Beat Boy transforms into a gorilla, increasing all allies' Attack by a percentage for 12s.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Tyrant's Roar",
+          "description": "Beat Boy transforms into a T-Rex and lets out a roar, reducing all enemies Attack and spiritual damage dealt by a percentage for 12s.",
+          "type": "Debuff",
+          "effects": [
+            "Debuff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Pack Instinct",
+          "description": "Increases Beast Boy's Max HP by a percentage. At the start of battle, all [Teen Titans] and [Outsiders] allies gain Spiritual Defense equal to a percentage of Beast Boy's Spiritual Defense.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Thick Hide",
+          "description": "Increases all Champions' Spiritual Defense by a percentage and [Guardian] Champions' Spiritual Defense by an additional percentage.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BeastBoy-card.png",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BeastBoy.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Beast%20Boy",
+      "relatedChampions": [
+        "Arsenal",
+        "Cyborg",
+        "Robin"
+      ]
     },
     {
       "name": "Batgirl",
