@@ -1130,6 +1130,7 @@ async function handleAddUpdateChampion() {
             inherentSynergies: baseChampionData.inherentSynergies || [],
             canUpgrade: baseChampionData.canUpgrade,
             upgradeSynergy: baseChampionData.upgradeSynergy,
+            isStraightUpgrade: baseChampionData.isStraightUpgrade,
             starColorTier: DOM.champStarColor.value,
             forceLevel: selectedForceLevel,
             gear: {
@@ -1415,18 +1416,23 @@ async function handleUpgradeChampion(id) {
     const champ = playerRoster[champIndex];
 
     let nextRarity = "";
-    let nextStarTier = "";
+    let nextStarTier = champ.starColorTier; // Default to preserving current stars
+
     if (champ.baseRarity === "Legendary") {
         nextRarity = "Mythic";
-        nextStarTier = "Purple 5-Star";
+        if (!champ.isStraightUpgrade) nextStarTier = "Purple 5-Star";
     } else if (champ.baseRarity === "Mythic") {
         nextRarity = "Limited Mythic";
-        nextStarTier = "Purple 5-Star";
+        if (!champ.isStraightUpgrade) nextStarTier = "Purple 5-Star";
     } else {
         return; // Safety catch
     }
 
-    const message = `Upgrade ${champ.name} from ${champ.baseRarity} to ${nextRarity}? This is permanent and also upgrades their star tier to ${nextStarTier}.`;
+    // Dynamically adjust the warning message
+    const message = champ.isStraightUpgrade 
+        ? `Upgrade ${champ.name} from ${champ.baseRarity} to ${nextRarity}? This is a straight upgrade and will preserve their current star level.`
+        : `Upgrade ${champ.name} from ${champ.baseRarity} to ${nextRarity}? This is permanent and also upgrades their star tier to ${nextStarTier}.`;
+
     openConfirmModal('Confirm Upgrade', message, async () => {
         const upgradedChamp = { ...champ };
         if (upgradedChamp.upgradeSynergy && !upgradedChamp.inherentSynergies.includes(upgradedChamp.upgradeSynergy)) {
