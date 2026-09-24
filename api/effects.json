@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-24T12:10:50.696Z",
+  "updated_at": "2026-09-24T10:35:06.610Z",
   "effects": [
     {
       "name": "Stunning",
@@ -148,6 +148,10 @@
     {
       "name": "Bleeding",
       "description": "Deals Physical DMG per second, for 5 seconds."
+    },
+    {
+      "name": "Afterimage",
+      "description": "Whenever Robin uses a basic attack, skill, or his Ultimate, an afterimage strikes the same target at high speed, dealing damage equal to a percentage of that action's damage multiplier."
     },
     {
       "name": "Frozen",
