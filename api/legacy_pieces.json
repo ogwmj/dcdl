@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-26T12:36:05.417Z",
+  "updated_at": "2026-09-24T10:18:11.998Z",
   "legacy_pieces": [
     {
       "name": "Honkin' Huge Hammer",
@@ -319,6 +319,15 @@
       ]
     },
     {
+      "name": "Batman's Tactical Suit",
+      "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/BatmansTacticalSuit.webp",
+      "classes": [
+        "Warrior",
+        "Guardian"
+      ]
+    },
+    {
       "name": "Pied Piper Flute",
       "baseRarity": "Epic",
       "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/PiedPiperFlute.webp",
@@ -529,6 +538,15 @@
       "classes": [
         "Supporter",
         "Intimidator"
+      ]
+    },
+    {
+      "name": "Robin's Utility Belt",
+      "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/RobinsUtilityBelt.webp",
+      "classes": [
+        "Warrior",
+        "Guardian"
       ]
     },
     {
