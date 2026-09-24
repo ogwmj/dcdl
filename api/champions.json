@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-24T10:35:26.974Z",
+  "updated_at": "2026-09-24T10:49:17.757Z",
   "champions": [
     {
       "name": "Swamp Thing",
@@ -751,9 +751,14 @@
         "Weapon Master"
       ],
       "class": "Warrior",
-      "cardImageUrl": "undefined",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/DickGraysonRobin-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/DickGrayson(Robin).webp",
-      "codexUrl": "https://dcdl-companion.com/codex.html?search=Dick%20Grayson%20(Robin)"
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Dick%20Grayson%20(Robin)",
+      "relatedChampions": [
+        "Arsenal",
+        "Batgirl",
+        "Cyborg"
+      ]
     },
     {
       "baseRarity": "Limited Mythic",

@@ -1,0 +1,4503 @@
+{
+  "updated_at": "2026-09-24T10:49:04.264Z",
+  "champions": [
+    {
+      "name": "Swamp Thing",
+      "class": "Warrior",
+      "baseRarity": "Limited Mythic",
+      "inherentSynergies": [
+        "Justice League Dark",
+        "Metahuman"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "isUltimate": false,
+          "name": "Vine Lash",
+          "description": "Swamp Thing lashes out with his vines, dealing Spiritual DMG to an enemy and reducing their current Energy.",
+          "type": "Spiritual",
+          "effects": [
+            "Control",
+            "DMG"
+          ]
+        },
+        {
+          "type": "Buff",
+          "isUltimate": false,
+          "description": "After the start of the battle, Swamp Think gains stackable Spiritual AMP.",
+          "effects": [
+            "Buff"
+          ],
+          "name": "Natural Remedy"
+        },
+        {
+          "effects": [
+            "Control",
+            "AoE DMG"
+          ],
+          "description": "Swamp Thing leaps into the air, dealing Spiritual DMG to enemies in a circular area and reducing their current Energy.",
+          "isUltimate": true,
+          "type": "Spiritual",
+          "name": "Overgrowth"
+        },
+        {
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false,
+          "type": "Buff",
+          "name": "Swamp Surge",
+          "description": "At the start of battle, Swamp Thing summons [Swamp]. Its effect doubles if at least 3 [Justice League Dark] allies are present."
+        },
+        {
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false,
+          "description": "Increases all Champions' Spiritual DEF and additionally for [Warrior] Champions.",
+          "type": "Passive",
+          "name": "Green Whisper"
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/SwampThing-card.png",
+      "communityAverageLevel": "Blue 5-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/SwampThing.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Swamp%20Thing",
+      "relatedChampions": [
+        "Harley Quinn",
+        "Poison Ivy",
+        "Raven"
+      ]
+    },
+    {
+      "name": "Atom",
+      "baseRarity": "Legendary",
+      "class": "Warrior",
+      "inherentSynergies": [
+        "Teen Titans",
+        "Metahuman",
+        "Justice League"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Small Target",
+          "description": "Atom shrinks rapidly, increasing his Dodge.",
+          "type": "Defense",
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Exponential Force",
+          "description": "Atom's ATK increases with each basic attack until the end of battle.",
+          "type": "Passive",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Shockwave & Awe",
+          "description": "The Atom paridly expands in size and compresses atoms, dealing Physical DMG to all enemies and [stunning] them before existing the battle.",
+          "type": "Control",
+          "effects": [
+            "Control",
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Subatomic Retreat",
+          "description": "Upon defeat, the Atom deals Physical DMG to nearby enemies and [stunning] them before existing the battle.",
+          "type": "Physical",
+          "effects": [
+            "Control",
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Small Target",
+          "description": "Increases all Champions' DEF.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Atom-card.png",
+      "communityAverageLevel": "Gold 3-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Atom.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Atom"
+    },
+    {
+      "name": "Catwoman",
+      "baseRarity": "Legendary",
+      "class": "Warrior",
+      "inherentSynergies": [
+        "Birds of Prey",
+        "Weapon Master",
+        "Arkham's Most Wanted"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "effects": [
+            "DMG"
+          ],
+          "name": "Murder Mittens",
+          "isUltimate": false,
+          "type": "Physical",
+          "description": "Catwoman launches a flurry of attacks, dealing Physical DMG to an enemy."
+        },
+        {
+          "isUltimate": false,
+          "type": "Physical",
+          "name": "Cat Burglar",
+          "effects": [
+            "DMG",
+            "Buff",
+            "Debuff"
+          ],
+          "description": "Catwoman stealthily maneuvers behind an enemy to deal Physical DMG and stealing a percentage of the target's ATK."
+        },
+        {
+          "type": "Physical",
+          "name": "Cat Leash",
+          "isUltimate": true,
+          "effects": [
+            "DMG",
+            "Buff",
+            "Debuff"
+          ],
+          "description": "Catwoman attacks with her whip, dealing Physical DMG and stealing a percentage of the target's ATK. The ATKL stolen is stackable up to a maximum of 3 times."
+        },
+        {
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "description": "Catwoman's Dodge increases every second.",
+          "isUltimate": false,
+          "name": "Feline Grace",
+          "type": "Buff"
+        },
+        {
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "description": "Increases all Champions' ATK.",
+          "name": "Predator's Instinct",
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Catwoman-card.png",
+      "communityAverageLevel": "Gold 3-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Catwoman.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Catwoman"
+    },
+    {
+      "name": "Gatling Girl",
+      "baseRarity": "Epic",
+      "class": "Firepower",
+      "inherentSynergies": [],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Make it Rain",
+          "description": "Gatling Gal unleashes a hail of bullets, dealing Physical DMG to enemies within range.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": true
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/GatlingGirl-card.png",
+      "communityAverageLevel": "Blue 1-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/GatlingGirl.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Gatling%20Girl"
+    },
+    {
+      "name": "Batman",
+      "baseRarity": "Mythic",
+      "class": "Warrior",
+      "inherentSynergies": [
+        "Bat Family",
+        "Weapon Master",
+        "Justice League"
+      ],
+      "isHealer": false,
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Batman-card.png",
+      "communityAverageLevel": "Blue 3-Star",
+      "skills": [
+        {
+          "name": "Dark Knight Detective",
+          "type": "Defense",
+          "isUltimate": false,
+          "description": "Batman throws his Batarangs, dealing Physical DMG equal to 200% / 230% / 260% / 290% / 320% of his ATK to enemies in a fan-shaped area and briefly interrupting their actions.",
+          "effects": [
+            "Defense"
+          ]
+        },
+        {
+          "name": "Utility Belt",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG",
+            "Debuff"
+          ],
+          "isUltimate": false,
+          "description": "Upon landing a Critical Hit, Batman throws a smoke bomb at enemies in a circular area, dealing Physical DMG equal to 210% / 270% / 330% / 390% / 450% of his ATK and reducing their ATK by 10% / 15% / 20% / 25% / 30% for 5s.\nBatman becomes untargetable during this time.\nCan trigger once every 10s."
+        },
+        {
+          "description": "Batman deploys his gadgets, dealing Physical DMG equal to 900% / 1050% / 1200% / 1350% / 1500% of his ATK to enemies in a circular area.",
+          "isUltimate": true,
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "name": "Batmobile",
+          "type": "Physical"
+        },
+        {
+          "isUltimate": false,
+          "type": "Buff",
+          "name": "I Am Vengeance",
+          "effects": [
+            "Buff"
+          ],
+          "description": "At the start of battle, each [Justice League] or [Bat Family] ally present increases Batman’s Crit Rate by 4% / 5.5% / 7% / 8.5% / 10%."
+        },
+        {
+          "name": "Bob & Weave",
+          "effects": [
+            "Passive"
+          ],
+          "type": "Passive",
+          "isUltimate": false,
+          "description": "Increases [Warrior] Champions' Dodge."
+        }
+      ],
+      "canUpgrade": true,
+      "upgradeMechanism": "Bleed",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Batman.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Batman"
+    },
+    {
+      "name": "Good Day AK",
+      "baseRarity": "Epic",
+      "class": "Firepower",
+      "inherentSynergies": [],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Light 'Em Up",
+          "description": "Good Day AK takes aim and unleashes a barrage, dealing Physical DMG to an enemy.",
+          "type": "Physical",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": true
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/GoodDayAK-card.png",
+      "communityAverageLevel": "Blue 1-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/GoodDayAK.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Good%20Day%20AK"
+    },
+    {
+      "name": "Wally West",
+      "isHealer": false,
+      "baseRarity": "Limited Mythic",
+      "class": "Firepower",
+      "skills": [
+        {
+          "name": "Everywhere at Once",
+          "description": "Wally blitzes an enemy from all directions, dealing physical damage equal to a percentage of his Attack, plus an additional percentag if the target has a shield.",
+          "type": "Physical",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Relentless Attack",
+          "description": "Each stack of [Speed Force] additionally increases Wally's Attack by a stacking percentage. 1 stack of [Speed Force] is lost every 5s.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Infinity Mass Punch",
+          "description": "Wally channels the Speed Force to unleash Infinity Mass Punch, dealing physical damage equal to a percentage of his Attack to an enemy. Each stack of [Speed Force] increases the damage multiplier by a percentage, up to a maximum of Wally's Attack.",
+          "type": "Physical",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Titan of Speed",
+          "description": "At the start of battle, Wally gains stacks of [Speed Force], doubled if there are at least 3 [Teen Titans] allies present.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "One Step Ahead",
+          "description": "Increases all Champions' Spiritual Defense, with an additional percentrage for [Firepower] Champions.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "inherentSynergies": [
+        "Teen Titans",
+        "Flash Family",
+        "Metahuman"
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/WallyWest-card.png",
+      "communityAverageLevel": "Blue 4-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/WallyWest.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Wally%20West",
+      "relatedChampions": [
+        "Arsenal",
+        "Cyborg",
+        "Raven"
+      ]
+    },
+    {
+      "name": "Green Lantern",
+      "baseRarity": "Mythic",
+      "class": "Supporter",
+      "inherentSynergies": [
+        "Justice League",
+        "Energy Wielder",
+        "Green Lantern Corps"
+      ],
+      "isHealer": true,
+      "skills": [
+        {
+          "name": "Emerald Armory",
+          "description": "Hal Jordan materializes a giant hammer with Green Lantern energy, dealing Spiritual DMG to an enemy and [Stunning] them.",
+          "type": "Spiritual",
+          "effects": [
+            "Control",
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Lantern Shield",
+          "description": "Hal Jordan creates an energy field that heals allies within range over time.",
+          "type": "Healing",
+          "effects": [
+            "Healing"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Green Lantern's Light",
+          "description": "Heals allies within a circular area. Up to 50% of excess healing is converted into a [Shield].",
+          "type": "Healing",
+          "effects": [
+            "Healing",
+            "Defense"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Green Lantern Corps",
+          "description": "Increases Healing Taken Up by all [Green Lantern Corps] Champions over time.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Green Guardian",
+          "description": "Increases all Champions' Crit DMG RES.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/GreenLantern-card.png",
+      "communityAverageLevel": "Blue 1-Star",
+      "canUpgrade": true,
+      "isStraightUpgrade": true,
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/GreenLantern.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Green%20Lantern"
+    },
+    {
+      "name": "Hawkgirl",
+      "baseRarity": "Limited Mythic",
+      "class": "Warrior",
+      "inherentSynergies": [
+        "Birds of Prey",
+        "Weapon Master",
+        "Justice League"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Hurricane Force",
+          "description": "Hawkgirl creates a powerful gust with her wings, dealing Physical DMG to nearby enemies and pulling enemies within range closer.",
+          "type": "Physical",
+          "effects": [
+            "Control",
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Nth Degree",
+          "description": "Hawkgirl charges her weapon and strikes, dealing Physical DMG to nearby enemies.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Dive Bomb",
+          "description": "Hawkgirl slams down from mid-air, dealing Physical DMG to nearby enemies. While casting this skill, she gains Super Armor and recovers HP bases on DMG dealt.",
+          "type": "Physical",
+          "effects": [
+            "Healing",
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Energy Absorption",
+          "description": "At the start of battle, Hawkgirl gains a shield based on her HP for each [Birds of Prey] ally present, up to a maximum amount.",
+          "type": "Defense",
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Thanagarian's Might",
+          "description": "Increases all Champions' HP.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Hawkgirl-card.png",
+      "communityAverageLevel": "Blue 2-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Hawkgirl.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Hawkgirl",
+      "relatedChampions": [
+        "Aquaman",
+        "Black Canary",
+        "Harley Quinn"
+      ]
+    },
+    {
+      "name": "Starfire",
+      "class": "Supporter",
+      "inherentSynergies": [
+        "Teen Titans",
+        "Energy Wielder",
+        "Outsiders"
+      ],
+      "isHealer": true,
+      "baseRarity": "Limited Mythic",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Starfire-card.png",
+      "skills": [
+        {
+          "effects": [
+            "DMG",
+            "AoE DMG",
+            "Debuff"
+          ],
+          "isUltimate": false,
+          "name": "Starbolts",
+          "description": "Starfire unleashes a beam of light, dealing Spiritual DMG equal to 180% / 250% / 320% / 390% / 460% of her ATK to enemies within range and increasing all allies’ ATK by 10% / 15% / 20% / 25% / 30% for 10s.",
+          "type": "Spiritual"
+        },
+        {
+          "name": "Healing Energy",
+          "description": "While the [Energy Absorption Field] is active, allies inside it restore HP over time.",
+          "effects": [
+            "Healing"
+          ],
+          "isUltimate": false,
+          "type": "Healing"
+        },
+        {
+          "description": "Starfire absorbs ultraviolet light energy to create an Energy Absorption Field, reducing damage taken by allies inside by 30% / 37.5% / 45% / 52.5% / 60% for 20s. This effect is non-stackable.\n Additionally, [Teen Titans] or [Outsiders] allies gain 20% / 25% / 30% / 35% / 40% Spiritual Damage Reduction, stacking up to 3 times.",
+          "type": "Defense",
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "isUltimate": true,
+          "name": "Energy Absorption Field"
+        },
+        {
+          "description": "At the start of battle, each [Outsiders] or [Teen Titans] ally present increases Starfire’s Energy Gain by 5% / 7.5% / 10% / 12.5% / 15%.",
+          "effects": [
+            "Defense",
+            "Buff"
+          ],
+          "isUltimate": false,
+          "name": "Precognition",
+          "type": "Defense"
+        },
+        {
+          "description": "Increases all Champions' MEN and [Supporter] Champions' ATK.",
+          "isUltimate": false,
+          "type": "Passive",
+          "name": "Empathic Perception",
+          "effects": [
+            "Passive"
+          ]
+        }
+      ],
+      "communityAverageLevel": "Blue 5-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Starfire.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Starfire",
+      "relatedChampions": [
+        "Arsenal",
+        "Poison Ivy",
+        "The Penguin"
+      ]
+    },
+    {
+      "baseRarity": "Limited Mythic",
+      "name": "Red Hood Knightfight",
+      "class": "Firepower",
+      "inherentSynergies": [
+        "Bat Family",
+        "League of Assassins",
+        "Weapon Master"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "type": "Physical",
+          "description": "Red Hood Knightfight fires a volley of arrows, dealing physical damage equal to a percentage of his Attack plus a percentage of the target's Max HP to enemies within range. Total damage is capped at a percentage of Red Hood Knightfight's Attack.",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "name": "Gotham's Last Guardian",
+          "isUltimate": true
+        },
+        {
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "name": "Red Wing",
+          "isUltimate": false,
+          "type": "Physical",
+          "description": "Red Hood Knightfight fires a volley of arrows, dealing physical damage equal to a percentage of his Attack to enemies in a fan-shaped area."
+        },
+        {
+          "effects": [
+            "Buff"
+          ],
+          "name": "Group Tactics",
+          "isUltimate": false,
+          "type": "Buff",
+          "description": "Increases Red Hood Knightfight's Crit Damage by a base percentage. Each [Bat Family] or [League of Assassins] ally increases Red Hood Knightfight's Crit Rate by an additional percentage."
+        },
+        {
+          "type": "Physical",
+          "description": "When Red Hood Knightfight lands a critical hit, he throws a grenade, dealing physical damage equal to a percentage of his Attack plus a percentage of the target's Max HP to enemies within range. Total damage is capped at a percentage of Red Hood Knightfight's Attack. Can trigger ogeronce every 5s.",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": false,
+          "name": "Hold the Line"
+        },
+        {
+          "description": "Increases all Champions' Attack by a percentage and [Firepower] Champions' Physical Defense by a percentage. Applies globally.",
+          "type": "Passive",
+          "isUltimate": false,
+          "name": "Lead by Example",
+          "effects": [
+            "Passive"
+          ]
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/RedHoodKnightfight-card.png",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/RedHoodKnightfight.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Red%20Hood%20Knightfight",
+      "relatedChampions": [
+        "Batgirl",
+        "Red Robin",
+        "Robin"
+      ]
+    },
+    {
+      "name": "Wonder Woman",
+      "baseRarity": "Legendary",
+      "class": "Guardian",
+      "inherentSynergies": [
+        "Justice League",
+        "Metahuman",
+        "Justice League Dark"
+      ],
+      "isHealer": false,
+      "canUpgrade": true,
+      "upgradeSynergy": "Amazons",
+      "skills": [
+        {
+          "name": "Amazonian Shield",
+          "description": "Wonder Woman infuses her shield with divine power, granting [Divine Shield] to the ally with the lowest HP percentage.",
+          "type": "Defense",
+          "effects": [
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Lasso of Truth",
+          "description": "Wonder Woman throws her Lasso of Truth, dealing Physical DMG to an enemy and inflicting [Stunned] on them.",
+          "type": "Control",
+          "effects": [
+            "Control",
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Bracelets of Submission",
+          "description": "Wonder Woman leaps high and clashes her Bracelets of Submission together to generate a showckwave, dealing Physical DMG to enemies within a fan-shaped area and [Stunning] them.",
+          "type": "Control",
+          "effects": [
+            "Control",
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Amazon Goddess",
+          "description": "When HP is below 75%, Wonder Woman's DEF increases.",
+          "type": "Buff",
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Athena's Aegis",
+          "description": "Increases all Champions' DEF.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/WonderWoman-card.png",
+      "communityAverageLevel": "Gold 1-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/WonderWoman.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Wonder%20Woman"
+    },
+    {
+      "name": "Black Canary",
+      "baseRarity": "Mythic",
+      "class": "Intimidator",
+      "inherentSynergies": [
+        "Birds of Prey",
+        "Metahuman"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Throw Your Voice",
+          "description": "Quickly throws a [Canary Cry Bomb], dealing Physical DMG to enemies within a circular are and reducing their ACC.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG",
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Inner Ear Disruption",
+          "description": "At the start of battle, Black Canary disrupts all enemies with a sonic wave, reducing their ATK.",
+          "type": "Passive",
+          "effects": [
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Canary Cry",
+          "description": "Black Canary deals Physical DMG to enemies within a circular area and inflicts [Silence] on them.",
+          "type": "Physical",
+          "effects": [
+            "Control",
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Birds of a Feather",
+          "description": "At the start of battle, Black Canary's Physical DEF increases.",
+          "type": "Buff",
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Birdsong",
+          "description": "Increases [Birds of Prey] Champions' Crit RES.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BlackCanary-card.png",
+      "communityAverageLevel": "Blue 1-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BlackCanary.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Black%20Canary"
+    },
+    {
+      "name": "Supergirl",
+      "baseRarity": "Limited Mythic",
+      "isHealer": false,
+      "class": "Warrior",
+      "inherentSynergies": [
+        "Superman Family",
+        "Metahuman"
+      ],
+      "skills": [
+        {
+          "name": "Artic Breath",
+          "description": "Supergirl draws in freezing air and exhales an icy blast, dealing Physical DMG to enemies in a fan-shaped area.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Solar Recharge",
+          "description": "Increases DEF and MEN. At the start of battle, for each [Superman Family] ally present, Supergirl gains an additional stack of DEF and MEN Up, stacking up to 5 time(s).",
+          "type": "Defense",
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Solar Battery",
+          "description": "Supergirl channels her power, dealing Physical DMG to enemies in a circular area. At [Krypton Energy] Lv. 1, she absobs solar energy increasing this skill's Crit Rate. At [Krypton Energy] Lv. 3, solar energy enhances her might even more, increasing this skill's DMG.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG",
+            "Buff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Family Ties",
+          "description": "Increases ATK. At the start of battle, for each [Superman Family] ally present, Supergirls' Unltimate DMG is increased, stacking up to 5 time(s).",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Power of Rao",
+          "description": "Increases all Champions' DEF and [Warrior] Champions' MEN.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Supergirl-card.png",
+      "communityAverageLevel": "Blue 4-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Supergirl.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Supergirl",
+      "relatedChampions": [
+        "Aquaman",
+        "Shazam",
+        "The Flash"
+      ]
+    },
+    {
+      "name": "Wonder Woman Death Metal",
+      "isHealer": false,
+      "inherentSynergies": [
+        "Death Metal",
+        "Amazons",
+        "Metahuman"
+      ],
+      "class": "Warrior",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/WonderWomanDeathMetal-card.png",
+      "skills": [
+        {
+          "name": "Metalwork",
+          "description": "Wonder Woman Death Metal swings her chainsaw, dealing physical damage based on her ATK and Physical DEF to nearby enemies.",
+          "type": "Physical",
+          "effects": [
+            "AoE DMG",
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Wrought Iron",
+          "description": "Increases WonderWoman Death Metal's Physical PEN. When an enemy is defeated nearby, she restores 20 Energy.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Peak Intensity",
+          "description": "Wonder Woman Death Metal enters her ultimate form, continuously consuming Energy until it's depleted (drain rate increases over time). While active, she gains [Super Armor], can recover Energy, and enhances her basic attacks with chain lightning that arcs to up to 5 enemies (including her target), dealing physical DMG. Upon casting her Ultimate, Wonder Woman Death Metal gains bonus Physical DEF for each [Amazons] ally present.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Bonds of Sisterhood",
+          "description": "Every 5s after the start of battle, Physical DMG taken by [Amazons] Champions is reduced, stacking up to 4 times.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Heavy Mettle",
+          "description": "Increases all Champions' Physical DEF and [Warrior] Champions' ATK. Applies globally.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "baseRarity": "Iconic",
+      "communityAverageLevel": "Purple 3-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/WonderWomanDeathMetal.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Wonder%20Woman%20Death%20Metal"
+    },
+    {
+      "name": "Poison Ivy",
+      "baseRarity": "Mythic",
+      "class": "Supporter",
+      "inherentSynergies": [
+        "Birds of Prey",
+        "Energy Wielder",
+        "Arkham's Most Wanted"
+      ],
+      "isHealer": true,
+      "skills": [
+        {
+          "name": "Poison Embrace",
+          "description": "Poison Ivy summons a Thorny Ivy next to an enemy. It inherits a percentage of Poison Ivy's Max HP and 100% of her other attributes. Every 1s, the Thorny Ivy deals Physical DMG to enemies around it, with a chance to inflict 1 stack of [Ivy Thorn].",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG",
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Bloom of Life",
+          "description": "Poison IOvy summons a Blooming Ivy next to her ally. It inherits a percentage of Poison Ivy's Max HP and 100% of her other attributes. Every 2s, the Blooming Ivy heals allies around it and inflicts 1 stacks of [Ivy Bloom].",
+          "type": "Healing",
+          "effects": [
+            "Healing",
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Growing Pains",
+          "description": "Poison Ivy unleashes green energy and summons countless vines, healing the target for a percentage of her ATK. Each vine she summons increases the healing effect up to a maximum of 300%.",
+          "type": "Healing",
+          "effects": [
+            "Healing"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Death's Embrace",
+          "description": "Poison Ivy unleashes [Bewitching Spores], dealing Physical DMG to an enemy and inflicting [Bewitch], causing the target to slowly move towards her.",
+          "type": "Physical",
+          "effects": [
+            "Control",
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Personal Growth",
+          "description": "Increases [Supporter] Champions' healing effect.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/PoisonIvy-card.png",
+      "communityAverageLevel": "Blue 3-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/PoisonIvy.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Poison%20Ivy"
+    },
+    {
+      "baseRarity": "Limited Mythic",
+      "name": "Lobo",
+      "isHealer": false,
+      "class": "Firepower",
+      "skills": [
+        {
+          "name": "My Dawg",
+          "description": "Lobo tosses Dawg forward, dealing physical damage equal to a percentage of Lobo's Attack to an enemy.",
+          "type": "Physical",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "You Got Fragged",
+          "description": "At the start of battle, Lobo's Attack is increased by a percentage. His basic attacks reduce the target's healing received.",
+          "type": "Buff",
+          "effects": [
+            "Buff",
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Spacehog Rampage",
+          "description": "Lobo sharges forward on his bike, dealing physical damage equal to a percentage of his Attack to enemies in a recutangular area. Lobo's basic attacks are empowered, dealing physical damage equal to a percentage of his Attack to the target.",
+          "type": "Physical",
+          "effects": [
+            "AoE DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Lo-Bros",
+          "description": "After Lobo casts his Ultimate, he summons two space dolphins to join the fight periodically. Each dolphin's attacks deal physical damage equal to a percentage of Lobo's Attack (counted as basic attacks).",
+          "type": "Buff",
+          "effects": [
+            "DMG",
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Main Wingman",
+          "description": "Increases all Champions' Attack and [Firepower] Champion's HP globally.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "inherentSynergies": [
+        "Suicide Squad",
+        "Weapon Master"
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Lobo-card.png",
+      "communityAverageLevel": "Blue 3-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Lobo.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Lobo",
+      "relatedChampions": [
+        "Deadshot",
+        "Harley Quinn",
+        "The Flash"
+      ]
+    },
+    {
+      "name": "Chop Chop",
+      "baseRarity": "Epic",
+      "class": "Assassin",
+      "inherentSynergies": [],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Look Sharp",
+          "description": "Chop Chop leaps towards an enemy, dealing Physical DMG.",
+          "type": "Physical",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": true
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/ChopChop-card.png",
+      "communityAverageLevel": "Blue 1-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/ChopChop.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Chop%20Chop"
+    },
+    {
+      "baseRarity": "Limited Mythic",
+      "name": "Batman Knightfight",
+      "isHealer": false,
+      "class": "Warrior",
+      "skills": [
+        {
+          "name": "Knight's Reckoning",
+          "description": "Batman Knightfight sweeps his blade, dealing physical damange equal to a percentage of hi Attack to enemies within range. If the attack fails to defeat and enemy, he immediately follows up with another strike that deals physical damage equal to half the percentage of the first attack.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Whirling Verdict",
+          "description": "Batman Knightfight whirls his blade around him, dealing physical damage equal to a percentage of his Attack to enemies within range.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Legacy of the Bat",
+          "description": "At the start of battle, all [Bat Family] allies' Crit Damage is increased by a percentage. When Batman Knightfight lands a critical hit, [Whirling Verdict]'s cooldown is reduced by 1s. This can trigger every 1s.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Unbroken Resolve",
+          "description": "Increases Batman Knightfight's Max HP by a percentage. His Attack increases by a percentage for every 1% of HP lost, stacking up to a perceentage.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Battlefield Doctrine",
+          "description": "Increases all Champions' HP by a percentage and [Warrior] Champions' ATK by an additional percentage.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "inherentSynergies": [
+        "Bat Family",
+        "Weapon Master"
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BatmanKnightfight-card.png",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BatmanKnightfight.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Batman%20Knightfight",
+      "relatedChampions": [
+        "Batgirl",
+        "Red Robin",
+        "Robin"
+      ]
+    },
+    {
+      "name": "The Riddler",
+      "baseRarity": "Limited Mythic",
+      "class": "Supporter",
+      "inherentSynergies": [
+        "Arkham's Most Wanted",
+        "Weapon Master"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Riddle Me This",
+          "description": "The Riddler poses a puzzle, inflicting stack(s) of [Enigma] on each enemy within range.",
+          "type": "Debuff",
+          "effects": [
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Surprise!",
+          "description": "After The Riddler casts his Ultimate or a skill, there is a chance to inflict additional [Enigma] on all enemies.",
+          "type": "Debuff",
+          "effects": [
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "The Grand Enigma",
+          "description": "The Riddler unveils his grand enigma, grant all allies a shield equal to a percentage of his Attack.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "The Arkham Shuffle",
+          "description": "Each [Arkham's Most Wanted] ally present increases the strength of The Riddler's shields.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Riddle Interlude",
+          "description": "Increases all Champion's Physical Defense with an additional percentage for [Supporter] Champions. Applies globally.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TheRiddler-card.png",
+      "communityAverageLevel": "Blue 5-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TheRiddler.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=The%20Riddler",
+      "relatedChampions": [
+        "Bane",
+        "The Penguin",
+        "Two-Face"
+      ]
+    },
+    {
+      "name": "Wonder Girl",
+      "baseRarity": "Mythic",
+      "class": "Warrior",
+      "isHealer": false,
+      "inherentSynergies": [
+        "Amazons",
+        "Teen Titans",
+        "Metahuman"
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/WonderGirl-card.png",
+      "skills": [
+        {
+          "description": "Donna Troy unleashes a flurry of lashes at an enemy, dealing Physical DMG and applying [Astral Willpower].",
+          "name": "Lasso of Persuasion",
+          "isUltimate": false,
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "Debuff"
+          ]
+        },
+        {
+          "type": "Buff",
+          "description": "When an enemy reaches 4 stack(s) of [Astral Willpower], Donna Troy gainbs a shield  equal to a percentage of her HP, and all [Amazons] allies' DMG dealt is increased.",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false,
+          "name": "Divine Protection"
+        },
+        {
+          "isUltimate": true,
+          "description": "Donna Troy charges at an enemy and slashes, knocking them down, dealing Physical DMG and applying 3 stack(s) of {Astral Willpower]. Also reduces the target's Physical DEF by 25%.",
+          "name": "Amazonian Resolve",
+          "effects": [
+            "Control",
+            "DMG",
+            "Debuff"
+          ],
+          "type": "Physical"
+        },
+        {
+          "name": "Shield of Unity",
+          "description": "At the start of battle, all [Amazons] allies gain 10% / 20% / 30% / 40% / 50% Physical DEF Up, and all [Teen Titans] allies gain 10% / 20% / 30% / 40% / 50% Spiritual DEF Up.",
+          "effects": [
+            "Buff"
+          ],
+          "type": "Buff",
+          "isUltimate": false
+        },
+        {
+          "description": "Increases [Amazons] Champions' Physical DEF.",
+          "effects": [
+            "Passive"
+          ],
+          "type": "Passive",
+          "name": "Battle Harmony",
+          "isUltimate": false
+        }
+      ],
+      "communityAverageLevel": "Blue 3-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/WonderGirl.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Wonder%20Girl"
+    },
+    {
+      "name": "Krypto",
+      "inherentSynergies": [
+        "Superman Family",
+        "Metahuman"
+      ],
+      "class": "Supporter",
+      "baseRarity": "Mythic",
+      "isHealer": true,
+      "skills": [
+        {
+          "name": "Good Boy!",
+          "description": "Krypto heals allies within range.",
+          "type": "Healing",
+          "effects": [
+            "Healing"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Therapy Dog",
+          "description": "When an ally drops below a target percentage HP, Krypto flies to their side, granting a shield and healing them. Can be cast manually with a cooldown.",
+          "type": "Healing",
+          "effects": [
+            "Healing",
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Zoomies",
+          "description": "Krypto zips around excitedly, knocking down enemies in his path and reducing their ATK. He also heals allies in his path. Krypto also passively increases his Energy and increases his healing effect.",
+          "type": "Healing",
+          "effects": [
+            "Healing",
+            "Buff",
+            "Debuff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Best Super-Friend",
+          "description": "At the start of battle, Krypto gains bonus HP and increases all allies' DEF and MEN. Casting his Ultimate generates [Krypton Energy], and if Krypto is defeated, this effect transfers to the nearest [Superman Family] ally.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Cuddle Charge",
+          "description": "Increases [Superman Family] Champions' ATK and DEF.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Krypto-card.png",
+      "communityAverageLevel": "Purple 1-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Krypto.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Krypto"
+    },
+    {
+      "name": "Patrolman",
+      "baseRarity": "Epic",
+      "class": "Firepower",
+      "inherentSynergies": [],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Grenade Toss",
+          "description": "Throws a grenade, dealing DMG to enemies in a circular area.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": true
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Patrolman-card.png",
+      "communityAverageLevel": "Blue 1-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Patrolman.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Patrolman"
+    },
+    {
+      "name": "Red Robin",
+      "baseRarity": "Mythic",
+      "class": "Guardian",
+      "inherentSynergies": [
+        "Teen Titans",
+        "Weapon Master",
+        "Bat Family"
+      ],
+      "isHealer": false,
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/RedRobin-card.png",
+      "communityAverageLevel": "Blue 1-Star",
+      "skills": [
+        {
+          "effects": [
+            "DMG",
+            "AoE DMG",
+            "Defense"
+          ],
+          "type": "Physical",
+          "description": "Red Robin rapidly spins his staff for 5s, dealing Physical DMG equal to 180% / 210% / 240% / 270% / 300% of his ATK to enemies ahead.\n For the duration, he gains Super Armor and 40% / 50% / 60% / 70% / 80% Dodge Up.",
+          "isUltimate": false,
+          "name": "Spin Cycle"
+        },
+        {
+          "effects": [
+            "DMG",
+            "AoE DMG",
+            "Debuff"
+          ],
+          "description": "Upon a successful dodge, Red Robin restores 2% / 3% / 4% / 5% / 6% of his lost HP.\n Can trigger once every 1s.",
+          "type": "Physical",
+          "name": "Precision Bat",
+          "isUltimate": false
+        },
+        {
+          "name": "Bat-Tech Decoy",
+          "effects": [
+            "DMG",
+            "AoE DMG",
+            "Debuff"
+          ],
+          "description": "Red Robin slams his staff, dealing Physical DMG equal to 220% / 300% / 380% / 460% / 550% of his ATK to enemies within range and reducing their ATK by 10% / 15% / 20% / 25% / 30% for 10s.",
+          "isUltimate": true,
+          "type": "Physical"
+        },
+        {
+          "type": "Buff",
+          "isUltimate": false,
+          "name": "Robin's Egg",
+          "description": "ncreases Red Robin’s Max HP by 12% / 20% / 28% / 36% / 45%.\n At the start of battle, each [Bat Family] ally present increases Red Robin’s Dodge by 2% / 4% / 6% / 8% / 10%.",
+          "effects": [
+            "Buff",
+            "Defense"
+          ]
+        },
+        {
+          "type": "Passive",
+          "description": "Increases [Teen Titans] Champions' DEF.",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false,
+          "name": "Seeing Red"
+        }
+      ],
+      "canUpgrade": true,
+      "upgradeMechanism": "Bleed",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/RedRobin.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Red%20Robin"
+    },
+    {
+      "name": "Deathstroke",
+      "baseRarity": "Limited Mythic",
+      "class": "Assassin",
+      "inherentSynergies": [
+        "League of Assassins",
+        "Weapon Master",
+        "Legion of Doom"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Eye on You",
+          "description": "Deathstroke advances behind an enemy and slashes with his swords, dealing Physical DMG. In auto mode, the skill targets the enemy with the highest ATK.",
+          "type": "Physical",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Stroke of Genius",
+          "description": "At the start of battle, Deathstroke gains an ATK Up for eacvh [Legion of Doom] ally present.",
+          "type": "Passive",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Slade's Blade",
+          "description": "Deathstroke uses multiple weapons in combat, dealing Physical DMG to an enemy.",
+          "type": "Physical",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "ACTH Serum",
+          "description": "Deathstroke's regenerative capabilities allow him to recover a percentage of his lost HP over time.",
+          "type": "Healing",
+          "effects": [
+            "Healing"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Perfect Soldier",
+          "description": "Increases all Champions' HP and [Assassin] Champions' Dodge.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Deathstroke-card.png",
+      "communityAverageLevel": "Blue 4-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Deathstroke.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Deathstroke",
+      "relatedChampions": [
+        "Batgirl",
+        "Cyborg",
+        "Deadshot"
+      ]
+    },
+    {
+      "name": "Constantine",
+      "baseRarity": "Limited Mythic",
+      "class": "Magical",
+      "inherentSynergies": [
+        "Justice League Dark",
+        "Energy Wielder"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Exorcism Blast",
+          "description": "Constantine unleashes a blast of flame, dealing Spiritual DMG to enemies in a circular area.",
+          "type": "Spiritual",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Power Curse",
+          "description": "After Constantine casts [Summoned Flame] or [Exorcism Blast], there is a chance to inflict [Burn] on the target.",
+          "type": "Spiritual",
+          "effects": [
+            "DMG",
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Summonded Flame",
+          "description": "Constantine conjurs a firestorm that deals Spiritual DMG to enemies within a circular area. If [Black Magix Surge] is active, the next two ultimate casts deal increased Spiritual DMG.",
+          "type": "Spiritual",
+          "effects": [
+            "DMG",
+            "AoE DMG",
+            "Buff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Black Magic Surge",
+          "description": "After Constantine casts his Ultimate, the area and range of his next [Exorcism Blast] and the DMG of his next [Summoned Flame] increase, stacking up to 2 times. At the start of battle, each [Justice League Dark] ally increases Constantine's ATK.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Unfair Advantage",
+          "description": "Increases all Champions' ATK and [Magical] Champions' HP.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Constantine-card.png",
+      "communityAverageLevel": "Blue 5-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Constantine.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Constantine",
+      "relatedChampions": [
+        "Doctor Fate",
+        "Shazam",
+        "The Flash"
+      ]
+    },
+    {
+      "name": "Sinestro",
+      "baseRarity": "Limited Mythic",
+      "class": "Magical",
+      "inherentSynergies": [
+        "Legion of Doom",
+        "Energy Wielder"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Bondage of Fear",
+          "description": "Sinestro summons the Chain of Fear, dealing Spiritual DMG to an enemy.",
+          "type": "Spiritual",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Strong Will",
+          "description": "Sinestro absorbs fear, restoring his Energy.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Mind Over Matter",
+          "description": "Sinestro channels fear to deal Spiritual DMG to an enemy. The damage then chains to the next nearest enemy, with each chain attack dealing 40% of the previous attack's damage, affecting up to 3 targets.",
+          "type": "Spiritual",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Fear Grows",
+          "description": "Whenever Sinestro or an ally defeats an enemy (excluding summons), for every [Legion of Doom] ally present, Sinestro's ATK increases.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Sinestro's Might",
+          "description": "Increases all Champions' MEN and [Magical] Champions' Spiritual AMP.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Sinestro-card.png",
+      "communityAverageLevel": "Blue 4-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Sinestro.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Sinestro",
+      "relatedChampions": [
+        "Black Canary",
+        "Lex Luthor",
+        "Stargirl"
+      ]
+    },
+    {
+      "name": "Aquaman",
+      "baseRarity": "Mythic",
+      "class": "Firepower",
+      "inherentSynergies": [
+        "Justice League",
+        "Metahuman",
+        "Atlanteans"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "effects": [
+            "Control"
+          ],
+          "name": "Trident's Shield",
+          "type": "Control",
+          "isUltimate": false,
+          "description": "Aquaman inflicts [Water Prison] on an enemy."
+        },
+        {
+          "isUltimate": false,
+          "description": "Aquaman summoonos waves to knock back enemies within a rectangular area in front of him, dealing Physical DMG.",
+          "effects": [
+            "Control",
+            "DMG",
+            "AoE DMG"
+          ],
+          "name": "Breath of Atlantis",
+          "type": "Physical"
+        },
+        {
+          "description": "Aquaman summons a waterspout, dealing Physical DMG over time to enemies within a circualr area while pulling them towards the center.",
+          "effects": [
+            "Control",
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": true,
+          "name": "Atlantean Vortex",
+          "type": "Physical"
+        },
+        {
+          "type": "Physical",
+          "name": "Sea King",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false,
+          "description": "At the start of battle, if there are at least 4 other [Justice League allies besides Aquaman, Aquaman's bassic attack have a 50% chance to deliver a heavy blow, dealing Physical DMG."
+        },
+        {
+          "description": "Increases [Justice League] Champions' Cris Rate.",
+          "effects": [
+            "Passive"
+          ],
+          "name": "Neptune's Glory",
+          "type": "Passive",
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Aquaman-card.png",
+      "communityAverageLevel": "Blue 2-Star",
+      "canUpgrade": true,
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Aquaman.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Aquaman"
+    },
+    {
+      "name": "Batman Death Metal",
+      "class": "Magical",
+      "baseRarity": "Iconic",
+      "inherentSynergies": [
+        "Death Metal",
+        "Bat Family",
+        "Energy Wielder"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "isUltimate": false,
+          "description": "Batman Death Metal slams the ground, dealing spiritual damage equal to a percentage of his Attack to enemies within range.",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "name": "Gotham Calling",
+          "type": "Spiritual"
+        },
+        {
+          "effects": [
+            "Buff"
+          ],
+          "description": "After the start of battle, whenever an allied Champion is defeated, Batman Death Metal's Ultimate summons an additional Blackest Bat. Each Blackest Bat inherits a percentage of his Attack and HP from Batman Death Metal and lasts 15s.",
+          "isUltimate": false,
+          "name": "Rock After Death",
+          "type": "Buff"
+        },
+        {
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": true,
+          "description": "Batman Death Metal goes wild on his guitar, dealing spiritual damage equal to a percentage of his Attack to enemies within range, then summons two Blackest Bats to join the fight. Each Blackest Bat inherits a percentage of his Attack and HP from Batman Death Metal and lasts 15s.",
+          "name": "Raise the Shred",
+          "type": "Spiritual"
+        },
+        {
+          "effects": [
+            "Buff"
+          ],
+          "description": "At the start of battle, damage dealt by Batman Death Metal and his Blackest Bats is increased by 30% at level 1, 50% at level 2, 70% at level 3, 85% at level 4, and 100% at level 5.",
+          "isUltimate": false,
+          "type": "Buff",
+          "name": "Heavier Mettle"
+        },
+        {
+          "name": "Sword & Sorcery",
+          "type": "Passive",
+          "description": "Increases all Champions' Physical Defense and [Magical] Champions' Attack. Applies globally.",
+          "isUltimate": false,
+          "effects": [
+            "Passive"
+          ]
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BatmanDeathMetal-card.png",
+      "communityAverageLevel": "Blue 5-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BatmanDeathMetal.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Batman%20Death%20Metal"
+    },
+    {
+      "name": "Raven",
+      "baseRarity": "Mythic",
+      "class": "Supporter",
+      "inherentSynergies": [
+        "Teen Titans",
+        "Energy Wielder",
+        "Justice League Dark"
+      ],
+      "isHealer": true,
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Raven-card.png",
+      "communityAverageLevel": "Blue 3-Star",
+      "skills": [
+        {
+          "type": "Spiritual",
+          "effects": [
+            "Healing",
+            "DMG",
+            "AoE DMG"
+          ],
+          "name": "Flock Together",
+          "description": "Raven summons a multitude of magical ravens through the Rift, dealing Spiritual DMG to enemies within a rectangular area in fronf of her. Raven restores HP equal to 50% of the DMG dealt.",
+          "isUltimate": false
+        },
+        {
+          "isUltimate": false,
+          "type": "Healing",
+          "name": "Demon's Shield",
+          "effects": [
+            "Healing"
+          ],
+          "description": "Raven bends rtime and space, swapping places with a selected ally whose HP is below 50% and healing them for a percentage of Raven's ATK over time."
+        },
+        {
+          "effects": [
+            "Healing"
+          ],
+          "description": "Raven transforms and circles overhead, healing all allies within a circular area in front of her by 240% / 320% / 400% / 480% / 560% of her ATK, and increasing their Spiritual DEF by 20% / 25% / 30% / 35% / 40% for 12s.",
+          "isUltimate": true,
+          "name": "Demon's Flight",
+          "type": "Healing"
+        },
+        {
+          "description": "Increases Raven’s Healing Done by 5% / 10% / 15% / 20% / 25%.\nAt the start of battle, each [Justice League Dark] ally present increases Raven’s Healing Done by 2% / 4% / 6% / 8% / 10%.",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false,
+          "name": "Dark Soul",
+          "type": "Buff"
+        },
+        {
+          "name": "Daughter of Darkness",
+          "type": "Passive",
+          "description": "Increases all Champions' ATK.",
+          "isUltimate": false,
+          "effects": [
+            "Passive"
+          ]
+        }
+      ],
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Raven.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Raven"
+    },
+    {
+      "name": "Mera",
+      "baseRarity": "Legendary",
+      "class": "Supporter",
+      "isHealer": true,
+      "skills": [
+        {
+          "name": "Healing Waters",
+          "description": "Mera heals an ally.",
+          "type": "Healing",
+          "effects": [
+            "Healing"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Water of Life",
+          "description": "Mera's healing amount is increased for the beginning of the battle.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "The Gift of Sea",
+          "description": "Mera summons a vortex, healing all allies within range over time.",
+          "type": "Healing",
+          "effects": [
+            "Healing"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Crown of Atlantis",
+          "description": "Mera's ATK increases.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Healing Waters",
+          "description": "Increases all Champions' HP.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Mera-card.png",
+      "inherentSynergies": [
+        "Atlanteans",
+        "Energy Wielder",
+        "Justice League"
+      ],
+      "communityAverageLevel": "Gold 4-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Mera.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Mera"
+    },
+    {
+      "name": "Robin",
+      "baseRarity": "Mythic",
+      "class": "Assassin",
+      "inherentSynergies": [
+        "Teen Titans",
+        "Weapon Master",
+        "Bat Family"
+      ],
+      "isHealer": false,
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Robin-card.png",
+      "skills": [
+        {
+          "isUltimate": false,
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "type": "Physical",
+          "description": "Robin shoots several Batarangs in a fan-shaped area in front of him, dealing physical damage equal to170%/240%/310%/380%/450%  of his Attack to enemies within range.",
+          "name": "Vengeance is Mine"
+        },
+        {
+          "name": "Cloud of Bats",
+          "isUltimate": false,
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "description": "Upon landing a Critical Hit, Robin’s Crit Damage increases by 20% / 35% / 50% / 65% / 80% for 5s."
+        },
+        {
+          "isUltimate": true,
+          "description": "Robin darts across the battlefield, dealing slashes to enemies. Each slash deals Physical DMG. The first slash targets a selected enemy (the furthest raget in auto mode), with subsequent slashes hitting random enemies within range. Robin cannot be targeted during the attack.",
+          "name": "Round Robin",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "Defense"
+          ]
+        },
+        {
+          "description": "At the start of battle, each [Bat Family] ally present increases Robin’s Crit Rate by 2% / 4% / 6% / 8% / 10%.",
+          "name": "Brooding Legacy",
+          "effects": [
+            "Buff"
+          ],
+          "type": "Buff",
+          "isUltimate": false
+        },
+        {
+          "description": "Increases [Assassin] Champions' ATK.",
+          "isUltimate": false,
+          "effects": [
+            "Passive"
+          ],
+          "type": "Passive",
+          "name": "League Synergy"
+        }
+      ],
+      "communityAverageLevel": "Blue 2-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Robin.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Robin"
+    },
+    {
+      "name": "Red Hood",
+      "baseRarity": "Legendary",
+      "class": "Firepower",
+      "inherentSynergies": [
+        "League of Assassins",
+        "Weapon Master",
+        "Bat Family"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Blow the Hood",
+          "description": "When Red Hood's basic attack deals Crit DMG, he throws a grenade upwards, dealing Physical DMG to enemies within range.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG",
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Wrong Place, Right Time",
+          "description": "For every enemy within range, Red Hood's Crit Rate increases, up to a maximum of 30%.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Strafe Strife",
+          "description": "Red Hood leaps to the target area and strafes, dealing Physical DMG to enemies within range.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Bat-Family Tree",
+          "description": "After casting [Strafe Strife], Red Hood's Dodge increases.",
+          "type": "Defense",
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Ruthless Pursuit",
+          "description": "Increases all Champions' ATK.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/RedHood-card.png",
+      "canUpgrade": true,
+      "communityAverageLevel": "Gold 3-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/RedHood.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Red%20Hood"
+    },
+    {
+      "name": "Arsenal",
+      "baseRarity": "Mythic",
+      "class": "Firepower",
+      "inherentSynergies": [
+        "Teen Titans",
+        "Weapon Master",
+        "Outsiders"
+      ],
+      "isHealer": false,
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Arsenal-card.png",
+      "communityAverageLevel": "Blue 1-Star",
+      "skills": [
+        {
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "Debuff"
+          ],
+          "isUltimate": false,
+          "name": "On Target",
+          "description": "Arsenal charges briefly before firing a sinal arrow, dealing Physical DMG to an enemy and inflicting stacks of [Deadly Mark]."
+        },
+        {
+          "name": "Retribution",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": false,
+          "type": "Physical",
+          "description": "Arsenal deploys an untargetable turret at his location. When an enemy deals damage with their Ultimate or special skill the turrent counterattacks by firing an explosive arrow at the attacker, dealing Physical DMG."
+        },
+        {
+          "isUltimate": true,
+          "description": "Increases all [Teen Titans] allies’ Crit Damage by 10% / 15% / 20% / 25% / 30% for 12s.\n Arsenal then shoots 9 arrows into the sky, each dealing Physical DMG equal to 120% / 150% / 180% / 210% / 240% of his ATK to a random enemy.",
+          "type": "Physical",
+          "name": "Rain of Destruction",
+          "effects": [
+            "DMG",
+            "Debuff"
+          ]
+        },
+        {
+          "isUltimate": false,
+          "effects": [
+            "Buff"
+          ],
+          "description": "At the start of battle, each [Outsiders] ally present increases Arsenal's Energy gain.",
+          "name": "Acrobat Attack",
+          "type": "Passive"
+        },
+        {
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false,
+          "type": "Passive",
+          "name": "Weapon Maximization",
+          "description": "Increases [Outsiders] Champions' ATK."
+        }
+      ],
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Arsenal.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Arsenal"
+    },
+    {
+      "name": "Martian Manhunter",
+      "baseRarity": "Limited Mythic",
+      "class": "Warrior",
+      "inherentSynergies": [
+        "Justice League",
+        "Metahuman",
+        "Outsiders"
+      ],
+      "isHealer": false,
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/MartianManhunter-card.png",
+      "skills": [
+        {
+          "isUltimate": false,
+          "type": "Spiritual",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "name": "H'ronmeer's Rage",
+          "description": "Martian Manhunter fires heat beams from his eyes, dealing Spiritual DMG to enemies within a rectangular area in front of him."
+        },
+        {
+          "name": "Outsidders Forever",
+          "isUltimate": false,
+          "description": "At the start of battle, J'onn's Physical DEF and MEN is increased.",
+          "type": "Defense",
+          "effects": [
+            "Buff",
+            "Defense"
+          ]
+        },
+        {
+          "effects": [
+            "DMG"
+          ],
+          "type": "Spiritual",
+          "description": "Martian Manhunter links minds with all allies granting them [Mind Ward]. When J'onn carries [Mind Ward], taking basic attack DMG reduces cooldown of [H'ronmeer's Rage].",
+          "isUltimate": true,
+          "name": "Psionic Protection"
+        },
+        {
+          "isUltimate": false,
+          "effects": [
+            "Buff"
+          ],
+          "type": "Buff",
+          "description": "Increases Martian Manhunter’s ATK by 20% / 30% / 45% / 60% / 75%.\n At the start of battle, if there are at least 3 [Outsiders] or [Justice League] allies present, the duration of [Mind Ward] is increased by 5s.",
+          "name": "Telepathic Bulwark"
+        },
+        {
+          "name": "Telekinetic Shield",
+          "effects": [
+            "Passive"
+          ],
+          "type": "Passive",
+          "description": "Increases all Champions' DEF and [Warrior] Champions' DEF.",
+          "isUltimate": false
+        }
+      ],
+      "communityAverageLevel": "Blue 4-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/MartianManhunter.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Martian%20Manhunter",
+      "relatedChampions": [
+        "Atom",
+        "Mera",
+        "Vixen"
+      ]
+    },
+    {
+      "baseRarity": "Limited Mythic",
+      "isHealer": false,
+      "class": "Assassin",
+      "inherentSynergies": [
+        "League of Assassins",
+        "Metahuman"
+      ],
+      "skills": [
+        {
+          "name": "Assassin's Strike",
+          "description": "Ra's al Ghul sacrifices HP to dash behind his target and strike.",
+          "type": "Physical",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "To the Death",
+          "description": "Ra's al Ghul gains bonus ATK based on his HP lost.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Wrath of the Demon",
+          "description": "Ra's al Ghul's Ultimate and basic attacks host HP. The more HP sacrificed, the greater the DMG.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "Buff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Lazarus's Rise",
+          "description": "When taking lethal damage, Ra's al Ghul enters the Lazarus Pit to recover. If all allies are defeated, he returns and casts his ultimate.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Lazarus Effect",
+          "description": "Increases all Champion's HP and [Assassin] Champions' HP additionally.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "name": "Ra's al Ghul",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/RasalGhul-card.png",
+      "communityAverageLevel": "Blue 2-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Ra'salGhul.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Ra's%20al%20Ghul",
+      "relatedChampions": [
+        "Cyborg",
+        "Krypto",
+        "Robin"
+      ]
+    },
+    {
+      "name": "Mr. Freeze",
+      "baseRarity": "Limited Mythic",
+      "class": "Guardian",
+      "inherentSynergies": [
+        "Arkham's Most Wanted",
+        "Weapon Master"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Nora's Tears",
+          "description": "Mr. Freeze deals spiritual damage equal to a percentage of his Attack to an enemy, with a base chance to inflict [Frozen] for 2s.",
+          "type": "Spiritual",
+          "effects": [
+            "Control",
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Cryo-Field",
+          "description": "Reduces Mr. Freeze's combined single-target damage taken by a percentage. After casting his Ultimate, his combined single-target damage taken is reduced by an additional percentage for 10s.",
+          "type": "Defense",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Cold to the Touch",
+          "description": "Mr. Freeze gains [Absolute Zero Armor] for 10s.",
+          "type": "Healing",
+          "effects": [
+            "Healing",
+            "Debuff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Ice Cold",
+          "description": "Mr. Freeze is immune to [Frozen], and his Max HP is increased by a percentage. When hit by single-target damage from an enemy skill or Ultimate, there is a 50% base chance to inflict [Frozen] on the attacker for 2s.",
+          "type": "Control",
+          "effects": [
+            "Control"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Glacier",
+          "description": "Increases all Champions' Physical Defense by a percentage with an additional percentage for [Guardian] Champions. Applies globally.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/MrFreeze-card.png",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Mr.Freeze.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Mr.%20Freeze",
+      "relatedChampions": [
+        "Bane",
+        "Poison Ivy",
+        "The Penguin"
+      ]
+    },
+    {
+      "name": "Captain Cold",
+      "baseRarity": "Legendary",
+      "class": "Intimidator",
+      "inherentSynergies": [
+        "Suicide Squad",
+        "Weapon Master",
+        "Legion of Doom"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Frozen Stiff",
+          "description": "Captain Cold blasts a freezing ray at the ground, dealing consecutive attacks to enemies within a circular area in front of him. Each attack deals Physical DMG and has a fixed 10% chance to render the target [Frozen].",
+          "type": "Physical",
+          "effects": [
+            "Control",
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Cool Off",
+          "description": "At the start of battle, all [Legion of Doom] allies' Physical DEF and Spiritual DEF increases.",
+          "type": "Buff",
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "On Ice",
+          "description": "Captain Cold creates an icy perch to snipe from, dealing Physical DMG to an enemy and inflicting [Frostbite].",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "Debuff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Avalanche",
+          "description": "When receiving melee attacks, Captain Cold immediately rolls backwards and then charges forward to knock down the target, dealing Physical DMG.",
+          "type": "Physical",
+          "effects": [
+            "Control",
+            "DMG",
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Cold Analysis",
+          "description": "Increases all Champions' MEN.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/CaptainCold-card.png",
+      "communityAverageLevel": "Gold 3-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/CaptainCold.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Captain%20Cold"
+    },
+    {
+      "name": "Vixen",
+      "baseRarity": "Legendary",
+      "class": "Supporter",
+      "inherentSynergies": [
+        "Birds of Prey",
+        "Metahuman"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Familiar",
+          "description": "Vixen summons a deer spirit from her necklace that leaps to an ally, increasing their ATK.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Raptor Attack",
+          "description": "Vixen summons a falcon from her necklace that swoops down on the target, dealing Physical DMG.",
+          "type": "Physical",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "King of Beasts",
+          "description": "Vixen summons a lion from her necklace that lets out a mighty roar, increasing ATK of allies within range.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Fly High",
+          "description": "At the start of battle, Vixen's Dodge increases.",
+          "type": "Defense",
+          "effects": [
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Rhino Hide",
+          "description": "Increases all Champion's HP.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Vixen-card.png",
+      "communityAverageLevel": "Gold 3-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Vixen.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Vixen"
+    },
+    {
+      "name": "Doctor Fate",
+      "baseRarity": "Mythic",
+      "class": "Guardian",
+      "inherentSynergies": [
+        "Justice League Dark",
+        "Energy Wielder"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Mystic Shield",
+          "description": "Doctor Fate casts a spell that grands a [Shield] to a selected ally.",
+          "type": "Defense",
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Ancient Strike",
+          "description": "Doctor Fate gathers Energy, dealing Spiritual DMG over time to an enemy.",
+          "type": "Spiritual",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Protection Charm",
+          "description": "Doctor Fate casts a spell that grants a [Shield] to allies within a circular area.",
+          "type": "Defense",
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Dark Magic",
+          "description": "At the start of battle, every [Justice League Dark] ally increases the [Shield] strength granted by Doctor Fate.",
+          "type": "Passive",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Fate Smiles",
+          "description": "Increases [Justice League Dark] Champions' HP.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/DoctorFate-card.png",
+      "communityAverageLevel": "Blue 3-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/DoctorFate.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Doctor%20Fate"
+    },
+    {
+      "name": "Deadshot",
+      "baseRarity": "Mythic",
+      "class": "Firepower",
+      "inherentSynergies": [
+        "Suicide Squad",
+        "Weapon Master"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Maximum Damage",
+          "description": "Deadshot coontinuously fires at an enemy, dealing Physical DMG and reducing the target's healing received.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Nowhere to Run",
+          "description": "Deadshot's basic attacks deal more damage to enemies affected by his healing reduction debuff.",
+          "type": "Passive",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Marked for Death",
+          "description": "Deadshot fires a powerful bullet at an enemy, dealing Physical DMG and reducing the target's healing received, during which Deadshot gains Energy if the target is defeated.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "Buff",
+            "Debuff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Killer Elite",
+          "description": "At the start of battle, Deadhshot's ACC increases.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Dead Aim",
+          "description": "Increases [Firewpower] Champions' ATK.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Deadshot-card.png",
+      "communityAverageLevel": "Blue 1-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Deadshot.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Deadshot"
+    },
+    {
+      "name": "Killer Croc",
+      "baseRarity": "Legendary",
+      "class": "Guardian",
+      "inherentSynergies": [
+        "Suicide Squad",
+        "Metahuman",
+        "Legion of Doom"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Crocodile Wrestling",
+          "description": "Killer Croc unleashes a devastating smash in front of him, dealing Physical DMG to enemies within range.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Tough Hide",
+          "description": "Killer Croc's Physical DEF is increased.",
+          "type": "Defense",
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Ambush Predator",
+          "description": "Killer Croc lunges forward and crashes down, dealing Physical DMG to enemies within a circular area and inflicting [Shockwave].",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG",
+            "Debuff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Sewer Strike",
+          "description": "When Killer Croc's HP drops below a target percentage, he retreats into the sewers, restoring HP, then surges towards the enemy with the highest ATK to deliver a crushing blow that deals Physical DMG. Can only be triggered once per battle.",
+          "type": "Physical",
+          "effects": [
+            "Healing",
+            "DMG",
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Thick Skin",
+          "description": "Increases all Champions' HP.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/KillerCroc-card.png",
+      "communityAverageLevel": "Gold 3-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/KillerCroc.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Killer%20Croc"
+    },
+    {
+      "name": "Cyborg",
+      "baseRarity": "Mythic",
+      "class": "Intimidator",
+      "inherentSynergies": [
+        "Teen Titans",
+        "Weapon Master",
+        "Justice League"
+      ],
+      "isHealer": false,
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Cyborg-card.png",
+      "communityAverageLevel": "Blue 1-Star",
+      "skills": [
+        {
+          "description": "Cyborg charges up to fire his sonic cannon, dealing Physical DMG to enemies within a rectangular area in front of him.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": false,
+          "name": "Sonic Cannon"
+        },
+        {
+          "effects": [
+            "Healing",
+            "Defense"
+          ],
+          "type": "Defense",
+          "name": "Reboot",
+          "description": "When Cyborg takes lethal damage for the first time and there is at least one living ally present, he blacks the damage and gains [Emergency Repair].",
+          "isUltimate": false
+        },
+        {
+          "name": "Scan Strike",
+          "type": "Debuff",
+          "effects": [
+            "Defense"
+          ],
+          "isUltimate": true,
+          "description": "Cyborg takes flight and scans ahead, increasing Physical Damage dealt by allies in a circular area by 20% / 30% / 40% / 50% / 60% for 12s."
+        },
+        {
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "description": "When Cyborg is deployed in certain time-limited missions, he can extend the mission's time limit.",
+          "isUltimate": false,
+          "name": "System Hack"
+        },
+        {
+          "isUltimate": false,
+          "type": "Passive",
+          "name": "Hammer Blow",
+          "description": "Increases [Intimidator] Champions' Effect ACC.",
+          "effects": [
+            "Passive"
+          ]
+        }
+      ],
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Cyborg.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Cyborg"
+    },
+    {
+      "name": "Bazooka Bro",
+      "baseRarity": "Epic",
+      "class": "Firepower",
+      "inherentSynergies": [],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Incoming!",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "type": "Physical",
+          "isUltimate": true,
+          "description": "Bazooka Bro fires a rocket, dealing Physical DMG to enemies within range."
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BazookaBro-card.png",
+      "communityAverageLevel": "Blue 1-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BazookaBro.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Bazooka%20Bro"
+    },
+    {
+      "baseRarity": "Limited Mythic",
+      "name": "Queen Hippolyta",
+      "class": "Guardian",
+      "inherentSynergies": [
+        "Amazons",
+        "Metahuman"
+      ],
+      "isHealer": false,
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/QueenHippolyta-card.png",
+      "skills": [
+        {
+          "isUltimate": false,
+          "type": "Defense",
+          "name": "Luck of Tyche",
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "description": "Queen Hippolyta grants a shield to the ally with the lowest HP percentage for 10s."
+        },
+        {
+          "type": "Defense",
+          "isUltimate": false,
+          "name": "Hera's Protection",
+          "description": "At the start of the battle, all allies' Physical DEF is increased for a period of time.",
+          "effects": [
+            "Buff",
+            "Defense"
+          ]
+        },
+        {
+          "description": "Queen Hippolyta stands firm and raises her sceptre, radiating divine power. Absorbs DMG taken by allies within 14 meters, during which she gains [Super Armor] and cannot recover Energy.",
+          "type": "Defense",
+          "isUltimate": true,
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "name": "Athena's Shield"
+        },
+        {
+          "isUltimate": false,
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "type": "Defense",
+          "description": "At the start of battle, Queen Hippolyta gains Energy. After casting Ultimate, Queen Hippolyta takes less DMG.",
+          "name": "Gaea's Gift"
+        },
+        {
+          "description": "Increases all Champions' HP and [Guardian] Champion's Physical DEF.",
+          "type": "Passive",
+          "name": "Queen's Patronage",
+          "isUltimate": false,
+          "effects": [
+            "Passive"
+          ]
+        }
+      ],
+      "communityAverageLevel": "Blue 5-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/QueenHippolyta.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Queen%20Hippolyta",
+      "relatedChampions": [
+        "Deadshot",
+        "Harley Quinn",
+        "Two-Face"
+      ]
+    },
+    {
+      "baseRarity": "Limited Mythic",
+      "name": "Supergirl Woman of Tomorrow",
+      "inherentSynergies": [
+        "Superman Family",
+        "Justice League",
+        "Metahuman"
+      ],
+      "class": "Warrior",
+      "isHealer": true,
+      "skills": [
+        {
+          "type": "Physical",
+          "description": "Before awakening: Supergirl Woman of Tomorrow commands Krypto to heal the ally with the lowest HP percentage for a percentage of her Attack, then continue healing the target for an additional matching percentage of her Attack over 5s. After awakening: Supergirl Woman of Tomorrow fires Heat Vision, dealing physical damage equal to a percentage of her Attack to enemies in a fan-shaped area.",
+          "name": "Argo City Special",
+          "isUltimate": false,
+          "effects": [
+            "Healing",
+            "AoE DMG"
+          ]
+        },
+        {
+          "type": "Buff",
+          "description": "Increases Supergirl Woman of Tomorrow's Max HP by a percentage. After awakening: Also reduces Supergirl Woman of Tomorrow's spiritual damage taken by a percentage until the end of battle.",
+          "name": "Build Strength",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Walk the Dog",
+          "isUltimate": true,
+          "effects": [
+            "Healing",
+            "AoE DMG",
+            "Buff"
+          ],
+          "type": "Healing",
+          "description": "Before awakening: Supergirl Woman of Tomorrow heals allies in a circular area for a percentage of her Attack and reduces the targets' spiritual damage taken by a percentage for 15s. After awakening: Supergirl Woman of Tomorrow races through the enemy lines at super speed, kicking up a sandstorm that deals physical damage equal to a percecntage of her Attack to enemies in a circular area. Passive: When 1 friendly Champion has been defeated, or after SupeSupergirl Woman of Tomorrow casts her Ultimate for the 2nd tie, she immediately enters [Awakened] state until the end of the battle."
+        },
+        {
+          "type": "Buff",
+          "description": "At the start of battle, increases all allies' physical damage dealt by a percentage until the end of battle. This effect is doubled for [Superman Family] and [Justice League] Allies. After awakening: Also increases Supergirl Woman of Tomorrow's Physical Penetration by 20% until the end of battle.",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false,
+          "name": "Resolute"
+        },
+        {
+          "type": "Passive",
+          "description": "Increases all Champion's Spiritual Defence by a percentage and [Warrior] Champions' Spiritual Defence by an additional percentage.",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false,
+          "name": "Inspire Confidence"
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/SupergirlWomanofTomorrow-card.png",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/SupergirlWomanofTomorrow.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Supergirl%20Woman%20of%20Tomorrow"
+    },
+    {
+      "name": "Dick Grayson (Robin)",
+      "baseRarity": "Limited Mythic",
+      "inherentSynergies": [
+        "Teen Titans",
+        "Bat Family",
+        "Weapon Master"
+      ],
+      "class": "Warrior",
+      "skills": [
+        {
+          "name": "Acrobatic Barrage",
+          "description": "Robin unleashes a rapid flurry, dealing physical damage equal to a percentage of his Attack on an enemy. While [Afterimage] is active, this has a fixed 50% chance to inflict [Off Balance] for 8s.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Family Ties",
+          "description": "Increases Robin's Max HP by a percentage. At the start of battle, each [Teen Titans] ally present increases Robin's Spiritual Resistance by a percentage, while each [Bat Family] ally present increases his Crit Rate by a percentage.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "The Flying Grayson",
+          "description": "Robin enters [Afterimage] for 12s, then launches into a powerful flying kick, dealing physical damage equal to a percentage of his Attack to an enemy.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "Buff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Kinetic Flow",
+          "description": "Increases Robin's Attack by a percentage. While [Afterimage] is active, his physical damage dealt is increases by a percentage. Each [Afterimage] strike reduces this bonus by a percentage.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Boy Wonder",
+          "description": "Increases all Champions' Attack by a percentage and [Warrior] Champions' HP by a percentage.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/DickGraysonRobin-card.png",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/DickGrayson(Robin).webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Dick%20Grayson%20(Robin)",
+      "relatedChampions": [
+        "Arsenal",
+        "Batgirl",
+        "Cyborg"
+      ]
+    },
+    {
+      "baseRarity": "Limited Mythic",
+      "name": "Artemis",
+      "class": "Guardian",
+      "inherentSynergies": [
+        "Amazons",
+        "Metahuman"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Lasso of Conquer",
+          "description": "Artemis slashes her target repeatedly, dealing physical damage equal to a percentage of her Attack plus Physical Defense.",
+          "type": "Physical",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Blade of Vengeance",
+          "description": "Increases Artemis's Physical Defense, and reduces her damage taken.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Duel of the Amazons",
+          "description": "Artemis deals physical damage equal to a percentage of her Attack plus her Physical Defense to an enemy, then challenges them to a duel.",
+          "type": "Physical",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Fated Target",
+          "description": "At the start of battle, increases Artemis's Attack and Physical Defense for each [Amazons] ally present.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Hunter's Resolve",
+          "description": "Increases all Champions' HP by a percentage with an additional percentage for [Guardian] Champions.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Artemis-card.png",
+      "communityAverageLevel": "Blue 3-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Artemis.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Artemis",
+      "relatedChampions": [
+        "Arsenal",
+        "Harley Quinn",
+        "Wonder Girl"
+      ]
+    },
+    {
+      "name": "Scarecrow",
+      "baseRarity": "Limited Mythic",
+      "class": "Guardian",
+      "inherentSynergies": [
+        "Legion of Doom",
+        "Weapon Master",
+        "Arkham's Most Wanted"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Terror Strike",
+          "description": "Scarecrow swings his scythe, dealing Spiritual DMG to enemies in front of him and inflicting 1 stack of [Scare], with a 50% base chance to reduce their MEN.",
+          "type": "Spiritual",
+          "effects": [
+            "DMG",
+            "AoE DMG",
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Haunting Visions",
+          "description": "Scarecrow intimidates the enemy, dealing Spiritual DMG to enemies in a fan-shaped area in front of him and inflicting 1 stack of [Scare], with a chance to reduce their ATK.",
+          "type": "Spiritual",
+          "effects": [
+            "DMG",
+            "AoE DMG",
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "The Scent of Fear",
+          "description": "Scarecrow transforms into a towering phantom and releases a thick cloud of fear gas, dealing Spiritual DMG to enemies in a circular area and inflicting 2 stacks of [Scare]. If a target has 4 stacks of [Scare], [Memtal Breakdown] is also inflicted, incapacitating and slightly shrinking them and reducing rtheir MEN.",
+          "type": "Spiritual",
+          "effects": [
+            "Control",
+            "DMG",
+            "AoE DMG",
+            "Debuff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Growing Terror",
+          "description": "Every time Scarecrow casts his Ultimate, he grows in size and gains DMG reduction, stacking up to 3 times. At the start of battle, all [Arkham's Most Wanted] allies gain 1 stack of MEN Up.",
+          "type": "Buff",
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Frightener",
+          "description": "Increases all Chasmpions' MEN and [Guardian] Champions' HP.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Scarecrow-card.png",
+      "communityAverageLevel": "Blue 3-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Scarecrow.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Scarecrow",
+      "relatedChampions": [
+        "Aquaman",
+        "Poison Ivy",
+        "The Penguin"
+      ]
+    },
+    {
+      "name": "Two-Face",
+      "baseRarity": "Mythic",
+      "class": "Firepower",
+      "inherentSynergies": [
+        "Arkham's Most Wanted",
+        "Weapon Master"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Shoot You Twice",
+          "description": "Two-Face fires with one assault rifle, dealing Physical DMG to enemies within a circular area in front of him.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Bleed You Dry",
+          "description": "When attacking an enemy inflicted with [Panic], Two-Face has a 50% chance to inflict 1 stack of [Bleeding] on the target.",
+          "type": "Debuff",
+          "effects": [
+            "DMG",
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Both Bad Siides",
+          "description": "Two-Face fires with dual assault rifles, dealing Physical DMG to enemies withing a fan-shaped area in front of him and inflictiung 1 stack of [Panic].",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG",
+            "Debuff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Shot in the Dark",
+          "description": "Two-Face's basic attack has a fixed 50% chance to attack with an assault rifle, dealing Physical DMG.",
+          "type": "Physical",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Lawyer's Advice",
+          "description": "Increases [Arkham's Most Wanted] Champions' ATK.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Two-Face-card.png",
+      "communityAverageLevel": "Blue 2-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Two-Face.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Two-Face"
+    },
+    {
+      "name": "Zatanna",
+      "baseRarity": "Limited Mythic",
+      "class": "Supporter",
+      "inherentSynergies": [
+        "Justice League Dark",
+        "Energy Wielder"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Elbuod Elbuort",
+          "description": "Zatanna creates a clone that inherits a percentage of her ATK and max HP. The clone attacks enemies with basic attacks. While the magical stage is active, the clone's attacks also deal Spiritual DMG to enemies in a circular area.",
+          "type": "Spiritual",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Delgnis Tuo",
+          "description": "Zatanna selects an ally (including herself) with the highest ATK and increases their ATK.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Eht Wohs Tsum Og No",
+          "description": "Zatanna creates a magical stage that grants all allies ATK Up and Physical DEF Up, during which Zatanna's basic attacks deal Spiritual DMG to enemies in a circular area.",
+          "type": "Spiritual",
+          "effects": [
+            "DMG",
+            "AoE DMG",
+            "Buff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Epon",
+          "description": "At the start of battle, all [Justice League Dark] allies gain a percentage of Spiritual AMP every 4s, stacking up with a maximum of 35%.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Ygrene Niag",
+          "description": "Increases all Champions' DEF and [Supporter] Champions Energy gain bonus.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Zatanna-card.png",
+      "communityAverageLevel": "Blue 3-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Zatanna.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Zatanna",
+      "relatedChampions": [
+        "Doctor Fate",
+        "Raven",
+        "Robin"
+      ]
+    },
+    {
+      "name": "Lex Luthor",
+      "baseRarity": "Mythic",
+      "class": "Firepower",
+      "inherentSynergies": [
+        "Legion of Doom",
+        "Weapon Master"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Ability Analysis",
+          "description": "Lex Luthor locks onto enemies ahead, unleashing a barrage that deals Physical DMG to enemies within a fan-shaped area.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Natural Leader",
+          "description": "At the start of battle, Luthor's Energy Restoration Speed increases. For each [Legion of Doom] ally present, his Energy Restoration Speed increases.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Warsuit",
+          "description": "Luthor commands an orbital strike from his satellite, dealing Physical DMG to an entire row of enemies.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Human Supremacy",
+          "description": "At the start of battle, Luthoor provides support with his technological prowess, granting Energy to all [Legion of Doom] allies.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "LexCorp Bonus",
+          "description": "Increases [Legion of Doom] Champions' HP.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/LexLuthor-card.png",
+      "communityAverageLevel": "Blue 2-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/LexLuthor.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Lex%20Luthor"
+    },
+    {
+      "name": "Beast Boy",
+      "baseRarity": "Limited Mythic",
+      "inherentSynergies": [
+        "Teen Titans",
+        "Outsiders",
+        "Metahuman"
+      ],
+      "class": "Guardian",
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Rhino Rush",
+          "description": "Beast Boy transforms into a rhino and charges at an enemy, dealing physical damage equal to a percentage of his Attack, with a fixed chance to inflict [Stunned] on the target for 2s.",
+          "type": "Physical",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Gorilla Might",
+          "description": "Beat Boy transforms into a gorilla, increasing all allies' Attack by a percentage for 12s.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Tyrant's Roar",
+          "description": "Beat Boy transforms into a T-Rex and lets out a roar, reducing all enemies Attack and spiritual damage dealt by a percentage for 12s.",
+          "type": "Debuff",
+          "effects": [
+            "Debuff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Pack Instinct",
+          "description": "Increases Beast Boy's Max HP by a percentage. At the start of battle, all [Teen Titans] and [Outsiders] allies gain Spiritual Defense equal to a percentage of Beast Boy's Spiritual Defense.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Thick Hide",
+          "description": "Increases all Champions' Spiritual Defense by a percentage and [Guardian] Champions' Spiritual Defense by an additional percentage.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BeastBoy-card.png",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BeastBoy.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Beast%20Boy",
+      "relatedChampions": [
+        "Arsenal",
+        "Cyborg",
+        "Robin"
+      ]
+    },
+    {
+      "name": "Batgirl",
+      "baseRarity": "Mythic",
+      "class": "Supporter",
+      "inherentSynergies": [
+        "Birds of Prey",
+        "Weapon Master",
+        "Bat Family"
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Batgirl-card.png",
+      "communityAverageLevel": "Blue 2-Star",
+      "isHealer": true,
+      "skills": [
+        {
+          "type": "Buff",
+          "name": "Tactical Drone",
+          "description": "Batgirl deploys a medical drone to heal the ally with the lowest HP for 160% / 210% / 260% / 310% / 360% of Batgirl’s ATK.",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "effects": [
+            "Control",
+            "DMG",
+            "Debuff"
+          ],
+          "isUltimate": false,
+          "description": "Upon landing a Critical Hit, Batgirl heals the ally with the lowest HP for 25% / 40% / 55% / 70% / 85% of Batgirl’s ATK.",
+          "name": "Grapple With This",
+          "type": "Physical"
+        },
+        {
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "name": "Bat Scanner",
+          "isUltimate": true,
+          "description": "Batgirl scans the battlefield and deploys a drone behind each ally, increasing all allies’ Crit Rate by 16% / 22% / 28% / 34% / 40% for 15s.\nShe then heals the ally with the lowest HP for 150% / 200% / 250% / 300% / 350% of Batgirl’s ATK."
+        },
+        {
+          "type": "Buff",
+          "isUltimate": false,
+          "description": "Increases Batgirl’s Healing Done by 5% / 10% / 15% / 20% / 25%.\nAt the start of battle, each [Bat Family] ally present increases Batgirl’s Energy Gain by 2% / 4% / 6% / 8% / 10%.",
+          "name": "Babs's Boost",
+          "effects": [
+            "Buff"
+          ]
+        },
+        {
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false,
+          "type": "Passive",
+          "description": "Increases [Bat Family] Champions' ATK.",
+          "name": "Detective Mode"
+        }
+      ],
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Batgirl.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Batgirl"
+    },
+    {
+      "name": "Homefun",
+      "baseRarity": "Epic",
+      "class": "Guardian",
+      "inherentSynergies": [],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Grand Slam",
+          "description": "Home Fun swings his club horizontally, ddealing Physical DMG to enemies within range and knocking them back.",
+          "type": "Physical",
+          "effects": [
+            "Control",
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": true
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Homefun-card.png",
+      "communityAverageLevel": "Blue 1-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Homefun.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Homefun"
+    },
+    {
+      "baseRarity": "Limited Mythic",
+      "name": "Orphan",
+      "class": "Warrior",
+      "inherentSynergies": [
+        "Bat Family",
+        "Birds of Prey",
+        "Weapon Master"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Mark of Cain",
+          "description": "Cassandra Cain unleashes a powerful slash, dealing physical damage equal to a percentage of her Attack to enemies within range. After casting, she slashes forward upon each successful dodge, dealing physical damage equal to a percentage of her Attack to enemies within range.",
+          "type": "Passive",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Shiva's Scion",
+          "description": "Cassandra Cain unleashes a flurry of slashes, dealing physical damage equal to a percentage of her Attack to enemies within range.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Shadow Strike",
+          "description": "Increases Cassandra Cain's Crit Rate by a percentage. After casting her Ultimate, her Crit Damage is increased by a percentage for 10s.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "False Retreat",
+          "description": "Increases Cassandra Cain's Dodge by a percentage. At the start of battle, if there are at least 3 [Bat Family] allies present, her Dodge is increased by an additional percentage.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Warrior Spirit",
+          "description": "Increases all Champions' HP by a percentage, with an additional percentage for [Warrior] Champions. Applies globally.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Orphan-card.png",
+      "communityAverageLevel": "Blue 1-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Orphan.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Orphan",
+      "relatedChampions": [
+        "Batgirl",
+        "Red Robin",
+        "Robin"
+      ]
+    },
+    {
+      "name": "Bane",
+      "baseRarity": "Mythic",
+      "class": "Guardian",
+      "inherentSynergies": [
+        "League of Assassins",
+        "Metahuman",
+        "Arkham's Most Wanted"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "type": "Healing",
+          "effects": [
+            "Healing"
+          ],
+          "name": "Venom Boost",
+          "description": "Bane increases his bvenom dosage, recoovering his lost HP per second.",
+          "isUltimate": false
+        },
+        {
+          "description": "After casting his ultimate, Bane gains DMG reduction. When his HP is below 50%, his Physical DEF is increased.",
+          "isUltimate": false,
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "name": "Unbreakable",
+          "type": "Defense"
+        },
+        {
+          "isUltimate": true,
+          "description": "Bane infuses his body with venom and unleashes a barrage of attacks, dealing Physical DMG to an enemy and restoring HP.",
+          "effects": [
+            "Healing",
+            "DMG"
+          ],
+          "name": "Break You",
+          "type": "Physical"
+        },
+        {
+          "name": "Mob Mentality",
+          "description": "At the start of battle, all [Arkham's Most Wanted] allies gain [Robustness], increasing the Physical DEF by 10% and rendering them immunee to enemy forced movement effects.",
+          "type": "Defense",
+          "isUltimate": false,
+          "effects": [
+            "Buff",
+            "Defense"
+          ]
+        },
+        {
+          "isUltimate": false,
+          "type": "Passive",
+          "description": "Increases all Champions' DEF.",
+          "name": "Unbroken",
+          "effects": [
+            "Passive"
+          ]
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Bane-card.png",
+      "communityAverageLevel": "Blue 2-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Bane.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Bane"
+    },
+    {
+      "name": "Stargirl",
+      "baseRarity": "Mythic",
+      "class": "Supporter",
+      "inherentSynergies": [
+        "Justice League",
+        "Energy Wielder"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Star Shield",
+          "description": "Stargirl applies DMG Reduction to an ally.",
+          "type": "Buff",
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Astral Autofire",
+          "description": "Stargirl unleashes energy at an enemy, dealing Spiritual DMG and reducing their Effect ACC.",
+          "type": "Spiritual",
+          "effects": [
+            "DMG",
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Cosmic Cleanse",
+          "description": "Stargirl dispels stacks of debuffs or weakening effects for all allies and applies DMG Reduction to them.",
+          "type": "Defense",
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Stellar Stamina",
+          "description": "At the start of battle, all aliles gain an Effect RES bonus for 20s.",
+          "type": "Buff",
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Tamaranean Blessing",
+          "description": "Increases all Champions' Effect RES.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Stargirl-card.png",
+      "communityAverageLevel": "Blue 1-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Stargirl.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Stargirl"
+    },
+    {
+      "name": "Harley Quinn",
+      "baseRarity": "Mythic",
+      "class": "Warrior",
+      "inherentSynergies": [
+        "Suicide Squad",
+        "Weapon Master",
+        "Birds of Prey"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Manic Episode",
+          "description": "Harley Quinn feroviously attacks with a hammer, dealing Physical DMG to an enemy.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Escalation",
+          "description": "Harley Quinn gains HP based on her DMG dealt. At the start of battle, all [Suicide Squad] allies gain HP based on their DMG dealt.",
+          "type": "Healing",
+          "effects": [
+            "Healing",
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Self-Actualization: Release Self",
+          "description": "Harley Quinn unleashes her full potential and enters a [Self-Actualization] state, dealing Physical DMG to a target and nearby enemies.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG",
+            "Buff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Special Physiology",
+          "description": "Harley Quinn gains Energy for each enemy she defeats.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Reckless Abandon",
+          "description": "Increases [Suicide Squad] Champions' ATK.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/HarleyQuinn-card.png",
+      "communityAverageLevel": "Blue 1-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/HarleyQuinn.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Harley%20Quinn"
+    },
+    {
+      "name": "Big Boy",
+      "baseRarity": "Epic",
+      "class": "Guardian",
+      "inherentSynergies": [],
+      "isHealer": false,
+      "skills": [
+        {
+          "isUltimate": true,
+          "description": "Big Boy shouts excitedly, restoring HP over time and taunting enemies within range.",
+          "name": "Trolling",
+          "type": "Control",
+          "effects": [
+            "Healing",
+            "Control"
+          ]
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BigBoy-card.png",
+      "communityAverageLevel": "Blue 1-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BigBoy.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Big%20Boy"
+    },
+    {
+      "name": "Superboy",
+      "class": "Supporter",
+      "baseRarity": "Limited Mythic",
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Chill",
+          "description": "Conner Kent exhales a blast of icy wind, dealing Physical DMG to enemies in a circular area and reducing their Physical DEF until the end of battle, stacking up to 4 time(s).",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG",
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "\"S\" Shield",
+          "description": "Conner Kent strengthens his resolve, reducing DMG taken from ranged skills.",
+          "type": "Defense",
+          "effects": [
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Super Bro",
+          "description": "Conner Kent unleashes his telekentic power, increasing ATK for both himself and the ally with the highest ATK (Supergirl takes priority if present). This effect is capped at a maximum of 133% of the target's base ATK each time, stacks up to 3 time(s), and lasts until the end of battle. The ally also becomes immune to control effects 1 time. The ATJK bonus is doubled for [Superman Family] allies.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "In the Genes",
+          "description": "At the start of battle, Connor Kent's ATK increases for each level of [Krypton Energy].",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "TK Field",
+          "description": "Increases all Champions' MEN and [Supporter] Champions' HP.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Superboy-card.png",
+      "communityAverageLevel": "Blue 3-Star",
+      "inherentSynergies": [
+        "Superman Family",
+        "Metahuman",
+        "Teen Titans"
+      ],
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Superboy.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Superboy",
+      "relatedChampions": [
+        "Raven",
+        "The Flash",
+        "Two-Face"
+      ]
+    },
+    {
+      "name": "Crossbar",
+      "baseRarity": "Epic",
+      "class": "Warrior",
+      "inherentSynergies": [],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Bell Ring",
+          "description": "Cross Bar swings his crowbar with mighty force, dealing Physical DMG to an enemy and [Stunning] them.",
+          "type": "Physical",
+          "effects": [
+            "Control",
+            "DMG"
+          ],
+          "isUltimate": true
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Crossbar-card.png",
+      "communityAverageLevel": "Blue 1-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Crossbar.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Crossbar"
+    },
+    {
+      "name": "Black Adam",
+      "baseRarity": "Legendary",
+      "class": "Magical",
+      "inherentSynergies": [
+        "Legion of Doom",
+        "Metahuman"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Wrath",
+          "description": "Black Adam unleashes a series of lightning bolts, dealing Spiritual DMG to a target and nearby enemies.",
+          "type": "Spiritual",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Judgement of Osiris",
+          "description": "Black Adam ddeals more damage to enemies with less that 75% HP.",
+          "type": "Passive",
+          "effects": [
+            "Passive",
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Power of Aten",
+          "description": "Black Adam channels his power to unleash a lightning storm, dealing Spiritual DMG to enemies within a rectangular area in front of him.",
+          "type": "Spiritual",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Injustice Society",
+          "description": "At the start of battle, Black Adam's ATK increases for 20s.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Wisdom of the Gods",
+          "description": "Increases all Champions' MEN.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BlackAdam-card.png",
+      "communityAverageLevel": "Gold 3-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BlackAdam.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Black%20Adam"
+    },
+    {
+      "name": "Green Arrow",
+      "baseRarity": "Legendary",
+      "class": "Firepower",
+      "inherentSynergies": [
+        "Justice League",
+        "Weapon Master"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Boxing Glove Arrow",
+          "description": "After a brief charge-up, Green Arrow fires a special boxing glove arrow, dealing Physical DMG to an enemy.",
+          "type": "Physical",
+          "effects": [
+            "Control",
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Multitasking",
+          "description": "Green Arrow unleashes a volley of arrows into the air, dealing Physical DMG to enemies within range.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Sharp Rain",
+          "description": "Green Arrow leaps into the air and shoots a barrage of arrows, dealing Physical DMG to an enemy.",
+          "type": "Physical",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Watch and Learn",
+          "description": "Green Arrow's Crit Rate increases.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Hunter's Instinct",
+          "description": "Increases all Champions' ATK.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/GreenArrow-card.png",
+      "communityAverageLevel": "Gold 4-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/GreenArrow.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Green%20Arrow"
+    },
+    {
+      "name": "Bang Bang",
+      "baseRarity": "Epic",
+      "class": "Supporter",
+      "inherentSynergies": [],
+      "isHealer": false,
+      "skills": [
+        {
+          "isUltimate": true,
+          "type": "Passive",
+          "description": "Bang Bang fires a warning shot to support her allies, restoring Energy to all allies within range except herself.",
+          "effects": [],
+          "name": "YEE-HA!"
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BangBang-card.png",
+      "communityAverageLevel": "Blue 1-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BangBang.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Bang%20Bang"
+    },
+    {
+      "name": "The Joker",
+      "baseRarity": "Limited Mythic",
+      "class": "Intimidator",
+      "inherentSynergies": [
+        "Arkham's Most Wanted",
+        "Weapon Master"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "What a Gas",
+          "description": "The Joker detonates a bomb, dealing Spiritual DMG to enemies within range, and a base chance 50% to inflict stacks of [Joker Venom].",
+          "type": "Spiritual",
+          "effects": [
+            "DMG",
+            "AoE DMG",
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Big Laugh",
+          "description": "The Joker's Spiritual AMP increases. Each of his attacks has a 50% base chance to inflict 1 stack of [Joker Venom] on the target. Can be triggered once every 1s.",
+          "type": "Buff",
+          "effects": [
+            "Buff",
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Joker Vemon",
+          "description": "The Joker deals Spiritual DMG to an enemy, with a 50% base chance to inflict 10 stacks of [Joker Venom]. In auto mode, he prioritizes the enemy with the most stacks of [Joker Venom]. After casting this skill, if an enemy reaches 50 stacks of [Joker Venom], their debuffs and weakening effects spread to other enemies, up to 5 stacks per effect.",
+          "type": "Spiritual",
+          "effects": [
+            "DMG",
+            "Debuff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Buzz Off",
+          "description": "At the start of battle, The Joker gains 1 stack of ATK Up for each [Arkham's Most Wanted] ally present.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Laugh Attack",
+          "description": "Increases all Champion's ATK and [Intimidator] Champions' ATK additionally.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TheJoker-card.png",
+      "communityAverageLevel": "Blue 4-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TheJoker.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=The%20Joker",
+      "relatedChampions": [
+        "Bane",
+        "Harley Quinn",
+        "Two-Face"
+      ]
+    },
+    {
+      "name": "Superman",
+      "baseRarity": "Limited Mythic",
+      "inherentSynergies": [
+        "Justice League",
+        "Superman Family",
+        "Metahuman"
+      ],
+      "class": "Warrior",
+      "isHealer": false,
+      "skills": [
+        {
+          "effects": [
+            "DMG",
+            "Debuff"
+          ],
+          "description": "Superman shoots a heat laser, dealing Physical DMG to an enemy.",
+          "isUltimate": false,
+          "name": "Heat Vision",
+          "type": "Physical"
+        },
+        {
+          "name": "Freeze Breath",
+          "type": "Control",
+          "isUltimate": false,
+          "effects": [
+            "Control",
+            "DMG"
+          ],
+          "description": "Superman inhales deeply before exhaling a freezing breath, dealing Physical DMG to an enemy and [Freezing] them."
+        },
+        {
+          "description": "Superman soars into space, gaining 1 permanent stack of [Solar Energy] before dealing Physical DMG to an enemy.",
+          "type": "Physical",
+          "isUltimate": true,
+          "name": "Under a Yellow Sun",
+          "effects": [
+            "DMG",
+            "Buff"
+          ]
+        },
+        {
+          "name": "Man of Steel",
+          "description": "Superman's DEF increases. At the start of battle, Superman gains 1 stack of ATK Up for each [Superman Family] ally present.",
+          "type": "Defense",
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "description": "Increases all Champions' HP and [Warrior] Champions' ATK.",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false,
+          "name": "Hope Restored",
+          "type": "Passive"
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Superman-card.png",
+      "communityAverageLevel": "Blue 5-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Superman.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Superman",
+      "relatedChampions": [
+        "Cyborg",
+        "Shazam",
+        "The Flash"
+      ]
+    },
+    {
+      "baseRarity": "Limited Mythic",
+      "class": "Assassin",
+      "inherentSynergies": [
+        "League of Assassins",
+        "Metahuman"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Shadow Strike",
+          "description": "Talia al Ghul vanishes in a cloud of smoke, then reappears behind her target to perform a spinning slash, dealing Physical DMG to enemies within range.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Recharge",
+          "description": "Talia al Ghul sacrifices a portion of her Max HP to gain Energy.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Unleashed Rage",
+          "description": "Talia al Ghul sacrifices some of her current HPto deal Physical DMG to nearby enemies. Targets with high remaining HP take increased DMG.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Lazarun Boost",
+          "description": "Increases Talia al Ghul's Crit Rate. When an enemy [excluding summons] is defeated, she restores a portion of her Max HP for each [League of Assassins] ally present.",
+          "type": "Buff",
+          "effects": [
+            "Healing",
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Coordinated Ambush",
+          "description": "Increases all Champions' ATK and [Assassin] Champions' ATK additionally.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "name": "Talia al Ghul",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TaliaalGhul-card.png",
+      "communityAverageLevel": "Purple 1-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TaliaalGhul.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Talia%20al%20Ghul",
+      "relatedChampions": [
+        "Bane",
+        "Batgirl",
+        "Harley Quinn"
+      ]
+    },
+    {
+      "name": "The Penguin",
+      "baseRarity": "Mythic",
+      "class": "Intimidator",
+      "inherentSynergies": [
+        "Arkham's Most Wanted",
+        "Weapon Master"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "isUltimate": false,
+          "type": "Spiritual",
+          "description": "The Pengiun deals Spiritual DMG to enemies within a circular area in front of him, with a 50% chance to inflict 1 stack of [Engine Oil].",
+          "effects": [
+            "Control",
+            "DMG",
+            "AoE DMG",
+            "Debuff"
+          ],
+          "name": "Oil Spill"
+        },
+        {
+          "isUltimate": false,
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "description": "The Penguin summons a Penguin Commando around him, which automatically seeks out targets and explodes on impact, dealing Spiritual DMG to nearby enemied.",
+          "type": "Spiritual",
+          "name": "Bird of Prey"
+        },
+        {
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "type": "Spiritual",
+          "description": "The Penguin summons Penguin Commandos in front of him, which automatically seek out targets and explode upon impact, dealing Spiritual DMG to nmearby enemies.",
+          "name": "For the Birds",
+          "isUltimate": true
+        },
+        {
+          "isUltimate": false,
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "description": "When taking melee attacks, The Penguin immediately moves backward. Can be triggered once per skill level per battle. An additional Penguin Commando is summoned with each Ultimate cast.",
+          "type": "Defense",
+          "name": "Umbrella Retreat"
+        },
+        {
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false,
+          "type": "Passive",
+          "name": "Keen Analysis",
+          "description": "Increases all Champions' MEN."
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/ThePenguin-card.png",
+      "communityAverageLevel": "Blue 1-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/ThePenguin.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=The%20Penguin"
+    },
+    {
+      "name": "Nurse Harley",
+      "inherentSynergies": [
+        "Birds of Prey",
+        "Arkham's Most Wanted",
+        "Weapon Master"
+      ],
+      "isHealer": false,
+      "class": "Firepower",
+      "baseRarity": "Limited Mythic",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/NurseHarley-card.png",
+      "skills": [
+        {
+          "name": "Insanity Erosion",
+          "description": "Deals physical damage equal to a percentage of her ATK and inflicts 4 stack(s) of [Corrosion].",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG",
+            "Debuff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Madness Actualization",
+          "description": "Nurse Harley's active attacks deal more damage. For every 1 stack(s) of debuffes on the target, the damage is increased by an additional percentage.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Corrosive Sanity",
+          "description": "Nurse Harley enters [Self-Actualization] for 13s. While in this state, her basic attacks fire corrosive shots, each dealing Physical DMG and inflicting 2 stack(s) of [Corrosion].",
+          "type": "Passive",
+          "effects": [
+            "DMG",
+            "Debuff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Arkham's Awakening",
+          "description": "At the start of battle, Nurse Harley gains 1 stack of [Attack Growth] for each [Arkham's Most Wanted] ally present, up to 5 stacks. Each stack increases her ATK.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Adrenaline Frenzy",
+          "description": "Increases all Champion's ATK with an additional bonus for [Firepower] Champions. Applies globally.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "communityAverageLevel": "Gold 5-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/NurseHarley.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Nurse%20Harley"
+    },
+    {
+      "name": "Shazam",
+      "baseRarity": "Mythic",
+      "class": "Guardian",
+      "inherentSynergies": [
+        "Justice League",
+        "Metahuman"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "type": "Defense",
+          "isUltimate": false,
+          "description": "Gains [Courage of Achilles].",
+          "name": "Achilles Summon"
+        },
+        {
+          "isUltimate": false,
+          "description": "Shazam dashes forward and unleashes a burst of lightning within a circular area around him, dealing Physical DMG and gaining a Shield.",
+          "name": "Wisdom of Solomon",
+          "effects": [
+            "DMG",
+            "Defense"
+          ],
+          "type": "Physical"
+        },
+        {
+          "isUltimate": true,
+          "name": "Strength of Hercules",
+          "description": "Shazam deals Physical DMG to enemies within a circular area around him and [Taunts] them.",
+          "effects": [
+            "Control",
+            "DMG",
+            "AoE DMG"
+          ],
+          "type": "Physical"
+        },
+        {
+          "description": "When Shazam takes lethal damage, his HP is locked at 1 instead and he recovers a percentage of his Max HP over time, inflicting [Taunted] on all enemies at the cost of all his Energy. Can be triggered once per battle.",
+          "type": "Healing",
+          "isUltimate": false,
+          "effects": [
+            "Healing",
+            "Control",
+            "Defense"
+          ],
+          "name": "Atlas Boost"
+        },
+        {
+          "name": "Achilles' Shield",
+          "description": "Increases [Guardian] Champions' Crit RES.",
+          "type": "Passive",
+          "isUltimate": false,
+          "effects": [
+            "Passive"
+          ]
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Shazam-card.png",
+      "communityAverageLevel": "Blue 2-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Shazam.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Shazam"
+    },
+    {
+      "name": "Shield Squad",
+      "baseRarity": "Epic",
+      "class": "Guardian",
+      "inherentSynergies": [],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Crowd Control",
+          "description": "Sheild Squad slams his baton into the ground, dealing Physical DMG to enemies within range.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": true
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/ShieldSquad-card.png",
+      "communityAverageLevel": "Blue 1-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/ShieldSquad.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Shield%20Squad"
+    },
+    {
+      "name": "The Flash",
+      "baseRarity": "Mythic",
+      "class": "Supporter",
+      "inherentSynergies": [
+        "Justice League",
+        "Metahuman",
+        "Flash Family"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "What a Rush",
+          "description": "The Flash zips to the side of an ally to assist, increasing the target's ATK. In auto mode, the skill targets the ally with the highest ATK.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Speed Strike",
+          "description": "The Flash attacks enemies while running in circles, dealing Physical DMG to enemies within a circular area.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Speed Force Sharing",
+          "description": "The Flash channels his Energy to an ally until they are fully charged or his Energy is deploeted, and increaases the target's ATK. Casting the Ultiimate costs The Flash a percentage of Energy. In auto mode, the skill targets the ally with this highest ATK.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Fast Friends",
+          "description": "The Flash runs to an ally's back and grants them [Speed Force Resonance]. In auto mode, the skill targets the ally with the lowest HP percentage.",
+          "type": "Buff",
+          "effects": [
+            "Buff",
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Speed Healing",
+          "description": "Increases all Champions' HP.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/TheFlash-card.png",
+      "communityAverageLevel": "Blue 3-Star",
+      "canUpgrade": true,
+      "upgradeMechanism": "Bleed",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/TheFlash.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=The%20Flash"
+    },
+    {
+      "name": "Nightwing",
+      "baseRarity": "Limited Mythic",
+      "class": "Assassin",
+      "inherentSynergies": [
+        "Teen Titans",
+        "Weapon Master",
+        "Bat Family"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Shadow Flip",
+          "description": "Nightwing flips over the enemy with the lowest HP, dealing Physical DMG. He is untargetable during the leap.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "Defense"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Bright Knight",
+          "description": "Upon each attack, Nightwing gains 1 stack of Crit RTate Up. Stackable up to a maximum of 5 times.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Darkest Knight Strike",
+          "description": "Nightwing strikes an enemy in front of him, dealing Physical DMG. Nightwing gains 1 stack of Crit DMG APM Up and Cris Rate Up for each [Bat Family] ally present. If this attack defeats the target, Nightwing immediately strikes again on another enemy with the lowest HP, dealing DMG. Nightwing is untargetable during the leap. Prioritizes the enemy champion with the lowest HP in auto mode.",
+          "type": "Physical",
+          "effects": [
+            "DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Double Ttouble",
+          "description": "Whenever Nightwing's basic attack deals Crit DMG, he deals additional Physical DMG to an enemy and gains 1 additional Energy.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Son of Gotham",
+          "description": "Increases all Champions' ATK and [Assassin] Champions' Crit Rate.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/Nightwing-card.png",
+      "communityAverageLevel": "Blue 5-Star",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Nightwing.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Nightwing",
+      "relatedChampions": [
+        "Batgirl",
+        "Red Robin",
+        "Robin"
+      ]
+    }
+  ]
+}
