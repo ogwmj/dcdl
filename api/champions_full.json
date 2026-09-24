@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-24T10:49:04.264Z",
+  "updated_at": "2026-09-24T12:14:36.565Z",
   "champions": [
     {
       "name": "Swamp Thing",
@@ -2908,9 +2908,9 @@
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/DickGrayson(Robin).webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Dick%20Grayson%20(Robin)",
       "relatedChampions": [
-        "Arsenal",
-        "Batgirl",
-        "Cyborg"
+        "Cyborg",
+        "Krypto",
+        "Stargirl"
       ]
     },
     {
