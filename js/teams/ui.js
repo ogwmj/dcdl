@@ -1126,11 +1126,11 @@ async function handleAddUpdateChampion() {
             name: baseChampionData.name,
             baseRarity: baseChampionData.baseRarity,
             class: baseChampionData.class || "N/A",
-            isHealer: baseChampionData.isHealer === true,
+            isHealer: baseChampionData.isHealer === false,
             inherentSynergies: baseChampionData.inherentSynergies || [],
-            canUpgrade: baseChampionData.canUpgrade,
-            upgradeSynergy: baseChampionData.upgradeSynergy,
-            isStraightUpgrade: baseChampionData.isStraightUpgrade,
+            canUpgrade: baseChampionData.canUpgrade === false,
+            upgradeSynergy: baseChampionData.upgradeSynergy || "",
+            isStraightUpgrade: baseChampionData.isStraightUpgrade === true,
             starColorTier: DOM.champStarColor.value,
             forceLevel: selectedForceLevel,
             gear: {
@@ -1641,11 +1641,12 @@ async function saveRosterToFirestore() {
     DOM.saveRosterIndicator.classList.remove('hidden');
     try {
         const rosterToSave = playerRoster.map(champ => {
-            const { individualScore, canUpgrade, upgradeSynergy, ...rest } = champ;
+            const { individualScore, canUpgrade, upgradeSynergy, isStraightUpgrade, ...rest } = champ;
             return rest;
         });
         await setDoc(doc(db, `artifacts/${appId}/users/${userId}/roster/myRoster`), { champions: rosterToSave });
     } catch(e) {
+        console.error("Error saving roster:", e);
         showToast("Failed to save roster.", "error");
         logEvent(analytics, 'exception', { description: 'save_roster_failed' });
     } finally {
