@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-24T12:14:36.565Z",
+  "updated_at": "2026-10-21T12:13:59.399Z",
   "champions": [
     {
       "name": "Swamp Thing",
@@ -3538,6 +3538,71 @@
       "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Bane.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Bane"
+    },
+    {
+      "baseRarity": "Iconic",
+      "name": "Superman Death Metal",
+      "class": "Warrior",
+      "inherentSynergies": [
+        "Death Metal",
+        "Superman Family",
+        "Metahuman"
+      ],
+      "isHealer": false,
+      "skills": [
+        {
+          "name": "Cold Breath",
+          "description": "Superman Death Metal blasts an enemy with freezing breath, dealing physical damage equal to a percentage of his Attack and inflicting [Freeze] and [Vulnerability].",
+          "type": "Control",
+          "effects": [
+            "Control",
+            "DMG"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Inspiration",
+          "description": "Increases Superman Death Metal's Max HP by a percentage. At the start of battle he grants all allies [Steadfast] for 20s. Every other [Superman Family] ally also gains a percentage of Max HP.",
+          "type": "Buff",
+          "effects": [
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Solar Punch",
+          "description": "Superman Death Metal channels solar energy into his right arm, dealing physical damage equal to a percecntage of his Attack to an enemy. If his Ultimate or a follow-up it triggers defeats an enemy, he immediately attacks all enemies dealing physical famage equal to half the Ultimate Attack. This follow-up counts as Ultimate damage.",
+          "type": "Physical",
+          "effects": [
+            "DMG",
+            "AoE DMG"
+          ],
+          "isUltimate": true
+        },
+        {
+          "name": "Second Wind",
+          "description": "The first time Superman Death Metal would take lethal damage, he enters [Hibernation] for 5s.",
+          "type": "Healing",
+          "effects": [
+            "Healing",
+            "AoE DMG",
+            "Buff"
+          ],
+          "isUltimate": false
+        },
+        {
+          "name": "Natural Leader",
+          "description": "Increases all Champions' Attack by a percentage and [Warrior] Champions' Physical Defense by an additional percentage. Applies globally.",
+          "type": "Passive",
+          "effects": [
+            "Passive"
+          ],
+          "isUltimate": false
+        }
+      ],
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/SupermanDeathMetal-card.png",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/SupermanDeathMetal.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Superman%20Death%20Metal"
     },
     {
       "name": "Stargirl",

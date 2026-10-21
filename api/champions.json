@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-24T12:14:25.833Z",
+  "updated_at": "2026-10-21T12:13:47.836Z",
   "champions": [
     {
       "name": "Swamp Thing",
@@ -925,6 +925,20 @@
       "communityAverageLevel": "Blue 2-Star",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/Bane.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Bane"
+    },
+    {
+      "baseRarity": "Iconic",
+      "name": "Superman Death Metal",
+      "class": "Warrior",
+      "inherentSynergies": [
+        "Death Metal",
+        "Superman Family",
+        "Metahuman"
+      ],
+      "isHealer": false,
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/SupermanDeathMetal-card.png",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/SupermanDeathMetal.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Superman%20Death%20Metal"
     },
     {
       "name": "Stargirl",

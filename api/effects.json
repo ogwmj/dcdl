@@ -1,9 +1,13 @@
 {
-  "updated_at": "2026-09-24T10:35:06.610Z",
+  "updated_at": "2026-10-21T12:13:32.639Z",
   "effects": [
     {
       "name": "Stunning",
       "description": "The targeted Champion's are affected by control and cannot take any action."
+    },
+    {
+      "name": "Steadfast",
+      "description": "Immune to forced movement."
     },
     {
       "name": "Duel",
@@ -28,6 +32,10 @@
     {
       "name": "Joker Venom",
       "description": "Deals Spiritual DMG per second, for 20 seconds, stacking up to 100 time(s)."
+    },
+    {
+      "name": "Hibernation",
+      "description": "Cannot act, his is immune to debuffs and converts a percentage of incoming damage into healing. When the effect expires or his HP reaches 100%, he awakes, dealing physical damage equal to a percentage of his Attack to all enemies and gains Energy. This attack counts as Ultimate damage."
     },
     {
       "name": "Mind Ward",

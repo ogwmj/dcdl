@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-24T10:18:11.998Z",
+  "updated_at": "2026-10-21T12:13:25.973Z",
   "legacy_pieces": [
     {
       "name": "Honkin' Huge Hammer",
@@ -100,6 +100,15 @@
       "classes": [
         "Supporter",
         "Intimidator"
+      ]
+    },
+    {
+      "name": "Arm of Apokolips",
+      "baseRarity": "Mythic+",
+      "defaultImageUrl": "https://dcdl-companion.com/img/legacy_pieces/ArmofApokolips.webp",
+      "classes": [
+        "Warrior",
+        "Gueadian"
       ]
     },
     {
