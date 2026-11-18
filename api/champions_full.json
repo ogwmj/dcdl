@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-18T11:41:50.622Z",
+  "updated_at": "2026-11-18T11:44:48.324Z",
   "champions": [
     {
       "name": "Swamp Thing",
@@ -506,7 +506,7 @@
           "isUltimate": false
         }
       ],
-      "cardImageUrl": "undefined",
+      "cardImageUrl": "https://dcdl-companion.com/img/champions/cards/BlueBeetle-card.png",
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BlueBeetle.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Blue%20Beetle"
     },
