@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-21T12:13:47.836Z",
+  "updated_at": "2026-11-18T11:41:34.360Z",
   "champions": [
     {
       "name": "Swamp Thing",
@@ -125,6 +125,19 @@
       "isStraightUpgrade": true,
       "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/GreenLantern.webp",
       "codexUrl": "https://dcdl-companion.com/codex.html?search=Green%20Lantern"
+    },
+    {
+      "name": "Blue Beetle",
+      "baseRarity": "Limited Mythic",
+      "class": "Firepower",
+      "inherentSynergies": [
+        "Teen Titans",
+        "Justice League",
+        "Metahuman"
+      ],
+      "cardImageUrl": "undefined",
+      "defaultImageUrl": "https://dcdl-companion.com/img/champions/full/BlueBeetle.webp",
+      "codexUrl": "https://dcdl-companion.com/codex.html?search=Blue%20Beetle"
     },
     {
       "name": "Hawkgirl",

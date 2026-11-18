@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-21T12:13:32.639Z",
+  "updated_at": "2026-11-18T11:41:54.522Z",
   "effects": [
     {
       "name": "Stunning",
@@ -16,6 +16,10 @@
     {
       "name": "Awakened",
       "description": "Immediately gains 50 Energy and has [Super Armor] while in this state."
+    },
+    {
+      "name": "Scarab Sigil",
+      "description": "Grants bonus Attack equal to a percentage of Blue Beetle's Base Attack."
     },
     {
       "name": "Ivy Thorn",
